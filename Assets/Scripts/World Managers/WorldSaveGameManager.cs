@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace SG { 
+namespace baodeag { 
     public class WorldSaveGameManager : MonoBehaviour
     {
         public static WorldSaveGameManager instance;
@@ -32,6 +32,11 @@ namespace SG {
             AsyncOperation loadOperation = SceneManager.LoadSceneAsync(worldSceneIndex);
 
             yield return null;
+        }
+
+        public int GetWorldSceneIndex()
+        {
+            return worldSceneIndex;
         }
     }
 }

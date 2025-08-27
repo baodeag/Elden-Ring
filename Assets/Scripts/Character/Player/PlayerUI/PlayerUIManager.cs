@@ -1,6 +1,6 @@
 using UnityEngine;
 using Unity.Netcode;
-namespace SG
+namespace baodeag
 {
     public class PlayerUIManager : MonoBehaviour
     {

@@ -1,7 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
 
-namespace SG { 
+namespace baodeag { 
     public class TitleScreenManager : MonoBehaviour
     {
         public void StartNetworkAsHost()
