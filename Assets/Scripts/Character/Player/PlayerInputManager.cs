@@ -11,6 +11,9 @@ namespace baodeag
         PlayerControls playerControls;
 
         [SerializeField] Vector2 movementInput;
+        public float horizontalInput;
+        public float verticalInput;
+        [SerializeField] public float moveAmount;
 
         private void Awake()
         {
@@ -66,6 +69,46 @@ namespace baodeag
         {
             //when this object is destroyed, unsubscribe from the event
             SceneManager.activeSceneChanged -= OnSceneChange;
+        }
+
+        // if we minimize or lower the window, stop adjusting input
+        private void OnApplicationFocus(bool focus)
+        {
+            if(enabled)
+            {
+                if (focus)
+                {
+                    playerControls.Enable();
+                }
+                else
+                {
+                    playerControls.Disable();
+                }
+            }
+        }
+
+        private void Update()
+        {
+            HandleMovementInput();
+        }
+
+        private void HandleMovementInput()
+        {
+            verticalInput = movementInput.y;
+            horizontalInput = movementInput.x;
+
+            //returns a value between 0 and 1
+            moveAmount = Mathf.Clamp01(Mathf.Abs(horizontalInput) + Mathf.Abs(verticalInput));
+
+            //snap moveAmount to either 0, 0.5, or 1
+            if (moveAmount <= 0.5 && moveAmount > 0)
+            {
+                moveAmount = 0.5f; //walk
+            }
+            else if(moveAmount > 0.5 && moveAmount <= 1)
+            {
+                moveAmount = 1; //run
+            }
         }
     }
 }

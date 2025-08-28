@@ -14,6 +14,11 @@ namespace baodeag
         protected override void Update()
         {
             base.Update();
+
+            //if we dont own this player, dont do anything
+            if (!IsOwner)
+                return;
+
             playerLocomotionManager.HandleAllMovement();
         }
     }

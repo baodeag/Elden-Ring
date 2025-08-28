@@ -67,7 +67,13 @@ PrefabInstance:
       addedObject: {fileID: -697219944618230427}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 45bb6f38aa3255a429469052278b8007, type: 3}
       insertIndex: -1
+      addedObject: {fileID: -7892414856359944612}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 45bb6f38aa3255a429469052278b8007, type: 3}
+      insertIndex: -1
       addedObject: {fileID: -5518382285501829735}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 45bb6f38aa3255a429469052278b8007, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -9214488087924178148}
   m_SourcePrefab: {fileID: 100100000, guid: 45bb6f38aa3255a429469052278b8007, type: 3}
 --- !u!1 &5812641894028359149 stripped
 GameObject:
@@ -133,6 +139,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a99c15c9ac358154583b13d4d244cf05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  characterController: {fileID: 0}
+--- !u!114 &-7892414856359944612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5812641894028359149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd94feb5b9ffa15408a85a4d7d618fb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  networkPosition:
+    m_InternalValue: {x: 0, y: 0, z: 0}
+  networkPositionVelocity: {x: 0, y: 0, z: 0}
+  networkPositionSmoothTime: 0.1
 --- !u!114 &-5518382285501829735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,3 +170,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1fa6de7a94ce1a47a5cc19c039815a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  verticalMovement: 0
+  horizontalMovement: 0
+  moveAmount: 0
+  walkingSpeed: 2
+  runningSpeed: 5
+--- !u!143 &-9214488087924178148
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5812641894028359149}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 1.8
+  m_Radius: 0.23
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0.9, z: 0}
