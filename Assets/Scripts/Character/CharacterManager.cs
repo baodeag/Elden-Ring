@@ -41,5 +41,14 @@ namespace baodeag
                     characterNetworkManager.networkRotationSmoothTime);
             }
         }
+
+        protected virtual void LateUpdate()
+        {
+            //if we own this char, handle the camera actions
+            if (IsOwner)
+            {
+                PlayerCamera.instance.HandleAllCameraActions();
+            }
+        }
     }
 }

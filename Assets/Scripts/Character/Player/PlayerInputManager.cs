@@ -10,10 +10,16 @@ namespace baodeag
 
         PlayerControls playerControls;
 
+        [Header("Movement Input")]
         [SerializeField] Vector2 movementInput;
         public float horizontalInput;
         public float verticalInput;
-        [SerializeField] public float moveAmount;
+        public float moveAmount;
+
+        [Header("Camera Input")]
+        [SerializeField] Vector2 cameraInput;
+        public float cameraHorizontalInput;
+        public float cameraVerticalInput;
 
         private void Awake()
         {
@@ -60,6 +66,7 @@ namespace baodeag
                 playerControls = new PlayerControls();
 
                 playerControls.PlayerMovement.Movement.performed += i => movementInput = i.ReadValue<Vector2>(); // Get movement input
+                playerControls.PlayerCamera.Movement.performed += i => cameraInput = i.ReadValue<Vector2>(); // Get camera input
             }
 
             playerControls.Enable();
@@ -89,10 +96,11 @@ namespace baodeag
 
         private void Update()
         {
-            HandleMovementInput();
+            HandlePlayerMovementInput();
+            HandleCameraMovementInput();
         }
 
-        private void HandleMovementInput()
+        private void HandlePlayerMovementInput()
         {
             verticalInput = movementInput.y;
             horizontalInput = movementInput.x;
@@ -109,6 +117,12 @@ namespace baodeag
             {
                 moveAmount = 1; //run
             }
+        }
+
+        private void HandleCameraMovementInput()
+        {
+            cameraHorizontalInput = cameraInput.x;
+            cameraVerticalInput = cameraInput.y;
         }
     }
 }

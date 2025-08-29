@@ -21,5 +21,25 @@ namespace baodeag
 
             playerLocomotionManager.HandleAllMovement();
         }
+
+        protected override void LateUpdate()
+        {
+            if(!IsOwner)
+                return;
+
+            base.LateUpdate();
+
+            PlayerCamera.instance.HandleAllCameraActions();
+        }
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
+
+            //if we own this player, set the camera's player to this
+            if (IsOwner)
+            {
+                PlayerCamera.instance.player = this;
+            }
+        }
     }
 }
