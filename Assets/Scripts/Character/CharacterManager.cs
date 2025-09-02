@@ -5,15 +5,17 @@ namespace baodeag
 {
     public class CharacterManager : NetworkBehaviour
     {
-        public CharacterController characterController;
+        [HideInInspector] public CharacterController characterController;
+        [HideInInspector] public Animator animator;
 
-        CharacterNetworkManager characterNetworkManager;
+        [HideInInspector] public CharacterNetworkManager characterNetworkManager;
 
         protected virtual void Awake()
         {
             DontDestroyOnLoad(this);
 
             characterController = GetComponent<CharacterController>();
+            animator = GetComponent<Animator>();
             characterNetworkManager = GetComponent<CharacterNetworkManager>();
         }
         protected virtual void Update()

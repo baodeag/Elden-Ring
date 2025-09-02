@@ -7,6 +7,7 @@ namespace baodeag
     public class PlayerInputManager : MonoBehaviour
     {
         public static PlayerInputManager instance;
+        public PlayerManager player;
 
         PlayerControls playerControls;
 
@@ -117,6 +118,16 @@ namespace baodeag
             {
                 moveAmount = 1; //run
             }
+
+            // why do we pass 0 on the horizontal? because we only want non-strafing movement
+            // we  use horizontal when we are strafing or locked on
+            if(player == null)
+                return;
+            // if we are not locked on, only use the move amount
+            player.playerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount);
+
+            // if we are locked on pass the horizontal movement as well
+
         }
 
         private void HandleCameraMovementInput()

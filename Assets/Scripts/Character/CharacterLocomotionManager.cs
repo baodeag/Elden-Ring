@@ -8,5 +8,10 @@ namespace baodeag
         {
 
         }
+
+        protected virtual void Update()
+        {
+
+        }
     }
 }
