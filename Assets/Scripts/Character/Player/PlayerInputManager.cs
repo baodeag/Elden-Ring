@@ -11,16 +11,19 @@ namespace baodeag
 
         PlayerControls playerControls;
 
+        [Header("Camera Input")]
+        [SerializeField] Vector2 cameraInput;
+        public float cameraHorizontalInput;
+        public float cameraVerticalInput;
+
         [Header("Movement Input")]
         [SerializeField] Vector2 movementInput;
         public float horizontalInput;
         public float verticalInput;
         public float moveAmount;
 
-        [Header("Camera Input")]
-        [SerializeField] Vector2 cameraInput;
-        public float cameraHorizontalInput;
-        public float cameraVerticalInput;
+        [Header("Player Action Input")]
+        [SerializeField] bool dodgeInput = false;
 
         private void Awake()
         {
@@ -68,6 +71,7 @@ namespace baodeag
 
                 playerControls.PlayerMovement.Movement.performed += i => movementInput = i.ReadValue<Vector2>(); // Get movement input
                 playerControls.PlayerCamera.Movement.performed += i => cameraInput = i.ReadValue<Vector2>(); // Get camera input
+                playerControls.PlayerActions.Dodge.performed += i => dodgeInput = true; // Get dodge input
             }
 
             playerControls.Enable();
@@ -97,9 +101,17 @@ namespace baodeag
 
         private void Update()
         {
+            HandleAllInputs();
+        }
+
+        private void HandleAllInputs()
+        {
             HandlePlayerMovementInput();
             HandleCameraMovementInput();
+            HandleDodgeInput();
         }
+
+        //Movement
 
         private void HandlePlayerMovementInput()
         {
@@ -134,6 +146,17 @@ namespace baodeag
         {
             cameraHorizontalInput = cameraInput.x;
             cameraVerticalInput = cameraInput.y;
+        }
+
+        //Action
+
+        private void HandleDodgeInput()
+        {
+            if(dodgeInput)
+            {
+                dodgeInput = false;
+                player.playerLocomotionManager.AttemptToPerformDodge();
+            }
         }
     }
 }

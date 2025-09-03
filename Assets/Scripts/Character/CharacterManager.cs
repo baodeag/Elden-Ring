@@ -10,6 +10,12 @@ namespace baodeag
 
         [HideInInspector] public CharacterNetworkManager characterNetworkManager;
 
+        [Header("Flags")]
+        public bool isPerformingAction = false;
+        public bool applyRootMotion = false;
+        public bool canRotate = true;
+        public bool canMove = true;
+
         protected virtual void Awake()
         {
             DontDestroyOnLoad(this);
@@ -18,6 +24,7 @@ namespace baodeag
             animator = GetComponent<Animator>();
             characterNetworkManager = GetComponent<CharacterNetworkManager>();
         }
+
         protected virtual void Update()
         {
             //if this char is being controlled by the local player, update the networked position
