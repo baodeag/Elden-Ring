@@ -6,12 +6,14 @@ namespace baodeag
     {
         [HideInInspector] public PlayerAnimatorManager playerAnimatorManager;
         [HideInInspector] public PlayerLocomotionManager playerLocomotionManager;
+        [HideInInspector] public PlayerNetworkManager playerNetworkManager;
         protected override void Awake()
         {
             base.Awake();
 
             playerLocomotionManager = GetComponent<PlayerLocomotionManager>();
             playerAnimatorManager = GetComponent<PlayerAnimatorManager>();
+            playerNetworkManager = GetComponent<PlayerNetworkManager>();
         }
 
         protected override void Update()

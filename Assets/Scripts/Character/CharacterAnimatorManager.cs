@@ -7,16 +7,28 @@ namespace baodeag
     {
         CharacterManager character;
 
-        float vertical;
-        float horizontal;
+        int vertical;
+        int horizontal;
         protected virtual void Awake()
         {
             character = GetComponent<CharacterManager>();
+
+            vertical = Animator.StringToHash("Vertical");
+            horizontal = Animator.StringToHash("Horizontal");
         }
-        public void UpdateAnimatorMovementParameters(float horizontalValue, float verticalValue)
+        public void UpdateAnimatorMovementParameters(float horizontalMovement, float verticalMovement, bool isSprinting)
         {
-            character.animator.SetFloat("Horizontal", horizontalValue, 0.1f, Time.deltaTime);
-            character.animator.SetFloat("Vertical", verticalValue, 0.1f, Time.deltaTime);
+            float horizontalAmount = horizontalMovement;
+            float verticalAmount = verticalMovement;
+
+            if (isSprinting)
+            {
+                verticalAmount = 2;
+            }
+
+            character.animator.SetFloat(horizontal, horizontalAmount, 0.1f, Time.deltaTime);
+            character.animator.SetFloat(vertical, verticalAmount, 0.1f, Time.deltaTime);
+
         }
 
         public virtual void PlayTargetActionAnimation(

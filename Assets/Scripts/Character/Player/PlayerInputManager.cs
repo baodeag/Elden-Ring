@@ -24,6 +24,7 @@ namespace baodeag
 
         [Header("Player Action Input")]
         [SerializeField] bool dodgeInput = false;
+        [SerializeField] bool sprintInput = false;
 
         private void Awake()
         {
@@ -72,6 +73,8 @@ namespace baodeag
                 playerControls.PlayerMovement.Movement.performed += i => movementInput = i.ReadValue<Vector2>(); // Get movement input
                 playerControls.PlayerCamera.Movement.performed += i => cameraInput = i.ReadValue<Vector2>(); // Get camera input
                 playerControls.PlayerActions.Dodge.performed += i => dodgeInput = true; // Get dodge input
+                playerControls.PlayerActions.Sprint.performed += i => sprintInput = true; // Get sprint input
+                playerControls.PlayerActions.Sprint.canceled += i => sprintInput = false; // Get sprint input
             }
 
             playerControls.Enable();
@@ -109,6 +112,7 @@ namespace baodeag
             HandlePlayerMovementInput();
             HandleCameraMovementInput();
             HandleDodgeInput();
+            HandleSprinting();
         }
 
         //Movement
@@ -136,7 +140,10 @@ namespace baodeag
             if(player == null)
                 return;
             // if we are not locked on, only use the move amount
-            player.playerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount);
+            player.playerAnimatorManager.UpdateAnimatorMovementParameters(
+                0, 
+                moveAmount, 
+                player.playerNetworkManager.isSprinting.Value);
 
             // if we are locked on pass the horizontal movement as well
 
@@ -156,6 +163,18 @@ namespace baodeag
             {
                 dodgeInput = false;
                 player.playerLocomotionManager.AttemptToPerformDodge();
+            }
+        }
+
+        private void HandleSprinting()
+        {
+            if (sprintInput)
+            {
+                player.playerLocomotionManager.HandleSprinting();
+            }
+            else
+            {
+                player.playerNetworkManager.isSprinting.Value = false;
             }
         }
     }
