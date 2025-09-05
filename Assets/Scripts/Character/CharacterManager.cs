@@ -16,6 +16,8 @@ namespace baodeag
         public bool canRotate = true;
         public bool canMove = true;
 
+        
+
         protected virtual void Awake()
         {
             DontDestroyOnLoad(this);
@@ -59,5 +61,7 @@ namespace baodeag
                 PlayerCamera.instance.HandleAllCameraActions();
             }
         }
+
+        
     }
 }

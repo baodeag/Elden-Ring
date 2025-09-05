@@ -64,10 +64,13 @@ PrefabInstance:
       addedObject: {fileID: 8220159403925653821}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 45bb6f38aa3255a429469052278b8007, type: 3}
       insertIndex: -1
+      addedObject: {fileID: -7892414856359944612}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 45bb6f38aa3255a429469052278b8007, type: 3}
+      insertIndex: -1
       addedObject: {fileID: -697219944618230427}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 45bb6f38aa3255a429469052278b8007, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -7892414856359944612}
+      addedObject: {fileID: 8321796122209035286}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 45bb6f38aa3255a429469052278b8007, type: 3}
       insertIndex: -1
       addedObject: {fileID: -5518382285501829735}
@@ -136,29 +139,6 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &-697219944618230427
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5812641894028359149}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a99c15c9ac358154583b13d4d244cf05, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
-  characterController: {fileID: 0}
-  animator: {fileID: 0}
-  characterNetworkManager: {fileID: 0}
-  isPerformingAction: 0
-  applyRootMotion: 0
-  canRotate: 1
-  canMove: 1
-  playerAnimatorManager: {fileID: 0}
-  playerLocomotionManager: {fileID: 0}
-  playerNetworkManager: {fileID: 0}
 --- !u!114 &-7892414856359944612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -187,6 +167,41 @@ MonoBehaviour:
     m_InternalValue: 0
   isSprinting:
     m_InternalValue: 0
+--- !u!114 &-697219944618230427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5812641894028359149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a99c15c9ac358154583b13d4d244cf05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  characterController: {fileID: 0}
+  animator: {fileID: 0}
+  characterNetworkManager: {fileID: 0}
+  isPerformingAction: 0
+  applyRootMotion: 0
+  canRotate: 1
+  canMove: 1
+  playerAnimatorManager: {fileID: 0}
+  playerLocomotionManager: {fileID: 0}
+  playerNetworkManager: {fileID: 0}
+--- !u!114 &8321796122209035286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5812641894028359149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eec520231612b014f93d74e9b44db142, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &-5518382285501829735
 MonoBehaviour:
   m_ObjectHideFlags: 0

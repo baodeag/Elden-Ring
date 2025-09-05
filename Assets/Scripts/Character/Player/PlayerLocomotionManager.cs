@@ -18,9 +18,11 @@ namespace baodeag
         [SerializeField] float runningSpeed = 5;
         [SerializeField] float sprintingSpeed = 6.5f;
         [SerializeField] float rotationSpeed = 15;
+        [SerializeField] int sprintingStaminaCost = 2;
 
         [Header("Dodge ")]
         private Vector3 rollDirection;
+        [SerializeField] float dodgeStaminaCost = 25;
 
         protected override void Awake()
         {
@@ -128,13 +130,19 @@ namespace baodeag
 
         public void HandleSprinting()
         {
-            if(player.isPerformingAction)
+            if (player.isPerformingAction)
             {
                 player.playerNetworkManager.isSprinting.Value = false;
             }
 
+            if (player.playerNetworkManager.currentStamina.Value <= 0)
+            {
+                player.playerNetworkManager.isSprinting.Value = false;
+                return;
+            }
+
             //if we are moving, sprint
-            if(moveAmount >= 0.5)
+            if (moveAmount >= 0.5)
             {
                 player.playerNetworkManager.isSprinting.Value = true;
             }
@@ -143,11 +151,19 @@ namespace baodeag
             {
                 player.playerNetworkManager.isSprinting.Value = false;
             }
+
+            if (player.playerNetworkManager.isSprinting.Value)
+            {
+                player.playerNetworkManager.currentStamina.Value -= sprintingStaminaCost * Time.deltaTime;
+            }
         }
 
         public void AttemptToPerformDodge()
         {
             if (player.isPerformingAction)
+                return;
+
+            if(player.playerNetworkManager.currentStamina.Value <= 0)
                 return;
 
             //if we are moving when we attempt to dodge, we perform a roll
@@ -170,6 +186,8 @@ namespace baodeag
                 //perform a backstep animation
                 player.playerAnimatorManager.PlayTargetActionAnimation("Back_Step_01", true, true);
             }
+
+            player.playerNetworkManager.currentStamina.Value -= dodgeStaminaCost;
         }
     }
 }
