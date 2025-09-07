@@ -26,15 +26,15 @@ namespace baodeag {
 
         [Header("Character Slots")]
         public CharacterSaveData characterSlots01;
-        //public CharacterSaveData characterSlots02;
-        //public CharacterSaveData characterSlots03;
-        //public CharacterSaveData characterSlots04;
-        //public CharacterSaveData characterSlots05;
-        //public CharacterSaveData characterSlots06;
-        //public CharacterSaveData characterSlots07;
-        //public CharacterSaveData characterSlots08;
-        //public CharacterSaveData characterSlots09;
-        //public CharacterSaveData characterSlots10;
+        public CharacterSaveData characterSlots02;
+        public CharacterSaveData characterSlots03;
+        public CharacterSaveData characterSlots04;
+        public CharacterSaveData characterSlots05;
+        public CharacterSaveData characterSlots06;
+        public CharacterSaveData characterSlots07;
+        public CharacterSaveData characterSlots08;
+        public CharacterSaveData characterSlots09;
+        public CharacterSaveData characterSlots10;
 
         private void Awake()
         {
@@ -53,6 +53,7 @@ namespace baodeag {
         {
             // Ensure this object persists across scene loads
             DontDestroyOnLoad(gameObject);
+            LoadAllCharacterProfiles();
         }
 
         private void Update()
@@ -70,47 +71,51 @@ namespace baodeag {
             }
         }
 
-        private void DecideCharacterFileNameBasedOnCharacterSlotBeingUsed()
+        public string DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot characterSlot)
         {
-            switch (currentCharacterSlotBeingUsed)
+            string fileName = "";
+            switch (characterSlot)
             {
                 case CharacterSlot.CharacterSlot_01:
-                    saveFileName = "characterSlot_01";
+                    fileName = "characterSlot_01";
                     break;
                 case CharacterSlot.CharacterSlot_02:
-                    saveFileName = "characterSlot_02";
+                    fileName = "characterSlot_02";
                     break;
                 case CharacterSlot.CharacterSlot_03:
-                    saveFileName = "characterSlot_03";
+                    fileName = "characterSlot_03";
                     break;
                 case CharacterSlot.CharacterSlot_04:
-                    saveFileName = "characterSlot_04";
+                    fileName = "characterSlot_04";
                     break;
                 case CharacterSlot.CharacterSlot_05:
-                    saveFileName = "characterSlot_05";
+                    fileName = "characterSlot_05";
                     break;
                 case CharacterSlot.CharacterSlot_06:
-                    saveFileName = "characterSlot_06";
+                    fileName = "characterSlot_06";
                     break;
                 case CharacterSlot.CharacterSlot_07:
-                    saveFileName = "characterSlot_07";
+                    fileName = "characterSlot_07";
                     break;
                 case CharacterSlot.CharacterSlot_08:
-                    saveFileName = "characterSlot_08";
+                    fileName = "characterSlot_08";
                     break;
                 case CharacterSlot.CharacterSlot_09:
-                    saveFileName = "characterSlot_09";
+                    fileName = "characterSlot_09";
                     break;
                 case CharacterSlot.CharacterSlot_10:
-                    saveFileName = "characterSlot_10";
+                    fileName = "characterSlot_10";
+                    break;
+                default:
                     break;
             }
+            return fileName;
         }
 
         public void CreateNewGame()
         {
             //creat a new file, with a file name depending on which slot we are using
-            DecideCharacterFileNameBasedOnCharacterSlotBeingUsed();
+            saveFileName = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(currentCharacterSlotBeingUsed);
 
             currentCharacterData = new CharacterSaveData();
         }
@@ -118,7 +123,7 @@ namespace baodeag {
         public void LoadGame()
         {
             //load the file, with a file name depending on which slot we are using
-            DecideCharacterFileNameBasedOnCharacterSlotBeingUsed();
+            saveFileName = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(currentCharacterSlotBeingUsed);
             
             saveFileDataWriter = new SaveFileDataWriter();
             //generally works on multiple machines types
@@ -132,7 +137,7 @@ namespace baodeag {
         public void SaveGame()
         {
             //save the current file under a file name depending on which slot we are using
-            DecideCharacterFileNameBasedOnCharacterSlotBeingUsed();
+            saveFileName = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(currentCharacterSlotBeingUsed);
 
             saveFileDataWriter = new SaveFileDataWriter();
             //generally works on multiple machines types
@@ -144,6 +149,43 @@ namespace baodeag {
 
             //write that info onto a json file, saved to this machine
             saveFileDataWriter.CreateNewCharacterSaveFile(currentCharacterData);
+        }
+
+        //load all character profiles on device when starting the game
+        private void LoadAllCharacterProfiles()
+        {
+            saveFileDataWriter = new SaveFileDataWriter();
+            saveFileDataWriter.saveDataDirectoryPath = Application.persistentDataPath;
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_01);
+            characterSlots01 = saveFileDataWriter.LoadSaveFile();
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_02);
+            characterSlots02 = saveFileDataWriter.LoadSaveFile();
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_03);
+            characterSlots03 = saveFileDataWriter.LoadSaveFile();
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_04);
+            characterSlots04 = saveFileDataWriter.LoadSaveFile();
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_05);
+            characterSlots05 = saveFileDataWriter.LoadSaveFile();
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_06);
+            characterSlots06 = saveFileDataWriter.LoadSaveFile();
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_07);
+            characterSlots07 = saveFileDataWriter.LoadSaveFile();
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_08);
+            characterSlots08 = saveFileDataWriter.LoadSaveFile();
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_09);
+            characterSlots09 = saveFileDataWriter.LoadSaveFile();
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_10);
+            characterSlots10 = saveFileDataWriter.LoadSaveFile();
         }
 
         public IEnumerator LoadWorldScene()
