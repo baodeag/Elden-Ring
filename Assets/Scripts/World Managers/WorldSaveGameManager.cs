@@ -7,7 +7,7 @@ namespace baodeag {
     {
         public static WorldSaveGameManager instance;
 
-        [SerializeField] PlayerManager player;
+        public PlayerManager player;
 
         [Header("Save/Load")]
         [SerializeField] bool saveGame;
@@ -112,12 +112,36 @@ namespace baodeag {
             return fileName;
         }
 
-        public void CreateNewGame()
+        public void AttemptToCreateNewGame()
         {
-            //creat a new file, with a file name depending on which slot we are using
-            saveFileName = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(currentCharacterSlotBeingUsed);
+            saveFileDataWriter = new SaveFileDataWriter();
+            saveFileDataWriter.saveDataDirectoryPath = Application.persistentDataPath;
 
-            currentCharacterData = new CharacterSaveData();
+            //check to see if we can create a new save file (check for other existing files first)
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_01);
+
+            if (!saveFileDataWriter.CheckToSeeIfFileExists())
+            {
+                //if this profile slot is not taken, make a new one using this slot
+                currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_01;
+                currentCharacterData = new CharacterSaveData();
+                StartCoroutine(LoadWorldScene());
+                return;
+            }
+            //check to see if we can create a new save file (check for other existing files first)
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_02);
+
+            if (!saveFileDataWriter.CheckToSeeIfFileExists())
+            {
+                //if this profile slot is not taken, make a new one using this slot
+                currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_02;
+                currentCharacterData = new CharacterSaveData();
+                StartCoroutine(LoadWorldScene());
+                return;
+            }
+
+            //if there are no available slots, notify the player
+            TitleScreenManager.Instance.DisplayNoFreeCharacterSlotPopUp();
         }
 
         public void LoadGame()
@@ -191,6 +215,8 @@ namespace baodeag {
         public IEnumerator LoadWorldScene()
         {
             AsyncOperation loadOperation = SceneManager.LoadSceneAsync(worldSceneIndex);
+
+            player.LoadGameDataFromCurrentCharacterData(ref currentCharacterData);
 
             yield return null;
         }

@@ -8,7 +8,7 @@ namespace baodeag
     public class CharacterSaveData 
     {
         [Header("Character Name")]
-        public string characterName;
+        public string characterName = "Character";
 
         [Header("Time Played")]
         public float secondsPlayed;
