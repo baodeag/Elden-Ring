@@ -128,13 +128,101 @@ namespace baodeag {
                 StartCoroutine(LoadWorldScene());
                 return;
             }
-            //check to see if we can create a new save file (check for other existing files first)
+
             saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_02);
 
             if (!saveFileDataWriter.CheckToSeeIfFileExists())
             {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_02;
+                currentCharacterData = new CharacterSaveData();
+                StartCoroutine(LoadWorldScene());
+                return;
+            }
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_03);
+
+            if (!saveFileDataWriter.CheckToSeeIfFileExists())
+            {
+                //if this profile slot is not taken, make a new one using this slot
+                currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_03;
+                currentCharacterData = new CharacterSaveData();
+                StartCoroutine(LoadWorldScene());
+                return;
+            }
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_04);
+
+            if (!saveFileDataWriter.CheckToSeeIfFileExists())
+            {
+                //if this profile slot is not taken, make a new one using this slot
+                currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_04;
+                currentCharacterData = new CharacterSaveData();
+                StartCoroutine(LoadWorldScene());
+                return;
+            }
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_05);
+
+            if (!saveFileDataWriter.CheckToSeeIfFileExists())
+            {
+                //if this profile slot is not taken, make a new one using this slot
+                currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_05;
+                currentCharacterData = new CharacterSaveData();
+                StartCoroutine(LoadWorldScene());
+                return;
+            }
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_06);
+
+            if (!saveFileDataWriter.CheckToSeeIfFileExists())
+            {
+                //if this profile slot is not taken, make a new one using this slot
+                currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_06;
+                currentCharacterData = new CharacterSaveData();
+                StartCoroutine(LoadWorldScene());
+                return;
+            }
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_07);
+
+            if (!saveFileDataWriter.CheckToSeeIfFileExists())
+            {
+                //if this profile slot is not taken, make a new one using this slot
+                currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_07;
+                currentCharacterData = new CharacterSaveData();
+                StartCoroutine(LoadWorldScene());
+                return;
+            }
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_08);
+
+            if (!saveFileDataWriter.CheckToSeeIfFileExists())
+            {
+                //if this profile slot is not taken, make a new one using this slot
+                currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_08;
+                currentCharacterData = new CharacterSaveData();
+                StartCoroutine(LoadWorldScene());
+                return;
+            }
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_09);
+
+            if (!saveFileDataWriter.CheckToSeeIfFileExists())
+            {
+                //if this profile slot is not taken, make a new one using this slot
+                currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_09;
+                currentCharacterData = new CharacterSaveData();
+                StartCoroutine(LoadWorldScene());
+                return;
+            }
+
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_10);
+
+            if (!saveFileDataWriter.CheckToSeeIfFileExists())
+            {
+                //if this profile slot is not taken, make a new one using this slot
+                currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_10;
                 currentCharacterData = new CharacterSaveData();
                 StartCoroutine(LoadWorldScene());
                 return;
@@ -173,6 +261,15 @@ namespace baodeag {
 
             //write that info onto a json file, saved to this machine
             saveFileDataWriter.CreateNewCharacterSaveFile(currentCharacterData);
+        }
+
+        public void DeleteGame(CharacterSlot characterSlot)
+        {
+            //choose file base on name
+            saveFileDataWriter = new SaveFileDataWriter();
+            saveFileDataWriter.saveDataDirectoryPath = Application.persistentDataPath;
+            saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(characterSlot);
+            saveFileDataWriter.DeleteSaveFile();
         }
 
         //load all character profiles on device when starting the game
@@ -214,8 +311,11 @@ namespace baodeag {
 
         public IEnumerator LoadWorldScene()
         {
+            
             AsyncOperation loadOperation = SceneManager.LoadSceneAsync(worldSceneIndex);
 
+            //if you want to use different scenes for levels in your porject use this
+            //AsyncOperation loadOperation = SceneManager.LoadSceneAsync(currentCharacterData.sceneIndex);
             player.LoadGameDataFromCurrentCharacterData(ref currentCharacterData);
 
             yield return null;

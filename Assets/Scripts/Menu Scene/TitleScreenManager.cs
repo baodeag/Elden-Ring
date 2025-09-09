@@ -14,10 +14,16 @@ namespace baodeag {
         [SerializeField] Button loadMenuReturnButton;
         [SerializeField] Button mainMenuLoadGameButton;
         [SerializeField] Button mainMenuNewGameButton;
+        [SerializeField] Button deleteCharacterPopUpConfirmButton;
 
         [Header("Pop Ups")]
         [SerializeField] GameObject noCharacterSlotsPopUp;
         [SerializeField] Button noCharacterSlotsOkayButton;
+        [SerializeField] GameObject deleteCharacterSlotPopup;
+
+        [Header("Character Slots")]
+        public CharacterSlot currentSelectedSlot = CharacterSlot.NO_SLOT;
+
 
         private void Awake()
         {
@@ -76,6 +82,43 @@ namespace baodeag {
         {
             noCharacterSlotsPopUp.SetActive(false);
             mainMenuNewGameButton.Select();
+        }
+
+        public void SelectCharacterSlot(CharacterSlot characterSlot)
+        {
+            currentSelectedSlot = characterSlot;
+        }
+
+        public void SelectNoSlot()
+        {
+            currentSelectedSlot = CharacterSlot.NO_SLOT;
+        }
+
+        public void AttemptToDeleteCharacterSlot()
+        {
+            if(currentSelectedSlot != CharacterSlot.NO_SLOT)
+            {
+                deleteCharacterSlotPopup.SetActive(true);
+                deleteCharacterPopUpConfirmButton.Select();
+            }
+        }
+
+        public void DeleteCharacterSlot()
+        {
+            deleteCharacterSlotPopup.SetActive(false);
+            WorldSaveGameManager.instance.DeleteGame(currentSelectedSlot);
+
+            //we disable and then enable the load menu, to refresh the slots will now become active
+            titleScreenLoadMenu.SetActive(false);
+            titleScreenLoadMenu.SetActive(true);
+
+            loadMenuReturnButton.Select();
+        }
+
+        public void CloseDeleteCharacterPopUp()
+        {
+            deleteCharacterSlotPopup.SetActive(false);
+            loadMenuReturnButton.Select();
         }
     }
 }

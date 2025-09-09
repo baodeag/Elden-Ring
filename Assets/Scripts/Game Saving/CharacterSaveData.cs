@@ -7,6 +7,9 @@ namespace baodeag
     //since we want to ref this data for every save file, this scripts is not a monobehaviour and is instead serializable
     public class CharacterSaveData 
     {
+        [Header("Scene Index")]
+        public int sceneIndex = 1;
+
         [Header("Character Name")]
         public string characterName = "Character";
 

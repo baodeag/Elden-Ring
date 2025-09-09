@@ -2,18 +2,9 @@ using UnityEngine;
 
 public class Enums : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
 }
+
 public enum CharacterSlot
 {
     CharacterSlot_01,
@@ -26,4 +17,5 @@ public enum CharacterSlot
     CharacterSlot_08,
     CharacterSlot_09,
     CharacterSlot_10,
+    NO_SLOT
 }
