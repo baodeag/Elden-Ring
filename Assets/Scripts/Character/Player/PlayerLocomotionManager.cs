@@ -22,7 +22,8 @@ namespace baodeag
 
         [Header("Dodge ")]
         private Vector3 rollDirection;
-        [SerializeField] float dodgeStaminaCost = 25;
+        [SerializeField] float dodgeStaminaCost = 2;
+        [SerializeField] float jumpStaminaCost = 2;
 
         protected override void Awake()
         {
@@ -188,6 +189,37 @@ namespace baodeag
             }
 
             player.playerNetworkManager.currentStamina.Value -= dodgeStaminaCost;
+        }
+
+        public void AttemptToPerformJump()
+        {
+            //if we are performing an action, we cannot jump
+            if (player.isPerformingAction)
+                return;
+
+            //if we have no stamina, we cannot jump
+            if (player.playerNetworkManager.currentStamina.Value <= 0)
+                return;
+
+            //if we are already jumping, we cannot jump
+            if (player.isJumping)
+                return;
+
+            //if we are not grounded, we cannot jump
+            if (player.isGrounded)
+                return;
+
+            //if we are two handling a weapon, play two handed jump animation, else play one handed jump animation
+            player.playerAnimatorManager.PlayTargetActionAnimation("Main_Jump_01", false);
+
+            player.isJumping = true;
+
+            player.playerNetworkManager.currentStamina.Value -= jumpStaminaCost;
+        }
+
+        public void ApplyJumpingVelocity()
+        {
+            //apply an upwards velocity to the player
         }
     }
 }

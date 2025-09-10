@@ -25,6 +25,7 @@ namespace baodeag
         [Header("Player Action Input")]
         [SerializeField] bool dodgeInput = false;
         [SerializeField] bool sprintInput = false;
+        [SerializeField] bool jumpInput = false;
 
         private void Awake()
         {
@@ -73,6 +74,7 @@ namespace baodeag
                 playerControls.PlayerMovement.Movement.performed += i => movementInput = i.ReadValue<Vector2>(); // Get movement input
                 playerControls.PlayerCamera.Movement.performed += i => cameraInput = i.ReadValue<Vector2>(); // Get camera input
                 playerControls.PlayerActions.Dodge.performed += i => dodgeInput = true; // Get dodge input
+                playerControls.PlayerActions.Jump.performed += i => jumpInput = true;
                 playerControls.PlayerActions.Sprint.performed += i => sprintInput = true; // Get sprint input
                 playerControls.PlayerActions.Sprint.canceled += i => sprintInput = false; // Get sprint input
             }
@@ -112,7 +114,7 @@ namespace baodeag
             HandlePlayerMovementInput();
             HandleCameraMovementInput();
             HandleDodgeInput();
-            HandleSprinting();
+            HandleSprintInput();
         }
 
         //Movement
@@ -166,7 +168,7 @@ namespace baodeag
             }
         }
 
-        private void HandleSprinting()
+        private void HandleSprintInput()
         {
             if (sprintInput)
             {
@@ -175,6 +177,16 @@ namespace baodeag
             else
             {
                 player.playerNetworkManager.isSprinting.Value = false;
+            }
+        }
+
+        private void HandleJumpInput()
+        {
+            if (jumpInput)
+            {
+                jumpInput = false;
+
+                player.playerLocomotionManager.AttemptToPerformJump();
             }
         }
     }
