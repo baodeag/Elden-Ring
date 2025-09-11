@@ -115,6 +115,7 @@ namespace baodeag
             HandleCameraMovementInput();
             HandleDodgeInput();
             HandleSprintInput();
+            HandleJumpInput();
         }
 
         //Movement
