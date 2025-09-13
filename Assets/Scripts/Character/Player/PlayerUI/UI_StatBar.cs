@@ -6,12 +6,17 @@ namespace baodeag
     public class UI_StatBar : MonoBehaviour
     {
         private Slider slider;
-        //variable to scale bar size depending on stat(higher stat = larger bar)
+        private RectTransform rectTransform;
+
+        [Header("Bar Options")]
+        [SerializeField] protected bool scaleBarLengthWithStats = true;
+        [SerializeField] protected float widthScaleMultiplier = 1;
         //secondary bar behind may bar for polish effect(yellow bar that shows how much an action/damage takes away from current stat)
 
         protected virtual void Awake()
         {
             slider = GetComponent<Slider>();
+            rectTransform = GetComponent<RectTransform>();
         }
 
         public virtual void SetStat(int newValue)
@@ -23,6 +28,13 @@ namespace baodeag
         {
             slider.maxValue = maxValue;
             slider.value = maxValue;
+
+            if (scaleBarLengthWithStats)
+            {
+                rectTransform.sizeDelta = new Vector2(maxValue * widthScaleMultiplier, rectTransform.sizeDelta.y);
+                //reset the position of the bar to be centered
+                PlayerUIManager.instance.playerUIHudManager.RefreshHUD();
+            }
         }
     }
 }

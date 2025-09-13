@@ -125,7 +125,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_01;
                 currentCharacterData = new CharacterSaveData();
-                StartCoroutine(LoadWorldScene());
+                NewGame();
                 return;
             }
 
@@ -136,7 +136,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_02;
                 currentCharacterData = new CharacterSaveData();
-                StartCoroutine(LoadWorldScene());
+                NewGame();
                 return;
             }
 
@@ -147,7 +147,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_03;
                 currentCharacterData = new CharacterSaveData();
-                StartCoroutine(LoadWorldScene());
+                NewGame();
                 return;
             }
 
@@ -158,7 +158,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_04;
                 currentCharacterData = new CharacterSaveData();
-                StartCoroutine(LoadWorldScene());
+                NewGame();
                 return;
             }
 
@@ -169,7 +169,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_05;
                 currentCharacterData = new CharacterSaveData();
-                StartCoroutine(LoadWorldScene());
+                NewGame();
                 return;
             }
 
@@ -180,7 +180,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_06;
                 currentCharacterData = new CharacterSaveData();
-                StartCoroutine(LoadWorldScene());
+                NewGame();
                 return;
             }
 
@@ -191,7 +191,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_07;
                 currentCharacterData = new CharacterSaveData();
-                StartCoroutine(LoadWorldScene());
+                NewGame();
                 return;
             }
 
@@ -202,7 +202,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_08;
                 currentCharacterData = new CharacterSaveData();
-                StartCoroutine(LoadWorldScene());
+                NewGame();
                 return;
             }
 
@@ -213,7 +213,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_09;
                 currentCharacterData = new CharacterSaveData();
-                StartCoroutine(LoadWorldScene());
+                NewGame();
                 return;
             }
 
@@ -224,12 +224,19 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_10;
                 currentCharacterData = new CharacterSaveData();
-                StartCoroutine(LoadWorldScene());
+                NewGame();
                 return;
             }
 
             //if there are no available slots, notify the player
             TitleScreenManager.Instance.DisplayNoFreeCharacterSlotPopUp();
+        }
+
+        private void NewGame()
+        {
+            //saves the newly created character  stats, and items (when cration screen is added)
+            SaveGame();
+            StartCoroutine(LoadWorldScene());
         }
 
         public void LoadGame()
@@ -314,8 +321,9 @@ namespace baodeag {
             
             AsyncOperation loadOperation = SceneManager.LoadSceneAsync(worldSceneIndex);
 
-            //if you want to use different scenes for levels in your porject use this
+            //if you want to use different scenes for levels in your project use this
             //AsyncOperation loadOperation = SceneManager.LoadSceneAsync(currentCharacterData.sceneIndex);
+
             player.LoadGameDataFromCurrentCharacterData(ref currentCharacterData);
 
             yield return null;

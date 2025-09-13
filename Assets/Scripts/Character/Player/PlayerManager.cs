@@ -55,13 +55,16 @@ namespace baodeag
                 PlayerInputManager.instance.player = this;
                 WorldSaveGameManager.instance.player = this;
 
+                //update the total amount of health when the sts linked to either changes
+                playerNetworkManager.vitality.OnValueChanged += playerNetworkManager.SetNewMaxHealthValue;
+                playerNetworkManager.endurance.OnValueChanged += playerNetworkManager.SetNewMaxStaminaValue;
+
+                //updates ui stat bars when a stats change (health or stamina)
+                playerNetworkManager.currentHealth.OnValueChanged += PlayerUIManager.instance.playerUIHudManager.SetNewHealthValue;
                 playerNetworkManager.currentStamina.OnValueChanged += PlayerUIManager.instance.playerUIHudManager.SetNewStaminaValue;
                 playerNetworkManager.currentStamina.OnValueChanged += playerStatsManager.ResetStaminaRegenTimer;
 
-                //this will be moved when saving and loading is added
-                playerNetworkManager.maxStamina.Value = playerStatsManager.CalculateStaminaBasedOnEnduranceLevel(playerNetworkManager.endurance.Value);
-                playerNetworkManager.currentStamina.Value = playerStatsManager.CalculateStaminaBasedOnEnduranceLevel(playerNetworkManager.endurance.Value);
-                PlayerUIManager.instance.playerUIHudManager.SetMaxStaminaValue(playerNetworkManager.maxStamina.Value);
+                
             }
         }
 
@@ -72,6 +75,13 @@ namespace baodeag
             currentCharacterData.xPosition = transform.position.x;
             currentCharacterData.yPosition = transform.position.y;
             currentCharacterData.zPosition = transform.position.z;
+
+            currentCharacterData.currentHealth = playerNetworkManager.currentHealth.Value;
+            currentCharacterData.currentStamina = playerNetworkManager.currentStamina.Value;
+
+            currentCharacterData.vitality = playerNetworkManager.vitality.Value;
+            currentCharacterData.endurance = playerNetworkManager.endurance.Value;
+
         }
 
         public void LoadGameDataFromCurrentCharacterData(ref CharacterSaveData currentCharacterData)
@@ -83,6 +93,15 @@ namespace baodeag
                 currentCharacterData.zPosition);
             transform.position = myPosition;
 
+            playerNetworkManager.vitality.Value = currentCharacterData.vitality;
+            playerNetworkManager.endurance.Value= currentCharacterData.endurance;
+
+            //this will be moved when saving and loading is added
+            playerNetworkManager.maxHealth.Value = playerStatsManager.CalculateHealthBasedOnVitalityLevel(playerNetworkManager.vitality.Value);
+            playerNetworkManager.maxStamina.Value = playerStatsManager.CalculateStaminaBasedOnEnduranceLevel(playerNetworkManager.endurance.Value);
+            playerNetworkManager.currentHealth.Value = currentCharacterData.currentHealth;
+            playerNetworkManager.currentStamina.Value = currentCharacterData.currentStamina;
+            PlayerUIManager.instance.playerUIHudManager.SetMaxStaminaValue(playerNetworkManager.maxStamina.Value);
         }
     }
 }
