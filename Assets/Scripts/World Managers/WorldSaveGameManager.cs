@@ -234,7 +234,10 @@ namespace baodeag {
 
         private void NewGame()
         {
-            //saves the newly created character  stats, and items (when cration screen is added)
+            //saves the newly created character  stats, and items (when creation screen is added)
+            player.playerNetworkManager.vitality.Value = 15;
+            player.playerNetworkManager.endurance.Value = 10;
+
             SaveGame();
             StartCoroutine(LoadWorldScene());
         }
