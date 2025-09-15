@@ -10,6 +10,7 @@ namespace baodeag
         [SerializeField] bool startGameAsClient;
 
         [HideInInspector] public PlayerUIHudManager playerUIHudManager;
+        [HideInInspector] public PlayerUIPopUpManager playerUIPopUpManager;
 
         private void Awake()
         {
@@ -22,6 +23,7 @@ namespace baodeag
                 Destroy(this.gameObject);
             }
             playerUIHudManager = GetComponentInChildren<PlayerUIHudManager>();
+            playerUIPopUpManager = GetComponentInChildren<PlayerUIPopUpManager>();
         }
 
         private void Start()

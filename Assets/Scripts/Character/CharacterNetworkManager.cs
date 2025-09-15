@@ -41,8 +41,8 @@ namespace baodeag
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
 
-        [Header("Stats")]
-        public NetworkVariable<float> currentHealth = new NetworkVariable<float>
+        [Header("Resources")]
+        public NetworkVariable<int> currentHealth = new NetworkVariable<int>
             (0,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
@@ -59,7 +59,7 @@ namespace baodeag
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
 
-        [Header("Resource")]
+        [Header("Stats")]
         public NetworkVariable<int> vitality = new NetworkVariable<int>
             (1,
             NetworkVariableReadPermission.Everyone,
@@ -72,6 +72,22 @@ namespace baodeag
         protected virtual void Awake()
         {
             character = GetComponent<CharacterManager>();
+        }
+
+        public void CheckHP(int oldValue, int newValue)
+        {
+            if(currentHealth.Value <= 0)
+            {
+                StartCoroutine(character.ProcessDeathEvent());
+            }
+
+            if(character.IsOwner)
+            {
+                if(currentHealth.Value > maxHealth.Value)
+                {
+                    currentHealth.Value = maxHealth.Value;
+                }
+            }
         }
 
         //A server rps is a function called from a client, to the server(in our case the host)
