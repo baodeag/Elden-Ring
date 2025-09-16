@@ -13,6 +13,9 @@ namespace baodeag
         [HideInInspector] public PlayerLocomotionManager playerLocomotionManager;
         [HideInInspector] public PlayerNetworkManager playerNetworkManager;
         [HideInInspector] public PlayerStatsManager playerStatsManager;
+        [HideInInspector] public PlayerInventoryManager playerInventoryManager;
+
+
         protected override void Awake()
         {
             base.Awake();
@@ -21,6 +24,7 @@ namespace baodeag
             playerAnimatorManager = GetComponent<PlayerAnimatorManager>();
             playerNetworkManager = GetComponent<PlayerNetworkManager>();
             playerStatsManager = GetComponent<PlayerStatsManager>();
+            playerInventoryManager = GetComponent<PlayerInventoryManager>();
         }
 
         protected override void Update()
