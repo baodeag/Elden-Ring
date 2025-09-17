@@ -13,6 +13,18 @@ namespace baodeag
             NetworkVariableReadPermission.Everyone, 
             NetworkVariableWritePermission.Owner);
 
+        [Header("Equipment")]
+        public NetworkVariable<int> currentRightHandWeaponID = new NetworkVariable<int>(
+            0, 
+            NetworkVariableReadPermission.Everyone, 
+            NetworkVariableWritePermission.Owner);
+
+        public NetworkVariable<int> currentLeftHandWeaponID = new NetworkVariable<int>(
+            0,
+            NetworkVariableReadPermission.Everyone, 
+            NetworkVariableWritePermission.Owner);
+
+
         protected override void Awake()
         {
             base.Awake();
@@ -31,6 +43,20 @@ namespace baodeag
             maxStamina.Value = player.playerStatsManager.CalculateStaminaBasedOnEnduranceLevel(newEndurance);
             PlayerUIManager.instance.playerUIHudManager.SetMaxStaminaValue(maxStamina.Value);
             currentStamina.Value = maxStamina.Value;
+        }
+
+        public void OnCurrentRightHandWeaponIDChange(int oldID, int newId)
+        {
+            WeaponItem newWeapon = Instantiate(WorldItemDatabase.Instance.GetWeaponByID(newId));
+            player.playerInventoryManager.currentRightHandWeapon = newWeapon;
+            player.playerEquipmentManager.LoadRightWeapon();
+        }
+
+        public void OnCurrentLeftHandWeaponIDChange(int oldID, int newId)
+        {
+            WeaponItem newWeapon = Instantiate(WorldItemDatabase.Instance.GetWeaponByID(newId));
+            player.playerInventoryManager.currentLeftHandWeapon = newWeapon;
+            player.playerEquipmentManager.LoadLeftWeapon();
         }
     }
 }

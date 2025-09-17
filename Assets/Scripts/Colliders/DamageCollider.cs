@@ -6,6 +6,9 @@ namespace baodeag
 {
     public class DamageCollider : MonoBehaviour
     {
+        [Header("Collider")]
+        protected Collider damageCollider;
+
         [Header("Damage")]
         public float physicalDamage = 0;
         public float magicDamage = 0;
@@ -49,6 +52,17 @@ namespace baodeag
             damageEffect.contactPoint = contactPoint;
 
             damageTarget.characterEffectsManager.ProcessInstantEffect(damageEffect);
+        }
+
+        public virtual void EnableDamageCollider()
+        {
+            damageCollider.enabled = true;
+        }
+
+        public virtual void DisableDamageCollider()
+        {
+            damageCollider.enabled = false;
+            charactersDamaged.Clear(); //reset the character that have been hit when reset the collider
         }
     }
 }
