@@ -61,7 +61,7 @@ namespace baodeag
         //draws our ground check sphere in editor
         protected void OnDrawGizmosSelected()
         {
-            Gizmos.DrawSphere(character.transform.position, groundCheckSphereRadius);
+            //Gizmos.DrawSphere(character.transform.position, groundCheckSphereRadius);
         }
     }
 }

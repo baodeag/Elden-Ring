@@ -1,6 +1,8 @@
 using UnityEngine;
 using Unity.Netcode;
 using System.Collections;
+using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace baodeag
 {
@@ -35,6 +37,11 @@ namespace baodeag
             characterNetworkManager = GetComponent<CharacterNetworkManager>();
             characterEffectsManager = GetComponent<CharacterEffectsManager>();
             characterAnimatorManager = GetComponent<CharacterAnimatorManager>();
+        }
+
+        protected virtual void Start()
+        {
+            IgnoreMyOwnColliders();
         }
 
         protected virtual void Update()
@@ -95,6 +102,34 @@ namespace baodeag
         public virtual void ReviveCharacter()
         {
 
+        }
+
+        protected virtual void IgnoreMyOwnColliders()
+        {
+            Collider characterControllerCollider = GetComponent<Collider>();
+            Collider[] damageableCharacterColliders = GetComponentsInChildren<Collider>();
+            List<Collider> ignoreColliders = new List<Collider>();
+
+            //add all of our damageable colliders to the ignore list
+            foreach (var collider in damageableCharacterColliders)
+            {
+                ignoreColliders.Add(collider);
+            }
+
+            //add our character controller collider to the ignore list
+            ignoreColliders.Add(characterControllerCollider);
+
+            //go through every collider on the list, and ignores collisions with each other
+            foreach (var collider in ignoreColliders)
+            {
+                foreach (var otherCollider in ignoreColliders)
+                {
+                    if (collider != otherCollider)
+                    {
+                        Physics.IgnoreCollision(collider, otherCollider, true);
+                    }
+                }
+            }
         }
     }
 }

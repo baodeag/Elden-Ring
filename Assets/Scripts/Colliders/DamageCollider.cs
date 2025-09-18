@@ -24,7 +24,8 @@ namespace baodeag
 
         private void OnTriggerEnter(Collider other)
         {
-            CharacterManager damageTarget = other.GetComponent<CharacterManager>();
+            CharacterManager damageTarget = other.GetComponentInParent<CharacterManager>();
+
 
             if (damageTarget != null)
             {

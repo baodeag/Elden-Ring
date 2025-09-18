@@ -14,10 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Broadsword
   itemIcon: {fileID: 21300000, guid: 0848f2123fce3b84993e5eaae6bfeb87, type: 3}
-  itemDescription: 'A straight sword
-
-'
-  itemID: 0
+  itemDescription: A broadsword
+  itemID: 2
   weaponModel: {fileID: 3655762614452610535, guid: f627b79b0f0a53847bac97469a48adf5, type: 3}
   strengthREQ: 10
   dexREQ: 10
