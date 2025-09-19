@@ -363,6 +363,9 @@ PrefabInstance:
       addedObject: {fileID: -697219944618230427}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 45bb6f38aa3255a429469052278b8007, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 5439719953508784656}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 45bb6f38aa3255a429469052278b8007, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 8321796122209035286}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 45bb6f38aa3255a429469052278b8007, type: 3}
       insertIndex: -1
@@ -904,6 +907,8 @@ MonoBehaviour:
     m_InternalValue: 0
   isSprinting:
     m_InternalValue: 0
+  isJumping:
+    m_InternalValue: 0
   currentHealth:
     m_InternalValue: 0
   maxHealth:
@@ -985,9 +990,15 @@ MonoBehaviour:
         byte0059: 0
         byte0060: 0
         byte0061: 0
+  currentWeaponBeingUsed:
+    m_InternalValue: 0
   currentRightHandWeaponID:
     m_InternalValue: 0
   currentLeftHandWeaponID:
+    m_InternalValue: 0
+  isUsingRightHand:
+    m_InternalValue: 0
+  isUsingLeftHand:
     m_InternalValue: 0
 --- !u!114 &-697219944618230427
 MonoBehaviour:
@@ -1010,9 +1021,8 @@ MonoBehaviour:
   characterEffectsManager: {fileID: 0}
   characterAnimatorManager: {fileID: 0}
   isPerformingAction: 0
-  isJumping: 0
   isGrounded: 1
-  applyRootMotion: 0
+  applyRootMotion: 1
   canRotate: 1
   canMove: 1
   respawnCharacter: 0
@@ -1023,6 +1033,20 @@ MonoBehaviour:
   playerStatsManager: {fileID: 0}
   playerInventoryManager: {fileID: 0}
   playerEquipmentManager: {fileID: 0}
+  playerCombatManager: {fileID: 0}
+--- !u!114 &5439719953508784656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5812641894028359149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4a911663c45982448263e6af2941311, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentWeaponBeingUsed: {fileID: 0}
 --- !u!114 &8321796122209035286
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -26,6 +26,7 @@ namespace baodeag
         [SerializeField] bool dodgeInput = false;
         [SerializeField] bool sprintInput = false;
         [SerializeField] bool jumpInput = false;
+        [SerializeField] bool RB_Input = false;
 
         private void Awake()
         {
@@ -37,7 +38,7 @@ namespace baodeag
             {
                 Destroy(gameObject);
             }
-            
+
         }
 
         private void Start()
@@ -53,7 +54,7 @@ namespace baodeag
             {
                 playerControls.Disable();
             }
-            
+
         }
 
         private void OnSceneChange(Scene oldScene, Scene newScene)
@@ -83,7 +84,7 @@ namespace baodeag
 
         private void OnEnable()
         {
-            if(playerControls == null)
+            if (playerControls == null)
             {
                 playerControls = new PlayerControls();
 
@@ -91,6 +92,9 @@ namespace baodeag
                 playerControls.PlayerCamera.Movement.performed += i => cameraInput = i.ReadValue<Vector2>(); // Get camera input
                 playerControls.PlayerActions.Dodge.performed += i => dodgeInput = true; // Get dodge input
                 playerControls.PlayerActions.Jump.performed += i => jumpInput = true;
+                playerControls.PlayerActions.RB.performed += i => RB_Input = true; // Get RB input
+
+
                 playerControls.PlayerActions.Sprint.performed += i => sprintInput = true; // Get sprint input
                 playerControls.PlayerActions.Sprint.canceled += i => sprintInput = false; // Get sprint input
             }
@@ -107,7 +111,7 @@ namespace baodeag
         // if we minimize or lower the window, stop adjusting input
         private void OnApplicationFocus(bool focus)
         {
-            if(enabled)
+            if (enabled)
             {
                 if (focus)
                 {
@@ -132,6 +136,7 @@ namespace baodeag
             HandleDodgeInput();
             HandleSprintInput();
             HandleJumpInput();
+            HandleRBInput();
         }
 
         //Movement
@@ -149,19 +154,19 @@ namespace baodeag
             {
                 moveAmount = 0.5f; //walk
             }
-            else if(moveAmount > 0.5 && moveAmount <= 1)
+            else if (moveAmount > 0.5 && moveAmount <= 1)
             {
                 moveAmount = 1; //run
             }
 
             // why do we pass 0 on the horizontal? because we only want non-strafing movement
             // we  use horizontal when we are strafing or locked on
-            if(player == null)
+            if (player == null)
                 return;
             // if we are not locked on, only use the move amount
             player.playerAnimatorManager.UpdateAnimatorMovementParameters(
-                0, 
-                moveAmount, 
+                0,
+                moveAmount,
                 player.playerNetworkManager.isSprinting.Value);
 
             // if we are locked on pass the horizontal movement as well
@@ -178,7 +183,7 @@ namespace baodeag
 
         private void HandleDodgeInput()
         {
-            if(dodgeInput)
+            if (dodgeInput)
             {
                 dodgeInput = false;
                 player.playerLocomotionManager.AttemptToPerformDodge();
@@ -204,6 +209,20 @@ namespace baodeag
                 jumpInput = false;
 
                 player.playerLocomotionManager.AttemptToPerformJump();
+            }
+        }
+
+        private void HandleRBInput()
+        {
+            if (RB_Input)
+            {
+                RB_Input = false;
+
+                player.playerNetworkManager.SetCharacterActionHand(true);
+
+                player.playerCombatManager.PerformWeaponBasedAction(
+                    player.playerInventoryManager.currentRightHandWeapon.oh_RB_Action,
+                    player.playerInventoryManager.currentRightHandWeapon);
             }
         }
     }
