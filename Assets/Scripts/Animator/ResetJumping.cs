@@ -15,9 +15,10 @@ namespace baodeag
                 character = animator.GetComponent<CharacterManager>();
             }
 
-            //this is called when an action ends, and the state returns to empty
-            
-            character.isJumping = false;
+            if (character.IsOwner)
+            {
+                character.characterNetworkManager.isJumping.Value = false;
+            }
         }
     }
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

@@ -39,7 +39,7 @@ namespace baodeag
             else
             {
                 //if we are not jumping and our falling velocity has not been set
-                if(!character.isJumping && !fallingVelocityHasBeenSet)
+                if(!character.characterNetworkManager.isJumping.Value && !fallingVelocityHasBeenSet)
                 {
                     fallingVelocityHasBeenSet = true;
                     yVelocity.y = fallStartYVelocity;

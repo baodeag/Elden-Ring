@@ -119,7 +119,7 @@ namespace baodeag
 
         private void HandleJumpingMovement()
         {
-            if (player.isJumping)
+            if (player.playerNetworkManager.isJumping.Value)
             {
                 player.characterController.Move(jumpDirection * jumpForwardSpeed * Time.deltaTime);
             }
@@ -233,7 +233,7 @@ namespace baodeag
                 return;
 
             //if we are already jumping, we cannot jump
-            if (player.isJumping)
+            if (player.playerNetworkManager.isJumping.Value)
                 return;
 
             //if we are not grounded, we cannot jump
@@ -243,7 +243,7 @@ namespace baodeag
             //if we are two handling a weapon, play two handed jump animation, else play one handed jump animation
             player.playerAnimatorManager.PlayTargetActionAnimation("Main_Jump_01", false);
 
-            player.isJumping = true;
+            player.playerNetworkManager.isJumping.Value = true;
 
             player.playerNetworkManager.currentStamina.Value -= jumpStaminaCost;
 

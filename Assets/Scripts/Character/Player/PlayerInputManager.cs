@@ -48,6 +48,12 @@ namespace baodeag
             SceneManager.activeSceneChanged += OnSceneChange;
 
             instance.enabled = false; //disable player controls by default
+
+            if (playerControls != null)
+            {
+                playerControls.Disable();
+            }
+            
         }
 
         private void OnSceneChange(Scene oldScene, Scene newScene)
@@ -56,12 +62,22 @@ namespace baodeag
             if (newScene.buildIndex == WorldSaveGameManager.instance.GetWorldSceneIndex())
             {
                 instance.enabled = true;
+
+                if (playerControls != null)
+                {
+                    playerControls.Enable();
+                }
             }
             //otherwise disable them
             //this is so our player cant move around in menus or other scenes
             else
             {
                 instance.enabled = false;
+
+                if (playerControls != null)
+                {
+                    playerControls.Disable();
+                }
             }
         }
 

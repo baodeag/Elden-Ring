@@ -85,6 +85,12 @@ namespace baodeag
             //equipment
             playerNetworkManager.currentRightHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentRightHandWeaponIDChange;
             playerNetworkManager.currentLeftHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentLeftHandWeaponIDChange;
+
+            //upon connecting, if we are the owner of this player, but not the server, reload our character data to this newly instantiated character
+            if (IsOwner && IsServer)
+            {
+                LoadGameDataFromCurrentCharacterData(ref WorldSaveGameManager.instance.currentCharacterData);
+            }
         }
 
         public override IEnumerator ProcessDeathEvent(bool manuallySelectDeathAnimation = false)
