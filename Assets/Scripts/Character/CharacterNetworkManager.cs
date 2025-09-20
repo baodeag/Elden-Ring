@@ -122,6 +122,35 @@ namespace baodeag
             character.applyRootMotion = applyRootMotion;
             character.animator.CrossFade(animationID, 0.2f);
         }
+
+        //A server rps is a function called from a client, to the server(in our case the host)
+        [ServerRpc]
+        public void NotifyTheServerOfAttackActionAnimationServerRpc(ulong clientID, string animationID, bool applyRootMotion)
+        {
+            //if this char is the host/server, then activate the client rpc
+            if (IsServer)
+            {
+                //tell all clients to play the animation
+                PlayAttackActionAnimationForAllClientsClientRpc(clientID, animationID, applyRootMotion);
+            }
+        }
+
+        //a client rpc is sent to all clients present, from the server/host
+        [ClientRpc]
+        public void PlayAttackActionAnimationForAllClientsClientRpc(ulong clientID, string animationID, bool applyRootMotion)
+        {
+            //we make sure to not run the function on the char who sent it(so we dont play an animation twice)
+            if (clientID != NetworkManager.Singleton.LocalClientId)
+            {
+                PerformAttackActionAnimationFromServer(animationID, applyRootMotion);
+            }
+        }
+
+        private void PerformAttackActionAnimationFromServer(string animationID, bool applyRootMotion)
+        {
+            character.applyRootMotion = applyRootMotion;
+            character.animator.CrossFade(animationID, 0.2f);
+        }
     }
 
 }
