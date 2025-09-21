@@ -20,11 +20,15 @@ namespace baodeag
         public int holyDamage = 0;
         public int lightningDamage = 0;
 
-        [Header("Weapon Base Poise Damage")]
+        [Header("Weapon Poise")]
         public float poiseDamage = 10;
 
-        [Header("Stamina Costs")]
+        [Header("Attack Modifiers")]
+        public float light_Attack_01_Modifier = 1.1f;
+
+        [Header("Stamina Cost Modifiers")]
         public int baseStaminaCost = 20;
+        public float lightAttackStaminaCostMultiplier = 0.9f;
 
         [Header("Actions")]
         public WeaponItemAction oh_RB_Action; //one hand right bumper action

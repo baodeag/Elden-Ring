@@ -56,12 +56,14 @@ namespace baodeag
         }
 
         public virtual void PlayTargetAttackActionAnimation(
+            AttackType attackType,
             string targetAnimation,
             bool isPerformingAction,
             bool applyRootMotion = true,
             bool canRotate = false,
             bool canMove = false)
         {
+            character.characterCombatManager.currentAttackType = attackType;
             character.applyRootMotion = applyRootMotion;
             character.animator.CrossFade(targetAnimation, 0.2f);
             character.isPerformingAction = isPerformingAction;

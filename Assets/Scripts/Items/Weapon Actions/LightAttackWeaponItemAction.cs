@@ -28,7 +28,7 @@ namespace baodeag
 
             if (playPerformingAction.playerNetworkManager.isUsingRightHand.Value)
             {
-                playPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(light_Attack_01, true);
+                playPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack01, light_Attack_01, true);
             }
             if (playPerformingAction.playerNetworkManager.isUsingLeftHand.Value)
             {

@@ -17,7 +17,7 @@ MonoBehaviour:
   itemDescription: 'A straight sword
 
 '
-  itemID: 0
+  itemID: 1
   weaponModel: {fileID: 3655762614452610535, guid: 32f0e19d9c00f3f40a7e80b89e7917ab, type: 3}
   strengthREQ: 10
   dexREQ: 10
@@ -29,5 +29,7 @@ MonoBehaviour:
   holyDamage: 0
   lightningDamage: 0
   poiseDamage: 25
+  light_Attack_01_Modifier: 1.1
   baseStaminaCost: 20
+  lightAttackStaminaCostMultiplier: 0.9
   oh_RB_Action: {fileID: 11400000, guid: 7ded38d00ecd2fb4bb1d9c059955ab0f, type: 2}
