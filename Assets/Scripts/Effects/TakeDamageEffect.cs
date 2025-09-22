@@ -45,6 +45,9 @@ namespace baodeag
                 return;
 
             CalculateDamage(character);
+
+            PlayDamageSFX(character);
+            PlayDamageVFX(character);
         }
 
         private void CalculateDamage(CharacterManager character)
@@ -67,6 +70,18 @@ namespace baodeag
             Debug.Log("Final Damage Dealt: " + finalDamageDealt);
 
             character.characterNetworkManager.currentHealth.Value -= finalDamageDealt;
+        }
+
+        private void PlayDamageVFX(CharacterManager character)
+        {
+            character.characterEffectsManager.PlayBloodSplatterVFX(contactPoint);
+        }
+
+        private void PlayDamageSFX(CharacterManager character)
+        {
+            AudioClip physicalDamageSFX = WorldSoundFXManager.instance.ChooseRandomSFXFromArray(WorldSoundFXManager.instance.physicalDamageSFX);
+
+            character.characterSoundFXManager.PlaySoundFX(physicalDamageSFX);
         }
     }
 }

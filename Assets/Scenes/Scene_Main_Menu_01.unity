@@ -119,6 +119,24 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &4170710 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2352044073367267216, guid: 74ed47cd96dcc0d429366ca71548588d, type: 3}
+  m_PrefabInstance: {fileID: 2760355294585673029}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4170714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4170710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a22eeb9d4b2f91f4eb7ab09bc8f6e5dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  players: []
 --- !u!1001 &11794128
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5289,7 +5307,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2352044073367267216, guid: 74ed47cd96dcc0d429366ca71548588d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4170714}
   m_SourcePrefab: {fileID: 100100000, guid: 74ed47cd96dcc0d429366ca71548588d, type: 3}
 --- !u!114 &3557902933216485905
 MonoBehaviour:
@@ -5898,6 +5919,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: World Sound FX Manager
       objectReference: {fileID: 0}
+    - target: {fileID: 3821463889768214675, guid: d899f285619060e4eacb5504692a44ce, type: 3}
+      propertyPath: physicalDamageSFX.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3821463889768214675, guid: d899f285619060e4eacb5504692a44ce, type: 3}
+      propertyPath: 'physicalDamageSFX.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 7cbd6cd765888ff418d01d98bd1ce9c2, type: 3}
+    - target: {fileID: 3821463889768214675, guid: d899f285619060e4eacb5504692a44ce, type: 3}
+      propertyPath: 'physicalDamageSFX.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 3df9bbbc130ccb344af5f3fc793a630f, type: 3}
     - target: {fileID: 4328515716662464315, guid: d899f285619060e4eacb5504692a44ce, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
