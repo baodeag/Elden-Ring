@@ -239,6 +239,7 @@ namespace baodeag {
             player.playerNetworkManager.endurance.Value = 10;
 
             SaveGame();
+
             StartCoroutine(LoadWorldScene());
         }
 

@@ -60,6 +60,7 @@ namespace baodeag
 
         public void SetNewMaxHealthValue(int oldVitality, int newVitality)
         {
+            Debug.Log("Vitality changed from " + oldVitality + " to " + newVitality + ", updating max health");
             maxHealth.Value = player.playerStatsManager.CalculateHealthBasedOnVitalityLevel(newVitality);
             PlayerUIManager.instance.playerUIHudManager.SetMaxHealthValue(maxHealth.Value);
             currentHealth.Value = maxHealth.Value;
