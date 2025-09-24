@@ -77,8 +77,8 @@ namespace baodeag
 
         private void GetMovementValues()
         {
-            verticalMovement = PlayerInputManager.instance.verticalInput;
-            horizontalMovement = PlayerInputManager.instance.horizontalInput;
+            verticalMovement = PlayerInputManager.instance.vertical_Input;
+            horizontalMovement = PlayerInputManager.instance.horizontal_Input;
             moveAmount = PlayerInputManager.instance.moveAmount;
             //clamp the movements
         }
@@ -131,8 +131,8 @@ namespace baodeag
             {
                 Vector3 freeFallDirection;
 
-                freeFallDirection = PlayerCamera.instance.transform.forward * PlayerInputManager.instance.verticalInput;
-                freeFallDirection = freeFallDirection + PlayerCamera.instance.transform.right * PlayerInputManager.instance.horizontalInput;
+                freeFallDirection = PlayerCamera.instance.transform.forward * PlayerInputManager.instance.vertical_Input;
+                freeFallDirection = freeFallDirection + PlayerCamera.instance.transform.right * PlayerInputManager.instance.horizontal_Input;
                 freeFallDirection.y = 0;
 
                 player.characterController.Move(freeFallDirection * freeFallSpeed * Time.deltaTime);
@@ -201,8 +201,8 @@ namespace baodeag
             //if we are moving when we attempt to dodge, we perform a roll
             if (PlayerInputManager.instance.moveAmount > 0)
             {
-                rollDirection = PlayerCamera.instance.cameraObject.transform.forward * PlayerInputManager.instance.verticalInput;
-                rollDirection += PlayerCamera.instance.cameraObject.transform.right * PlayerInputManager.instance.horizontalInput;
+                rollDirection = PlayerCamera.instance.cameraObject.transform.forward * PlayerInputManager.instance.vertical_Input;
+                rollDirection += PlayerCamera.instance.cameraObject.transform.right * PlayerInputManager.instance.horizontal_Input;
                 rollDirection.y = 0;
                 rollDirection.Normalize();
 
@@ -247,8 +247,8 @@ namespace baodeag
 
             player.playerNetworkManager.currentStamina.Value -= jumpStaminaCost;
 
-            jumpDirection = PlayerCamera.instance.cameraObject.transform.forward * PlayerInputManager.instance.verticalInput;
-            jumpDirection += PlayerCamera.instance.cameraObject.transform.right * PlayerInputManager.instance.horizontalInput;
+            jumpDirection = PlayerCamera.instance.cameraObject.transform.forward * PlayerInputManager.instance.vertical_Input;
+            jumpDirection += PlayerCamera.instance.cameraObject.transform.right * PlayerInputManager.instance.horizontal_Input;
             jumpDirection.y = 0;
 
             if(jumpDirection != Vector3.zero)

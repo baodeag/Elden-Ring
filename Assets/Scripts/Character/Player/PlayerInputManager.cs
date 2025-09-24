@@ -12,21 +12,25 @@ namespace baodeag
         PlayerControls playerControls;
 
         [Header("Camera Input")]
-        [SerializeField] Vector2 cameraInput;
-        public float cameraHorizontalInput;
-        public float cameraVerticalInput;
+        [SerializeField] Vector2 camera_Input;
+        public float cameraHorizontal_Input;
+        public float cameraVertical_Input;
 
-        [Header("Movement Input")]
-        [SerializeField] Vector2 movementInput;
-        public float horizontalInput;
-        public float verticalInput;
+        [Header("Lock On Input")]
+        [SerializeField] bool lockOn_Input;
+
+        [Header("Player Movement Input")]
+        [SerializeField] Vector2 movement_Input;
+        public float horizontal_Input;
+        public float vertical_Input;
         public float moveAmount;
 
         [Header("Player Action Input")]
-        [SerializeField] bool dodgeInput = false;
-        [SerializeField] bool sprintInput = false;
-        [SerializeField] bool jumpInput = false;
+        [SerializeField] bool dodge_Input = false;
+        [SerializeField] bool sprint_Input = false;
+        [SerializeField] bool jump_Input = false;
         [SerializeField] bool RB_Input = false;
+
 
         private void Awake()
         {
@@ -88,15 +92,17 @@ namespace baodeag
             {
                 playerControls = new PlayerControls();
 
-                playerControls.PlayerMovement.Movement.performed += i => movementInput = i.ReadValue<Vector2>(); // Get movement input
-                playerControls.PlayerCamera.Movement.performed += i => cameraInput = i.ReadValue<Vector2>(); // Get camera input
-                playerControls.PlayerActions.Dodge.performed += i => dodgeInput = true; // Get dodge input
-                playerControls.PlayerActions.Jump.performed += i => jumpInput = true;
+                playerControls.PlayerMovement.Movement.performed += i => movement_Input = i.ReadValue<Vector2>(); // Get movement input
+                playerControls.PlayerCamera.Movement.performed += i => camera_Input = i.ReadValue<Vector2>(); // Get camera input
+                playerControls.PlayerActions.Dodge.performed += i => dodge_Input = true; // Get dodge input
+                playerControls.PlayerActions.Jump.performed += i => jump_Input = true;
                 playerControls.PlayerActions.RB.performed += i => RB_Input = true; // Get RB input
 
+                playerControls.PlayerActions.LockOn.performed += i => lockOn_Input = true;
 
-                playerControls.PlayerActions.Sprint.performed += i => sprintInput = true; // Get sprint input
-                playerControls.PlayerActions.Sprint.canceled += i => sprintInput = false; // Get sprint input
+
+                playerControls.PlayerActions.Sprint.performed += i => sprint_Input = true; // Get sprint input
+                playerControls.PlayerActions.Sprint.canceled += i => sprint_Input = false; // Get sprint input
             }
 
             playerControls.Enable();
@@ -131,6 +137,7 @@ namespace baodeag
 
         private void HandleAllInputs()
         {
+            HandleLockOnInput();
             HandlePlayerMovementInput();
             HandleCameraMovementInput();
             HandleDodgeInput();
@@ -139,15 +146,44 @@ namespace baodeag
             HandleRBInput();
         }
 
+        //Lock On
+        private void HandleLockOnInput()
+        {
+            if (player.playerNetworkManager.isLockedOn.Value)
+            {
+                if (player.playerCombatManager.currentTarget != null)
+                    return;
+
+                if (player.playerCombatManager.currentTarget.isDead.Value)
+                {
+                    //stop locking on to a dead target
+                    player.playerNetworkManager.isLockedOn.Value = false;
+                }
+            }
+
+            if (lockOn_Input && player.playerNetworkManager.isLockedOn.Value)
+            {
+                lockOn_Input = false;
+                return;
+            }
+
+            if (lockOn_Input && !player.playerNetworkManager.isLockedOn.Value)
+            {
+                lockOn_Input = false;
+
+                PlayerCamera.instance.HandleLocatingLockOnTarget();
+            }
+        }
+
         //Movement
 
         private void HandlePlayerMovementInput()
         {
-            verticalInput = movementInput.y;
-            horizontalInput = movementInput.x;
+            vertical_Input = movement_Input.y;
+            horizontal_Input = movement_Input.x;
 
             //returns a value between 0 and 1
-            moveAmount = Mathf.Clamp01(Mathf.Abs(horizontalInput) + Mathf.Abs(verticalInput));
+            moveAmount = Mathf.Clamp01(Mathf.Abs(horizontal_Input) + Mathf.Abs(vertical_Input));
 
             //snap moveAmount to either 0, 0.5, or 1
             if (moveAmount <= 0.5 && moveAmount > 0)
@@ -175,24 +211,24 @@ namespace baodeag
 
         private void HandleCameraMovementInput()
         {
-            cameraHorizontalInput = cameraInput.x;
-            cameraVerticalInput = cameraInput.y;
+            cameraHorizontal_Input = camera_Input.x;
+            cameraVertical_Input = camera_Input.y;
         }
 
         //Action
 
         private void HandleDodgeInput()
         {
-            if (dodgeInput)
+            if (dodge_Input)
             {
-                dodgeInput = false;
+                dodge_Input = false;
                 player.playerLocomotionManager.AttemptToPerformDodge();
             }
         }
 
         private void HandleSprintInput()
         {
-            if (sprintInput)
+            if (sprint_Input)
             {
                 player.playerLocomotionManager.HandleSprinting();
             }
@@ -204,9 +240,9 @@ namespace baodeag
 
         private void HandleJumpInput()
         {
-            if (jumpInput)
+            if (jump_Input)
             {
-                jumpInput = false;
+                jump_Input = false;
 
                 player.playerLocomotionManager.AttemptToPerformJump();
             }

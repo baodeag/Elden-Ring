@@ -28,6 +28,12 @@ namespace baodeag
         private float cameraZPosition; //value used for camera collision
         private float targetCameraZPosition; //value used for camera collision
 
+        [Header("Lock On")]
+        [SerializeField] float lockOnRadius = 20;
+        [SerializeField] float minimumViewableAngle = -50;
+        [SerializeField] float maximumViewableAngle = 50;
+        [SerializeField] float maximumLockOnDistance = 20;
+
         private void Awake()
         {
             if (instance == null)
@@ -69,10 +75,10 @@ namespace baodeag
         private void HandleRotations()
         {
             //rotate the player based on horizontal, vertical mouse movement
-            leftAndRightLookAngle += (PlayerInputManager.instance.cameraHorizontalInput * leftAndRightRotationSpeed) * Time.deltaTime;
+            leftAndRightLookAngle += (PlayerInputManager.instance.cameraHorizontal_Input * leftAndRightRotationSpeed) * Time.deltaTime;
 
             //apply the rotation to the player
-            upAndDownLookAngle -= (PlayerInputManager.instance.cameraVerticalInput * upAndDownRotationSpeed) * Time.deltaTime;
+            upAndDownLookAngle -= (PlayerInputManager.instance.cameraVertical_Input * upAndDownRotationSpeed) * Time.deltaTime;
 
             //apply the rotation to the camera
             upAndDownLookAngle = Mathf.Clamp(upAndDownLookAngle, minimumPivot, maximumPivot);
@@ -120,6 +126,54 @@ namespace baodeag
             //we then apply our final position using a lerp over a time of 0.2f
             cameraObjectPosition.z = Mathf.Lerp(cameraObject.transform.localPosition.z, targetCameraZPosition, 0.2f);
             cameraObject.transform.localPosition = cameraObjectPosition;
+        }
+
+        public void HandleLocatingLockOnTarget()
+        {
+            float shortestDistance = Mathf.Infinity;
+            float shortestDistanceOfRightTarget = Mathf.Infinity;
+            float shortestDistanceOfLeftTarget = -Mathf.Infinity;
+
+            Collider[] colliders = Physics.OverlapSphere(player.transform.position, lockOnRadius, WorldUtilityManager.Instance.GetCharacterLayers());
+
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                CharacterManager lockOnTarget = colliders[i].GetComponent<CharacterManager>();
+
+                if (lockOnTarget != null)
+                {
+                    Vector3 lockOnTargetsDirection = lockOnTarget.transform.position - player.transform.position;
+                    float distanceFromTarget = Vector3.Distance(player.transform.position, lockOnTarget.transform.position);
+                    float viewableAngle = Vector3.Angle(lockOnTargetsDirection, cameraObject.transform.forward);
+
+                    if (lockOnTarget.isDead.Value)
+                        continue;
+
+                    if (lockOnTarget.transform.root == player.transform.root)
+                        continue;
+
+                    if (distanceFromTarget > maximumLockOnDistance)
+                        continue;
+
+                    if (viewableAngle < maximumViewableAngle && viewableAngle > minimumViewableAngle)
+                    {
+                        RaycastHit hit;
+
+                        if (Physics.Linecast(
+                            player.playerCombatManager.lockOnTransform.position, 
+                            lockOnTarget.characterCombatManager.lockOnTransform.position, 
+                            out hit, 
+                            WorldUtilityManager.Instance.GetEnviroLayers()))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            Debug.Log("We made it");
+                        }
+                    }
+                }
+            }
         }
     }
 }
