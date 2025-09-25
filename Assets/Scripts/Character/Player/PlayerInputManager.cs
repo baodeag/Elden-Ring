@@ -164,6 +164,8 @@ namespace baodeag
             if (lockOn_Input && player.playerNetworkManager.isLockedOn.Value)
             {
                 lockOn_Input = false;
+                PlayerCamera.instance.ClearLockOnTargets();
+                player.playerNetworkManager.isLockedOn.Value = false;
                 return;
             }
 
@@ -172,6 +174,12 @@ namespace baodeag
                 lockOn_Input = false;
 
                 PlayerCamera.instance.HandleLocatingLockOnTarget();
+
+                if (PlayerCamera.instance.nearestLockOnTarget != null)
+                {
+                    player.playerCombatManager.SetTarget(PlayerCamera.instance.nearestLockOnTarget);
+                    player.playerNetworkManager.isLockedOn.Value = true;
+                }
             }
         }
 

@@ -1,5 +1,7 @@
 using baodeag;
+using NUnit.Framework;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace baodeag
 {
@@ -32,7 +34,9 @@ namespace baodeag
         [SerializeField] float lockOnRadius = 20;
         [SerializeField] float minimumViewableAngle = -50;
         [SerializeField] float maximumViewableAngle = 50;
-        [SerializeField] float maximumLockOnDistance = 20;
+        private List<CharacterManager> availableTargets = new List<CharacterManager>();
+        public CharacterManager nearestLockOnTarget;
+        [SerializeField] float lockOnTargetFollowSpeed = 0.2f;
 
         private void Awake()
         {
@@ -74,28 +78,51 @@ namespace baodeag
 
         private void HandleRotations()
         {
-            //rotate the player based on horizontal, vertical mouse movement
-            leftAndRightLookAngle += (PlayerInputManager.instance.cameraHorizontal_Input * leftAndRightRotationSpeed) * Time.deltaTime;
+            if (player.playerNetworkManager.isLockedOn.Value)
+            {
+                Vector3 rotationDirection = player.playerCombatManager.currentTarget.characterCombatManager.lockOnTransform.position - transform.position;
+                rotationDirection.Normalize();
+                rotationDirection.y = 0;
 
-            //apply the rotation to the player
-            upAndDownLookAngle -= (PlayerInputManager.instance.cameraVertical_Input * upAndDownRotationSpeed) * Time.deltaTime;
+                Quaternion targetRotation = Quaternion.LookRotation(rotationDirection);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, lockOnTargetFollowSpeed);
 
-            //apply the rotation to the camera
-            upAndDownLookAngle = Mathf.Clamp(upAndDownLookAngle, minimumPivot, maximumPivot);
+                rotationDirection = player.playerCombatManager.currentTarget.characterCombatManager.lockOnTransform.position - cameraPivotTransform.position;
+                rotationDirection.Normalize();
 
-            Vector3 cameraRotation = Vector3.zero;
-            Quaternion targetRotation;
+                targetRotation = Quaternion.LookRotation(rotationDirection);
+                cameraPivotTransform.transform.rotation = Quaternion.Slerp(cameraPivotTransform.rotation, targetRotation, lockOnTargetFollowSpeed);
 
-            //rotate this gameobject left and right
-            cameraRotation.y = leftAndRightLookAngle;   
-            targetRotation = Quaternion.Euler(cameraRotation);
-            transform.rotation = targetRotation;
+                leftAndRightLookAngle = transform.eulerAngles.y;
+                upAndDownLookAngle = transform.eulerAngles.x;
+            }
+            else
+            {
+                //rotate the player based on horizontal, vertical mouse movement
+                leftAndRightLookAngle += (PlayerInputManager.instance.cameraHorizontal_Input * leftAndRightRotationSpeed) * Time.deltaTime;
 
-            //rotate the pivot gameobject up and down
-            cameraRotation = Vector3.zero;
-            cameraRotation.x = upAndDownLookAngle;
-            targetRotation = Quaternion.Euler(cameraRotation);
-            cameraPivotTransform.localRotation = targetRotation;
+                //apply the rotation to the player
+                upAndDownLookAngle -= (PlayerInputManager.instance.cameraVertical_Input * upAndDownRotationSpeed) * Time.deltaTime;
+
+                //apply the rotation to the camera
+                upAndDownLookAngle = Mathf.Clamp(upAndDownLookAngle, minimumPivot, maximumPivot);
+
+                Vector3 cameraRotation = Vector3.zero;
+                Quaternion targetRotation;
+
+                //rotate this gameobject left and right
+                cameraRotation.y = leftAndRightLookAngle;
+                targetRotation = Quaternion.Euler(cameraRotation);
+                transform.rotation = targetRotation;
+
+                //rotate the pivot gameobject up and down
+                cameraRotation = Vector3.zero;
+                cameraRotation.x = upAndDownLookAngle;
+                targetRotation = Quaternion.Euler(cameraRotation);
+                cameraPivotTransform.localRotation = targetRotation;
+            }
+
+            
         }
 
         private void HandleCollisions()
@@ -152,9 +179,6 @@ namespace baodeag
                     if (lockOnTarget.transform.root == player.transform.root)
                         continue;
 
-                    if (distanceFromTarget > maximumLockOnDistance)
-                        continue;
-
                     if (viewableAngle < maximumViewableAngle && viewableAngle > minimumViewableAngle)
                     {
                         RaycastHit hit;
@@ -169,11 +193,37 @@ namespace baodeag
                         }
                         else
                         {
-                            Debug.Log("We made it");
+                            availableTargets.Add(lockOnTarget);
                         }
                     }
+
                 }
             }
+
+            for (int k = 0; k < availableTargets.Count; k++)
+            {
+                if (availableTargets[k] != null)
+                {
+                    float distanceFromTarget = Vector3.Distance(player.transform.position, availableTargets[k].transform.position);
+
+                    if (distanceFromTarget < shortestDistance)
+                    {
+                        shortestDistance = distanceFromTarget;
+                        nearestLockOnTarget = availableTargets[k];
+                    }
+                }
+                else
+                {
+                    ClearLockOnTargets();
+                    player.playerNetworkManager.isLockedOn.Value = false;
+                }
+            }
+        }
+
+        public void ClearLockOnTargets()
+        {
+            nearestLockOnTarget = null;
+            availableTargets.Clear();
         }
     }
 }
