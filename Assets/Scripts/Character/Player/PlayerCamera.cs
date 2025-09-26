@@ -2,6 +2,7 @@ using baodeag;
 using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace baodeag
 {
@@ -34,9 +35,15 @@ namespace baodeag
         [SerializeField] float lockOnRadius = 20;
         [SerializeField] float minimumViewableAngle = -50;
         [SerializeField] float maximumViewableAngle = 50;
+        [SerializeField] float lockOnTargetFollowSpeed = 0.2f;
+        [SerializeField] float setCameraHeightSpeed = 1;
+        [SerializeField] float unlockedCameraHeight = 1.65f;
+        [SerializeField] float lockedCameraHeight = 2.0f;
+        private Coroutine cameraLockOnHeightCoroutine;
         private List<CharacterManager> availableTargets = new List<CharacterManager>();
         public CharacterManager nearestLockOnTarget;
-        [SerializeField] float lockOnTargetFollowSpeed = 0.2f;
+        public CharacterManager leftLockOnTarget;
+        public CharacterManager rightLockOnTarget;
 
         private void Awake()
         {
@@ -110,7 +117,7 @@ namespace baodeag
                 Vector3 cameraRotation = Vector3.zero;
                 Quaternion targetRotation;
 
-                //rotate this gameobject left and right
+                //rotate this game object left and right
                 cameraRotation.y = leftAndRightLookAngle;
                 targetRotation = Quaternion.Euler(cameraRotation);
                 transform.rotation = targetRotation;
@@ -179,7 +186,7 @@ namespace baodeag
                     if (lockOnTarget.transform.root == player.transform.root)
                         continue;
 
-                    if (viewableAngle < maximumViewableAngle && viewableAngle > minimumViewableAngle)
+                    if (viewableAngle > minimumViewableAngle && viewableAngle < maximumViewableAngle)
                     {
                         RaycastHit hit;
 
@@ -211,6 +218,27 @@ namespace baodeag
                         shortestDistance = distanceFromTarget;
                         nearestLockOnTarget = availableTargets[k];
                     }
+
+                    if (player.playerNetworkManager.isLockedOn.Value)
+                    {
+                        Vector3 relativeEnemyPosition = player.transform.InverseTransformPoint(availableTargets[k].transform.position);
+                        var distanceFromLeftTarget = relativeEnemyPosition.x;
+                        var distanceFromRightTarget = relativeEnemyPosition.x;
+
+                        if (availableTargets[k] == player.playerCombatManager.currentTarget)
+                            continue;
+
+                        if (relativeEnemyPosition.x <=0.00 && distanceFromLeftTarget > shortestDistanceOfLeftTarget)
+                        {
+                            shortestDistanceOfLeftTarget = distanceFromLeftTarget;
+                            leftLockOnTarget = availableTargets[k];
+                        }
+                        else if (relativeEnemyPosition.x >= 0.00 && distanceFromRightTarget < shortestDistanceOfRightTarget)
+                        {
+                            shortestDistanceOfRightTarget = distanceFromRightTarget;
+                            rightLockOnTarget = availableTargets[k];
+                        }
+                    }
                 }
                 else
                 {
@@ -220,10 +248,95 @@ namespace baodeag
             }
         }
 
+        public void SetLockCameraHeight()
+        {
+            if (cameraLockOnHeightCoroutine != null)
+            {
+                StopCoroutine(cameraLockOnHeightCoroutine);
+            }
+            cameraLockOnHeightCoroutine = StartCoroutine(SetCameraHeight());
+        }
+
         public void ClearLockOnTargets()
         {
             nearestLockOnTarget = null;
+            leftLockOnTarget = null;
+            rightLockOnTarget = null;
             availableTargets.Clear();
+        }
+
+        public IEnumerator WaitThenFindNewTarget()
+        {
+            while (player.isPerformingAction)
+            {
+                yield return null;
+            }
+
+            ClearLockOnTargets();
+            HandleLocatingLockOnTarget();
+
+            if (nearestLockOnTarget != null)
+            {
+                player.playerCombatManager.SetTarget(nearestLockOnTarget);
+                player.playerNetworkManager.isLockedOn.Value = true;
+            }
+
+            yield return null;
+        }
+
+        private IEnumerator SetCameraHeight()
+        {
+            float duration = 1;
+            float timer = 0;
+
+            Vector3 velocity = Vector3.zero;
+            Vector3 newLockedCameraHeight = new Vector3 (cameraPivotTransform.transform.localPosition.x, lockedCameraHeight);
+            Vector3 newUnlockedCameraHeight = new Vector3 (cameraPivotTransform.transform.localPosition.x, unlockedCameraHeight);
+
+            while (timer < duration)
+            {
+                timer += Time.deltaTime;
+
+                if (player != null)
+                {
+                    if (player.playerCombatManager.currentTarget != null)
+                    {
+                        cameraPivotTransform.transform.localPosition = Vector3.SmoothDamp
+                            (cameraPivotTransform.transform.localPosition, 
+                            newLockedCameraHeight, 
+                            ref velocity, 
+                            setCameraHeightSpeed);
+                        cameraPivotTransform.transform.localRotation = Quaternion.Slerp
+                            (cameraPivotTransform.transform.localRotation, 
+                            Quaternion.Euler(0, 0, 0), 
+                            lockOnTargetFollowSpeed);
+                    }
+                    else
+                    {
+                        cameraPivotTransform.transform.localPosition = Vector3.SmoothDamp
+                            (cameraPivotTransform.transform.localPosition, 
+                            newUnlockedCameraHeight, 
+                            ref velocity, 
+                            setCameraHeightSpeed);
+                    }
+                }
+                yield return null;
+            }
+
+            if (player != null)
+            {
+                if (player.playerCombatManager.currentTarget != null)
+                {
+                    cameraPivotTransform.transform.localPosition = newLockedCameraHeight;
+                    cameraPivotTransform.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                }
+                else
+                {
+                    cameraPivotTransform.transform.localPosition = newUnlockedCameraHeight;
+                }
+            }
+
+            yield return null;
         }
     }
 }

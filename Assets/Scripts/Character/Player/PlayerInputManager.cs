@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,6 +18,9 @@ namespace baodeag
 
         [Header("Lock On Input")]
         [SerializeField] bool lockOn_Input;
+        [SerializeField] bool lockOn_Left_Input;
+        [SerializeField] bool lockOn_Right_Input;
+        private Coroutine lockOnCoroutine;
 
         [Header("Player Movement Input")]
         [SerializeField] Vector2 movement_Input;
@@ -99,6 +102,9 @@ namespace baodeag
                 playerControls.PlayerActions.RB.performed += i => RB_Input = true; // Get RB input
 
                 playerControls.PlayerActions.LockOn.performed += i => lockOn_Input = true;
+                playerControls.PlayerActions.SeekLeftLockOnTarget.performed += i => lockOn_Left_Input = true;
+                playerControls.PlayerActions.SeekRightLockOnTarget.performed += i => lockOn_Right_Input = true;
+
 
 
                 playerControls.PlayerActions.Sprint.performed += i => sprint_Input = true; // Get sprint input
@@ -138,6 +144,7 @@ namespace baodeag
         private void HandleAllInputs()
         {
             HandleLockOnInput();
+            HandleLockOnSwitchTargetInput();
             HandlePlayerMovementInput();
             HandleCameraMovementInput();
             HandleDodgeInput();
@@ -147,38 +154,163 @@ namespace baodeag
         }
 
         //Lock On
+        //private void HandleLockOnInput()
+        //{
+        //    if (player.playerNetworkManager.isLockedOn.Value)
+        //    {
+        //        if (player.playerCombatManager.currentTarget != null)
+        //            return;
+
+        //        if (player.playerCombatManager.currentTarget.isDead.Value)
+        //        {
+        //            //stop locking on to a dead target
+        //            player.playerNetworkManager.isLockedOn.Value = false;
+        //        }
+
+        //        if (lockOnCoroutine != null)
+        //            StopCoroutine(lockOnCoroutine);
+        //        lockOnCoroutine = StartCoroutine(PlayerCamera.instance.WaitThenFindNewTarget());
+        //    }
+
+        //    if (lockOn_Input && player.playerNetworkManager.isLockedOn.Value)
+        //    {
+        //        lockOn_Input = false;
+        //        PlayerCamera.instance.ClearLockOnTargets();
+        //        player.playerNetworkManager.isLockedOn.Value = false;
+        //        return;
+        //    }
+
+        //    if (lockOn_Input && !player.playerNetworkManager.isLockedOn.Value)
+        //    {
+        //        lockOn_Input = false;
+
+        //        PlayerCamera.instance.HandleLocatingLockOnTarget();
+
+        //        if (PlayerCamera.instance.nearestLockOnTarget != null)
+        //        {
+        //            player.playerCombatManager.SetTarget(PlayerCamera.instance.nearestLockOnTarget);
+        //            player.playerNetworkManager.isLockedOn.Value = true;
+        //        }
+        //    }
+        //}
+
         private void HandleLockOnInput()
         {
-            if (player.playerNetworkManager.isLockedOn.Value)
+            // 1) Ưu tiên toggle theo phím R
+            if (lockOn_Input)
             {
-                if (player.playerCombatManager.currentTarget != null)
-                    return;
+                lockOn_Input = false;
 
-                if (player.playerCombatManager.currentTarget.isDead.Value)
+                if (player.playerNetworkManager.isLockedOn.Value)
                 {
-                    //stop locking on to a dead target
+                    // TẮT lock-on
                     player.playerNetworkManager.isLockedOn.Value = false;
+
+                    // dừng coroutine (nếu đang chạy)
+                    if (lockOnCoroutine != null)
+                    {
+                        StopCoroutine(lockOnCoroutine);
+                        lockOnCoroutine = null;
+                    }
+
+                    // dọn target & camera
+                    if (player.playerCombatManager != null)
+                        player.playerCombatManager.currentTarget = null;
+
+                    if (PlayerCamera.instance != null)
+                        PlayerCamera.instance.ClearLockOnTargets();
+
+                    return;
+                }
+                else
+                {
+                    // BẬT lock-on: tìm target ngay lập tức
+                    if (PlayerCamera.instance != null)
+                    {
+                        PlayerCamera.instance.HandleLocatingLockOnTarget();
+
+                        if (PlayerCamera.instance.nearestLockOnTarget != null &&
+                            player.playerCombatManager != null)
+                        {
+                            player.playerCombatManager.SetTarget(PlayerCamera.instance.nearestLockOnTarget);
+                            player.playerNetworkManager.isLockedOn.Value = true;
+
+                            // BẮT ĐẦU coroutine tìm/chuyển target sau một nhịp (nếu bạn muốn cập nhật mềm)
+                            if (lockOnCoroutine != null)
+                                StopCoroutine(lockOnCoroutine);
+                            lockOnCoroutine = StartCoroutine(PlayerCamera.instance.WaitThenFindNewTarget());
+                        }
+                        else
+                        {
+                            // Không có target -> đảm bảo trạng thái off
+                            player.playerNetworkManager.isLockedOn.Value = false;
+
+                            if (lockOnCoroutine != null)
+                            {
+                                StopCoroutine(lockOnCoroutine);
+                                lockOnCoroutine = null;
+                            }
+                        }
+                    }
+                    return;
                 }
             }
 
-            if (lockOn_Input && player.playerNetworkManager.isLockedOn.Value)
+            // 2) Nếu đang lock-on, tự thoát khi target không hợp lệ (null/chết)
+            if (player.playerNetworkManager.isLockedOn.Value)
             {
-                lockOn_Input = false;
-                PlayerCamera.instance.ClearLockOnTargets();
-                player.playerNetworkManager.isLockedOn.Value = false;
-                return;
+                var t = player.playerCombatManager != null ? player.playerCombatManager.currentTarget : null;
+
+                bool invalid = (t == null) || (t.isDead != null && t.isDead.Value);
+                if (invalid)
+                {
+                    player.playerNetworkManager.isLockedOn.Value = false;
+
+                    if (lockOnCoroutine != null)
+                    {
+                        StopCoroutine(lockOnCoroutine);
+                        lockOnCoroutine = null;
+                    }
+
+                    if (player.playerCombatManager != null)
+                        player.playerCombatManager.currentTarget = null;
+
+                    if (PlayerCamera.instance != null)
+                        PlayerCamera.instance.ClearLockOnTargets();
+                }
+            }
+        }
+
+
+        private void HandleLockOnSwitchTargetInput()
+        {
+            if (lockOn_Left_Input)
+            {
+                lockOn_Left_Input = false;
+                
+                if (player.playerNetworkManager.isLockedOn.Value)
+                {
+                    PlayerCamera.instance.HandleLocatingLockOnTarget();
+
+                    if (PlayerCamera.instance.leftLockOnTarget != null)
+                    {
+                        player.playerCombatManager.SetTarget(PlayerCamera.instance.leftLockOnTarget);
+                    }
+                }
             }
 
-            if (lockOn_Input && !player.playerNetworkManager.isLockedOn.Value)
+            if (lockOn_Right_Input)
             {
-                lockOn_Input = false;
+                lockOn_Right_Input = false;
 
-                PlayerCamera.instance.HandleLocatingLockOnTarget();
-
-                if (PlayerCamera.instance.nearestLockOnTarget != null)
+                if (player.playerNetworkManager.isLockedOn.Value)
                 {
-                    player.playerCombatManager.SetTarget(PlayerCamera.instance.nearestLockOnTarget);
-                    player.playerNetworkManager.isLockedOn.Value = true;
+                    PlayerCamera.instance.HandleLocatingLockOnTarget();
+
+                    if (PlayerCamera.instance.rightLockOnTarget != null)
+                    {
+                        player.playerCombatManager.SetTarget(PlayerCamera.instance.rightLockOnTarget);
+                    }
                 }
             }
         }
@@ -208,10 +340,16 @@ namespace baodeag
             if (player == null)
                 return;
             // if we are not locked on, only use the move amount
-            player.playerAnimatorManager.UpdateAnimatorMovementParameters(
-                0,
-                moveAmount,
-                player.playerNetworkManager.isSprinting.Value);
+
+            if (player.playerNetworkManager.isLockedOn.Value || player.playerNetworkManager.isSprinting.Value)
+            {
+                player.playerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.playerNetworkManager.isSprinting.Value);
+            }
+            else
+            {
+                player.playerAnimatorManager.UpdateAnimatorMovementParameters(horizontal_Input, vertical_Input, player.playerNetworkManager.isSprinting.Value);
+            }
+            
 
             // if we are locked on pass the horizontal movement as well
 
