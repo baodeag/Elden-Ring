@@ -162,9 +162,7 @@ namespace baodeag
                     targetDirection.y = 0;
 
                     if (targetDirection == Vector3.zero)
-                    {
                         targetDirection = transform.forward;
-                    }
 
                     Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
                     Quaternion finalRotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);

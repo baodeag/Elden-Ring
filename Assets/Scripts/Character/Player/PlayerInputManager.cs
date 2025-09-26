@@ -105,8 +105,6 @@ namespace baodeag
                 playerControls.PlayerActions.SeekLeftLockOnTarget.performed += i => lockOn_Left_Input = true;
                 playerControls.PlayerActions.SeekRightLockOnTarget.performed += i => lockOn_Right_Input = true;
 
-
-
                 playerControls.PlayerActions.Sprint.performed += i => sprint_Input = true; // Get sprint input
                 playerControls.PlayerActions.Sprint.canceled += i => sprint_Input = false; // Get sprint input
             }
@@ -281,7 +279,6 @@ namespace baodeag
             }
         }
 
-
         private void HandleLockOnSwitchTargetInput()
         {
             if (lockOn_Left_Input)
@@ -341,7 +338,7 @@ namespace baodeag
                 return;
             // if we are not locked on, only use the move amount
 
-            if (player.playerNetworkManager.isLockedOn.Value || player.playerNetworkManager.isSprinting.Value)
+            if (!player.playerNetworkManager.isLockedOn.Value || player.playerNetworkManager.isSprinting.Value)
             {
                 player.playerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.playerNetworkManager.isSprinting.Value);
             }

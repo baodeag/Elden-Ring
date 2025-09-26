@@ -228,7 +228,7 @@ namespace baodeag
                         if (availableTargets[k] == player.playerCombatManager.currentTarget)
                             continue;
 
-                        if (relativeEnemyPosition.x <=0.00 && distanceFromLeftTarget > shortestDistanceOfLeftTarget)
+                        if (relativeEnemyPosition.x <= 0.00 && distanceFromLeftTarget > shortestDistanceOfLeftTarget)
                         {
                             shortestDistanceOfLeftTarget = distanceFromLeftTarget;
                             leftLockOnTarget = availableTargets[k];
