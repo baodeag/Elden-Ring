@@ -32,8 +32,13 @@ namespace baodeag
         [SerializeField] bool dodge_Input = false;
         [SerializeField] bool sprint_Input = false;
         [SerializeField] bool jump_Input = false;
+
+        [Header("Bumper Input")]
         [SerializeField] bool RB_Input = false;
 
+        [Header("Trigger Input")]
+        [SerializeField] bool RT_Input = false;
+        [SerializeField] bool Hold_RT_Input = false;
 
         private void Awake()
         {
@@ -99,7 +104,14 @@ namespace baodeag
                 playerControls.PlayerCamera.Movement.performed += i => camera_Input = i.ReadValue<Vector2>(); // Get camera input
                 playerControls.PlayerActions.Dodge.performed += i => dodge_Input = true; // Get dodge input
                 playerControls.PlayerActions.Jump.performed += i => jump_Input = true;
+
+                //bumper
                 playerControls.PlayerActions.RB.performed += i => RB_Input = true; // Get RB input
+
+                //triggers
+                playerControls.PlayerActions.RT.performed += i => RT_Input = true;
+                playerControls.PlayerActions.HoldRT.performed += i => Hold_RT_Input = true;
+                playerControls.PlayerActions.HoldRT.canceled += i => Hold_RT_Input = false;
 
                 playerControls.PlayerActions.LockOn.performed += i => lockOn_Input = true;
                 playerControls.PlayerActions.SeekLeftLockOnTarget.performed += i => lockOn_Left_Input = true;
@@ -149,6 +161,8 @@ namespace baodeag
             HandleSprintInput();
             HandleJumpInput();
             HandleRBInput();
+            HandleRTInput();
+            HandleChargeRTInput();
         }
 
         //Lock On
@@ -313,7 +327,6 @@ namespace baodeag
         }
 
         //Movement
-
         private void HandlePlayerMovementInput()
         {
             vertical_Input = movement_Input.y;
@@ -359,7 +372,6 @@ namespace baodeag
         }
 
         //Action
-
         private void HandleDodgeInput()
         {
             if (dodge_Input)
@@ -402,6 +414,29 @@ namespace baodeag
                 player.playerCombatManager.PerformWeaponBasedAction(
                     player.playerInventoryManager.currentRightHandWeapon.oh_RB_Action,
                     player.playerInventoryManager.currentRightHandWeapon);
+            }
+        }
+
+        private void HandleRTInput()
+        {
+            if (RT_Input)
+            {
+                RT_Input = false;
+                player.playerNetworkManager.SetCharacterActionHand(true);
+                player.playerCombatManager.PerformWeaponBasedAction(
+                    player.playerInventoryManager.currentRightHandWeapon.oh_RT_Action,
+                    player.playerInventoryManager.currentRightHandWeapon);
+            }
+        }
+
+        private void HandleChargeRTInput()
+        {
+            if (player.isPerformingAction)
+            {
+                if (player.playerNetworkManager.isUsingRightHand.Value)
+                {
+                    player.playerNetworkManager.isChargingAttack.Value = Hold_RT_Input;
+                }
             }
         }
     }
