@@ -78,6 +78,11 @@ namespace baodeag
             WeaponItem newWeapon = Instantiate(WorldItemDatabase.Instance.GetWeaponByID(newId));
             player.playerInventoryManager.currentRightHandWeapon = newWeapon;
             player.playerEquipmentManager.LoadRightWeapon();
+
+            if (player.IsOwner)
+            {
+                PlayerUIManager.instance.playerUIHudManager.SetRightWeaponQuickSlotIcon(newId);
+            }
         }
 
         public void OnCurrentLeftHandWeaponIDChange(int oldID, int newId)
@@ -85,6 +90,11 @@ namespace baodeag
             WeaponItem newWeapon = Instantiate(WorldItemDatabase.Instance.GetWeaponByID(newId));
             player.playerInventoryManager.currentLeftHandWeapon = newWeapon;
             player.playerEquipmentManager.LoadLeftWeapon();
+
+            if (player.IsOwner)
+            {
+                PlayerUIManager.instance.playerUIHudManager.SetLeftWeaponQuickSlotIcon(newId);
+            }
         }
 
         public void OnCurrentWeaponBeingUsedIDChange(int oldID, int newId)

@@ -32,6 +32,8 @@ namespace baodeag
         [SerializeField] bool dodge_Input = false;
         [SerializeField] bool sprint_Input = false;
         [SerializeField] bool jump_Input = false;
+        [SerializeField] bool switch_Right_Weapon_Input = false;
+        [SerializeField] bool switch_Left_Weapon_Input = false;
 
         [Header("Bumper Input")]
         [SerializeField] bool RB_Input = false;
@@ -39,6 +41,8 @@ namespace baodeag
         [Header("Trigger Input")]
         [SerializeField] bool RT_Input = false;
         [SerializeField] bool Hold_RT_Input = false;
+
+        
 
         private void Awake()
         {
@@ -102,8 +106,12 @@ namespace baodeag
 
                 playerControls.PlayerMovement.Movement.performed += i => movement_Input = i.ReadValue<Vector2>(); // Get movement input
                 playerControls.PlayerCamera.Movement.performed += i => camera_Input = i.ReadValue<Vector2>(); // Get camera input
+
+                //actions
                 playerControls.PlayerActions.Dodge.performed += i => dodge_Input = true; // Get dodge input
                 playerControls.PlayerActions.Jump.performed += i => jump_Input = true;
+                playerControls.PlayerActions.SwitchRightWeapon.performed += i => switch_Right_Weapon_Input = true;
+                playerControls.PlayerActions.SwitchLeftWeapon.performed += i => switch_Left_Weapon_Input = true;
 
                 //bumper
                 playerControls.PlayerActions.RB.performed += i => RB_Input = true; // Get RB input
@@ -163,6 +171,8 @@ namespace baodeag
             HandleRBInput();
             HandleRTInput();
             HandleChargeRTInput();
+            HandleSwitchRightWeaponInput();
+            HandleSwitchLeftWeaponInput();
         }
 
         //Lock On
@@ -437,6 +447,24 @@ namespace baodeag
                 {
                     player.playerNetworkManager.isChargingAttack.Value = Hold_RT_Input;
                 }
+            }
+        }
+
+        private void HandleSwitchRightWeaponInput()
+        {
+            if (switch_Right_Weapon_Input)
+            {
+                switch_Right_Weapon_Input = false;
+                player.playerEquipmentManager.SwitchRightWeapon();
+            }
+        }
+
+        private void HandleSwitchLeftWeaponInput()
+        {
+            if (switch_Left_Weapon_Input)
+            {
+                switch_Left_Weapon_Input = false;
+                player.playerEquipmentManager.SwitchLeftWeapon();
             }
         }
     }
