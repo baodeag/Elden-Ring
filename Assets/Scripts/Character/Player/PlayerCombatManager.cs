@@ -9,6 +9,9 @@ namespace baodeag
 
         public WeaponItem currentWeaponBeingUsed;
 
+        [Header("Flags")]
+        public bool canComboWithMainHandWeapon = false;
+
         protected override void Awake()
         {
             base.Awake();
@@ -58,5 +61,7 @@ namespace baodeag
                 PlayerCamera.instance.SetLockCameraHeight();
             }
         }
+
+        
     }
 }

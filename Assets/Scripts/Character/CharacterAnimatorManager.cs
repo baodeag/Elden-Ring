@@ -170,6 +170,7 @@ namespace baodeag
         {
             Debug.Log("Playing animation: " + targetAnimation);
             character.characterCombatManager.currentAttackType = attackType;
+            character.characterCombatManager.lastAttackAnimationPerformed = targetAnimation;
             character.applyRootMotion = applyRootMotion;
             character.animator.CrossFade(targetAnimation, 0.2f);
             character.isPerformingAction = isPerformingAction;
@@ -181,6 +182,16 @@ namespace baodeag
                 NetworkManager.Singleton.LocalClientId,
                 targetAnimation,
                 applyRootMotion);
+        }
+
+        public virtual void EnableCanDoCombo()
+        {
+
+        }
+
+        public virtual void DisableCanDoCombo()
+        {
+
         }
     }
 }

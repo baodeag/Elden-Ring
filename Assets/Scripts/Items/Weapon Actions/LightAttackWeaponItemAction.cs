@@ -6,6 +6,7 @@ namespace baodeag
     public class LightAttackWeaponItemAction : WeaponItemAction
     {
         [SerializeField] string light_Attack_01 = "Main_Light_Attack_01";
+        [SerializeField] string light_Attack_02 = "Main_Light_Attack_02";
 
         public override void AttemptToPerformAction(PlayerManager playerPerformingAction, WeaponItem weaponPerformingAction)
         {
@@ -23,16 +24,26 @@ namespace baodeag
             PerformLightAttack(playerPerformingAction, weaponPerformingAction);
         }
 
-        private void PerformLightAttack(PlayerManager playPerformingAction, WeaponItem weaponPerformingAction)
+        private void PerformLightAttack(PlayerManager playerPerformingAction, WeaponItem weaponPerformingAction)
         {
-
-            if (playPerformingAction.playerNetworkManager.isUsingRightHand.Value)
+            // if we are attacking currently and we can combo, perform the combo
+            if (playerPerformingAction.playerCombatManager.canComboWithMainHandWeapon && playerPerformingAction.isPerformingAction)
             {
-                playPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack01, light_Attack_01, true);
+                playerPerformingAction.playerCombatManager.canComboWithMainHandWeapon = false;
+
+                if (playerPerformingAction.characterCombatManager.lastAttackAnimationPerformed == light_Attack_01)
+                {
+                    playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack02, light_Attack_02, true);
+                }
+                else
+                {
+                    playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack01, light_Attack_01, true);
+                }
             }
-            if (playPerformingAction.playerNetworkManager.isUsingLeftHand.Value)
+            // otherwise if we are not already attacking, perform the first light attack
+            else if (!playerPerformingAction.isPerformingAction)
             {
-
+                playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack01, light_Attack_01, true);
             }
         }
     }
