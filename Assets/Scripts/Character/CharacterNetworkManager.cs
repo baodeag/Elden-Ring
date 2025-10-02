@@ -22,6 +22,10 @@ namespace baodeag
         public float networkRotationSmoothTime = 0.1f;
 
         [Header("Animator")]
+        public NetworkVariable<bool> isMoving = new NetworkVariable<bool>
+            (false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
         public NetworkVariable<float> horizontalMovement = new NetworkVariable<float>
             (0,
             NetworkVariableReadPermission.Everyone,
@@ -128,6 +132,11 @@ namespace baodeag
         public void OnIsChargingAttackChanged(bool oldStatus, bool newStatus)
         {
             character.animator.SetBool("isChargingAttack", isChargingAttack.Value);
+        }
+
+        public void OnIsMovingChanged(bool oldStatus, bool newStatus)
+        {
+            character.animator.SetBool("isMoving", isMoving.Value);
         }
 
         //A server rps is a function called from a client, to the server(in our case the host)
