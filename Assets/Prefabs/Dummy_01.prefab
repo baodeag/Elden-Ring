@@ -1842,8 +1842,9 @@ GameObject:
   - component: {fileID: 8851394947276124705}
   - component: {fileID: 8926681642944794537}
   - component: {fileID: 8970646509520337143}
+  - component: {fileID: -3812401420841702768}
+  - component: {fileID: -8861859218723465713}
   - component: {fileID: -194083055525034274}
-  - component: {fileID: 3661400445934577448}
   - component: {fileID: 2288849307475993896}
   - component: {fileID: 7097257383368532276}
   - component: {fileID: 6760839679122582330}
@@ -1851,7 +1852,6 @@ GameObject:
   - component: {fileID: 1555292016712692113}
   - component: {fileID: 185331414850979193}
   - component: {fileID: 2507102652227460325}
-  - component: {fileID: -3812401420841702768}
   m_Layer: 6
   m_Name: Dummy_01
   m_TagString: Untagged
@@ -2032,7 +2032,7 @@ MonoBehaviour:
   fallStartYVelocity: -5
   inAirTimer: 0
   isRolling: 0
---- !u!114 &-194083055525034274
+--- !u!114 &-3812401420841702768
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2041,13 +2041,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 6944900050668453464}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77eddea6ec0f1344b8b5ae20ffd6d1a9, type: 3}
+  m_Script: {fileID: 11500000, guid: 5eded97660bf7034e8ef3a1e805e4d85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  staminaRegenerationAmount: 2
-  staminaRegenerationTimer: 0
-  staminaRegenerationDelay: 2
---- !u!114 &3661400445934577448
+  ShowTopMostFoldoutHeaderGroup: 1
+  lastAttackAnimationPerformed: 
+  currentTarget: {fileID: 0}
+  currentAttackType: 0
+  lockOnTransform: {fileID: 434109110450267810}
+  viewableAngle: 0
+  targetsDirection: {x: 0, y: 0, z: 0}
+  detectionRadius: 15
+  minimumFOV: -35
+  maximumFOV: 35
+--- !u!114 &-8861859218723465713
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2056,7 +2063,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6944900050668453464}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 420c80b61cbc6f24286d5f144ea52150, type: 3}
+  m_Script: {fileID: 11500000, guid: f2a048a20067eac4db73d60ab375a718, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   lastDamageAnimationPlayed: 
@@ -2072,6 +2079,21 @@ MonoBehaviour:
   backward_Medium_Damage: []
   left_Medium_Damage: []
   right_Medium_Damage: []
+--- !u!114 &-194083055525034274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6944900050668453464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77eddea6ec0f1344b8b5ae20ffd6d1a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  staminaRegenerationAmount: 2
+  staminaRegenerationTimer: 0
+  staminaRegenerationDelay: 2
 --- !u!114 &2288849307475993896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2270,26 +2292,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &-3812401420841702768
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6944900050668453464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eded97660bf7034e8ef3a1e805e4d85, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
-  lastAttackAnimationPerformed: 
-  currentTarget: {fileID: 0}
-  currentAttackType: 0
-  lockOnTransform: {fileID: 434109110450267810}
-  detectionRadius: 15
-  minimumDetectionAngle: -35
-  maximumDetectionAngle: 35
 --- !u!1 &7019962085677612842
 GameObject:
   m_ObjectHideFlags: 0

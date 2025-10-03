@@ -4,10 +4,14 @@ namespace baodeag
 {
     public class AICharacterCombatManager : CharacterCombatManager
     {
+        [Header("Target Information")]
+        public float viewableAngle;
+        public Vector3 targetsDirection;
+
         [Header("Detection")]
         [SerializeField] float detectionRadius = 15;
-        [SerializeField] float minimumDetectionAngle = -35;
-        [SerializeField] float maximumDetectionAngle = 35;
+        public float minimumFOV = -35;
+        public float maximumFOV = 35;
 
         public void FindATargetViaLineOfSight(AICharacterManager aiCharacter)
         {
@@ -32,23 +36,45 @@ namespace baodeag
                 if (WorldUtilityManager.Instance.CanIDamageThisTarget(aiCharacter.characterGroup, targetCharacter.characterGroup))
                 {
                     Vector3 targetsDirection = targetCharacter.transform.position - aiCharacter.transform.position;
-                    float viewableAngle = Vector3.Angle(targetsDirection, aiCharacter.transform.forward);
+                    float angleOfPotentialTarget = Vector3.Angle(targetsDirection, aiCharacter.transform.forward);
 
-                    if (viewableAngle > minimumDetectionAngle && viewableAngle < maximumDetectionAngle)
+                    if (angleOfPotentialTarget > minimumFOV && angleOfPotentialTarget < maximumFOV)
                     {
                         if (Physics.Linecast(aiCharacter.characterCombatManager.lockOnTransform.position, 
                             targetCharacter.characterCombatManager.lockOnTransform.position, 
                             WorldUtilityManager.Instance.GetEnviroLayers()))
                         {
                             Debug.DrawLine(aiCharacter.characterCombatManager.lockOnTransform.position, targetCharacter.characterCombatManager.lockOnTransform.position);
-                            Debug.Log("Blocked");
                         }
                         else
                         {
+                            targetsDirection = targetCharacter.transform.position - transform.position;
+                            viewableAngle = WorldUtilityManager.Instance.GetAngleOfTarget(transform, targetsDirection);
+
                             aiCharacter.characterCombatManager.SetTarget(targetCharacter);
+                            PivotTowardsTarget(aiCharacter);
                         }
                     }
                 }
+            }
+        }
+
+        public void PivotTowardsTarget(AICharacterManager aiCharacter)
+        {
+            if (aiCharacter.isPerformingAction)
+                return;
+
+            if (viewableAngle >= 20 && viewableAngle <= 160)
+            {
+                aiCharacter.characterAnimatorManager.PlayTargetActionAnimation("Turn_Right_90", true);
+            }
+            else if (viewableAngle <= -20 && viewableAngle >= -160)
+            {
+                aiCharacter.characterAnimatorManager.PlayTargetActionAnimation("Turn_Left_90", true);
+            }
+            else if (viewableAngle > 160 || viewableAngle < -160)
+            {
+                aiCharacter.characterAnimatorManager.PlayTargetActionAnimation("Turn_Right_180", true);
             }
         }
     }

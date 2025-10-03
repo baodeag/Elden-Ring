@@ -41,7 +41,11 @@ namespace baodeag
         {
             base.FixedUpdate();
 
-            ProcessStateMachine();
+            if (IsOwner)
+            {
+                ProcessStateMachine();
+            }
+
         }
 
         private void ProcessStateMachine()
@@ -56,6 +60,12 @@ namespace baodeag
             //the position/rotation should be reset only after the state machine has processed its tick
             navMeshAgent.transform.localPosition = Vector3.zero;
             navMeshAgent.transform.localRotation = Quaternion.identity;
+
+            if (aiCharacterCombatManager.currentTarget != null)
+            {
+                aiCharacterCombatManager.targetsDirection = aiCharacterCombatManager.currentTarget.transform.position - transform.position;
+                aiCharacterCombatManager.viewableAngle = WorldUtilityManager.Instance.GetAngleOfTarget(transform, aiCharacterCombatManager.targetsDirection);
+            }
 
             if (navMeshAgent.enabled)
             {
