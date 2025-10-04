@@ -25042,9 +25042,13 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2074409603879652554, guid: 6f10c3af162641047af89c12c3c627b8, type: 3}
+      propertyPath: 'aiCharacters.Array.data[0]'
+      value: 
+      objectReference: {fileID: 3379299002513751279, guid: a6efe08d9ab63384c93e4250fd427089, type: 3}
+    - target: {fileID: 2074409603879652554, guid: 6f10c3af162641047af89c12c3c627b8, type: 3}
       propertyPath: 'aiCharacters.Array.data[1]'
       value: 
-      objectReference: {fileID: 6944900050668453464, guid: 8ecabc9b67df18848836cacb4bc9058b, type: 3}
+      objectReference: {fileID: 6944900050668453464, guid: fa5635c953acd49479ed91b42d7d4af0, type: 3}
     - target: {fileID: 8655111693140369464, guid: 6f10c3af162641047af89c12c3c627b8, type: 3}
       propertyPath: m_Name
       value: World AI Manager

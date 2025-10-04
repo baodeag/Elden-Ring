@@ -5264,6 +5264,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 968115240157817716, guid: 74ed47cd96dcc0d429366ca71548588d, type: 3}
+      propertyPath: NetworkConfig.Prefabs.NetworkPrefabsLists.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 968115240157817716, guid: 74ed47cd96dcc0d429366ca71548588d, type: 3}
+      propertyPath: 'NetworkConfig.Prefabs.NetworkPrefabsLists.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: b6214a5b5642e634b935a9e5522569cf, type: 2}
+    - target: {fileID: 968115240157817716, guid: 74ed47cd96dcc0d429366ca71548588d, type: 3}
+      propertyPath: 'NetworkConfig.Prefabs.NetworkPrefabsLists.Array.data[1]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 2b43f99643e459d47bc6580dcd243c67, type: 2}
     - target: {fileID: 2352044073367267216, guid: 74ed47cd96dcc0d429366ca71548588d, type: 3}
       propertyPath: m_Name
       value: World Network Manager
