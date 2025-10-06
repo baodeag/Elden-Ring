@@ -21,7 +21,7 @@ namespace baodeag
         protected bool hasRolledForComboChance = false;
 
         [Header("Engagement Distance")]
-        [SerializeField] protected float maximumEngagementDistance = 5;
+        [SerializeField] public float maximumEngagementDistance = 5;
 
         public override AIState Tick(AICharacterManager aiCharacter)
         {
@@ -37,6 +37,8 @@ namespace baodeag
                     aiCharacter.aiCharacterCombatManager.PivotTowardsTarget(aiCharacter);
             }
 
+            aiCharacter.aiCharacterCombatManager.RotateTowardsAgent(aiCharacter);
+
             if (aiCharacter.aiCharacterCombatManager.currentTarget == null)
                 return SwitchState(aiCharacter, aiCharacter.idle);
 
@@ -46,7 +48,8 @@ namespace baodeag
             }
             else
             {
-
+                aiCharacter.attack.currentAttack = chosenAttack;
+                return SwitchState(aiCharacter, aiCharacter.attack);
             }
 
             if (aiCharacter.aiCharacterCombatManager.distanceFromTarget > maximumEngagementDistance)
@@ -63,7 +66,7 @@ namespace baodeag
         {
             potentialAttacks = new List<AICharacterAttackAction>();
 
-            foreach (var potentialAttack in potentialAttacks)
+            foreach (var potentialAttack in aiCharacterAttacks)
             {
                 //if we are too close for this attack, check the next
                 if (potentialAttack.minimumAttackDistance > aiCharacter.aiCharacterCombatManager.distanceFromTarget)
@@ -104,6 +107,7 @@ namespace baodeag
                     chosenAttack = attack;
                     previousAttack = chosenAttack;
                     hasAttack = true;
+                    return;
                 }
             }
 

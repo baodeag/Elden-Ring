@@ -18,6 +18,10 @@ namespace baodeag
         [Header("States")]
         public IdleState idle;
         public PursueTargetState pursueTarget;
+        public CombatStanceState combatStance;
+        public AttackState attack;
+
+
 
 
         protected override void Awake()
@@ -35,6 +39,13 @@ namespace baodeag
             pursueTarget = Instantiate(pursueTarget);
 
             currentState = idle;
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            aiCharacterCombatManager.HandleActionRecovery(this);
         }
 
         protected override void FixedUpdate()

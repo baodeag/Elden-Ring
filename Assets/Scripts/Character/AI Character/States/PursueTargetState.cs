@@ -25,6 +25,12 @@ namespace baodeag
 
             aiCharacter.aiCharacterLocomotionManager.RotateTowardsAgent(aiCharacter);
 
+            //if (aiCharacter.aiCharacterCombatManager.distanceFromTarget <= aiCharacter.combatStance.maximumEngagementDistance)
+            //    return SwitchState(aiCharacter, aiCharacter.combatStance);
+
+            if (aiCharacter.aiCharacterCombatManager.distanceFromTarget <= aiCharacter.navMeshAgent.stoppingDistance)
+                return SwitchState(aiCharacter, aiCharacter.combatStance);
+
             //aiCharacter.navMeshAgent.SetDestination(aiCharacter.aiCharacterCombatManager.currentTarget.transform.position);
 
             NavMeshPath path = new NavMeshPath();
