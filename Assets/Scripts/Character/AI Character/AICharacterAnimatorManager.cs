@@ -17,7 +17,7 @@ namespace baodeag
             //host
             if (aiCharacter.IsOwner)
             {
-                if (!aiCharacter.isGrounded)
+                if (!aiCharacter.characterLocomotionManager.isGrounded)
                     return;
 
                 Vector3 velocity = aiCharacter.animator.deltaPosition;
@@ -28,7 +28,7 @@ namespace baodeag
             //client
             else
             {
-                if (!aiCharacter.isGrounded)
+                if (!aiCharacter.characterLocomotionManager.isGrounded)
                     return;
 
                 Vector3 velocity = aiCharacter.animator.deltaPosition;

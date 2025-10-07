@@ -12,6 +12,9 @@ namespace baodeag
         int vertical;
         int horizontal;
 
+        [Header("Flags")]
+        public bool applyRootMotion = false;
+
         [Header("Damage Animation")]
         public string lastDamageAnimationPlayed;
 
@@ -143,15 +146,15 @@ namespace baodeag
             bool canRotate = false, 
             bool canMove = false)
         {
-            character.applyRootMotion = applyRootMotion;
+            this.applyRootMotion = applyRootMotion;
             character.animator.CrossFade(targetAnimation, 0.2f);
             //can be used to stop char from attempting other actions
             //for example, if you get damaged, and begin performing the damage animation
             //the flag will turn true if you are stunned
             //we can then check for this before attempting other actions
             character.isPerformingAction = isPerformingAction;
-            character.canRotate = canRotate;
-            character.canMove = canMove;
+            character.characterLocomotionManager.canRotate = canRotate;
+            character.characterLocomotionManager.canMove = canMove;
 
             //tell the server/host we played an animation, and to play that animation on all clients
             character.characterNetworkManager.NotifyTheServerOfActionAnimationServerRpc(
@@ -171,11 +174,11 @@ namespace baodeag
             Debug.Log("Playing animation: " + targetAnimation);
             character.characterCombatManager.currentAttackType = attackType;
             character.characterCombatManager.lastAttackAnimationPerformed = targetAnimation;
-            character.applyRootMotion = applyRootMotion;
+            character.characterAnimatorManager.applyRootMotion = applyRootMotion;
             character.animator.CrossFade(targetAnimation, 0.2f);
             character.isPerformingAction = isPerformingAction;
-            character.canRotate = canRotate;
-            character.canMove = canMove;
+            character.characterLocomotionManager.canRotate = canRotate;
+            character.characterLocomotionManager.canMove = canMove;
 
             //tell the server/host we played an animation, and to play that animation on all clients
             character.characterNetworkManager.NotifyTheServerOfAttackActionAnimationServerRpc(

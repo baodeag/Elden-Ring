@@ -7,9 +7,9 @@ namespace baodeag
         CharacterManager character;
 
         [Header("Ground Check & Jumping")]
-        [SerializeField] protected float gravityForce = -5.55f; 
+        [SerializeField] protected float gravityForce = -5.55f;
         [SerializeField] LayerMask groundLayer;
-        [SerializeField] float groundCheckSphereRadius = 1; 
+        [SerializeField] float groundCheckSphereRadius = 1;
         [SerializeField] protected Vector3 yVelocity; //the force at which our character is pulled up or down (jumping/falling)
         [SerializeField] protected float groundedYVelocity = -20; //the force at which our character is sticking to the ground whilist they arr grounded
         [SerializeField] protected float fallStartYVelocity = -5; //the force at which our character starts to fall when they become ungrounded
@@ -18,6 +18,9 @@ namespace baodeag
 
         [Header("Flags")]
         public bool isRolling = false;
+        public bool canRotate = true;
+        public bool canMove = true;
+        public bool isGrounded = true;
 
         protected virtual void Awake()
         {
@@ -28,10 +31,10 @@ namespace baodeag
         {
             HandleGroundCheck();
 
-            if (character.isGrounded)
+            if (character.characterLocomotionManager.isGrounded)
             {
                 //if we are not attempting to jump or move around
-                if(yVelocity.y < 0)
+                if (yVelocity.y < 0)
                 {
                     inAirTimer = 0;
                     fallingVelocityHasBeenSet = false;
@@ -41,7 +44,7 @@ namespace baodeag
             else
             {
                 //if we are not jumping and our falling velocity has not been set
-                if(!character.characterNetworkManager.isJumping.Value && !fallingVelocityHasBeenSet)
+                if (!character.characterNetworkManager.isJumping.Value && !fallingVelocityHasBeenSet)
                 {
                     fallingVelocityHasBeenSet = true;
                     yVelocity.y = fallStartYVelocity;
@@ -57,13 +60,23 @@ namespace baodeag
 
         protected void HandleGroundCheck()
         {
-            character.isGrounded = Physics.CheckSphere(character.transform.position, groundCheckSphereRadius, groundLayer);
+            isGrounded = Physics.CheckSphere(character.transform.position, groundCheckSphereRadius, groundLayer);
         }
 
         //draws our ground check sphere in editor
         protected void OnDrawGizmosSelected()
         {
             //Gizmos.DrawSphere(character.transform.position, groundCheckSphereRadius);
+        }
+
+        public void EnableCanRotate()
+        {
+            canRotate = true;
+        }
+
+        public void DisableCanRotate()
+        {
+            canRotate = false;
         }
     }
 }

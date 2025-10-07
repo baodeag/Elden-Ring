@@ -28,10 +28,6 @@ namespace baodeag
 
         [Header("Flags")]
         public bool isPerformingAction = false;
-        public bool isGrounded = true;
-        public bool applyRootMotion = false;
-        public bool canRotate = true;
-        public bool canMove = true;
 
         protected virtual void Awake()
         {
@@ -54,7 +50,7 @@ namespace baodeag
 
         protected virtual void Update()
         {
-            animator.SetBool("IsGrounded", isGrounded);
+            animator.SetBool("IsGrounded", characterLocomotionManager.isGrounded);
 
             //if this char is being controlled by the local player, update the networked position
             if (IsOwner)

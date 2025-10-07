@@ -91,7 +91,7 @@ namespace baodeag
         {
             GetMovementValues();
 
-            if(!player.canMove)
+            if(!player.characterLocomotionManager.canMove)
                 return;
 
             // our movement direction is relative to our camera and our movement input
@@ -131,7 +131,7 @@ namespace baodeag
 
         private void HandleFreeFallMovement()
         {
-            if (!player.isGrounded)
+            if (!player.characterLocomotionManager.isGrounded)
             {
                 Vector3 freeFallDirection;
 
@@ -148,7 +148,7 @@ namespace baodeag
             if (player.isDead.Value)
                 return;
 
-            if (!player.canRotate)
+            if (!player.characterLocomotionManager.canRotate)
                 return;
 
             if (player.playerNetworkManager.isLockedOn.Value)
@@ -279,7 +279,7 @@ namespace baodeag
                 return;
 
             //if we are not grounded, we cannot jump
-            if (!player.isGrounded)
+            if (!player.characterLocomotionManager.isGrounded)
                 return;
 
             //if we are two handling a weapon, play two handed jump animation, else play one handed jump animation
