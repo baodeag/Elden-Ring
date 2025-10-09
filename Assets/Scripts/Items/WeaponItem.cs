@@ -38,5 +38,8 @@ namespace baodeag
         [Header("Actions")]
         public WeaponItemAction oh_RB_Action; //one hand right bumper action
         public WeaponItemAction oh_RT_Action; //one hand right trigger action
+
+        [Header("Whooshes")]
+        public AudioClip[] whooshes;
     }
 }
