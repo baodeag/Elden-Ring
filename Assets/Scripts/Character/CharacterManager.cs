@@ -94,6 +94,7 @@ namespace baodeag
         {
             base.OnNetworkSpawn();
 
+            animator.SetBool("isMoving", characterNetworkManager.isMoving.Value);
             characterNetworkManager.isMoving.OnValueChanged += characterNetworkManager.OnIsMovingChanged;
         }
 
