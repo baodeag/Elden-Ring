@@ -16,6 +16,7 @@ namespace baodeag
         [Header("Time Played")]
         public float secondsPlayed;
 
+
         // we can only save data from basic variables types (int, float, string, bool)
         [Header("World Coordinates")]
         public float xPosition;
@@ -29,5 +30,15 @@ namespace baodeag
         [Header("Stats")]
         public int vitality;
         public int endurance;
+
+        [Header("Boss")]
+        public SerializableDictionary<int, bool> bossesAwakened; //the int is the boss ID, the bool is the awakened state
+        public SerializableDictionary<int, bool> bossesDefeated; //the int is the boss ID, the bool is the defeated state
+
+        public CharacterSaveData()
+        {
+            bossesAwakened = new SerializableDictionary<int, bool>();
+            bossesDefeated = new SerializableDictionary<int, bool>();
+        }
     }
 }

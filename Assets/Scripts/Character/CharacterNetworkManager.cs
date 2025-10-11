@@ -7,6 +7,12 @@ namespace baodeag
     {
         CharacterManager character;
 
+        [Header("Active")]
+        public NetworkVariable<bool> isActive = new NetworkVariable<bool>
+            (true,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+
         [Header("Position")]
         // if you owner this object, you can write to this variable
         public NetworkVariable<Vector3> networkPosition = new NetworkVariable<Vector3>
@@ -137,6 +143,11 @@ namespace baodeag
         public void OnIsMovingChanged(bool oldStatus, bool newStatus)
         {
             character.animator.SetBool("isMoving", isMoving.Value);
+        }
+
+        public virtual void OnIsActiveChanged(bool oldStatus, bool newStatus)
+        {
+            gameObject.SetActive(isActive.Value);
         }
 
         //A server rps is a function called from a client, to the server(in our case the host)
