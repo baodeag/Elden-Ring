@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 043a9bbfd7eba2b4ea869d7b06f60124
+guid: 56f6e7debd85df04fb39c4da78801845
 ModelImporter:
-  serializedVersion: 21300
+  serializedVersion: 22200
   internalIDToNameTable:
   - first:
-      74: -81773759949406527
-    second: core_main_idle_01
+      74: 1827226128182048838
+    second: Take 001
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -17,213 +17,29 @@ ModelImporter:
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
-    removeConstantScaleCurves: 1
+    removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
-    animationImportWarnings: 
+    animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'upperarm_r' has translation animation that
+      will be discarded.\n\t'hand_r' has translation animation that will be discarded.\n\t'neck_01'
+      has translation animation that will be discarded.\n\t'foot_l' has translation
+      animation that will be discarded.\n\t'ball_l' has translation animation that
+      will be discarded.\n\t'foot_r' has translation animation that will be discarded.\n\t'ball_r'
+      has translation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 3
+    animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations:
-    - serializedVersion: 16
-      name: core_main_idle_01
-      takeName: unarmed_main_idle_01
-      internalID: 0
-      firstFrame: 0
-      lastFrame: 80
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 0
-      loopBlendOrientation: 1
-      loopBlendPositionY: 1
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 1
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask:
-      - path: 
-        weight: 1
-      - path: Root
-        weight: 1
-      - path: Root/Fx_Attachment
-        weight: 1
-      - path: Root/Hips
-        weight: 1
-      - path: Root/Hips/Hips_Attachment
-        weight: 1
-      - path: Root/Hips/Loincloth_Back_01
-        weight: 1
-      - path: Root/Hips/Loincloth_Back_01/Loincloth_Back_02
-        weight: 1
-      - path: Root/Hips/Loincloth_Back_01/Loincloth_Back_02/Loincloth_Back_03
-        weight: 1
-      - path: Root/Hips/Loincloth_Front_01
-        weight: 1
-      - path: Root/Hips/Loincloth_Front_01/Loincloth_Front_02
-        weight: 1
-      - path: Root/Hips/Loincloth_Front_01/Loincloth_Front_02/Loincloth_Front_03
-        weight: 1
-      - path: Root/Hips/Spine_01
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Back_Attachment
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Back_Attachment/Cape_Attachment_01
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Back_Attachment/Cape_Attachment_01/Cape_Attachment_02
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Back_Attachment/Cape_Attachment_01/Cape_Attachment_02/Cape_Attachment_03
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Back_Attachment/Cape_Attachment_01/Cape_Attachment_02/Cape_Attachment_03/Cape_Attachment_04
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Chest_Attachment
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_Attachment_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Elbow_Attachment_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Finger_01_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Finger_01_L/Finger_02_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Finger_01_L/Finger_02_L/Finger_03_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Finger_01_L/Finger_02_L/Finger_03_L/Finger_04_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/IndexFinger_01_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/IndexFinger_01_L/IndexFinger_02_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/IndexFinger_01_L/IndexFinger_02_L/IndexFinger_03_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/IndexFinger_01_L/IndexFinger_02_L/IndexFinger_03_L/IndexFinger_04_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Prop_Attachment_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Shield_Attachment_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Thumb_01_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Thumb_01_L/Thumb_02_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Thumb_01_L/Thumb_02_L/Thumb_03_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Tome_Attachment_L
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_Attachment_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Elbow_Attachment_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Finger_01_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Finger_01_R/Finger_02_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Finger_01_R/Finger_02_R/Finger_03_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Finger_01_R/Finger_02_R/Finger_03_R/Finger_04_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/IndexFinger_01_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/IndexFinger_01_R/IndexFinger_02_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/IndexFinger_01_R/IndexFinger_02_R/IndexFinger_03_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/IndexFinger_01_R/IndexFinger_02_R/IndexFinger_03_R/IndexFinger_04_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Prop_Attachment_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Shield_Attachment_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Thumb_01_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Thumb_01_R/Thumb_02_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Thumb_01_R/Thumb_02_R/Thumb_03_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Tome_Attachment_R
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Neck
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Neck/Head
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Neck/Head/Eyebrows
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Neck/Head/Eyes
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Spine_03/Neck/Head/Head_Attachment
-        weight: 1
-      - path: Root/Hips/Spine_01/Spine_02/Target
-        weight: 1
-      - path: Root/Hips/UpperLeg_L
-        weight: 1
-      - path: Root/Hips/UpperLeg_L/LowerLeg_L
-        weight: 1
-      - path: Root/Hips/UpperLeg_L/LowerLeg_L/Ankle_L
-        weight: 1
-      - path: Root/Hips/UpperLeg_L/LowerLeg_L/Ankle_L/Ball_L
-        weight: 1
-      - path: Root/Hips/UpperLeg_L/LowerLeg_L/Ankle_L/Ball_L/Toes_L
-        weight: 1
-      - path: Root/Hips/UpperLeg_L/LowerLeg_L/Knee_Attachment_L
-        weight: 1
-      - path: Root/Hips/UpperLeg_R
-        weight: 1
-      - path: Root/Hips/UpperLeg_R/LowerLeg_R
-        weight: 1
-      - path: Root/Hips/UpperLeg_R/LowerLeg_R/Ankle_R
-        weight: 1
-      - path: Root/Hips/UpperLeg_R/LowerLeg_R/Ankle_R/Ball_R
-        weight: 1
-      - path: Root/Hips/UpperLeg_R/LowerLeg_R/Ankle_R/Ball_R/Toes_R
-        weight: 1
-      - path: Root/Hips/UpperLeg_R/LowerLeg_R/Knee_Attachment_R
-        weight: 1
-      - path: Root/Prop_Attachment_Extra1
-        weight: 1
-      - path: Root/Prop_Attachment_Extra2
-        weight: 1
-      maskType: 0
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+    clipAnimations: []
     isReadable: 0
   meshes:
     lODScreenPercentages: []
@@ -232,11 +48,12 @@ ModelImporter:
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
+    importPhysicalCameras: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
     importLights: 1
-    nodeNameCollisionStrategy: 1
+    nodeNameCollisionStrategy: 0
     fileIdsGeneration: 2
     swapUVChannels: 0
     generateSecondaryUV: 0
@@ -259,6 +76,7 @@ ModelImporter:
     secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
+    strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -916,7 +734,8 @@ ModelImporter:
   humanoidOversampling: 1
   avatarSetup: 2
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
-  remapMaterialsIfMaterialImportModeIsNone: 0
+  importBlendShapeDeformPercent: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
   additionalBone: 0
   userData: 
   assetBundleName: 
