@@ -38,6 +38,9 @@ namespace baodeag
 
         public override void ProcessEffect(CharacterManager character)
         {
+            if (character.characterNetworkManager.isInvulnerable.Value)
+                return;
+
             base.ProcessEffect(character);
 
             //if the character is dead, no additional damage effect should be processed

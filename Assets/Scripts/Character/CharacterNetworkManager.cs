@@ -51,7 +51,11 @@ namespace baodeag
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
 
-        [Header("Flags")]
+        [Header("Flag")]
+        public NetworkVariable<bool> isInvulnerable = new NetworkVariable<bool>
+            (false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
         public NetworkVariable<bool> isLockedOn = new NetworkVariable<bool>
             (false,
             NetworkVariableReadPermission.Everyone,
@@ -96,6 +100,9 @@ namespace baodeag
             (1,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
+
+        
+
 
         protected virtual void Awake()
         {

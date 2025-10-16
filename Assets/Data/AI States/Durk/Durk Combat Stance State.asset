@@ -10,11 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 212e6cbc83a1ea54588a056213f0fbc5, type: 3}
-  m_Name: Combat Stance State
+  m_Name: Durk Combat Stance State
   m_EditorClassIdentifier: 
   aiCharacterAttacks:
-  - {fileID: 11400000, guid: dfba3f0a36e76c94c81440bec8037005, type: 2}
-  - {fileID: 11400000, guid: 1d825cd212a17ac4e9c7449398ead4ca, type: 2}
+  - {fileID: 11400000, guid: 32c9c2e01da57f74597b9b505b7a8a1f, type: 2}
+  - {fileID: 11400000, guid: 9e073ce906b64bb429b085f68507c25e, type: 2}
+  - {fileID: 11400000, guid: efc01ccac01b6724eb36e3a50a6406e0, type: 2}
+  potentialAttacks: []
+  chosenAttack: {fileID: 11400000, guid: 9e073ce906b64bb429b085f68507c25e, type: 2}
+  previousAttack: {fileID: 11400000, guid: 9e073ce906b64bb429b085f68507c25e, type: 2}
   canPerformCombo: 0
   chanceToPerformCombo: 25
+  enablePivot: 0
   maximumEngagementDistance: 5
