@@ -34,5 +34,21 @@ namespace baodeag
             int index = Random.Range(0, array.Length);
             return array[index];
         }
+
+        /*
+        public AudioClip ChooseRandomFootStepSoundBasedOnGround(GameObject steppedOnObject, CharacterManager character)
+        {
+            if (steppedOnObject.tag == "Dirt")
+            {
+                return ChooseRandomSFXFromArray(character.characterSoundFXManager.footStepsDirt);
+            }
+            else if (steppedOnObject.tag == "Stone")
+            {
+                return ChooseRandomSFXFromArray(character.characterSoundFXManager.footStepsStone);
+            }
+
+            return null;
+        }
+        */
     }
 }

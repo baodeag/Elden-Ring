@@ -86,7 +86,7 @@ namespace baodeag
             AudioClip physicalDamageSFX = WorldSoundFXManager.instance.ChooseRandomSFXFromArray(WorldSoundFXManager.instance.physicalDamageSFX);
 
             character.characterSoundFXManager.PlaySoundFX(physicalDamageSFX);
-            character.characterSoundFXManager.PlayDamageGrunt();
+            character.characterSoundFXManager.PlayDamageGruntSoundFX();
         }
 
         private void PLayDirectionalBasedDamageAnimation(CharacterManager character)

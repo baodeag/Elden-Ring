@@ -12,6 +12,9 @@ namespace baodeag
         [Header("Attack Grunts")]
         [SerializeField] protected AudioClip[] attackGrunts;
 
+        [Header("Foot Steps")]
+        [SerializeField] protected AudioClip[] footSteps;
+
         protected virtual void Awake()
         {
             audioSource = GetComponent<AudioSource>();
@@ -33,16 +36,22 @@ namespace baodeag
             audioSource.PlayOneShot(WorldSoundFXManager.instance.rollSFX);
         }
 
-        public virtual void PlayDamageGrunt()
+        public virtual void PlayDamageGruntSoundFX()
         {
             if (damageGrunts.Length >0)
                 PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(damageGrunts));
         }
 
-        public virtual void PlayAttackGrunt()
+        public virtual void PlayAttackGruntSoundFX()
         {
             if (attackGrunts.Length > 0)
                 PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(attackGrunts));
+        }
+
+        public virtual void PlayFootStepSoundFX()
+        {
+            if (footSteps.Length > 0)
+                PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(footSteps));
         }
     }
 }
