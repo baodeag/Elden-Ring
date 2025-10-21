@@ -1509,6 +1509,7 @@ MonoBehaviour:
   characterLocomotionManager: {fileID: 0}
   characterGroup: 1
   isPerformingAction: 0
+  characterName: Durk, The Troll
   aiCharacterCombatManager: {fileID: 0}
   aiCharacterNetworkManager: {fileID: 0}
   aiCharacterLocomotionManager: {fileID: 0}
@@ -1519,10 +1520,16 @@ MonoBehaviour:
   combatStance: {fileID: 11400000, guid: 4e842838076879547a9601a56597dba2, type: 2}
   attack: {fileID: 11400000, guid: 19dc1d2b3a58b724ba0e5dcdc4907045, type: 2}
   bossID: 0
-  hasBeenDefeated: 0
-  hasBeenAwakened: 0
+  bossFightIsActive:
+    m_InternalValue: 0
+  hasBeenAwakened:
+    m_InternalValue: 0
+  hasBeenDefeated:
+    m_InternalValue: 0
   fogWalls: []
-  wakeBossUp: 0
+  sleepAnimation: Sleep_01
+  awakenAnimation: Awaken_01
+  sleepState: {fileID: 11400000, guid: ac7604d23513bcb4f8d06458c46d5055, type: 2}
   durkSoundFXManager: {fileID: 0}
   durkCombatManager: {fileID: 0}
 --- !u!114 &3036703911948734755

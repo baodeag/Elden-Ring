@@ -27,6 +27,7 @@ namespace baodeag
                 instantiateGameObject.transform.position = transform.position;
                 instantiateGameObject.transform.rotation = transform.rotation;
                 instantiateGameObject.GetComponent<NetworkObject>().Spawn();
+                WorldAIManager.instance.AddCharacterToSpawnedCharacterList(instantiateGameObject.GetComponent<AICharacterManager>());
             }
         }
     }

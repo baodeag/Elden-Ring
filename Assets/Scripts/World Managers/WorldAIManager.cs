@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace baodeag
 {
@@ -13,7 +14,10 @@ namespace baodeag
 
         [Header("Characters")]
         [SerializeField] List<AICharacterSpawner> aiCharacterSpawners;
-        [SerializeField] List<GameObject> spawnedInCharacters;
+        [SerializeField] List<AICharacterManager> spawnedInCharacters;
+
+        [Header("Bosses")]
+        [SerializeField] List<AIBossCharacterManager> spawnedInBosses;
 
         private void Awake()
         {
@@ -34,6 +38,29 @@ namespace baodeag
                 aiCharacterSpawners.Add(aiCharacterSpawner);
                 aiCharacterSpawner.AttemptToSpawnCharacter();
             }
+        }
+
+        public void AddCharacterToSpawnedCharacterList(AICharacterManager character)
+        {
+            if (spawnedInCharacters.Contains(character))
+                return;
+
+            spawnedInCharacters.Add(character);
+
+            AIBossCharacterManager bossCharacter = character as AIBossCharacterManager;
+
+            if (bossCharacter != null)
+            {
+                if (spawnedInBosses.Contains(bossCharacter))
+                    return;
+
+                spawnedInBosses.Add(bossCharacter);
+            }
+        }
+
+        public AIBossCharacterManager GetBossCharacterByID(int ID)
+        {
+            return spawnedInBosses.FirstOrDefault(boss => boss.bossID == ID);
         }
 
         private void DespawnAllCharacters()

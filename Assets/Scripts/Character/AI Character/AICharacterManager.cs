@@ -5,6 +5,9 @@ namespace baodeag
 {
     public class AICharacterManager : CharacterManager
     {
+        [Header("Character Name")]
+        public string characterName = "";
+
         [HideInInspector] public AICharacterCombatManager aiCharacterCombatManager;
         [HideInInspector] public AICharacterNetworkManager aiCharacterNetworkManager;
         [HideInInspector] public AICharacterLocomotionManager aiCharacterLocomotionManager;
@@ -13,16 +16,13 @@ namespace baodeag
         public NavMeshAgent navMeshAgent;
 
         [Header("Current State")]
-        [SerializeField] AIState currentState;
+        [SerializeField] protected AIState currentState;
 
         [Header("States")]
         public IdleState idle;
         public PursueTargetState pursueTarget;
         public CombatStanceState combatStance;
         public AttackState attack;
-
-
-
 
         protected override void Awake()
         {
@@ -33,12 +33,18 @@ namespace baodeag
             aiCharacterLocomotionManager = GetComponent<AICharacterLocomotionManager>();
 
             navMeshAgent = GetComponentInChildren<NavMeshAgent>();
+        }
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
 
-            //use a copy of the so, so the original is not modified during runtime
-            idle = Instantiate(idle);
-            pursueTarget = Instantiate(pursueTarget);
+            if (IsOwner)
+            {
+                idle = Instantiate(idle);
+                pursueTarget = Instantiate(pursueTarget);
 
-            currentState = idle;
+                currentState = idle;
+            }
         }
 
         protected override void Update()
