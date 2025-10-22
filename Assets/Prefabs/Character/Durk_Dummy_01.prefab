@@ -464,7 +464,7 @@ PrefabInstance:
       addedObject: {fileID: 2491848401437140870}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5e2e82ae813632544b25afebba47e04b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4130981877687890164}
+      addedObject: {fileID: -2585492474382452133}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5e2e82ae813632544b25afebba47e04b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 373281659264686980}
@@ -1370,7 +1370,7 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &4130981877687890164
+--- !u!114 &-2585492474382452133
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1379,7 +1379,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6870958607174294266}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fbe27b87ad8add14da61546c606161cd, type: 3}
+  m_Script: {fileID: 11500000, guid: 41ac6a319acf64740818d355f5a84ff9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
@@ -1520,6 +1520,8 @@ MonoBehaviour:
   combatStance: {fileID: 11400000, guid: 4e842838076879547a9601a56597dba2, type: 2}
   attack: {fileID: 11400000, guid: 19dc1d2b3a58b724ba0e5dcdc4907045, type: 2}
   bossID: 0
+  bossIntroClip: {fileID: 8300000, guid: 2cb017acd7587e547b508854354b3471, type: 3}
+  bossBattleLoopClip: {fileID: 8300000, guid: e55c426f2c73cee43993a9c5d89e8a9b, type: 3}
   bossFightIsActive:
     m_InternalValue: 0
   hasBeenAwakened:
@@ -1529,6 +1531,9 @@ MonoBehaviour:
   fogWalls: []
   sleepAnimation: Sleep_01
   awakenAnimation: Awaken_01
+  minimumHealthPercentageToShift: 50
+  phaseShiftAnimation: Phase_Change_01
+  phase02CombatStanceState: {fileID: 11400000, guid: 011d9e479aa9d414dad08df37b1f56c9, type: 2}
   sleepState: {fileID: 11400000, guid: ac7604d23513bcb4f8d06458c46d5055, type: 2}
   durkSoundFXManager: {fileID: 0}
   durkCombatManager: {fileID: 0}

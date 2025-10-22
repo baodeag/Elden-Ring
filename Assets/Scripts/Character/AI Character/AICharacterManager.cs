@@ -42,9 +42,19 @@ namespace baodeag
             {
                 idle = Instantiate(idle);
                 pursueTarget = Instantiate(pursueTarget);
-
+                combatStance = Instantiate(combatStance);
+                attack = Instantiate(attack);
                 currentState = idle;
             }
+
+            aiCharacterNetworkManager.currentHealth.OnValueChanged += aiCharacterNetworkManager.CheckHP;
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            base.OnNetworkDespawn();
+
+            aiCharacterNetworkManager.currentHealth.OnValueChanged -= aiCharacterNetworkManager.CheckHP;
         }
 
         protected override void Update()

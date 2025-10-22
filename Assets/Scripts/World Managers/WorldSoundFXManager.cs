@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace baodeag
@@ -5,6 +6,10 @@ namespace baodeag
     public class WorldSoundFXManager : MonoBehaviour
     {
         public static WorldSoundFXManager instance;
+
+        [Header("Boss Track")]
+        [SerializeField] AudioSource bossIntroPlayer;
+        [SerializeField] AudioSource bossLoopPlayer;
 
         [Header("Damage Sounds")]
         public AudioClip[] physicalDamageSFX;
@@ -35,20 +40,35 @@ namespace baodeag
             return array[index];
         }
 
-        /*
-        public AudioClip ChooseRandomFootStepSoundBasedOnGround(GameObject steppedOnObject, CharacterManager character)
+        public void PlayBossTrack(AudioClip introTrack, AudioClip loopTrack)
         {
-            if (steppedOnObject.tag == "Dirt")
+            bossIntroPlayer.volume = 1;
+            bossIntroPlayer.clip = introTrack;
+            bossIntroPlayer.loop = false;
+            bossIntroPlayer.Play();
+
+            bossLoopPlayer.volume = 1;
+            bossLoopPlayer.clip = loopTrack;
+            bossLoopPlayer.loop = true;
+            bossLoopPlayer.PlayDelayed(bossIntroPlayer.clip.length);
+        }
+
+        public void StopBossMusic()
+        {
+            StartCoroutine(FadeOutBossMusicThenStop());
+        }
+
+        private IEnumerator FadeOutBossMusicThenStop()
+        {
+            while (bossLoopPlayer.volume > 0)
             {
-                return ChooseRandomSFXFromArray(character.characterSoundFXManager.footStepsDirt);
-            }
-            else if (steppedOnObject.tag == "Stone")
-            {
-                return ChooseRandomSFXFromArray(character.characterSoundFXManager.footStepsStone);
+                bossLoopPlayer.volume -= Time.deltaTime;
+                bossIntroPlayer.volume -= Time.deltaTime;
+                yield return null;
             }
 
-            return null;
+            bossIntroPlayer.Stop();
+            bossLoopPlayer.Stop();
         }
-        */
     }
 }
