@@ -186,15 +186,5 @@ namespace baodeag
                 targetAnimation,
                 applyRootMotion);
         }
-
-        public virtual void EnableCanDoCombo()
-        {
-
-        }
-
-        public virtual void DisableCanDoCombo()
-        {
-
-        }
     }
 }

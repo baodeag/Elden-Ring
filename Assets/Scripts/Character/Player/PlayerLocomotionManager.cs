@@ -91,7 +91,11 @@ namespace baodeag
         {
             GetMovementValues();
 
-            if(!player.characterLocomotionManager.canMove)
+            if (player.characterLocomotionManager.canMove || player.playerLocomotionManager.canRotate)
+            {
+                GetMovementValues();
+            }
+            if (!player.characterLocomotionManager.canMove)
                 return;
 
             // our movement direction is relative to our camera and our movement input
