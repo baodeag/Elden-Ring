@@ -15,7 +15,7 @@ namespace baodeag
 
         //change these to tweak camera behaviour
         [Header("Camera Settings")]
-        private float cameraSmoothSpeed = 1; //the bigger the value, the faster the camera will follow
+        [SerializeField] private float cameraSmoothSpeed = 1; //the bigger the value, the faster the camera will follow
         [SerializeField] float leftAndRightRotationSpeed = 220;
         [SerializeField] float upAndDownRotationSpeed = 220;
         [SerializeField] float minimumPivot = -30; //the lowest point you can look
@@ -79,7 +79,7 @@ namespace baodeag
                 (transform.position, 
                 player.transform.position, 
                 ref cameraVelocity, 
-                cameraSmoothSpeed * Time.deltaTime);
+                cameraSmoothSpeed);
             transform.position = targetCameraPosition;
         }
 

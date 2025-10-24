@@ -177,9 +177,27 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Que RB",
+                    "type": "Button",
+                    "id": "07e78f97-d183-4746-aa6e-8c4b832ad33c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "RT",
                     "type": "Button",
                     "id": "a2850ecd-84b3-4bef-91e5-bbf6c45eac97",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Que RT",
+                    "type": "Button",
+                    "id": "b5542682-14a5-49b0-8814-43df4a0900ef",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -285,6 +303,17 @@
                 },
                 {
                     "name": "",
+                    "id": "2840480c-9fac-408b-b43e-8bb86dcb834a",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Que RB",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "62f07b47-79bb-4d81-81cf-8e88b73b601c",
                     "path": "<Keyboard>/rightArrow",
                     "interactions": "",
@@ -313,6 +342,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "RT",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a4049ebe-7c85-43b5-a1cd-352ef79d7dde",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Que RT",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

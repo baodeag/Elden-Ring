@@ -42,7 +42,12 @@ namespace baodeag
         [SerializeField] bool RT_Input = false;
         [SerializeField] bool Hold_RT_Input = false;
 
-        
+        [Header("Qued Inputs")]
+        [SerializeField] private bool input_Que_Is_Active = false;
+        [SerializeField] float default_Que_Input_Time = 0.35f;
+        [SerializeField] float que_Input_Timer = 0;
+        [SerializeField] bool que_RB_Input = false;
+        [SerializeField] bool que_RT_Input = false;
 
         private void Awake()
         {
@@ -121,12 +126,18 @@ namespace baodeag
                 playerControls.PlayerActions.HoldRT.performed += i => Hold_RT_Input = true;
                 playerControls.PlayerActions.HoldRT.canceled += i => Hold_RT_Input = false;
 
+                //lock on
                 playerControls.PlayerActions.LockOn.performed += i => lockOn_Input = true;
                 playerControls.PlayerActions.SeekLeftLockOnTarget.performed += i => lockOn_Left_Input = true;
                 playerControls.PlayerActions.SeekRightLockOnTarget.performed += i => lockOn_Right_Input = true;
 
-                playerControls.PlayerActions.Sprint.performed += i => sprint_Input = true; // Get sprint input
-                playerControls.PlayerActions.Sprint.canceled += i => sprint_Input = false; // Get sprint input
+                //sprint
+                playerControls.PlayerActions.Sprint.performed += i => sprint_Input = true;
+                playerControls.PlayerActions.Sprint.canceled += i => sprint_Input = false;
+
+                //qued inputs
+                playerControls.PlayerActions.QueRB.performed += i => QueInput(ref que_RB_Input);
+                playerControls.PlayerActions.QueRT.performed += i => QueInput(ref que_RT_Input);
             }
 
             playerControls.Enable();
@@ -173,6 +184,7 @@ namespace baodeag
             HandleChargeRTInput();
             HandleSwitchRightWeaponInput();
             HandleSwitchLeftWeaponInput();
+            HandleQuedInput();
         }
 
         //Lock On
@@ -475,6 +487,54 @@ namespace baodeag
             {
                 switch_Left_Weapon_Input = false;
                 player.playerEquipmentManager.SwitchLeftWeapon();
+            }
+        }
+
+        private void QueInput(ref bool quedInput) //passing a ref we pass a specific bool, and not the value of that bool (true/false)
+        {
+            que_RB_Input = false;
+            que_RT_Input = false;
+
+            //check for ui window being open, if its open return
+            if (player.isPerformingAction || player.playerNetworkManager.isJumping.Value)
+            {
+                quedInput = true;
+                //attempt this new input for x amount of time
+                que_Input_Timer = default_Que_Input_Time;
+                input_Que_Is_Active = true;
+            }
+        }
+
+        private void ProcessQuedInput()
+        {
+            if (player.isDead.Value)
+                return;
+
+            if (que_RB_Input)
+                RB_Input = true;
+
+            if (que_RT_Input)
+                RT_Input = true;
+        }
+
+        private void HandleQuedInput()
+        {
+            if (input_Que_Is_Active)
+            {
+                //while the timer is above 0, keep attempting to press the input
+                if (que_Input_Timer > 0)
+                {
+                    que_Input_Timer -= Time.deltaTime;
+                    ProcessQuedInput();
+                }
+                else
+                {
+                    //reset the que
+                    que_RB_Input = false;
+                    que_RT_Input = false;
+                    input_Que_Is_Active = false;
+                    que_Input_Timer = 0;
+                }
             }
         }
     }
