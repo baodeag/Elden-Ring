@@ -22,6 +22,7 @@ namespace baodeag
         [HideInInspector] public CharacterCombatManager characterCombatManager;
         [HideInInspector] public CharacterSoundFXManager characterSoundFXManager;
         [HideInInspector] public CharacterLocomotionManager characterLocomotionManager;
+        [HideInInspector] public CharacterUIManager characterUIManager;
 
         [Header("Character Group")]
         public CharacterGroup characterGroup;
@@ -41,6 +42,7 @@ namespace baodeag
             characterCombatManager = GetComponent<CharacterCombatManager>();
             characterSoundFXManager = GetComponent<CharacterSoundFXManager>();
             characterLocomotionManager = GetComponent<CharacterLocomotionManager>();
+            characterUIManager = GetComponent<CharacterUIManager>();
         }
 
         protected virtual void Start()
@@ -88,6 +90,16 @@ namespace baodeag
             {
                 PlayerCamera.instance.HandleAllCameraActions();
             }
+        }
+
+        protected virtual void OnEnable()
+        {
+
+        }
+
+        protected virtual void OnDisable()
+        {
+
         }
 
         public override void OnNetworkSpawn()

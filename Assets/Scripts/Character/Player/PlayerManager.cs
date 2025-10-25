@@ -53,6 +53,16 @@ namespace baodeag
             PlayerCamera.instance.HandleAllCameraActions();
         }
 
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+        }
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+        }
+
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
@@ -76,6 +86,10 @@ namespace baodeag
 
                 
             }
+
+            //only update the floating hp bar if this character is not the local players character
+            if (!IsOwner)
+                characterNetworkManager.currentHealth.OnValueChanged += characterUIManager.OnHPChanged;
 
             //stats
             playerNetworkManager.currentHealth.OnValueChanged += playerNetworkManager.CheckHP;
@@ -117,6 +131,9 @@ namespace baodeag
                 playerNetworkManager.currentStamina.OnValueChanged -= PlayerUIManager.instance.playerUIHudManager.SetNewStaminaValue;
                 playerNetworkManager.currentStamina.OnValueChanged -= playerStatsManager.ResetStaminaRegenTimer;
             }
+
+            if (!IsOwner)
+                characterNetworkManager.currentHealth.OnValueChanged -= characterUIManager.OnHPChanged;
 
             //stats
             playerNetworkManager.currentHealth.OnValueChanged -= playerNetworkManager.CheckHP;
