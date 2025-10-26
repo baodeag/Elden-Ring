@@ -34,6 +34,7 @@ namespace baodeag
         [SerializeField] bool jump_Input = false;
         [SerializeField] bool switch_Right_Weapon_Input = false;
         [SerializeField] bool switch_Left_Weapon_Input = false;
+        [SerializeField] bool interaction_Input = false;
 
         [Header("Bumper Input")]
         [SerializeField] bool RB_Input = false;
@@ -117,6 +118,7 @@ namespace baodeag
                 playerControls.PlayerActions.Jump.performed += i => jump_Input = true;
                 playerControls.PlayerActions.SwitchRightWeapon.performed += i => switch_Right_Weapon_Input = true;
                 playerControls.PlayerActions.SwitchLeftWeapon.performed += i => switch_Left_Weapon_Input = true;
+                playerControls.PlayerActions.Interact.performed += i => interaction_Input = true;
 
                 //bumper
                 playerControls.PlayerActions.RB.performed += i => RB_Input = true; // Get RB input
@@ -184,6 +186,7 @@ namespace baodeag
             HandleChargeRTInput();
             HandleSwitchRightWeaponInput();
             HandleSwitchLeftWeaponInput();
+            HandleInteractionInput();
             HandleQuedInput();
         }
 
@@ -487,6 +490,16 @@ namespace baodeag
             {
                 switch_Left_Weapon_Input = false;
                 player.playerEquipmentManager.SwitchLeftWeapon();
+            }
+        }
+
+        private void HandleInteractionInput()
+        {
+            if (interaction_Input)
+            {
+                interaction_Input = false;
+
+                player.playerInteractionManager.Interact();
             }
         }
 

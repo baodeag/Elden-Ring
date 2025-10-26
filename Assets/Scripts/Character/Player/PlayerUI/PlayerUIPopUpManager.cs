@@ -6,6 +6,10 @@ namespace baodeag
 {
     public class PlayerUIPopUpManager : MonoBehaviour
     {
+        [Header("Message Pop Up")]
+        [SerializeField] TextMeshProUGUI popUpMessageText;
+        [SerializeField] GameObject popUpMessageGameObject;
+
         [Header("You Died Popup")]
         [SerializeField] GameObject youDiedPopUpGameObject;
         [SerializeField] TextMeshProUGUI youDiedPopUpBackgroundText;
@@ -17,6 +21,20 @@ namespace baodeag
         [SerializeField] TextMeshProUGUI bossDefeatedPopUpBackgroundText;
         [SerializeField] TextMeshProUGUI bossDefeatedPopUpText;
         [SerializeField] CanvasGroup bossDefeatedPopUpCanvasGroup;
+
+        public void CloseAllPopUpWindows()
+        {
+            popUpMessageGameObject.SetActive(false);
+
+            PlayerUIManager.instance.popUpWindowIsOpen = false;
+        }
+
+        public void SendPlayerMessagePopUp(string messageText)
+        {
+            PlayerUIManager.instance.popUpWindowIsOpen = true;
+            popUpMessageText.text = messageText;
+            popUpMessageGameObject.SetActive(true);
+        }
 
         public void SendYouDiedPopUp()
         {
