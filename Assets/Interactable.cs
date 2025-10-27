@@ -3,7 +3,7 @@ using Unity.Netcode;
 
 namespace baodeag
 {
-    public class Interactable : MonoBehaviour
+    public class Interactable : NetworkBehaviour
     {
         public string interactableText;
         [SerializeField] protected Collider interactableCollider;

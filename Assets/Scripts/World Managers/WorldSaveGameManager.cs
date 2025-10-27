@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.Netcode;
 
 namespace baodeag { 
     public class WorldSaveGameManager : MonoBehaviour
@@ -240,7 +241,7 @@ namespace baodeag {
 
             SaveGame();
 
-            StartCoroutine(LoadWorldScene());
+            LoadWorldScene(worldSceneIndex);
         }
 
         public void LoadGame()
@@ -254,7 +255,7 @@ namespace baodeag {
             saveFileDataWriter.saveFilename = saveFileName;
             currentCharacterData = saveFileDataWriter.LoadSaveFile();
 
-            StartCoroutine(LoadWorldScene());
+            LoadWorldScene(worldSceneIndex);
         }
 
         public void SaveGame()
@@ -320,17 +321,12 @@ namespace baodeag {
             characterSlots10 = saveFileDataWriter.LoadSaveFile();
         }
 
-        public IEnumerator LoadWorldScene()
+        public void LoadWorldScene(int buildIndex)
         {
-            
-            AsyncOperation loadOperation = SceneManager.LoadSceneAsync(worldSceneIndex);
-
-            //if you want to use different scenes for levels in your project use this
-            //AsyncOperation loadOperation = SceneManager.LoadSceneAsync(currentCharacterData.sceneIndex);
+            string worldScene = SceneUtility.GetScenePathByBuildIndex(buildIndex);
+            NetworkManager.Singleton.SceneManager.LoadScene(worldScene, LoadSceneMode.Single);
 
             player.LoadGameDataFromCurrentCharacterData(ref currentCharacterData);
-
-            yield return null;
         }
 
         public int GetWorldSceneIndex()
