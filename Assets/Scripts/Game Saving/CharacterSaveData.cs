@@ -31,12 +31,16 @@ namespace baodeag
         public int vitality;
         public int endurance;
 
+        [Header("Sites of Grace")]
+        public SerializableDictionary<int, bool> sitesOfGrace; //the int is the site of grace ID, the bool is the activated state
+
         [Header("Boss")]
         public SerializableDictionary<int, bool> bossesAwakened; //the int is the boss ID, the bool is the awakened state
         public SerializableDictionary<int, bool> bossesDefeated; //the int is the boss ID, the bool is the defeated state
 
         public CharacterSaveData()
         {
+            sitesOfGrace = new SerializableDictionary<int, bool>();
             bossesAwakened = new SerializableDictionary<int, bool>();
             bossesDefeated = new SerializableDictionary<int, bool>();
         }

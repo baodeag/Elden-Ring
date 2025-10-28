@@ -63,6 +63,18 @@ namespace baodeag
             return spawnedInBosses.FirstOrDefault(boss => boss.bossID == ID);
         }
 
+        public void ResetAllCharacter()
+        {
+            DespawnAllCharacters();
+
+            foreach (var spawner in aiCharacterSpawners)
+            {
+                spawner.AttemptToSpawnCharacter();
+            }
+
+            spawnedInCharacters.Clear();
+        }
+
         private void DespawnAllCharacters()
         {
             foreach (var character in spawnedInCharacters)
