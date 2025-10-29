@@ -12,7 +12,14 @@ namespace baodeag
         public float staminaRegenerationTimer = 0;
         private float staminaTickTimer = 0;
         [SerializeField] float staminaRegenerationDelay = 2;
-        
+
+        [Header("Blocking Absorptions")]
+        public float blockingPhysicalAbsorption;
+        public float blockingFireAbsorption;
+        public float blockingLightningAbsorption;
+        public float blockingMagicAbsorption;
+        public float blockingHolyAbsorption;
+
         protected virtual void Awake()
         {
             character = GetComponent<CharacterManager>();

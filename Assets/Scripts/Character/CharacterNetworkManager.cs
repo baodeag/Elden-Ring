@@ -52,6 +52,10 @@ namespace baodeag
             NetworkVariableWritePermission.Owner);
 
         [Header("Flag")]
+        public NetworkVariable<bool> isBlocking = new NetworkVariable<bool>
+            (false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
         public NetworkVariable<bool> isInvulnerable = new NetworkVariable<bool>
             (false,
             NetworkVariableReadPermission.Everyone,

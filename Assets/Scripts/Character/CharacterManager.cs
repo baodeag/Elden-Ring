@@ -23,6 +23,7 @@ namespace baodeag
         [HideInInspector] public CharacterSoundFXManager characterSoundFXManager;
         [HideInInspector] public CharacterLocomotionManager characterLocomotionManager;
         [HideInInspector] public CharacterUIManager characterUIManager;
+        [HideInInspector] public CharacterStatsManager characterStatsManager;
 
         [Header("Character Group")]
         public CharacterGroup characterGroup;
@@ -43,6 +44,7 @@ namespace baodeag
             characterSoundFXManager = GetComponent<CharacterSoundFXManager>();
             characterLocomotionManager = GetComponent<CharacterLocomotionManager>();
             characterUIManager = GetComponent<CharacterUIManager>();
+            characterStatsManager = GetComponent<CharacterStatsManager>();
         }
 
         protected virtual void Start()

@@ -22,6 +22,10 @@ namespace baodeag
         [Header("Character Damaged")]
         protected List<CharacterManager> charactersDamaged = new List<CharacterManager>();
 
+        [Header("Block")]
+        protected Vector3 directionFromAttackToDamageTarget;
+        protected float dotValueFromAttackToDamageTarget;
+
         protected virtual void Awake()
         {
 
@@ -36,10 +40,42 @@ namespace baodeag
             {
                 contactPoint = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
 
+                CheckForBlock(damageTarget);
+
                 DamageTarget(damageTarget);
             }
         }
-        
+
+        protected virtual void CheckForBlock(CharacterManager damageTarget)
+        {
+            //if this character has already been damaged, do not proceed
+            if (charactersDamaged.Contains(damageTarget))
+                return;
+
+            GetBlockingDotValues(damageTarget);
+
+            if (damageTarget.characterNetworkManager.isBlocking.Value && dotValueFromAttackToDamageTarget > 0.3f)
+            {
+                charactersDamaged.Add(damageTarget);
+                TakeBlockedDamageEffect damageEffect = Instantiate(WorldCharacterEffectsManager.instance.takeBlockedDamageEffect);
+
+                damageEffect.physicalDamage = physicalDamage;
+                damageEffect.magicDamage = magicDamage;
+                damageEffect.fireDamage = fireDamage;
+                damageEffect.lightningDamage = lightningDamage;
+                damageEffect.holyDamage = holyDamage;
+                damageEffect.contactPoint = contactPoint;
+
+                damageTarget.characterEffectsManager.ProcessInstantEffect(damageEffect);
+            }
+        }   
+
+        protected virtual void GetBlockingDotValues(CharacterManager damageTarget)
+        {
+            directionFromAttackToDamageTarget = transform.position - damageTarget.transform.position;
+            dotValueFromAttackToDamageTarget = Vector3.Dot(directionFromAttackToDamageTarget, damageTarget.transform.forward);
+        }
+
         protected virtual void DamageTarget(CharacterManager damageTarget)
         {
             //we dont want to damage the same target multiple times in one swing
