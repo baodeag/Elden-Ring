@@ -13,8 +13,6 @@ namespace baodeag
             {
                 playerPerformingAction.playerNetworkManager.currentWeaponBeingUsed.Value = weaponPerformingAction.itemID;
             }
-
-            Debug.Log("The action has fired");
         }
     }
 }

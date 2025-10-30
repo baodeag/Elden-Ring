@@ -101,6 +101,12 @@ namespace baodeag
         {
             WeaponItem newWeapon = Instantiate(WorldItemDatabase.Instance.GetWeaponByID(newId));
             player.playerCombatManager.currentWeaponBeingUsed = newWeapon;
+
+            if (player.IsOwner)
+                return;
+
+            if (player.playerCombatManager.currentWeaponBeingUsed != null)
+                player.playerAnimatorManager.UpdateAnimatorController(player.playerCombatManager.currentWeaponBeingUsed.weaponAnimator);
         }
 
         [ServerRpc]

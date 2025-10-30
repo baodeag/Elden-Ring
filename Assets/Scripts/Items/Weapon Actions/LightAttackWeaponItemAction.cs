@@ -64,38 +64,38 @@ namespace baodeag
 
                 if (playerPerformingAction.characterCombatManager.lastAttackAnimationPerformed == light_Attack_01)
                 {
-                    playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack02, light_Attack_02, true);
+                    playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(weaponPerformingAction, AttackType.LightAttack02, light_Attack_02, true);
                 }
                 else
                 {
-                    playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack01, light_Attack_01, true);
+                    playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(weaponPerformingAction, AttackType.LightAttack01, light_Attack_01, true);
                 }
             }
             // otherwise if we are not already attacking, perform the first light attack
             else if (!playerPerformingAction.isPerformingAction)
             {
-                playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack01, light_Attack_01, true);
+                playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(weaponPerformingAction, AttackType.LightAttack01, light_Attack_01, true);
             }
         }
 
         private void PerformRunningAttack(PlayerManager playerPerformingAction, WeaponItem weaponPerformingAction)
         {
             // if we are two handing our weapon, perform a two handed running attack
-            playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.RunningAttack01, run_Attack_01, true);
+            playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(weaponPerformingAction, AttackType.RunningAttack01, run_Attack_01, true);
         }
 
         private void PerformRollingAttack(PlayerManager playerPerformingAction, WeaponItem weaponPerformingAction)
         {
             // if we are two handing our weapon, perform a two handed running attack
             playerPerformingAction.playerCombatManager.canPerformRollingAttack = false;
-            playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.RollingAttack01, roll_Attack_01, true);
+            playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(weaponPerformingAction, AttackType.RollingAttack01, roll_Attack_01, true);
         }
 
         private void PerformBackstepAttack(PlayerManager playerPerformingAction, WeaponItem weaponPerformingAction)
         {
             // if we are two handing our weapon, perform a two handed running attack
             playerPerformingAction.playerCombatManager.canPerformBackstepAttack = false;
-            playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.BackstepAttack01, backstep_Attack_01, true);
+            playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(weaponPerformingAction, AttackType.BackstepAttack01, backstep_Attack_01, true);
         }
     }
 }

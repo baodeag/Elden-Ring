@@ -747,7 +747,8 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 0ad932253e8dc8841948afa5d1a0d051, type: 3}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 0ad932253e8dc8841948afa5d1a0d051,
+    type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
@@ -757,3 +758,10 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 247709
+  packageName: Spear Animation Set
+  packageVersion: 2.0
+  assetPath: Assets/Nephilite Studios/Spear Animation Set/Animations/Core/core_main_hit_reaction_medium_B_01.fbx
+  uploadId: 696082

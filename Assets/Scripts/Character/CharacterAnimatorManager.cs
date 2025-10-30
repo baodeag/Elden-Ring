@@ -164,6 +164,7 @@ namespace baodeag
         }
 
         public virtual void PlayTargetAttackActionAnimation(
+            WeaponItem weapon,
             AttackType attackType,
             string targetAnimation,
             bool isPerformingAction,
@@ -171,9 +172,9 @@ namespace baodeag
             bool canRotate = false,
             bool canMove = false)
         {
-            Debug.Log("Playing animation: " + targetAnimation);
             character.characterCombatManager.currentAttackType = attackType;
             character.characterCombatManager.lastAttackAnimationPerformed = targetAnimation;
+            UpdateAnimatorController(weapon.weaponAnimator);
             character.characterAnimatorManager.applyRootMotion = applyRootMotion;
             character.animator.CrossFade(targetAnimation, 0.2f);
             character.isPerformingAction = isPerformingAction;
@@ -185,6 +186,11 @@ namespace baodeag
                 NetworkManager.Singleton.LocalClientId,
                 targetAnimation,
                 applyRootMotion);
+        }
+
+        public void UpdateAnimatorController(AnimatorOverrideController weaponController)
+        {
+            character.animator.runtimeAnimatorController = weaponController;
         }
     }
 }

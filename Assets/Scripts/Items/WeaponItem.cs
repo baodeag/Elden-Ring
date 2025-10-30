@@ -4,6 +4,9 @@ namespace baodeag
 {
     public class WeaponItem : Item
     {
+        [Header("Animations")]
+        public AnimatorOverrideController weaponAnimator;
+
         [Header("Weapon Model")]
         public GameObject weaponModel;
 
