@@ -56,6 +56,10 @@ namespace baodeag
             (false,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isAttacking = new NetworkVariable<bool>
+            (false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
         public NetworkVariable<bool> isInvulnerable = new NetworkVariable<bool>
             (false,
             NetworkVariableReadPermission.Everyone,
@@ -159,6 +163,11 @@ namespace baodeag
         public virtual void OnIsActiveChanged(bool oldStatus, bool newStatus)
         {
             gameObject.SetActive(isActive.Value);
+        }
+
+        public virtual void OnIsBlockingChanged(bool oldStatus, bool newStarus)
+        {
+            character.animator.SetBool("isBlocking", isBlocking.Value);
         }
 
         //A server rps is a function called from a client, to the server(in our case the host)

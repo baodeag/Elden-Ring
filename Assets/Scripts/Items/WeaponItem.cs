@@ -7,6 +7,9 @@ namespace baodeag
         [Header("Animations")]
         public AnimatorOverrideController weaponAnimator;
 
+        [Header("Model Instantiation")]
+        public WeaponModelType weaponModelType;
+
         [Header("Weapon Model")]
         public GameObject weaponModel;
 
@@ -46,9 +49,18 @@ namespace baodeag
         public float rollingAttackStaminaCostMultiplier = 1.1f;
         public float backstepAttackStaminaCostMultiplier = 1.1f;
 
+        [Header("Weapon Blocking Absorption")]
+        public float physicalBaseDamageAbsorption = 50;
+        public float magicBaseDamageAbsorption = 50;
+        public float fireBaseDamageAbsorption = 50;
+        public float lightningBaseDamageAbsorption = 50;
+        public float holyBaseDamageAbsorption = 50;
+        public float stability = 50;
+
         [Header("Actions")]
         public WeaponItemAction oh_RB_Action; //one hand right bumper action
         public WeaponItemAction oh_RT_Action; //one hand right trigger action
+        public WeaponItemAction oh_LB_Action; //one hand left bumper action
 
         [Header("Whooshes")]
         public AudioClip[] whooshes;

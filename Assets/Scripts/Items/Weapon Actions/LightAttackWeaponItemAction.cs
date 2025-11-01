@@ -31,6 +31,9 @@ namespace baodeag
             if (!playerPerformingAction.characterLocomotionManager.isGrounded)
                 return;
 
+            if (playerPerformingAction.IsOwner)
+                playerPerformingAction.playerNetworkManager.isAttacking.Value = true;
+
             //if we are sprinting, perform a running attack
             if (playerPerformingAction.characterNetworkManager.isSprinting.Value)
             {

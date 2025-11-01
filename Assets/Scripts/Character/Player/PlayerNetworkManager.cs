@@ -1,6 +1,7 @@
-using UnityEngine;
-using Unity.Netcode;
 using Unity.Collections;
+using Unity.Netcode;
+using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 namespace baodeag
 {
@@ -107,6 +108,20 @@ namespace baodeag
 
             if (player.playerCombatManager.currentWeaponBeingUsed != null)
                 player.playerAnimatorManager.UpdateAnimatorController(player.playerCombatManager.currentWeaponBeingUsed.weaponAnimator);
+        }
+
+        public override void OnIsBlockingChanged(bool oldStatus, bool newStarus)
+        {
+            base.OnIsBlockingChanged(oldStatus, newStarus);
+
+            if (IsOwner)
+            {
+                player.playerStatsManager.blockingPhysicalAbsorption = player.playerCombatManager.currentWeaponBeingUsed.physicalBaseDamageAbsorption;
+                player.playerStatsManager.blockingMagicAbsorption = player.playerCombatManager.currentWeaponBeingUsed.magicBaseDamageAbsorption;
+                player.playerStatsManager.blockingFireAbsorption = player.playerCombatManager.currentWeaponBeingUsed.fireBaseDamageAbsorption;
+                player.playerStatsManager.blockingLightningAbsorption = player.playerCombatManager.currentWeaponBeingUsed.lightningBaseDamageAbsorption;
+                player.playerStatsManager.blockingHolyAbsorption = player.playerCombatManager.currentWeaponBeingUsed.holyBaseDamageAbsorption;
+            }
         }
 
         [ServerRpc]

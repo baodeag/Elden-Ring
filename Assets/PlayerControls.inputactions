@@ -177,6 +177,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "LB",
+                    "type": "Button",
+                    "id": "4f36d820-62ae-4cc8-802d-8d72c745f3f4",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Interact",
                     "type": "Button",
                     "id": "2135937f-2860-4a25-a2eb-f05c472a7b70",
@@ -312,6 +321,17 @@
                 },
                 {
                     "name": "",
+                    "id": "db6abed4-960b-421c-914f-19545dae15ae",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LB",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "e6c95360-3bd4-4d64-abf2-e51b9ffe599b",
                     "path": "<Keyboard>/e",
                     "interactions": "",
@@ -357,7 +377,7 @@
                 {
                     "name": "",
                     "id": "0b6dfbfc-9f94-4fc0-b187-e7e32acf4628",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -368,7 +388,7 @@
                 {
                     "name": "",
                     "id": "a4049ebe-7c85-43b5-a1cd-352ef79d7dde",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -379,7 +399,7 @@
                 {
                     "name": "",
                     "id": "b965ddca-acb8-4f29-b7db-7203d260b7a7",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
