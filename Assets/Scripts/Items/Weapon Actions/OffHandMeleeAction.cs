@@ -27,7 +27,7 @@ namespace baodeag
                 return;
 
             if (playerPerformingAction.IsOwner)
-                playerPerformingAction.playerNetworkManager.isAttacking.Value = true;
+                playerPerformingAction.playerNetworkManager.isBlocking.Value = true;
         }
     }
 }
