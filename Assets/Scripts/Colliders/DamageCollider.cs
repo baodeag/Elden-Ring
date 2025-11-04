@@ -16,6 +16,9 @@ namespace baodeag
         public float lightningDamage = 0;
         public float holyDamage = 0;
 
+        [Header("Poise")]
+        public float poiseDamage = 0;
+
         [Header("Contact Point")]
         protected Vector3 contactPoint;
 
@@ -64,6 +67,8 @@ namespace baodeag
                 damageEffect.fireDamage = fireDamage;
                 damageEffect.lightningDamage = lightningDamage;
                 damageEffect.holyDamage = holyDamage;
+                damageEffect.poiseDamage = poiseDamage;
+                damageEffect.staminaDamage = poiseDamage;
                 damageEffect.contactPoint = contactPoint;
 
                 damageTarget.characterEffectsManager.ProcessInstantEffect(damageEffect);
@@ -91,6 +96,7 @@ namespace baodeag
             damageEffect.fireDamage = fireDamage;
             damageEffect.lightningDamage = lightningDamage;
             damageEffect.holyDamage = holyDamage;
+            damageEffect.poiseDamage = poiseDamage;
             damageEffect.contactPoint = contactPoint;
 
             damageTarget.characterEffectsManager.ProcessInstantEffect(damageEffect);

@@ -19,6 +19,7 @@ namespace baodeag
         public float blockingLightningAbsorption;
         public float blockingMagicAbsorption;
         public float blockingHolyAbsorption;
+        public float blockingStability;
 
         protected virtual void Awake()
         {

@@ -53,5 +53,10 @@ namespace baodeag
             if (footSteps.Length > 0)
                 PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(footSteps));
         }
+
+        public virtual void PlayBlockSoundFX()
+        {
+
+        }
     }
 }

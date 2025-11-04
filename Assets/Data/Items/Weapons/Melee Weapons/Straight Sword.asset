@@ -52,10 +52,13 @@ MonoBehaviour:
   fireBaseDamageAbsorption: 50
   lightningBaseDamageAbsorption: 50
   holyBaseDamageAbsorption: 50
-  stability: 30
+  stability: 1
   oh_RB_Action: {fileID: 11400000, guid: 7ded38d00ecd2fb4bb1d9c059955ab0f, type: 2}
   oh_RT_Action: {fileID: 11400000, guid: 0c09a584d46b74442a155e216ac45ba7, type: 2}
   oh_LB_Action: {fileID: 11400000, guid: cfe3d18711ba1614d9476db6ca13f85b, type: 2}
   whooshes:
   - {fileID: 8300000, guid: 77ffddd941b23104b82cc1e11e85aaff, type: 3}
   - {fileID: 8300000, guid: ee37bfc2270fe8448b92f5b930576bf4, type: 3}
+  blocking:
+  - {fileID: 8300000, guid: 8547905d4f6c6584285a5cd3dbcbf428, type: 3}
+  - {fileID: 8300000, guid: b8be789b9e0f710498b0799edd33a7a8, type: 3}
