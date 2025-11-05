@@ -18,15 +18,29 @@ namespace baodeag
         [Header("Damage Animation")]
         public string lastDamageAnimationPlayed;
 
+        //ping hit reactions
+
+        [SerializeField] string hit_Forward_Ping_01 = "hit_Forward_Ping_01";
+        [SerializeField] string hit_Forward_Ping_02 = "hit_Forward_Ping_02";
+        [SerializeField] string hit_Backward_Ping_01 = "hit_Backward_Ping_01";
+        [SerializeField] string hit_Backward_Ping_02 = "hit_Backward_Ping_02";
+        [SerializeField] string hit_Left_Ping_01 = "hit_Left_Ping_01";
+        [SerializeField] string hit_Left_Ping_02 = "hit_Left_Ping_02";
+        [SerializeField] string hit_Right_Ping_01 = "hit_Right_Ping_01";
+        [SerializeField] string hit_Right_Ping_02 = "hit_Right_Ping_02";
+
+        public List<string> forward_Ping_Damage = new List<string>();
+        public List<string> backward_Ping_Damage = new List<string>();
+        public List<string> left_Ping_Damage = new List<string>();
+        public List<string> right_Ping_Damage = new List<string>();
+
+        //medium hit reactions
         [SerializeField] string hit_Forward_Medium_01 = "hit_Forward_Medium_01";
         [SerializeField] string hit_Forward_Medium_02 = "hit_Forward_Medium_02";
-
         [SerializeField] string hit_Backward_Medium_01 = "hit_Backward_Medium_01";
         [SerializeField] string hit_Backward_Medium_02 = "hit_Backward_Medium_02";
-
         [SerializeField] string hit_Left_Medium_01 = "hit_Left_Medium_01";
         [SerializeField] string hit_Left_Medium_02 = "hit_Left_Medium_02";
-
         [SerializeField] string hit_Right_Medium_01 = "hit_Right_Medium_01";
         [SerializeField] string hit_Right_Medium_02 = "hit_Right_Medium_02";
 
@@ -45,7 +59,20 @@ namespace baodeag
 
         protected virtual void Start()
         {
-            //populate the damage animation lists
+            //ping hit reactions
+            forward_Ping_Damage.Add(hit_Forward_Ping_01);
+            forward_Ping_Damage.Add(hit_Forward_Ping_02);
+
+            backward_Ping_Damage.Add(hit_Backward_Ping_01);
+            backward_Ping_Damage.Add(hit_Backward_Ping_02);
+
+            left_Ping_Damage.Add(hit_Left_Ping_01);
+            left_Ping_Damage.Add(hit_Left_Ping_02);
+
+            right_Ping_Damage.Add(hit_Right_Ping_01);
+            right_Ping_Damage.Add(hit_Right_Ping_02);
+
+            //medium hit reactions
             forward_Medium_Damage.Add(hit_Forward_Medium_01);
             forward_Medium_Damage.Add(hit_Forward_Medium_02);
 

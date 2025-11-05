@@ -71,9 +71,20 @@ namespace baodeag
                 finalDamageDealt = 1;
             }
 
-            Debug.Log("Final Damage Dealt: " + finalDamageDealt);
-
             character.characterNetworkManager.currentHealth.Value -= finalDamageDealt;
+
+            //subject poise damage from characters total
+            character.characterStatsManager.totalPoiseDamage -= poiseDamage;
+
+            float remainingPoise = character.characterStatsManager.basePoiseDefense + 
+                character.characterStatsManager.offensivePoiseBonus + 
+                character.characterStatsManager.totalPoiseDamage;
+
+            if (remainingPoise <= 0) 
+                poiseIsBroken = true;
+
+            //since the  character has been hit, reset the poise timer
+            character.characterStatsManager.poiseResetTimer = character.characterStatsManager.defaultPoiseResetTime;
         }
 
         private void PlayDamageVFX(CharacterManager character)
@@ -97,39 +108,76 @@ namespace baodeag
             if (character.isDead.Value)
                 return;
 
-            poiseIsBroken = true;
-
-            if (angleHitFrom >= 145 && angleHitFrom <= 180)
-            {
-                //play front animation
-                damageAnimation = character.characterAnimatorManager.GetRandomAnimationFromList(character.characterAnimatorManager.forward_Medium_Damage);
-            }
-            else if (angleHitFrom <= -145 && angleHitFrom >= -180)
-            {
-                //play front animation
-                damageAnimation = character.characterAnimatorManager.GetRandomAnimationFromList(character.characterAnimatorManager.forward_Medium_Damage);
-            }
-            else if (angleHitFrom >= -45 && angleHitFrom <= 45)
-            {
-                //play back animation
-                damageAnimation = character.characterAnimatorManager.GetRandomAnimationFromList(character.characterAnimatorManager.backward_Medium_Damage);
-            }
-            else if (angleHitFrom >= -144 && angleHitFrom <= -45)
-            {
-                //play left animation
-                damageAnimation = character.characterAnimatorManager.GetRandomAnimationFromList(character.characterAnimatorManager.left_Medium_Damage);
-            }
-            else if (angleHitFrom >= 45 && angleHitFrom <= 144)
-            {
-                //play right animation
-                damageAnimation = character.characterAnimatorManager.GetRandomAnimationFromList(character.characterAnimatorManager.right_Medium_Damage);
-            }
-            
             if (poiseIsBroken)
             {
-                character.characterAnimatorManager.lastDamageAnimationPlayed = damageAnimation;
+                if (angleHitFrom >= 145 && angleHitFrom <= 180)
+                {
+                    //play front animation
+                    damageAnimation = character.characterAnimatorManager.GetRandomAnimationFromList(character.characterAnimatorManager.forward_Medium_Damage);
+                }
+                else if (angleHitFrom <= -145 && angleHitFrom >= -180)
+                {
+                    //play front animation
+                    damageAnimation = character.characterAnimatorManager.GetRandomAnimationFromList(character.characterAnimatorManager.forward_Medium_Damage);
+                }
+                else if (angleHitFrom >= -45 && angleHitFrom <= 45)
+                {
+                    //play back animation
+                    damageAnimation = character.characterAnimatorManager.GetRandomAnimationFromList(character.characterAnimatorManager.backward_Medium_Damage);
+                }
+                else if (angleHitFrom >= -144 && angleHitFrom <= -45)
+                {
+                    //play left animation
+                    damageAnimation = character.characterAnimatorManager.GetRandomAnimationFromList(character.characterAnimatorManager.left_Medium_Damage);
+                }
+                else if (angleHitFrom >= 45 && angleHitFrom <= 144)
+                {
+                    //play right animation
+                    damageAnimation = character.characterAnimatorManager.GetRandomAnimationFromList(character.characterAnimatorManager.right_Medium_Damage);
+                }
+            }
+            else
+            {
+                if (angleHitFrom >= 145 && angleHitFrom <= 180)
+                {
+                    //play front animation
+                    damageAnimation = character.characterAnimatorManager.GetRandomAnimationFromList(character.characterAnimatorManager.forward_Ping_Damage);
+                }
+                else if (angleHitFrom <= -145 && angleHitFrom >= -180)
+                {
+                    //play front animation
+                    damageAnimation = character.characterAnimatorManager.GetRandomAnimationFromList(character.characterAnimatorManager.forward_Ping_Damage);
+                }
+                else if (angleHitFrom >= -45 && angleHitFrom <= 45)
+                {
+                    //play back animation
+                    damageAnimation = character.characterAnimatorManager.GetRandomAnimationFromList(character.characterAnimatorManager.backward_Ping_Damage);
+                }
+                else if (angleHitFrom >= -144 && angleHitFrom <= -45)
+                {
+                    //play left animation
+                    damageAnimation = character.characterAnimatorManager.GetRandomAnimationFromList(character.characterAnimatorManager.left_Ping_Damage);
+                }
+                else if (angleHitFrom >= 45 && angleHitFrom <= 144)
+                {
+                    //play right animation
+                    damageAnimation = character.characterAnimatorManager.GetRandomAnimationFromList(character.characterAnimatorManager.right_Ping_Damage);
+                }
+            }
+
+            character.characterAnimatorManager.lastDamageAnimationPlayed = damageAnimation;
+
+            if (poiseIsBroken)
+            {
+                //if we are poise broken, we want to force the damage animation to play
                 character.characterAnimatorManager.PlayTargetActionAnimation(damageAnimation, true);
             }
+            else
+            {
+                //play normally
+                character.characterAnimatorManager.PlayTargetActionAnimation(damageAnimation, false, false, true, true);
+            }
+                
         }
     }
 }

@@ -21,6 +21,13 @@ namespace baodeag
         public float blockingHolyAbsorption;
         public float blockingStability;
 
+        [Header("Poise")]
+        public float totalPoiseDamage; //how much poise damage this character have taken
+        public float offensivePoiseBonus; //the poise bonus gained from using weapons
+        public float basePoiseDefense; //the poise bonus gained from armor
+        public float defaultPoiseResetTime = 8; //the time it takes for poise damage to reset
+        public float poiseResetTimer = 0; //the current timer for poise reset
+
         protected virtual void Awake()
         {
             character = GetComponent<CharacterManager>();
@@ -29,6 +36,11 @@ namespace baodeag
         protected virtual void Start()
         {
             
+        }
+
+        protected virtual void Update()
+        {
+            HandlePoiseResetTimer();
         }
 
         public int CalculateHealthBasedOnVitalityLevel(int vitality)
@@ -86,6 +98,18 @@ namespace baodeag
             if (currentStaminaAmount < previousStaminaAmount)
             { 
                 staminaRegenerationTimer = 0;  
+            }
+        }
+
+        protected virtual void HandlePoiseResetTimer()
+        {
+            if (poiseResetTimer > 0)
+            {
+                poiseResetTimer -= Time.deltaTime;
+            }
+            else
+            {
+                totalPoiseDamage = 0;
             }
         }
     }
