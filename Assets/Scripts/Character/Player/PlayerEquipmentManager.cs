@@ -7,15 +7,19 @@ namespace baodeag
     {
         PlayerManager player;
 
+        [Header("Weapon Model Instantiation Slots")]
         public WeaponModelInstantiationSlot rightHandSlot;
         public WeaponModelInstantiationSlot leftHandWeaponSlot;
         public WeaponModelInstantiationSlot leftHandShieldSlot;
+        public WeaponModelInstantiationSlot backSlot;
 
-        [SerializeField] WeaponManager rightWeaponManager;
-        [SerializeField] WeaponManager leftWeaponManager;
-
+        [Header("Weapon Models")]
         public GameObject rightHandWeaponModel;
         public GameObject leftHandWeaponModel;
+
+        [Header("Weapon Managers")]
+        [SerializeField] WeaponManager rightWeaponManager;
+        [SerializeField] WeaponManager leftWeaponManager;
 
         protected override void Awake()
         {
@@ -47,6 +51,10 @@ namespace baodeag
                 else if (weaponSlot.weaponSlot == WeaponModelSlot.LeftHandShieldSlot)
                 {
                     leftHandShieldSlot = weaponSlot;
+                }
+                else if (weaponSlot.weaponSlot == WeaponModelSlot.BackSlot)
+                {
+                    backSlot = weaponSlot;
                 }
 
             }
@@ -238,6 +246,22 @@ namespace baodeag
                 leftWeaponManager = leftHandWeaponModel.GetComponent<WeaponManager>();
                 leftWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentLeftHandWeapon);
             }
+        }
+
+        //two hand
+        public void UnTwoHandWeapon()
+        {
+
+        }
+
+        public void TwoHandRightWeapon()
+        {
+
+        }
+
+        public void TwoHandLeftWeapon()
+        {
+
         }
 
         //damage colliders

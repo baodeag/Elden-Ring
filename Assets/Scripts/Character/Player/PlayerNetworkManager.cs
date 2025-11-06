@@ -37,7 +37,23 @@ namespace baodeag
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
 
-
+        [Header("Two Handing")]
+        public NetworkVariable<int> currentWeaponBeingTwoHanded = new NetworkVariable<int>(
+            0,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isTwoHandingWeapon = new NetworkVariable<bool>(
+            false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isTwoHandingRightWeapon = new NetworkVariable<bool>(
+            false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isTwoHandingLeftWeapon = new NetworkVariable<bool>(
+            false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
 
         protected override void Awake()
         {
@@ -61,7 +77,6 @@ namespace baodeag
 
         public void SetNewMaxHealthValue(int oldVitality, int newVitality)
         {
-            Debug.Log("Vitality changed from " + oldVitality + " to " + newVitality + ", updating max health");
             maxHealth.Value = player.playerStatsManager.CalculateHealthBasedOnVitalityLevel(newVitality);
             PlayerUIManager.instance.playerUIHudManager.SetMaxHealthValue(maxHealth.Value);
             currentHealth.Value = maxHealth.Value;
@@ -110,9 +125,9 @@ namespace baodeag
                 player.playerAnimatorManager.UpdateAnimatorController(player.playerCombatManager.currentWeaponBeingUsed.weaponAnimator);
         }
 
-        public override void OnIsBlockingChanged(bool oldStatus, bool newStarus)
+        public override void OnIsBlockingChanged(bool oldStatus, bool newStatus)
         {
-            base.OnIsBlockingChanged(oldStatus, newStarus);
+            base.OnIsBlockingChanged(oldStatus, newStatus);
 
             if (IsOwner)
             {
@@ -123,6 +138,42 @@ namespace baodeag
                 player.playerStatsManager.blockingHolyAbsorption = player.playerCombatManager.currentWeaponBeingUsed.holyBaseDamageAbsorption;
                 player.playerStatsManager.blockingStability = player.playerCombatManager.currentWeaponBeingUsed.stability;
             }
+        }
+
+        public void OnIsTwoHandingWeaponChanged(bool oldStatus, bool newStatus)
+        {
+            if (!isTwoHandingWeapon.Value)
+                player.playerEquipmentManager.UnTwoHandWeapon();
+        }
+
+        public void OnIsTwoHandingRightWeaponChanged(bool oldStatus, bool newStatus)
+        {
+            if (!isTwoHandingRightWeapon.Value)
+                return;
+
+            if (IsOwner)
+            {
+                currentWeaponBeingTwoHanded.Value = currentRightHandWeaponID.Value;
+                isTwoHandingWeapon.Value = true;
+            }
+
+            player.playerInventoryManager.currentTwoHandWeapon = player.playerInventoryManager.currentRightHandWeapon;
+            player.playerEquipmentManager.TwoHandRightWeapon();
+        }
+
+        public void OnIsTwoHandingLeftWeaponChanged(bool oldStatus, bool newStatus)
+        {
+            if (!isTwoHandingLeftWeapon.Value)
+                return;
+
+            if (IsOwner)
+            {
+                currentWeaponBeingTwoHanded.Value = currentLeftHandWeaponID.Value;
+                isTwoHandingWeapon.Value = true;
+            }
+
+            player.playerInventoryManager.currentTwoHandWeapon = player.playerInventoryManager.currentLeftHandWeapon;
+            player.playerEquipmentManager.TwoHandLeftWeapon();
         }
 
         [ServerRpc]

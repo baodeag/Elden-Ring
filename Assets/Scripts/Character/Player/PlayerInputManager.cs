@@ -28,7 +28,7 @@ namespace baodeag
         public float vertical_Input;
         public float moveAmount;
 
-        [Header("Player Action Input")]
+        [Header("Player Action Inputs")]
         [SerializeField] bool dodge_Input = false;
         [SerializeField] bool sprint_Input = false;
         [SerializeField] bool jump_Input = false;
@@ -36,13 +36,18 @@ namespace baodeag
         [SerializeField] bool switch_Left_Weapon_Input = false;
         [SerializeField] bool interaction_Input = false;
 
-        [Header("Bumper Input")]
+        [Header("Bumper Inputs")]
         [SerializeField] bool RB_Input = false;
         [SerializeField] bool LB_Input = false;
 
-        [Header("Trigger Input")]
+        [Header("Trigger Inputs")]
         [SerializeField] bool RT_Input = false;
         [SerializeField] bool Hold_RT_Input = false;
+
+        [Header("Two Hand Inputs")]
+        [SerializeField] bool two_Hand_Input = false;
+        [SerializeField] bool two_Hand_Right_Weapon_Input = false;
+        [SerializeField] bool two_Hand_Left_Weapon_Input = false;
 
         [Header("Qued Inputs")]
         [SerializeField] private bool input_Que_Is_Active = false;
@@ -131,6 +136,14 @@ namespace baodeag
                 playerControls.PlayerActions.HoldRT.performed += i => Hold_RT_Input = true;
                 playerControls.PlayerActions.HoldRT.canceled += i => Hold_RT_Input = false;
 
+                //two hand
+                playerControls.PlayerActions.TwoHandWeapon.performed += i => two_Hand_Input = true;
+                playerControls.PlayerActions.TwoHandWeapon.canceled += i => two_Hand_Input = false;
+                playerControls.PlayerActions.TwoHandRightWeapon.performed += i => two_Hand_Right_Weapon_Input = true;
+                playerControls.PlayerActions.TwoHandRightWeapon.canceled += i => two_Hand_Right_Weapon_Input = false;
+                playerControls.PlayerActions.TwoHandLeftWeapon.performed += i => two_Hand_Left_Weapon_Input = true;
+                playerControls.PlayerActions.TwoHandLeftWeapon.canceled += i => two_Hand_Left_Weapon_Input = false;
+
                 //lock on
                 playerControls.PlayerActions.LockOn.performed += i => lockOn_Input = true;
                 playerControls.PlayerActions.SeekLeftLockOnTarget.performed += i => lockOn_Left_Input = true;
@@ -177,6 +190,7 @@ namespace baodeag
 
         private void HandleAllInputs()
         {
+            HandleTwoHandInput();
             HandleLockOnInput();
             HandleLockOnSwitchTargetInput();
             HandlePlayerMovementInput();
@@ -192,6 +206,51 @@ namespace baodeag
             HandleSwitchLeftWeaponInput();
             HandleInteractionInput();
             HandleQuedInput();
+        }
+
+        //two hand
+        private void HandleTwoHandInput()
+        {
+            if (!two_Hand_Input)
+                return;
+
+            if (two_Hand_Right_Weapon_Input)
+            {
+                RB_Input = false;
+                two_Hand_Right_Weapon_Input = false;
+                player.playerNetworkManager.isBlocking.Value = false;
+
+                if (player.playerNetworkManager.isTwoHandingWeapon.Value)
+                {
+                    //if we are two handing a weapon already, change the is twohanding bool to false which triggers an onvaluedchange function, which un-twohanded current weapon
+                    player.playerNetworkManager.isTwoHandingWeapon.Value = false;
+                    return;
+                }
+                else
+                {
+                    //if we are not already two handing a weapon, change the is twohanding bool to true which triggers an onvaluedchange function, which twohands the right weapon
+                    player.playerNetworkManager.isTwoHandingRightWeapon.Value = true;
+                    return;
+                }
+            }
+            else if (two_Hand_Left_Weapon_Input)
+            {
+                LB_Input = false;
+                two_Hand_Left_Weapon_Input = false;
+                player.playerNetworkManager.isBlocking.Value = false;
+                if (player.playerNetworkManager.isTwoHandingWeapon.Value)
+                {
+                    //if we are two handing a weapon already, change the is twohanding bool to false which triggers an onvaluedchange function, which un-twohanded current weapon
+                    player.playerNetworkManager.isTwoHandingWeapon.Value = false;
+                    return;
+                }
+                else
+                {
+                    //if we are not already two handing a weapon, change the is twohanding bool to true which triggers an onvaluedchange function, which twohands the left weapon
+                    player.playerNetworkManager.isTwoHandingLeftWeapon.Value = true;
+                    return;
+                }
+            }
         }
 
         //Lock On
@@ -444,6 +503,9 @@ namespace baodeag
 
         private void HandleRBInput()
         {
+            if (two_Hand_Input)
+                return;
+
             if (RB_Input)
             {
                 RB_Input = false;
@@ -458,6 +520,9 @@ namespace baodeag
 
         private void HandleLBInput()
         {
+            if (two_Hand_Input)
+                return;
+
             if (LB_Input)
             {
                 LB_Input = false;
