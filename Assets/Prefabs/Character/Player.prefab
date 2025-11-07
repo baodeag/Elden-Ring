@@ -46,6 +46,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponSlot: 2
   currentWeaponModel: {fileID: 0}
+--- !u!1 &5551283973748847303
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7738191061296041987}
+  - component: {fileID: 4712081038336876406}
+  m_Layer: 7
+  m_Name: Back Slot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7738191061296041987
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5551283973748847303}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.148, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 518056261171114824}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4712081038336876406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5551283973748847303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 566ce2a3a95e1d7438cb56a9d71a726b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponSlot: 3
+  currentWeaponModel: {fileID: 0}
 --- !u!1 &7235327432356370241
 GameObject:
   m_ObjectHideFlags: 0
@@ -595,6 +641,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -7011284792763705418, guid: 45bb6f38aa3255a429469052278b8007, type: 3}
       insertIndex: 1
       addedObject: {fileID: 4631032958853372553}
+    - targetCorrespondingSourceObject: {fileID: 6582942952909536244, guid: 45bb6f38aa3255a429469052278b8007, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7738191061296041987}
     - targetCorrespondingSourceObject: {fileID: 3780837713738550241, guid: 45bb6f38aa3255a429469052278b8007, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6586378449649065806}
@@ -781,6 +830,11 @@ CapsuleCollider:
   m_Height: 0.5
   m_Direction: 0
   m_Center: {x: -0.12, y: 0, z: 0}
+--- !u!4 &518056261171114824 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6582942952909536244, guid: 45bb6f38aa3255a429469052278b8007, type: 3}
+  m_PrefabInstance: {fileID: 6659643868357593276}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &574531609273919674 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6598595493709832198, guid: 45bb6f38aa3255a429469052278b8007, type: 3}
@@ -1288,6 +1342,14 @@ MonoBehaviour:
     m_InternalValue: 0
   isUsingLeftHand:
     m_InternalValue: 0
+  currentWeaponBeingTwoHanded:
+    m_InternalValue: 0
+  isTwoHandingWeapon:
+    m_InternalValue: 0
+  isTwoHandingRightWeapon:
+    m_InternalValue: 0
+  isTwoHandingLeftWeapon:
+    m_InternalValue: 0
 --- !u!114 &-697219944618230427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1365,6 +1427,12 @@ MonoBehaviour:
   blockingLightningAbsorption: 0
   blockingMagicAbsorption: 0
   blockingHolyAbsorption: 0
+  blockingStability: 0
+  totalPoiseDamage: 0
+  offensivePoiseBonus: 0
+  basePoiseDefense: 0
+  defaultPoiseResetTime: 8
+  poiseResetTimer: 0
 --- !u!114 &-5518382285501829735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1417,6 +1485,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   applyRootMotion: 0
   lastDamageAnimationPlayed: 
+  hit_Forward_Ping_01: hit_Forward_Ping_01
+  hit_Forward_Ping_02: hit_Forward_Ping_02
+  hit_Backward_Ping_01: hit_Backward_Ping_01
+  hit_Backward_Ping_02: hit_Backward_Ping_02
+  hit_Left_Ping_01: hit_Left_Ping_01
+  hit_Left_Ping_02: hit_Left_Ping_02
+  hit_Right_Ping_01: hit_Right_Ping_01
+  hit_Right_Ping_02: hit_Right_Ping_02
+  forward_Ping_Damage: []
+  backward_Ping_Damage: []
+  left_Ping_Damage: []
+  right_Ping_Damage: []
   hit_Forward_Medium_01: hit_Forward_Medium_01
   hit_Forward_Medium_02: hit_Forward_Medium_02
   hit_Backward_Medium_01: hit_Backward_Medium_01
@@ -1480,6 +1560,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentRightHandWeapon: {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   currentLeftHandWeapon: {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
+  currentTwoHandWeapon: {fileID: 0}
   weaponInRightHandSlots:
   - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
@@ -1505,10 +1586,11 @@ MonoBehaviour:
   rightHandSlot: {fileID: 0}
   leftHandWeaponSlot: {fileID: 0}
   leftHandShieldSlot: {fileID: 0}
-  rightWeaponManager: {fileID: 0}
-  leftWeaponManager: {fileID: 0}
+  backSlot: {fileID: 0}
   rightHandWeaponModel: {fileID: 0}
   leftHandWeaponModel: {fileID: 0}
+  rightWeaponManager: {fileID: 0}
+  leftWeaponManager: {fileID: 0}
 --- !u!143 &-9214488087924178148
 CharacterController:
   m_ObjectHideFlags: 0

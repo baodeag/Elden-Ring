@@ -40,6 +40,14 @@ public enum WeaponModelType
     Shield
 }
 
+public enum WeaponClass
+{
+    StraightSword,
+    Spear,
+    MediumShield,
+    Fist
+}
+
 public enum AttackType
 {
     LightAttack01,

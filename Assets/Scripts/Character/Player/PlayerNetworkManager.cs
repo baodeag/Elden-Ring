@@ -143,7 +143,17 @@ namespace baodeag
         public void OnIsTwoHandingWeaponChanged(bool oldStatus, bool newStatus)
         {
             if (!isTwoHandingWeapon.Value)
+            {
+                if (IsOwner)
+                {
+                    isTwoHandingLeftWeapon.Value = false;
+                    isTwoHandingRightWeapon.Value = false;
+                }
+
                 player.playerEquipmentManager.UnTwoHandWeapon();
+            }
+
+            player.animator.SetBool("isTwoHandingWeapon", isTwoHandingWeapon.Value);
         }
 
         public void OnIsTwoHandingRightWeaponChanged(bool oldStatus, bool newStatus)
