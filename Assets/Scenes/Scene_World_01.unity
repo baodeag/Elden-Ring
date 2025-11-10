@@ -1040,7 +1040,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: e823cd5b5d27c0f4b8256e7c12ee3e6d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14946,6 +14946,7 @@ MonoBehaviour:
   fireDamage: 0
   lightningDamage: 0
   holyDamage: 0
+  poiseDamage: 0
 --- !u!65 &431806508
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -37704,6 +37705,7 @@ MonoBehaviour:
   fireDamage: 0
   lightningDamage: 0
   holyDamage: 0
+  poiseDamage: 0
 --- !u!65 &1578297568
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -41301,6 +41303,10 @@ PrefabInstance:
       propertyPath: SceneMigrationSynchronization
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8023866338229262735, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: e823cd5b5d27c0f4b8256e7c12ee3e6d, type: 2}
     - target: {fileID: 8285844945573997591, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
       propertyPath: fogWallCollider
       value: 

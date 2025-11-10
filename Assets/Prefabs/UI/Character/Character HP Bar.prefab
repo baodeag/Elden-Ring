@@ -113,6 +113,7 @@ MonoBehaviour:
   currentDamageTaken: 0
   characterName: {fileID: 2208884366988249755}
   characterDamage: {fileID: 7412409694476894966}
+  oldHealthValue: 0
 --- !u!1 &1705297780355061860
 GameObject:
   m_ObjectHideFlags: 0

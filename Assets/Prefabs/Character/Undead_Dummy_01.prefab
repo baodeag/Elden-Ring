@@ -511,6 +511,7 @@ MonoBehaviour:
   fireDamage: 0
   lightningDamage: 0
   holyDamage: 0
+  poiseDamage: 0
   undeadCharacter: {fileID: 0}
 --- !u!135 &589640463088481018
 SphereCollider:
@@ -2000,6 +2001,10 @@ MonoBehaviour:
     m_InternalValue: 0
   currentTargetNetworkObjectID:
     m_InternalValue: 0
+  isBlocking:
+    m_InternalValue: 0
+  isAttacking:
+    m_InternalValue: 0
   isInvulnerable:
     m_InternalValue: 0
   isLockedOn:
@@ -2021,6 +2026,10 @@ MonoBehaviour:
   vitality:
     m_InternalValue: 1
   endurance:
+    m_InternalValue: 1
+  strength:
+    m_InternalValue: 1
+  strengthModifier:
     m_InternalValue: 1
 --- !u!114 &8926681642944794537
 MonoBehaviour:
@@ -2046,6 +2055,7 @@ MonoBehaviour:
   characterSoundFXManager: {fileID: 0}
   characterLocomotionManager: {fileID: 0}
   characterUIManager: {fileID: 0}
+  characterStatsManager: {fileID: 0}
   characterGroup: 1
   isPerformingAction: 0
   characterName: 
@@ -2102,6 +2112,7 @@ MonoBehaviour:
   lockOnTransform: {fileID: 0}
   canPerformRollingAttack: 0
   canPerformBackstepAttack: 0
+  canBlock: 1
   actionRecoveryTimer: 0
   enablePivot: 1
   distanceFromTarget: 0
@@ -2114,6 +2125,7 @@ MonoBehaviour:
   rightHandDamageCollider: {fileID: 8133267747213043641}
   leftHandDamageCollider: {fileID: 3524336758770988078}
   baseDamage: 25
+  basePoiseDamage: 25
   attack01DamageModifier: 1
   attack02DamageModifier: 1.4
 --- !u!114 &-8861859218723465713
@@ -2130,6 +2142,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   applyRootMotion: 0
   lastDamageAnimationPlayed: 
+  hit_Forward_Ping_01: hit_Forward_Ping_01
+  hit_Forward_Ping_02: hit_Forward_Ping_02
+  hit_Backward_Ping_01: hit_Backward_Ping_01
+  hit_Backward_Ping_02: hit_Backward_Ping_02
+  hit_Left_Ping_01: hit_Left_Ping_01
+  hit_Left_Ping_02: hit_Left_Ping_02
+  hit_Right_Ping_01: hit_Right_Ping_01
+  hit_Right_Ping_02: hit_Right_Ping_02
+  forward_Ping_Damage: []
+  backward_Ping_Damage: []
+  left_Ping_Damage: []
+  right_Ping_Damage: []
   hit_Forward_Medium_01: hit_Forward_Medium_01
   hit_Forward_Medium_02: hit_Forward_Medium_02
   hit_Backward_Medium_01: hit_Backward_Medium_01
@@ -2157,6 +2181,26 @@ MonoBehaviour:
   staminaRegenerationAmount: 2
   staminaRegenerationTimer: 0
   staminaRegenerationDelay: 2
+  blockingPhysicalAbsorption: 0
+  blockingFireAbsorption: 0
+  blockingLightningAbsorption: 0
+  blockingMagicAbsorption: 0
+  blockingHolyAbsorption: 0
+  blockingStability: 0
+  armorPhysicalDamageAbsorption: 0
+  armorMagicDamageAbsorption: 0
+  armorFireDamageAbsorption: 0
+  armorLightningDamageAbsorption: 0
+  armorHolyDamageAbsorption: 0
+  armorImmunity: 0
+  armorRobustness: 0
+  armorFocus: 0
+  armorVitality: 0
+  totalPoiseDamage: 0
+  offensivePoiseBonus: 0
+  basePoiseDefense: 0
+  defaultPoiseResetTime: 8
+  poiseResetTimer: 0
 --- !u!114 &2288849307475993896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2190,6 +2234,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bloodSplatterVFX: {fileID: 0}
+  staticEffects: []
 --- !u!114 &6760839679122582330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2864,6 +2909,7 @@ MonoBehaviour:
   fireDamage: 0
   lightningDamage: 0
   holyDamage: 0
+  poiseDamage: 0
   undeadCharacter: {fileID: 0}
 --- !u!135 &6692307487498183299
 SphereCollider:

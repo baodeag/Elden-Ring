@@ -1263,6 +1263,10 @@ MonoBehaviour:
     m_InternalValue: 10
   endurance:
     m_InternalValue: 10
+  strength:
+    m_InternalValue: 1
+  strengthModifier:
+    m_InternalValue: 1
   characterName:
     m_InternalValue:
       utf8LengthInBytes: 9
@@ -1385,6 +1389,7 @@ MonoBehaviour:
   playerEquipmentManager: {fileID: 0}
   playerCombatManager: {fileID: 0}
   playerInteractionManager: {fileID: 0}
+  playerEffectsManager: {fileID: 0}
 --- !u!114 &5439719953508784656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1428,6 +1433,15 @@ MonoBehaviour:
   blockingMagicAbsorption: 0
   blockingHolyAbsorption: 0
   blockingStability: 0
+  armorPhysicalDamageAbsorption: 0
+  armorMagicDamageAbsorption: 0
+  armorFireDamageAbsorption: 0
+  armorLightningDamageAbsorption: 0
+  armorHolyDamageAbsorption: 0
+  armorImmunity: 0
+  armorRobustness: 0
+  armorFocus: 0
+  armorVitality: 0
   totalPoiseDamage: 0
   offensivePoiseBonus: 0
   basePoiseDefense: 0
@@ -1544,6 +1558,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bloodSplatterVFX: {fileID: 0}
+  staticEffects: []
   effectToTest: {fileID: 11400000, guid: 52a0a31489f75054896d1e198c2f59e1, type: 2}
   processEffect: 0
 --- !u!114 &-707592575355970866
@@ -1571,6 +1586,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   leftHandWeaponIndex: 0
+  headEquipment: {fileID: 0}
+  bodyEquipment: {fileID: 0}
+  legEquipment: {fileID: 0}
+  handEquipment: {fileID: 0}
 --- !u!114 &8536375284825481294
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1583,7 +1602,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8f1517b8ed67d6439e9345a5bfa0d0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rightHandSlot: {fileID: 0}
+  rightHandWeaponSlot: {fileID: 0}
   leftHandWeaponSlot: {fileID: 0}
   leftHandShieldSlot: {fileID: 0}
   backSlot: {fileID: 0}
@@ -1591,6 +1610,7 @@ MonoBehaviour:
   leftHandWeaponModel: {fileID: 0}
   rightWeaponManager: {fileID: 0}
   leftWeaponManager: {fileID: 0}
+  equipNewItems: 0
 --- !u!143 &-9214488087924178148
 CharacterController:
   m_ObjectHideFlags: 0
