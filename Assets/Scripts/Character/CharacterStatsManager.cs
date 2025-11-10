@@ -21,6 +21,19 @@ namespace baodeag
         public float blockingHolyAbsorption;
         public float blockingStability;
 
+        [Header("Armor Absorption")]
+        public float armorPhysicalDamageAbsorption;
+        public float armorMagicDamageAbsorption;
+        public float armorFireDamageAbsorption;
+        public float armorLightningDamageAbsorption;
+        public float armorHolyDamageAbsorption;
+
+        [Header("Armor Resistances")]
+        public float armorImmunity; //resistance to rot and poison
+        public float armorRobustness; // bleed and frost
+        public float armorFocus; // madness and sleep
+        public float armorVitality; // death curse
+
         [Header("Poise")]
         public float totalPoiseDamage; //how much poise damage this character have taken
         public float offensivePoiseBonus; //the poise bonus gained from using weapons

@@ -21,6 +21,9 @@ namespace baodeag
         [SerializeField] WeaponManager rightWeaponManager;
         [SerializeField] WeaponManager leftWeaponManager;
 
+        [Header("Debug Delete Later")]
+        [SerializeField] bool equipNewItems = false;
+
         protected override void Awake()
         {
             base.Awake();
@@ -32,6 +35,52 @@ namespace baodeag
         {
             base.Start();
             LoadWeaponOnBothHands();
+        }
+
+        private void Update()
+        {
+            if (equipNewItems)
+            {
+                equipNewItems = false;
+                DebugEquipNewItems();
+            }
+        }
+
+        private void DebugEquipNewItems()
+        {
+            Debug.Log("Equipping new items");
+            if (player.playerInventoryManager.headEquipment != null)
+                LoadHeadEquipment(player.playerInventoryManager.headEquipment);
+
+            if (player.playerInventoryManager.bodyEquipment != null)
+                LoadBodyEquipment(player.playerInventoryManager.bodyEquipment);
+
+            if (player.playerInventoryManager.legEquipment != null)
+                LoadLegEquipment(player.playerInventoryManager.legEquipment);
+
+            if (player.playerInventoryManager.handEquipment != null)
+                LoadHandEquipment(player.playerInventoryManager.handEquipment);
+        }
+
+        //equipment
+        public void LoadHeadEquipment(HeadEquipmentItem equipment)
+        {
+            player.playerStatsManager.CalculateTotalArmorAbsorption();
+        }
+
+        public void LoadBodyEquipment(BodyEquipmentItem equipment)
+        {
+            player.playerStatsManager.CalculateTotalArmorAbsorption();
+        }
+
+        public void LoadLegEquipment(LegEquipmentItem equipment)
+        {
+            player.playerStatsManager.CalculateTotalArmorAbsorption();
+        }
+
+        public void LoadHandEquipment(HandEquipmentItem equipment)
+        {
+            player.playerStatsManager.CalculateTotalArmorAbsorption();
         }
 
         private void InitializeWeaponSlot()
