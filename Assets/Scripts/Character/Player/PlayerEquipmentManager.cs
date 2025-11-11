@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -24,11 +25,24 @@ namespace baodeag
         [Header("Debug Delete Later")]
         [SerializeField] bool equipNewItems = false;
 
+        [Header("Male Equipment Models")]
+        public GameObject maleFullHelmetObject;
+        public GameObject[] maleHeadFullHelmets;
+
         protected override void Awake()
         {
             base.Awake();
             player = GetComponent<PlayerManager>();
             InitializeWeaponSlot();
+
+            List<GameObject> maleFullHelmetsList = new List<GameObject>();
+
+            foreach (Transform child in maleFullHelmetObject.transform)
+            {
+                maleFullHelmetsList.Add(child.gameObject);
+            }
+
+            maleHeadFullHelmets = maleFullHelmetsList.ToArray();
         }
 
         protected override void Start()
@@ -49,8 +63,8 @@ namespace baodeag
         private void DebugEquipNewItems()
         {
             Debug.Log("Equipping new items");
-            if (player.playerInventoryManager.headEquipment != null)
-                LoadHeadEquipment(player.playerInventoryManager.headEquipment);
+
+            LoadHeadEquipment(player.playerInventoryManager.headEquipment);
 
             if (player.playerInventoryManager.bodyEquipment != null)
                 LoadBodyEquipment(player.playerInventoryManager.bodyEquipment);
@@ -65,7 +79,38 @@ namespace baodeag
         //equipment
         public void LoadHeadEquipment(HeadEquipmentItem equipment)
         {
+            UnloadHeadEquipmentModels();
+
+            if (equipment == null)
+            {
+                if (player.IsOwner)
+                    player.playerNetworkManager.headEquipmentID.Value = -1; // -1 will never be an item id, its always null
+
+                player.playerInventoryManager.headEquipment = null;
+                return;
+            }
+
+            player.playerInventoryManager.headEquipment = equipment;
+
+            foreach (var model in equipment.equipmentModels)
+            {
+                model.LoadModel(player, true);
+            }
+
             player.playerStatsManager.CalculateTotalArmorAbsorption();
+
+            if (player.IsOwner)
+                player.playerNetworkManager.headEquipmentID.Value = equipment.itemID;
+        }
+
+        private void UnloadHeadEquipmentModels()
+        {
+            foreach (var model in maleHeadFullHelmets)
+            {
+                model.SetActive(false);
+            }
+
+            //re-enable head
         }
 
         public void LoadBodyEquipment(BodyEquipmentItem equipment)

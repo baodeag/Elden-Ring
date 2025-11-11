@@ -21,6 +21,6 @@ namespace baodeag
         [Header("Poise")]
         public float poise;
 
-
+        public EquipmentModel[] equipmentModels;
     }
 }

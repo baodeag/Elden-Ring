@@ -48,6 +48,33 @@ public enum WeaponClass
     Fist
 }
 
+public enum EquipmentModelType
+{
+    FullHelmet, //hide face, hair, etc
+    OpenHelmet, //hide hair
+    Hood, //hide hair
+    HelmetAcessorie,
+    FaceCover,
+    Torso,
+    Back,
+    RightShoulder,
+    RightUpperArm,
+    RightElbow,
+    RightLowerArm,
+    RightHand,
+    LeftShoulder,
+    LeftUpperArm,
+    LeftElbow,
+    LeftLowerArm,
+    LeftHand,
+    Hips,
+    HipsAttachment,
+    RightLeg,
+    RightKnee,
+    LeftLeg,
+    LeftKnee
+}
+
 public enum AttackType
 {
     LightAttack01,
