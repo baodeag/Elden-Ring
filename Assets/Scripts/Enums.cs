@@ -51,7 +51,7 @@ public enum WeaponClass
 public enum EquipmentModelType
 {
     FullHelmet, //hide face, hair, etc
-    OpenHelmet, //hide hair
+    Hat, //hide hair
     Hood, //hide hair
     HelmetAcessorie,
     FaceCover,
@@ -73,6 +73,14 @@ public enum EquipmentModelType
     RightKnee,
     LeftLeg,
     LeftKnee
+}
+
+public enum HeadEquipmentType
+{
+    FullHelmet, //hide face, hair, etc
+    Hat, //does not hide anything
+    Hood, //hide hair
+    FaceCover //hide beard
 }
 
 public enum AttackType

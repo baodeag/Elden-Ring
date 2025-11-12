@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -9,31 +10,223 @@ namespace baodeag
         PlayerManager player;
 
         [Header("Weapon Model Instantiation Slots")]
-        public WeaponModelInstantiationSlot rightHandWeaponSlot;
-        public WeaponModelInstantiationSlot leftHandWeaponSlot;
-        public WeaponModelInstantiationSlot leftHandShieldSlot;
-        public WeaponModelInstantiationSlot backSlot;
+        [HideInInspector] public WeaponModelInstantiationSlot rightHandWeaponSlot;
+        [HideInInspector] public WeaponModelInstantiationSlot leftHandWeaponSlot;
+        [HideInInspector] public WeaponModelInstantiationSlot leftHandShieldSlot;
+        [HideInInspector] public WeaponModelInstantiationSlot backSlot;
 
         [Header("Weapon Models")]
-        public GameObject rightHandWeaponModel;
-        public GameObject leftHandWeaponModel;
+        [HideInInspector] public GameObject rightHandWeaponModel;
+        [HideInInspector] public GameObject leftHandWeaponModel;
 
         [Header("Weapon Managers")]
-        [SerializeField] WeaponManager rightWeaponManager;
-        [SerializeField] WeaponManager leftWeaponManager;
+        WeaponManager rightWeaponManager;
+        WeaponManager leftWeaponManager;
 
         [Header("Debug Delete Later")]
         [SerializeField] bool equipNewItems = false;
 
+        [Header("General Equipment Models")]
+        public GameObject hatsObject;
+        [HideInInspector] public GameObject[] hats;
+        public GameObject hoodsObject;
+        [HideInInspector] public GameObject[] hoods;
+        public GameObject faceCoversObject;
+        [HideInInspector] public GameObject[] faceCovers;
+        public GameObject helmetAccessoriesObject;
+        [HideInInspector] public GameObject[] helmetAccessories;
+        public GameObject backAccessoriesObject;
+        [HideInInspector] public GameObject[] backAccessories;
+        public GameObject hipAccessoriesObject;
+        [HideInInspector] public GameObject[] hipAccessories;
+        public GameObject rightShoulderObject;
+        [HideInInspector] public GameObject[] rightShoulder;
+        public GameObject rightElbowObject;
+        [HideInInspector] public GameObject[] rightElbow;
+        public GameObject rightKneeObject;
+        [HideInInspector] public GameObject[] rightKnee;
+        public GameObject leftShoulderObject;
+        [HideInInspector] public GameObject[] leftShoulder;
+        public GameObject leftElbowObject;
+        [HideInInspector] public GameObject[] leftElbow;
+        public GameObject leftKneeObject;
+        [HideInInspector] public GameObject[] leftKnee;
+
         [Header("Male Equipment Models")]
         public GameObject maleFullHelmetObject;
-        public GameObject[] maleHeadFullHelmets;
+        [HideInInspector] public GameObject[] maleHeadFullHelmets;
+        public GameObject maleFullBodyObject;
+        [HideInInspector] public GameObject[] maleBodies;
+        public GameObject maleRightUpperArmObject;
+        [HideInInspector] public GameObject[] maleRightUpperArms;
+        public GameObject maleRightLowerArmObject;
+        [HideInInspector] public GameObject[] maleRightLowerArms;
+        public GameObject maleRightHandObject;
+        [HideInInspector] public GameObject[] maleRightHands;
+        public GameObject maleLeftUpperArmObject;
+        [HideInInspector] public GameObject[] maleLeftUpperArms;
+        public GameObject maleLeftLowerArmObject;
+        [HideInInspector] public GameObject[] maleLeftLowerArms;
+        public GameObject maleLeftHandObject;
+        [HideInInspector] public GameObject[] maleLeftHands;
+        public GameObject maleHipsObject;
+        [HideInInspector] public GameObject[] maleHips;
+        public GameObject maleRightLegObject;
+        [HideInInspector] public GameObject[] maleRightLegs;
+        public GameObject maleLeftLegObject;
+        [HideInInspector] public GameObject[] maleLeftLegs;
+
+        [Header("Female Equipment Models")]
+        public GameObject femaleFullHelmetObject;
+        [HideInInspector] public GameObject[] femaleHeadFullHelmets;
+        public GameObject femaleFullBodyObject;
+        [HideInInspector] public GameObject[] femaleBodies;
+        public GameObject femaleRightUpperArmObject;
+        [HideInInspector] public GameObject[] femaleRightUpperArms;
+        public GameObject femaleRightLowerArmObject;
+        [HideInInspector] public GameObject[] femaleRightLowerArms;
+        public GameObject femaleRightHandObject;
+        [HideInInspector] public GameObject[] femaleRightHands;
+        public GameObject femaleLeftUpperArmObject;
+        [HideInInspector] public GameObject[] femaleLeftUpperArms;
+        public GameObject femaleLeftLowerArmObject;
+        [HideInInspector] public GameObject[] femaleLeftLowerArms;
+        public GameObject femaleLeftHandObject;
+        [HideInInspector] public GameObject[] femaleLeftHands;
+        public GameObject femaleHipsObject;
+        [HideInInspector] public GameObject[] femaleHips;
+        public GameObject femaleRightLegObject;
+        [HideInInspector] public GameObject[] femaleRightLegs;
+        public GameObject femaleLeftLegObject;
+        [HideInInspector] public GameObject[] femaleLeftLegs;
 
         protected override void Awake()
         {
             base.Awake();
             player = GetComponent<PlayerManager>();
             InitializeWeaponSlot();
+
+            //  HATS
+            List<GameObject> hatsList = new List<GameObject>();
+
+            foreach (Transform child in hatsObject.transform)
+            {
+                hatsList.Add(child.gameObject);
+            }
+
+            hats = hatsList.ToArray();
+
+            //  HOODS
+            List<GameObject> hoodsList = new List<GameObject>();
+
+            foreach (Transform child in hoodsObject.transform)
+            {
+                hoodsList.Add(child.gameObject);
+            }
+
+            hoods = hoodsList.ToArray();
+
+            //  FACE COVERS
+            List<GameObject> faceCoversList = new List<GameObject>();
+
+            foreach (Transform child in faceCoversObject.transform)
+            {
+                faceCoversList.Add(child.gameObject);
+            }
+
+            faceCovers = faceCoversList.ToArray();
+
+            //  HELMET ACCESSORIES
+            List<GameObject> helmetAccessoriesList = new List<GameObject>();
+
+            foreach (Transform child in helmetAccessoriesObject.transform)
+            {
+                helmetAccessoriesList.Add(child.gameObject);
+            }
+
+            helmetAccessories = helmetAccessoriesList.ToArray();
+
+            //  BACK ACCESSORIES
+            List<GameObject> backAccessoriesList = new List<GameObject>();
+
+            foreach (Transform child in backAccessoriesObject.transform)
+            {
+                backAccessoriesList.Add(child.gameObject);
+            }
+
+            backAccessories = backAccessoriesList.ToArray();
+
+            //  HIP ACCESSORIES
+            List<GameObject> hipAccessoriesList = new List<GameObject>();
+
+            foreach (Transform child in hipAccessoriesObject.transform)
+            {
+                hipAccessoriesList.Add(child.gameObject);
+            }
+
+            hipAccessories = hipAccessoriesList.ToArray();
+
+            //  RIGHT SHOULDER
+            List<GameObject> rightShoulderList = new List<GameObject>();
+
+            foreach (Transform child in rightShoulderObject.transform)
+            {
+                rightShoulderList.Add(child.gameObject);
+            }
+
+            rightShoulder = rightShoulderList.ToArray();
+
+            //  RIGHT ELBOW
+            List<GameObject> rightElbowList = new List<GameObject>();
+
+            foreach (Transform child in rightElbowObject.transform)
+            {
+                rightElbowList.Add(child.gameObject);
+            }
+
+            rightElbow = rightElbowList.ToArray();
+
+            //  RIGHT KNEE
+            List<GameObject> rightKneeList = new List<GameObject>();
+
+            foreach (Transform child in rightKneeObject.transform)
+            {
+                rightKneeList.Add(child.gameObject);
+            }
+
+            rightKnee = rightKneeList.ToArray();
+
+            //  LEFT SHOULDER
+            List<GameObject> leftShoulderList = new List<GameObject>();
+
+            foreach (Transform child in leftShoulderObject.transform)
+            {
+                leftShoulderList.Add(child.gameObject);
+            }
+
+            leftShoulder = leftShoulderList.ToArray();
+
+            //  LEFT ELBOW
+            List<GameObject> leftElbowList = new List<GameObject>();
+
+            foreach (Transform child in leftElbowObject.transform)
+            {
+                leftElbowList.Add(child.gameObject);
+            }
+
+            leftElbow = leftElbowList.ToArray();
+
+            //  LEFT KNEE
+            List<GameObject> leftKneeList = new List<GameObject>();
+
+            foreach (Transform child in leftKneeObject.transform)
+            {
+                leftKneeList.Add(child.gameObject);
+            }
+
+            leftKnee = leftKneeList.ToArray();
+
+            //  MALE EQUIPMENT
 
             List<GameObject> maleFullHelmetsList = new List<GameObject>();
 
@@ -43,6 +236,113 @@ namespace baodeag
             }
 
             maleHeadFullHelmets = maleFullHelmetsList.ToArray();
+
+            List<GameObject> maleBodiesList = new List<GameObject>();
+
+            foreach (Transform child in maleFullBodyObject.transform)
+            {
+                maleBodiesList.Add(child.gameObject);
+            }
+
+            maleBodies = maleBodiesList.ToArray();
+
+            //  MALE RIGHT UPPER ARM
+            List<GameObject> maleRightUpperArmList = new List<GameObject>();
+
+            foreach (Transform child in maleRightUpperArmObject.transform)
+            {
+                maleRightUpperArmList.Add(child.gameObject);
+            }
+
+            maleRightUpperArms = maleRightUpperArmList.ToArray();
+
+            //  MALE RIGHT LOWER ARM
+            List<GameObject> maleRightLowerArmList = new List<GameObject>();
+
+            foreach (Transform child in maleRightLowerArmObject.transform)
+            {
+                maleRightLowerArmList.Add(child.gameObject);
+            }
+
+            maleRightLowerArms = maleRightLowerArmList.ToArray();
+
+            //  MALE RIGHT HANDS
+            List<GameObject> maleRightHandsList = new List<GameObject>();
+
+            foreach (Transform child in maleRightHandObject.transform)
+            {
+                maleRightHandsList.Add(child.gameObject);
+            }
+
+            maleRightHands = maleRightHandsList.ToArray();
+
+            //  MALE LEFT UPPER ARM
+            List<GameObject> maleLeftUpperArmList = new List<GameObject>();
+
+            foreach (Transform child in maleLeftUpperArmObject.transform)
+            {
+                maleLeftUpperArmList.Add(child.gameObject);
+            }
+
+            maleLeftUpperArms = maleLeftUpperArmList.ToArray();
+
+            //  MALE LEFT LOWER ARM
+            List<GameObject> maleLeftLowerArmList = new List<GameObject>();
+
+            foreach (Transform child in maleLeftLowerArmObject.transform)
+            {
+                maleLeftLowerArmList.Add(child.gameObject);
+            }
+
+            maleLeftLowerArms = maleLeftLowerArmList.ToArray();
+
+            //  MALE LEFT HANDS
+            List<GameObject> maleLeftHandsList = new List<GameObject>();
+
+            foreach (Transform child in maleLeftHandObject.transform)
+            {
+                maleLeftHandsList.Add(child.gameObject);
+            }
+
+            maleLeftHands = maleLeftHandsList.ToArray();
+
+            //  MALE HIPS
+            List<GameObject> maleHipsList = new List<GameObject>();
+
+            foreach (Transform child in maleHipsObject.transform)
+            {
+                maleHipsList.Add(child.gameObject);
+            }
+
+            maleHips = maleHipsList.ToArray();
+
+            //  MALE RIGHT LEG
+            List<GameObject> maleRightLegList = new List<GameObject>();
+
+            foreach (Transform child in maleRightLegObject.transform)
+            {
+                maleRightLegList.Add(child.gameObject);
+            }
+
+            maleRightLegs = maleRightLegList.ToArray();
+
+            //  MALE LEFT LEG
+            List<GameObject> maleLeftLegList = new List<GameObject>();
+
+            foreach (Transform child in maleLeftLegObject.transform)
+            {
+                maleLeftLegList.Add(child.gameObject);
+            }
+
+            maleLeftLegs = maleLeftLegList.ToArray();
+
+            //  FEMALE FULL HELMETS
+            List<GameObject> femaleFullHelmetsList = new List<GameObject>();
+
+            foreach (Transform child in femaleFullHelmetObject.transform)
+            {
+                femaleFullHelmetsList.Add(child.gameObject);
+            }
         }
 
         protected override void Start()
@@ -66,8 +366,7 @@ namespace baodeag
 
             LoadHeadEquipment(player.playerInventoryManager.headEquipment);
 
-            if (player.playerInventoryManager.bodyEquipment != null)
-                LoadBodyEquipment(player.playerInventoryManager.bodyEquipment);
+            LoadBodyEquipment(player.playerInventoryManager.bodyEquipment);
 
             if (player.playerInventoryManager.legEquipment != null)
                 LoadLegEquipment(player.playerInventoryManager.legEquipment);
@@ -92,6 +391,25 @@ namespace baodeag
 
             player.playerInventoryManager.headEquipment = equipment;
 
+            switch (equipment.headEquipmentType)
+            {
+                case HeadEquipmentType.FullHelmet:
+                    player.playerBodyManager.DisableHead();
+                    player.playerBodyManager.DisableHair();
+                    break;
+                case HeadEquipmentType.Hat:
+                    break;
+                case HeadEquipmentType.Hood:
+                    player.playerBodyManager.DisableHair();
+                    break;
+                case HeadEquipmentType.FaceCover:
+                    player.playerBodyManager.DisableFacialHair();
+                    break;
+                default:
+                    break;
+            }
+
+            //load head equipment models
             foreach (var model in equipment.equipmentModels)
             {
                 model.LoadModel(player, true);
@@ -110,12 +428,123 @@ namespace baodeag
                 model.SetActive(false);
             }
 
-            //re-enable head
+            foreach (var model in femaleHeadFullHelmets)
+            {
+                model.SetActive(false);
+            }
+
+            foreach (var model in hats)
+            {
+                model.SetActive(false);
+            }
+
+            foreach (var model in faceCovers)
+            {
+                model.SetActive(false);
+            }
+
+            foreach (var model in hoods)
+            {
+                model.SetActive(false);
+            }
+
+            foreach (var model in helmetAccessories)
+            {
+                model.SetActive(false);
+            }
+
+            player.playerBodyManager.EnableHead();
+            player.playerBodyManager.EnableHair();
         }
 
         public void LoadBodyEquipment(BodyEquipmentItem equipment)
         {
+            UnloadBodyEquipmentModels();
+
+            if (equipment == null)
+            {
+                if (player.IsOwner)
+                    player.playerNetworkManager.bodyEquipmentID.Value = -1; // -1 will never be an item id, its always null
+
+                player.playerInventoryManager.bodyEquipment = null;
+                return;
+            }
+
+            player.playerInventoryManager.bodyEquipment = equipment;
+
+            //load body equipment models
+            foreach (var model in equipment.equipmentModels)
+            {
+                model.LoadModel(player, true);
+            }
+
             player.playerStatsManager.CalculateTotalArmorAbsorption();
+
+            if (player.IsOwner)
+                player.playerNetworkManager.bodyEquipmentID.Value = equipment.itemID;
+        }
+
+        private void UnloadBodyEquipmentModels()
+        {
+            foreach (var model in rightShoulder)
+            {
+                model.SetActive(false);
+            }
+
+            foreach (var model in rightElbow)
+            {
+                model.SetActive(false);
+            }
+
+
+            foreach (var model in leftShoulder)
+            {
+                model.SetActive(false);
+            }
+
+            foreach (var model in leftElbow)
+            {
+                model.SetActive(false);
+            }
+
+            foreach (var model in backAccessories)
+            {
+                model.SetActive(false);
+            }
+
+            //  MALE
+            foreach (var model in maleBodies)
+            {
+                model.SetActive(false);
+            }
+
+            foreach (var model in maleRightUpperArms)
+            {
+                model.SetActive(false);
+            }
+
+            foreach (var model in maleLeftUpperArms)
+            {
+                model.SetActive(false);
+            }
+
+            //  FEMALE
+            foreach (var model in femaleBodies)
+            {
+                model.SetActive(false);
+            }
+
+            foreach (var model in femaleRightUpperArms)
+            {
+                model.SetActive(false);
+            }
+
+            foreach (var model in femaleLeftUpperArms)
+            {
+                model.SetActive(false);
+            }
+
+            player.playerBodyManager.EnableBody();
         }
 
         public void LoadLegEquipment(LegEquipmentItem equipment)
