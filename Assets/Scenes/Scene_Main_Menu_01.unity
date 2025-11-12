@@ -5266,6 +5266,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 968115240157817716, guid: 74ed47cd96dcc0d429366ca71548588d, type: 3}
+      propertyPath: NetworkConfig.PlayerPrefab
+      value: 
+      objectReference: {fileID: 6660248609007990062, guid: 9894e56b8fa428f4e896a6996e0ad60b, type: 3}
+    - target: {fileID: 968115240157817716, guid: 74ed47cd96dcc0d429366ca71548588d, type: 3}
       propertyPath: NetworkConfig.Prefabs.NetworkPrefabsLists.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -6139,6 +6143,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4864479220912704464, guid: 0ac86389003dccb4eab4a2b2cc221384, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: -697219944618230427, guid: 9894e56b8fa428f4e896a6996e0ad60b, type: 3}
     - target: {fileID: 5429250766574995170, guid: 0ac86389003dccb4eab4a2b2cc221384, type: 3}
       propertyPath: m_Name
       value: World Save Game Manager
