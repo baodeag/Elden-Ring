@@ -27,3 +27,8 @@ MonoBehaviour:
   focus: 6
   vitality: 6
   poise: 5
+  equipmentModels:
+  - {fileID: 11400000, guid: 609571857050be340a2262cd8c281afe, type: 2}
+  - {fileID: 11400000, guid: d35f7a0e387bdb54ca01a3dc165359bf, type: 2}
+  - {fileID: 11400000, guid: 341db93be8b4b454fb410017d3853515, type: 2}
+  - {fileID: 11400000, guid: 258a8bbefd9254c44842e6e5ec0216ab, type: 2}

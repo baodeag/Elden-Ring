@@ -61,19 +61,19 @@ namespace baodeag
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
         public NetworkVariable<int> headEquipmentID = new NetworkVariable<int>(
-            0,
+            -1,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
         public NetworkVariable<int> bodyEquipmentID = new NetworkVariable<int>(
-            0,
+            -1,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
         public NetworkVariable<int> legEquipmentID = new NetworkVariable<int>(
-            0,
+            -1,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
         public NetworkVariable<int> handEquipmentID = new NetworkVariable<int>(
-            0,
+            -1,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
 
@@ -111,33 +111,33 @@ namespace baodeag
             currentStamina.Value = maxStamina.Value;
         }
 
-        public void OnCurrentRightHandWeaponIDChange(int oldID, int newId)
+        public void OnCurrentRightHandWeaponIDChange(int oldID, int newID)
         {
-            WeaponItem newWeapon = Instantiate(WorldItemDatabase.Instance.GetWeaponByID(newId));
+            WeaponItem newWeapon = Instantiate(WorldItemDatabase.Instance.GetWeaponByID(newID));
             player.playerInventoryManager.currentRightHandWeapon = newWeapon;
             player.playerEquipmentManager.LoadRightWeapon();
 
             if (player.IsOwner)
             {
-                PlayerUIManager.instance.playerUIHudManager.SetRightWeaponQuickSlotIcon(newId);
+                PlayerUIManager.instance.playerUIHudManager.SetRightWeaponQuickSlotIcon(newID);
             }
         }
 
-        public void OnCurrentLeftHandWeaponIDChange(int oldID, int newId)
+        public void OnCurrentLeftHandWeaponIDChange(int oldID, int newID)
         {
-            WeaponItem newWeapon = Instantiate(WorldItemDatabase.Instance.GetWeaponByID(newId));
+            WeaponItem newWeapon = Instantiate(WorldItemDatabase.Instance.GetWeaponByID(newID));
             player.playerInventoryManager.currentLeftHandWeapon = newWeapon;
             player.playerEquipmentManager.LoadLeftWeapon();
 
             if (player.IsOwner)
             {
-                PlayerUIManager.instance.playerUIHudManager.SetLeftWeaponQuickSlotIcon(newId);
+                PlayerUIManager.instance.playerUIHudManager.SetLeftWeaponQuickSlotIcon(newID);
             }
         }
 
-        public void OnCurrentWeaponBeingUsedIDChange(int oldID, int newId)
+        public void OnCurrentWeaponBeingUsedIDChange(int oldID, int newID)
         {
-            WeaponItem newWeapon = Instantiate(WorldItemDatabase.Instance.GetWeaponByID(newId));
+            WeaponItem newWeapon = Instantiate(WorldItemDatabase.Instance.GetWeaponByID(newID));
             player.playerCombatManager.currentWeaponBeingUsed = newWeapon;
 
             if (player.IsOwner)
@@ -284,6 +284,11 @@ namespace baodeag
             {
                 player.playerEquipmentManager.LoadHandEquipment(null);
             }
+        }
+
+        public void OnIsMaleChanged(bool oldStatus, bool newStatus)
+        {
+            player.playerBodyManager.ToggleBodyType(isMale.Value);
         }
 
         [ServerRpc]
