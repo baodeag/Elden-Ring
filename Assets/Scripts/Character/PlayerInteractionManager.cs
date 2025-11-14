@@ -72,6 +72,9 @@ namespace baodeag
 
         public void Interact()
         {
+            //if we press the interact button with or without an interactable, it will clear the pop up windows (item, message, etc)
+            PlayerUIManager.instance.playerUIPopUpManager.CloseAllPopUpWindows();
+
             if (currentInteractableActions.Count == 0)
                 return;
 

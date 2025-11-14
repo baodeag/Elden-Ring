@@ -104,3 +104,10 @@ public enum DamageIntensity
     Heavy,
     Colossal
 }
+
+//used to determine item pickup types
+public enum ItemPickUpType
+{
+    WorldSpawn,
+    CharacterDrop
+}

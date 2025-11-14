@@ -41,6 +41,9 @@ namespace baodeag
         public SerializableDictionary<int, bool> bossesAwakened; //the int is the boss ID, the bool is the awakened state
         public SerializableDictionary<int, bool> bossesDefeated; //the int is the boss ID, the bool is the defeated state
 
+        [Header("World Items")]
+        public SerializableDictionary<int, bool> worldItemsLooted; //the int is the world item ID, the bool is the looted state
+
         [Header("Equipment")]
         public int headEquipment;
         public int bodyEquipment;
@@ -62,6 +65,7 @@ namespace baodeag
             sitesOfGrace = new SerializableDictionary<int, bool>();
             bossesAwakened = new SerializableDictionary<int, bool>();
             bossesDefeated = new SerializableDictionary<int, bool>();
+            worldItemsLooted = new SerializableDictionary<int, bool>();
         }
     }
 }

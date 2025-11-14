@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.UI;
 
 namespace baodeag
 {
@@ -9,6 +10,12 @@ namespace baodeag
         [Header("Message Pop Up")]
         [SerializeField] TextMeshProUGUI popUpMessageText;
         [SerializeField] GameObject popUpMessageGameObject;
+
+        [Header("Item Pop Up")]
+        [SerializeField] GameObject itemPopUpGameObject;
+        [SerializeField] Image itemIcon;
+        [SerializeField] TextMeshProUGUI itemName;
+        [SerializeField] TextMeshProUGUI itemAmount;
 
         [Header("You Died Popup")]
         [SerializeField] GameObject youDiedPopUpGameObject;
@@ -31,6 +38,7 @@ namespace baodeag
         public void CloseAllPopUpWindows()
         {
             popUpMessageGameObject.SetActive(false);
+            itemPopUpGameObject.SetActive(false);
 
             PlayerUIManager.instance.popUpWindowIsOpen = false;
         }
@@ -40,6 +48,22 @@ namespace baodeag
             PlayerUIManager.instance.popUpWindowIsOpen = true;
             popUpMessageText.text = messageText;
             popUpMessageGameObject.SetActive(true);
+        }
+
+        public void SendItemPopUp(Item item, int amount)
+        {
+            itemAmount.enabled = false;
+            itemIcon.sprite = item.itemIcon;
+            itemName.text = item.itemName;
+
+            if (amount > 0)
+            {
+                itemAmount.enabled = true;
+                itemAmount.text = "x" + amount.ToString();
+            }
+
+            itemPopUpGameObject.SetActive(true);
+            PlayerUIManager.instance.popUpWindowIsOpen = true;
         }
 
         public void SendYouDiedPopUp()
