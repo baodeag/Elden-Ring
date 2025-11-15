@@ -1,10 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 namespace baodeag
 {
     public class PlayerUIHudManager : MonoBehaviour
     {
+        [SerializeField] CanvasGroup[] canvasGroup;
+
         [Header("Stat Bars")]
         [SerializeField] UI_StatBar healthBar;
         [SerializeField] UI_StatBar staminaBar;
@@ -16,6 +19,25 @@ namespace baodeag
         [Header("Boss Health Bar")]
         public Transform bossHealthBarParent;
         public GameObject bossHealthBarObject;
+
+        public void ToggleHUD(bool status)
+        {
+            //to do fade in and out over time
+            if (status)
+            {
+                foreach (var canvas in canvasGroup)
+                {
+                    canvas.alpha = 1;
+                }
+            }
+            else
+            {
+                foreach (var canvas in canvasGroup)
+                {
+                    canvas.alpha = 0;
+                }
+            }
+        }
 
         public void RefreshHUD()
         {

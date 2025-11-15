@@ -150,6 +150,15 @@
             "id": "d6058c0d-ae1e-40d0-a8c9-52100e8a740a",
             "actions": [
                 {
+                    "name": "Open Character Menu",
+                    "type": "Button",
+                    "id": "c80ea149-62ab-47d2-9110-b70df435c2d1",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Dodge",
                     "type": "Button",
                     "id": "7d40dfca-418a-4c24-8ede-4e3f19789235",
@@ -343,6 +352,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "RB",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fcc503e1-ee76-446d-b43b-07ab7aaf9b41",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Open Character Menu",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
