@@ -31,9 +31,17 @@ namespace baodeag
             itemsInInventory.Add(item);
         }
 
-        public void RemoveItemFromInventory()
+        public void RemoveItemFromInventory(Item item)
         {
+            itemsInInventory.Remove(item);
 
+            for (int i = itemsInInventory.Count - 1; i > -1; i--)
+            {
+                if (itemsInInventory[i] == null)
+                {
+                    itemsInInventory.RemoveAt(i);
+                }
+            }
         }
     }
 }
