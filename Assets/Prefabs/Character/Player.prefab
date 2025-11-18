@@ -4835,6 +4835,7 @@ MonoBehaviour:
   bodyEquipment: {fileID: 0}
   legEquipment: {fileID: 0}
   handEquipment: {fileID: 0}
+  itemsInInventory: []
 --- !u!114 &8536375284825481294
 MonoBehaviour:
   m_ObjectHideFlags: 0
