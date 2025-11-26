@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Knight's Gauntlets
   m_EditorClassIdentifier: 
   itemName: Knight Gauntlets
-  itemIcon: {fileID: 0}
+  itemIcon: {fileID: 21300000, guid: 7632630433a5f2a4194e6759350c96de, type: 3}
   itemDescription: 
-  itemID: 7
+  itemID: 8
   itemWeight: 3.5
   physicalDamageAbsorption: 3.1
   magicDamageAbsorption: 2.7
