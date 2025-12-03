@@ -52,6 +52,8 @@ namespace baodeag
 
             PlayDamageSFX(character);
             PlayDamageVFX(character);
+
+            CalculateStanceDamage(character);
         }
 
         private void CalculateDamage(CharacterManager character)
@@ -76,6 +78,9 @@ namespace baodeag
             //subject poise damage from characters total
             character.characterStatsManager.totalPoiseDamage -= poiseDamage;
 
+            //we store the previous poise damage taken for other interactions
+            character.characterCombatManager.previousPoiseDamageTaken -= poiseDamage;
+
             float remainingPoise = character.characterStatsManager.basePoiseDefense + 
                 character.characterStatsManager.offensivePoiseBonus + 
                 character.characterStatsManager.totalPoiseDamage;
@@ -85,6 +90,19 @@ namespace baodeag
 
             //since the  character has been hit, reset the poise timer
             character.characterStatsManager.poiseResetTimer = character.characterStatsManager.defaultPoiseResetTime;
+        }
+
+        private void CalculateStanceDamage(CharacterManager character)
+        {
+            AICharacterManager aiCharacter = character as AICharacterManager;
+
+            //you can optionally give weapons their own stance damage values, or use poise damage
+            int stanceDamage = Mathf.RoundToInt(poiseDamage);
+
+            if (aiCharacter != null)
+            {
+                aiCharacter.aiCharacterCombatManager.DamageStance(stanceDamage);
+            }
         }
 
         private void PlayDamageVFX(CharacterManager character)

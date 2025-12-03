@@ -80,6 +80,10 @@ namespace baodeag
             (false,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isRipostable = new NetworkVariable<bool>
+            (false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
 
         [Header("Resources")]
         public NetworkVariable<int> currentHealth = new NetworkVariable<int>
@@ -179,7 +183,7 @@ namespace baodeag
             character.animator.SetBool("isBlocking", isBlocking.Value);
         }
 
-        //A server rps is a function called from a client, to the server(in our case the host)
+        //A server rpc is a function called from a client, to the server(in our case the host)
         [ServerRpc]
         public void NotifyTheServerOfActionAnimationServerRpc(ulong clientID, string animationID, bool applyRootMotion)
         {
@@ -206,6 +210,34 @@ namespace baodeag
         {
             character.characterAnimatorManager.applyRootMotion = applyRootMotion;
             character.animator.CrossFade(animationID, 0.2f);
+        }
+
+        [ServerRpc]
+        public void NotifyTheServerOfInstantActionAnimationServerRpc(ulong clientID, string animationID, bool applyRootMotion)
+        {
+            //if this char is the host/server, then activate the client rpc
+            if (IsServer)
+            {
+                //tell all clients to play the animation
+                PlayInstantActionAnimationForAllClientsClientRpc(clientID, animationID, applyRootMotion);
+            }
+        }
+
+        //a client rpc is sent to all clients present, from the server/host
+        [ClientRpc]
+        public void PlayInstantActionAnimationForAllClientsClientRpc(ulong clientID, string animationID, bool applyRootMotion)
+        {
+            //we make sure to not run the function on the char who sent it(so we dont play an animation twice)
+            if (clientID != NetworkManager.Singleton.LocalClientId)
+            {
+                PerformInstantActionAnimationFromServer(animationID, applyRootMotion);
+            }
+        }
+
+        private void PerformInstantActionAnimationFromServer(string animationID, bool applyRootMotion)
+        {
+            character.characterAnimatorManager.applyRootMotion = applyRootMotion;
+            character.animator.Play(animationID);
         }
 
         //attack animation

@@ -6013,7 +6013,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4041293076804571371, guid: a46c1cb515972894290aee36506e31d5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 90
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4176284757595988588, guid: a46c1cb515972894290aee36506e31d5, type: 3}
       propertyPath: m_AnchorMax.y
@@ -6501,7 +6501,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7326091196115600764, guid: a46c1cb515972894290aee36506e31d5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 90
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7381415184022934148, guid: a46c1cb515972894290aee36506e31d5, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -7091,6 +7091,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: World Sound FX Manager
       objectReference: {fileID: 0}
+    - target: {fileID: 3821463889768214675, guid: d899f285619060e4eacb5504692a44ce, type: 3}
+      propertyPath: stanceBreakSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 9136d4bd4d59c764fab4ab723575c294, type: 3}
     - target: {fileID: 3821463889768214675, guid: d899f285619060e4eacb5504692a44ce, type: 3}
       propertyPath: physicalDamageSFX.Array.size
       value: 2
