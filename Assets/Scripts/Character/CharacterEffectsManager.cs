@@ -16,6 +16,7 @@ namespace baodeag
 
         [Header("VFX")]
         [SerializeField] GameObject bloodSplatterVFX;
+        [SerializeField] GameObject criticalBloodSplatterVFX;
 
         [Header("Static Effects")]
         public List<StaticCharacterEffect> staticEffects = new List<StaticCharacterEffect>();
@@ -39,6 +40,18 @@ namespace baodeag
             else
             {
                 GameObject bloodSplatter = Instantiate(WorldCharacterEffectsManager.instance.bloodSplatterVFX, contactPoint, Quaternion.identity);
+            }
+        }
+
+        public void PlayCriticalBloodSplatterVFX(Vector3 contactPoint)
+        {
+            if (bloodSplatterVFX != null)
+            {
+                GameObject bloodSplatter = Instantiate(criticalBloodSplatterVFX, contactPoint, Quaternion.identity);
+            }
+            else
+            {
+                GameObject bloodSplatter = Instantiate(WorldCharacterEffectsManager.instance.criticalBloodSplatterVFX, contactPoint, Quaternion.identity);
             }
         }
 

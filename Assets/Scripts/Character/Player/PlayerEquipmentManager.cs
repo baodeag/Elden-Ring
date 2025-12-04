@@ -20,8 +20,8 @@ namespace baodeag
         [HideInInspector] public GameObject leftHandWeaponModel;
 
         [Header("Weapon Managers")]
-        WeaponManager rightWeaponManager;
-        WeaponManager leftWeaponManager;
+        public WeaponManager rightWeaponManager;
+        public WeaponManager leftWeaponManager;
 
         [Header("Debug Delete Later")]
         [SerializeField] bool equipNewItems = false;

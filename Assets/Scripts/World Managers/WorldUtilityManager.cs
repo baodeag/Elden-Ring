@@ -93,5 +93,25 @@ namespace baodeag
 
             return damageIntensity;
         }
+
+        public Vector3 GetRipostingPositionBasedOnWeapnClass(WeaponClass weaponClass)
+        {
+            Vector3 position = new Vector3(0.11f, 0, 0.7f);
+            switch (weaponClass)
+            {
+                case WeaponClass.StraightSword: //change position here if you desire
+                    break;
+                case WeaponClass.Spear:
+                    break;
+                case WeaponClass.MediumShield:
+                    break;
+                case WeaponClass.Fist:
+                    break;
+                default:
+                    break;
+            }
+
+            return position;
+        }
     }
 }

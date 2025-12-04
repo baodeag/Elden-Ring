@@ -16,7 +16,7 @@ namespace baodeag
         public float holyDamage = 0;
 
         [Header("Final Damage")]
-        private int finalDamageDealt = 0;
+        protected int finalDamageDealt = 0;
 
         [Header("Poise")]
         public float poiseDamage = 0;
@@ -56,7 +56,7 @@ namespace baodeag
             CalculateStanceDamage(character);
         }
 
-        private void CalculateDamage(CharacterManager character)
+        protected virtual void CalculateDamage(CharacterManager character)
         {
             if (!character.IsOwner)
                 return;
@@ -92,7 +92,7 @@ namespace baodeag
             character.characterStatsManager.poiseResetTimer = character.characterStatsManager.defaultPoiseResetTime;
         }
 
-        private void CalculateStanceDamage(CharacterManager character)
+        protected void CalculateStanceDamage(CharacterManager character)
         {
             AICharacterManager aiCharacter = character as AICharacterManager;
 
@@ -105,12 +105,12 @@ namespace baodeag
             }
         }
 
-        private void PlayDamageVFX(CharacterManager character)
+        protected void PlayDamageVFX(CharacterManager character)
         {
             character.characterEffectsManager.PlayBloodSplatterVFX(contactPoint);
         }
 
-        private void PlayDamageSFX(CharacterManager character)
+        protected void PlayDamageSFX(CharacterManager character)
         {
             AudioClip physicalDamageSFX = WorldSoundFXManager.instance.ChooseRandomSFXFromArray(WorldSoundFXManager.instance.physicalDamageSFX);
 
@@ -118,7 +118,7 @@ namespace baodeag
             character.characterSoundFXManager.PlayDamageGruntSoundFX();
         }
 
-        private void PLayDirectionalBasedDamageAnimation(CharacterManager character)
+        protected void PLayDirectionalBasedDamageAnimation(CharacterManager character)
         {
             if (!character.IsOwner)
                 return;

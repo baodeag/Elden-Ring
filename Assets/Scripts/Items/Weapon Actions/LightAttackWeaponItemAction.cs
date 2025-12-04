@@ -70,6 +70,8 @@ namespace baodeag
                 return;
             }
 
+            playerPerformingAction.characterCombatManager.AttemptCriticalAttack();
+
             PerformLightAttack(playerPerformingAction, weaponPerformingAction);
         }
 

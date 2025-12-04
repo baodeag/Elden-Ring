@@ -2015,14 +2015,18 @@ MonoBehaviour:
     m_InternalValue: 0
   isChargingAttack:
     m_InternalValue: 0
+  isRipostable:
+    m_InternalValue: 0
+  isBeingCriticallyDamaged:
+    m_InternalValue: 0
   currentHealth:
-    m_InternalValue: 0
+    m_InternalValue: 500
   maxHealth:
-    m_InternalValue: 0
+    m_InternalValue: 500
   currentStamina:
-    m_InternalValue: 0
+    m_InternalValue: 500
   maxStamina:
-    m_InternalValue: 0
+    m_InternalValue: 500
   vitality:
     m_InternalValue: 1
   endurance:
@@ -2107,12 +2111,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   lastAttackAnimationPerformed: 
+  previousPoiseDamageTaken: 0
   currentTarget: {fileID: 0}
   currentAttackType: 0
   lockOnTransform: {fileID: 0}
   canPerformRollingAttack: 0
   canPerformBackstepAttack: 0
   canBlock: 1
+  criticalAttackDistanceCheck: 0.7
+  pendingCriticalDamage: 0
   actionRecoveryTimer: 0
   enablePivot: 1
   distanceFromTarget: 0
@@ -2122,6 +2129,12 @@ MonoBehaviour:
   minimumFOV: -35
   maximumFOV: 35
   attackRotationSpeed: 25
+  maxStance: 10
+  currentStance: 0
+  stanceRegeneratedPersecond: 15
+  ignoreStanceBreak: 0
+  stanceRegenerationTimer: 0
+  defaultTimeUntilStanceRegenerationBegins: 15
   rightHandDamageCollider: {fileID: 8133267747213043641}
   leftHandDamageCollider: {fileID: 3524336758770988078}
   baseDamage: 25
@@ -2234,6 +2247,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bloodSplatterVFX: {fileID: 0}
+  criticalBloodSplatterVFX: {fileID: 0}
   staticEffects: []
 --- !u!114 &6760839679122582330
 MonoBehaviour:
