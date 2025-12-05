@@ -50,8 +50,17 @@ namespace baodeag
             MeleeWeaponDamageCollider riposteCollider;
 
             //check if we are two handing left weapon or right weapon
-            riposteWeapon = player.playerInventoryManager.currentRightHandWeapon as MeleeWeaponItem;
-            riposteCollider = player.playerEquipmentManager.rightWeaponManager.meleeDamageCollider;
+
+            if (player.playerNetworkManager.isTwoHandingLeftWeapon.Value)
+            {
+                riposteWeapon = player.playerInventoryManager.currentLeftHandWeapon as MeleeWeaponItem;
+                riposteCollider = player.playerEquipmentManager.leftWeaponManager.meleeDamageCollider;
+            }
+            else
+            {
+                riposteWeapon = player.playerInventoryManager.currentRightHandWeapon as MeleeWeaponItem;
+                riposteCollider = player.playerEquipmentManager.rightWeaponManager.meleeDamageCollider;
+            }
 
             character.characterAnimatorManager.PlayTargetActionAnimationInstantly("Riposte_01", true);
 
@@ -80,6 +89,73 @@ namespace baodeag
                 character.NetworkObjectId, 
                 "Riposted_01",
                 riposteWeapon.itemID,
+                damageEffect.physicalDamage,
+                damageEffect.holyDamage,
+                damageEffect.fireDamage,
+                damageEffect.lightningDamage,
+                damageEffect.magicDamage,
+                damageEffect.poiseDamage);
+        }
+
+        public override void AttemptBackstab(RaycastHit hit)
+        {
+            CharacterManager targetCharacter = hit.transform.gameObject.GetComponent<CharacterManager>();
+
+            //if for some reason the target character is null, return
+            if (targetCharacter == null)
+                return;
+
+            //if some how since the initial check the character can no longer be riposted, return
+            if (!targetCharacter.characterCombatManager.canBeBackstabbed)
+                return;
+
+            //if somebody else is already performing a critical strike on the character, return
+            if (targetCharacter.characterNetworkManager.isBeingCriticallyDamaged.Value)
+                return;
+
+            MeleeWeaponItem backstabWeapon;
+            MeleeWeaponDamageCollider backstabCollider;
+
+            //check if we are two handing left weapon or right weapon
+
+            if (player.playerNetworkManager.isTwoHandingLeftWeapon.Value)
+            {
+                backstabWeapon = player.playerInventoryManager.currentLeftHandWeapon as MeleeWeaponItem;
+                backstabCollider = player.playerEquipmentManager.leftWeaponManager.meleeDamageCollider;
+            }
+            else
+            {
+                backstabWeapon = player.playerInventoryManager.currentRightHandWeapon as MeleeWeaponItem;
+                backstabCollider = player.playerEquipmentManager.rightWeaponManager.meleeDamageCollider;
+            }
+
+            character.characterAnimatorManager.PlayTargetActionAnimationInstantly("Backstab_01", true);
+
+            //whilist performing a critical strike, you cannot be damaged
+            if (character.IsOwner)
+                character.characterNetworkManager.isInvulnerable.Value = true;
+
+            TakeCriticalDamageEffect damageEffect = Instantiate(WorldCharacterEffectsManager.instance.takeCriticalDamageEffect);
+
+            damageEffect.physicalDamage = backstabCollider.physicalDamage;
+            damageEffect.holyDamage = backstabCollider.holyDamage;
+            damageEffect.fireDamage = backstabCollider.fireDamage;
+            damageEffect.lightningDamage = backstabCollider.lightningDamage;
+            damageEffect.magicDamage = backstabCollider.magicDamage;
+            damageEffect.poiseDamage = backstabCollider.poiseDamage;
+
+            damageEffect.physicalDamage *= backstabWeapon.backstab_Attack_01_Modifier;
+            damageEffect.holyDamage *= backstabWeapon.backstab_Attack_01_Modifier;
+            damageEffect.fireDamage *= backstabWeapon.backstab_Attack_01_Modifier;
+            damageEffect.lightningDamage *= backstabWeapon.backstab_Attack_01_Modifier;
+            damageEffect.magicDamage *= backstabWeapon.backstab_Attack_01_Modifier;
+            damageEffect.poiseDamage *= backstabWeapon.backstab_Attack_01_Modifier;
+
+            targetCharacter.characterNetworkManager.NotifyTheServerOfBackstabServerRpc(
+                targetCharacter.NetworkObjectId,
+                character.NetworkObjectId,
+                "Backstabbed_01",
+                backstabWeapon.itemID,
                 damageEffect.physicalDamage,
                 damageEffect.holyDamage,
                 damageEffect.fireDamage,

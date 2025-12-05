@@ -134,7 +134,7 @@ namespace baodeag
 
                 //reset any flags here that need to be reset on death
 
-                if(!manuallySelectDeathAnimation)
+                if(!manuallySelectDeathAnimation && characterNetworkManager.isBeingCriticallyDamaged.Value)
                 {
                     characterAnimatorManager.PlayTargetActionAnimation("Dead_01", true);
                 }
