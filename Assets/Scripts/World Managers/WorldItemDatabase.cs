@@ -26,6 +26,9 @@ namespace baodeag
         [Header("Hand Equipment")]
         [SerializeField] List<HandEquipmentItem> handEquipment = new List<HandEquipmentItem>();
 
+        [Header("Ash Of War")]
+        [SerializeField] List<AshOfWar> ashesOfWar = new List<AshOfWar>();
+
         [Header("Items")]
         private List<Item> items = new List<Item>();
 
@@ -66,6 +69,11 @@ namespace baodeag
                 items.Add(item);
             }
 
+            foreach(var item in ashesOfWar)
+            {
+                items.Add(item);
+            }
+
             //assign all of our items a unique item id
             for (int i = 0; i < items.Count; i++)
             {
@@ -96,6 +104,11 @@ namespace baodeag
         public HandEquipmentItem GetHandEquipmentByID(int ID)
         {
             return handEquipment.FirstOrDefault(equipment => equipment.itemID == ID);
+        }
+
+        public AshOfWar GetAshOfWarByID(int ID)
+        {
+            return ashesOfWar.FirstOrDefault(item => item.itemID == ID);
         }
     }
 }

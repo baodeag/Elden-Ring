@@ -258,6 +258,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "LT",
+                    "type": "Button",
+                    "id": "ef094d1e-ce3a-4d23-87f0-e1dbeac33879",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Que RT",
                     "type": "Button",
                     "id": "b5542682-14a5-49b0-8814-43df4a0900ef",
@@ -482,6 +491,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "RT",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6bf15dea-10f4-4376-baa0-22bbc6767400",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LT",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

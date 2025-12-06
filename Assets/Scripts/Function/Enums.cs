@@ -60,7 +60,8 @@ public enum WeaponClass
     StraightSword,
     Spear,
     MediumShield,
-    Fist
+    Fist,
+    LightShield
 }
 
 public enum EquipmentModelType

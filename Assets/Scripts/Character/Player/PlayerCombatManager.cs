@@ -221,6 +221,7 @@ namespace baodeag
             }
         }
 
+        //animation event call
         public override void EnableCanDoCombo()
         {
             if (player.playerNetworkManager.isUsingRightHand.Value)
@@ -238,5 +239,13 @@ namespace baodeag
             player.playerCombatManager.canComboWithMainHandWeapon = false;
 
         }
+
+        public WeaponItem SelectWeaponToPerformAshOfWar()
+        {
+            WeaponItem selectedWeapon = player.playerInventoryManager.currentLeftHandWeapon;
+            player.playerNetworkManager.SetCharacterActionHand(false);
+            player.playerNetworkManager.currentWeaponBeingUsed.Value = selectedWeapon.itemID;
+            return selectedWeapon;
+        } 
     }
 }

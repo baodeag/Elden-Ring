@@ -4561,6 +4561,10 @@ MonoBehaviour:
     m_InternalValue: 0
   isChargingAttack:
     m_InternalValue: 0
+  isRipostable:
+    m_InternalValue: 0
+  isBeingCriticallyDamaged:
+    m_InternalValue: 0
   currentHealth:
     m_InternalValue: 0
   maxHealth:
@@ -4725,12 +4729,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   lastAttackAnimationPerformed: 
+  previousPoiseDamageTaken: 0
   currentTarget: {fileID: 0}
   currentAttackType: 0
   lockOnTransform: {fileID: 4631032958853372553}
   canPerformRollingAttack: 0
   canPerformBackstepAttack: 0
   canBlock: 1
+  canBeBackstabbed: 1
+  criticalAttackDistanceCheck: 0.7
+  pendingCriticalDamage: 0
   currentWeaponBeingUsed: {fileID: 0}
   canComboWithMainHandWeapon: 0
 --- !u!114 &8321796122209035286
@@ -4827,8 +4835,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   rightHandWeaponIndex: 0
   weaponInLeftHandSlots:
-  - {fileID: 11400000, guid: 44cf7f826137bed409bf10c407725a1c, type: 2}
   - {fileID: 11400000, guid: 00c7c97a002a22b439e1e236b455d6e0, type: 2}
+  - {fileID: 11400000, guid: 44cf7f826137bed409bf10c407725a1c, type: 2}
   - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   leftHandWeaponIndex: 0
   headEquipment: {fileID: 0}
@@ -4854,6 +4862,8 @@ MonoBehaviour:
   backSlot: {fileID: 0}
   rightHandWeaponModel: {fileID: 0}
   leftHandWeaponModel: {fileID: 0}
+  rightWeaponManager: {fileID: 0}
+  leftWeaponManager: {fileID: 0}
   equipNewItems: 0
   hatsObject: {fileID: 6660003477014652952}
   hats: []
@@ -5043,6 +5053,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bloodSplatterVFX: {fileID: 0}
+  criticalBloodSplatterVFX: {fileID: 0}
   staticEffects: []
   effectToTest: {fileID: 11400000, guid: 52a0a31489f75054896d1e198c2f59e1, type: 2}
   processEffect: 0

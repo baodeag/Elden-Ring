@@ -43,6 +43,7 @@ namespace baodeag
         [Header("Trigger Inputs")]
         [SerializeField] bool RT_Input = false;
         [SerializeField] bool Hold_RT_Input = false;
+        [SerializeField] bool LT_Input = false;
 
         [Header("Two Hand Inputs")]
         [SerializeField] bool two_Hand_Input = false;
@@ -139,6 +140,7 @@ namespace baodeag
                 playerControls.PlayerActions.RT.performed += i => RT_Input = true;
                 playerControls.PlayerActions.HoldRT.performed += i => Hold_RT_Input = true;
                 playerControls.PlayerActions.HoldRT.canceled += i => Hold_RT_Input = false;
+                playerControls.PlayerActions.LT.performed += i => LT_Input = true;
 
                 //two hand
                 playerControls.PlayerActions.TwoHandWeapon.performed += i => two_Hand_Input = true;
@@ -210,6 +212,7 @@ namespace baodeag
             HandleLBInput();
             HandleRTInput();
             HandleChargeRTInput();
+            HandleLTInput();
             HandleSwitchRightWeaponInput();
             HandleSwitchLeftWeaponInput();
             HandleInteractionInput();
@@ -568,6 +571,18 @@ namespace baodeag
                 {
                     player.playerNetworkManager.isChargingAttack.Value = Hold_RT_Input;
                 }
+            }
+        }
+
+        private void HandleLTInput()
+        {
+            if (LT_Input)
+            {
+                LT_Input = false;
+
+                WeaponItem weaponPerformingAshOfWar = player.playerCombatManager.SelectWeaponToPerformAshOfWar();
+
+                weaponPerformingAshOfWar.ashOfWarAction.AttemptToPerformAction(player);
             }
         }
 
