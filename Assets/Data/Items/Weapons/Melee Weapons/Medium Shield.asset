@@ -10,18 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aac16a7a8b1a12b4e80263a424620dc5, type: 3}
-  m_Name: Straight Sword medium shield test
+  m_Name: Medium Shield
   m_EditorClassIdentifier: 
-  itemName: Straight Sword medium shield test
+  itemName: Medium Shield
   itemIcon: {fileID: 21300000, guid: 6f49fe118643fcb4c9f78638e34b26b2, type: 3}
-  itemDescription: 'A straight sword
-
-'
+  itemDescription: A Medium Shield
   itemID: 3
   itemWeight: 0
   weaponAnimator: {fileID: 22100000, guid: 00b7c2d9ad64ddf4da7744ae13bb005e, type: 2}
   weaponModelType: 1
-  weaponModel: {fileID: 3655762614452610535, guid: 32f0e19d9c00f3f40a7e80b89e7917ab, type: 3}
+  weaponModel: {fileID: 2226457717754544276, guid: 042fe9f7ec2ccc0449741f4a71e0dc7e, type: 3}
   weaponClass: 2
   strengthREQ: 10
   dexREQ: 10
