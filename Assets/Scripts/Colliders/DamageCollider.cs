@@ -45,7 +45,10 @@ namespace baodeag
 
                 CheckForBlock(damageTarget);
 
-                DamageTarget(damageTarget);
+                CheckForParry(damageTarget);
+
+                if (!damageTarget.characterNetworkManager.isInvulnerable.Value)
+                    DamageTarget(damageTarget);
             }
         }
 
@@ -74,6 +77,11 @@ namespace baodeag
                 damageTarget.characterEffectsManager.ProcessInstantEffect(damageEffect);
             }
         }   
+
+        protected virtual void CheckForParry(CharacterManager damageTarget)
+        {
+            //TO DO LATER
+        }
 
         protected virtual void GetBlockingDotValues(CharacterManager damageTarget)
         {
@@ -112,5 +120,6 @@ namespace baodeag
             damageCollider.enabled = false;
             charactersDamaged.Clear(); //reset the character that have been hit when reset the collider
         }
+
     }
 }

@@ -29,6 +29,14 @@ namespace baodeag
             
         }
 
+        public override void CloseAllDamageColliders()
+        {
+            base.CloseAllDamageColliders();
+
+            player.playerEquipmentManager.rightWeaponManager.meleeDamageCollider.DisableDamageCollider();
+            player.playerEquipmentManager.leftWeaponManager.meleeDamageCollider.DisableDamageCollider();
+        }
+
         //critical attacks
         public override void AttemptRiposte(RaycastHit hit)
         {

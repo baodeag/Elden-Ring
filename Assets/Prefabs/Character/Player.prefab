@@ -4549,6 +4549,10 @@ MonoBehaviour:
     m_InternalValue: 0
   isBlocking:
     m_InternalValue: 0
+  isParrying:
+    m_InternalValue: 0
+  isParryable:
+    m_InternalValue: 0
   isAttacking:
     m_InternalValue: 0
   isInvulnerable:
@@ -4836,7 +4840,7 @@ MonoBehaviour:
   rightHandWeaponIndex: 0
   weaponInLeftHandSlots:
   - {fileID: 11400000, guid: 00c7c97a002a22b439e1e236b455d6e0, type: 2}
-  - {fileID: 11400000, guid: 44cf7f826137bed409bf10c407725a1c, type: 2}
+  - {fileID: 11400000, guid: 00c7c97a002a22b439e1e236b455d6e0, type: 2}
   - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   leftHandWeaponIndex: 0
   headEquipment: {fileID: 0}

@@ -7,6 +7,7 @@ namespace baodeag
     {
         [Header("Attack")]
         [SerializeField] private string attackAnimation;
+        [SerializeField] bool isParryable = true;
 
         [Header("Combo Action")]
         public AICharacterAttackAction comboAction;
@@ -20,9 +21,10 @@ namespace baodeag
         public float minimumAttackDistance = 0;
         public float maximumAttackDistance = 2;
 
-        public void AttemptToPerformAction(AICharacterManager aICharacter)
+        public void AttemptToPerformAction(AICharacterManager aiCharacter)
         {
-            aICharacter.characterAnimatorManager.PlayTargetActionAnimation(attackAnimation, true);
+            aiCharacter.characterAnimatorManager.PlayTargetActionAnimation(attackAnimation, true);
+            aiCharacter.aiCharacterNetworkManager.isParryable.Value = isParryable;
         }
     }
 }

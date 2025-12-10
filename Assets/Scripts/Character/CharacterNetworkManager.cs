@@ -56,6 +56,14 @@ namespace baodeag
             (false,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isParrying = new NetworkVariable<bool>
+            (false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isParryable = new NetworkVariable<bool>
+            (false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
         public NetworkVariable<bool> isAttacking = new NetworkVariable<bool>
             (false,
             NetworkVariableReadPermission.Everyone,
@@ -535,6 +543,36 @@ namespace baodeag
             //move the enemy to the proper backstab position
             StartCoroutine(characterCausingDamage.characterCombatManager.ForceMoveEnemyCharacterToBackstabPosition(
                 damagedCharacter, WorldUtilityManager.Instance.GetBackstabPositionBasedOnWeaponClass(weapon.weaponClass)));
+        }
+
+        //parry
+        [ServerRpc(RequireOwnership = false)]
+        public void NotifyServerOfParryServerRpc(ulong parriedClientID)
+        {
+            if (IsServer)
+            {
+                NotifyServerOfParryClientRpc(parriedClientID);
+            }
+        }
+
+        [ClientRpc]
+        protected void NotifyServerOfParryClientRpc(ulong parriedClientID)
+        {
+            ProcessParryFromServer(parriedClientID);
+        }
+
+        protected void ProcessParryFromServer(ulong parriedClient)
+        {
+            CharacterManager parriedCharacter = NetworkManager.Singleton.SpawnManager.SpawnedObjects[parriedClient].gameObject.GetComponent<CharacterManager>();
+
+            if (parriedCharacter == null)
+                return;
+
+            //close all damage colliders on the parried character
+            if (parriedCharacter.IsOwner)
+            {
+                parriedCharacter.characterAnimatorManager.PlayTargetActionAnimationInstantly("Parried_01", true);
+            }
         }
     }
 
