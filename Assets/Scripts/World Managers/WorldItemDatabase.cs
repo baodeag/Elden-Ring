@@ -11,6 +11,8 @@ namespace baodeag
 
         public WeaponItem unarmedWeapon;
 
+        public GameObject pickUpItemPrefab;
+
         [Header("Weapons")]
         [SerializeField] List<WeaponItem> weapons = new List<WeaponItem>();
 
@@ -79,6 +81,11 @@ namespace baodeag
             {
                 items[i].itemID = i;
             }
+        }
+
+        public Item GetItemByID(int ID)
+        {
+            return items.FirstOrDefault(item => item.itemID == ID);
         }
 
         public WeaponItem GetWeaponByID(int ID)

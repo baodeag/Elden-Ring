@@ -11,6 +11,7 @@ namespace baodeag
         [HideInInspector] public AICharacterCombatManager aiCharacterCombatManager;
         [HideInInspector] public AICharacterNetworkManager aiCharacterNetworkManager;
         [HideInInspector] public AICharacterLocomotionManager aiCharacterLocomotionManager;
+        [HideInInspector] public AICharacterInventoryManager aiCharacterInventoryManager;
 
         [Header("Nav Mesh Agent")]
         public NavMeshAgent navMeshAgent;
@@ -31,6 +32,7 @@ namespace baodeag
             aiCharacterCombatManager = GetComponent<AICharacterCombatManager>();
             aiCharacterNetworkManager = GetComponent<AICharacterNetworkManager>();
             aiCharacterLocomotionManager = GetComponent<AICharacterLocomotionManager>();
+            aiCharacterInventoryManager = GetComponent<AICharacterInventoryManager>();
 
             navMeshAgent = GetComponentInChildren<NavMeshAgent>();
         }
