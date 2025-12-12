@@ -64,6 +64,12 @@ public enum WeaponClass
     LightShield
 }
 
+public enum SpellClass
+{
+    Incantation,
+    Sorcery
+}
+
 public enum EquipmentModelType
 {
     FullHelmet, //hide face, hair, etc

@@ -248,6 +248,22 @@ namespace baodeag
 
         }
 
+        public void InstantiateSpellWarmUpFX()
+        {
+            if (player.playerInventoryManager.currentSpell == null)
+                return;
+
+            player.playerInventoryManager.currentSpell.InstantiateWarmUpSpellFX(player);
+        }
+
+        public void InstantiateSpellReleaseFX()
+        {
+            if (player.playerInventoryManager.currentSpell == null)
+                return;
+
+            player.playerInventoryManager.currentSpell.InstantiateReleaseSpellFX(player);
+        }
+
         public WeaponItem SelectWeaponToPerformAshOfWar()
         {
             WeaponItem selectedWeapon = player.playerInventoryManager.currentLeftHandWeapon;

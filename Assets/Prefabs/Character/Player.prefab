@@ -4660,6 +4660,8 @@ MonoBehaviour:
     m_InternalValue: 0
   currentLeftHandWeaponID:
     m_InternalValue: 0
+  currentSpellID:
+    m_InternalValue: 0
   isUsingRightHand:
     m_InternalValue: 0
   isUsingLeftHand:
@@ -4834,8 +4836,8 @@ MonoBehaviour:
   currentLeftHandWeapon: {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   currentTwoHandWeapon: {fileID: 0}
   weaponInRightHandSlots:
-  - {fileID: 11400000, guid: 44cf7f826137bed409bf10c407725a1c, type: 2}
-  - {fileID: 11400000, guid: 00c7c97a002a22b439e1e236b455d6e0, type: 2}
+  - {fileID: 11400000, guid: 11604aa6e9114404cb9df6b4e87b6a49, type: 2}
+  - {fileID: 11400000, guid: 11604aa6e9114404cb9df6b4e87b6a49, type: 2}
   - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   rightHandWeaponIndex: 0
   weaponInLeftHandSlots:
@@ -4843,6 +4845,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 00c7c97a002a22b439e1e236b455d6e0, type: 2}
   - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   leftHandWeaponIndex: 0
+  currentSpell: {fileID: 11400000, guid: f02384e9fd8056545989242700aa4df7, type: 2}
   headEquipment: {fileID: 0}
   bodyEquipment: {fileID: 0}
   legEquipment: {fileID: 0}

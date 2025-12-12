@@ -28,6 +28,10 @@ namespace baodeag
             0,
             NetworkVariableReadPermission.Everyone, 
             NetworkVariableWritePermission.Owner);
+        public NetworkVariable<int> currentSpellID = new NetworkVariable<int>(
+            0,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
         public NetworkVariable<bool> isUsingRightHand = new NetworkVariable<bool>(
             false,
             NetworkVariableReadPermission.Everyone,
@@ -145,6 +149,12 @@ namespace baodeag
 
             if (player.playerCombatManager.currentWeaponBeingUsed != null)
                 player.playerAnimatorManager.UpdateAnimatorController(player.playerCombatManager.currentWeaponBeingUsed.weaponAnimator);
+        }
+
+        public void OnCurrentSpellIDChange(int oldID, int newID)
+        {
+            SpellItem newSpell = Instantiate(WorldItemDatabase.Instance.GetSpellByID(newID));
+            player.playerInventoryManager.currentSpell = newSpell;
         }
 
         public override void OnIsBlockingChanged(bool oldStatus, bool newStatus)

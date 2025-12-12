@@ -31,6 +31,9 @@ namespace baodeag
         [Header("Ash Of War")]
         [SerializeField] List<AshOfWar> ashesOfWar = new List<AshOfWar>();
 
+        [Header("Spells")]
+        [SerializeField] List<SpellItem> spells = new List<SpellItem>();
+
         [Header("Items")]
         private List<Item> items = new List<Item>();
 
@@ -76,6 +79,11 @@ namespace baodeag
                 items.Add(item);
             }
 
+            foreach (var item in spells)
+            {
+                items.Add(item); 
+            }
+
             //assign all of our items a unique item id
             for (int i = 0; i < items.Count; i++)
             {
@@ -116,6 +124,11 @@ namespace baodeag
         public AshOfWar GetAshOfWarByID(int ID)
         {
             return ashesOfWar.FirstOrDefault(item => item.itemID == ID);
+        }
+
+        public SpellItem GetSpellByID(int ID)
+        {
+            return spells.FirstOrDefault(item => item.itemID == ID);
         }
     }
 }
