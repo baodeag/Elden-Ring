@@ -79,7 +79,7 @@ namespace baodeag
             character.characterStatsManager.totalPoiseDamage -= poiseDamage;
 
             //we store the previous poise damage taken for other interactions
-            character.characterCombatManager.previousPoiseDamageTaken -= poiseDamage;
+            character.characterCombatManager.previousPoiseDamageTaken = poiseDamage;
 
             float remainingPoise = character.characterStatsManager.basePoiseDefense + 
                 character.characterStatsManager.offensivePoiseBonus + 
@@ -189,6 +189,7 @@ namespace baodeag
             {
                 //if we are poise broken, we want to force the damage animation to play
                 character.characterAnimatorManager.PlayTargetActionAnimation(damageAnimation, true);
+                character.characterCombatManager.DestroyAllCurrentActionFX();
             }
             else
             {

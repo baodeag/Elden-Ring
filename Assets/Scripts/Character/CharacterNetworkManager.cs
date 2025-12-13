@@ -201,6 +201,23 @@ namespace baodeag
             character.animator.SetBool("isBlocking", isBlocking.Value);
         }
 
+        //used to cancel fx when poise is broken
+        [ServerRpc]
+        public void DestroyAllCurrentActionFXServerRpc()
+        {
+            if (IsServer)
+            {
+                DestroyAllCurrentActionFXClientRpc();
+            }
+        }
+
+        [ClientRpc]
+        public void DestroyAllCurrentActionFXClientRpc()
+        {
+            if (character.characterEffectsManager.activeSpellWarmUpFX != null)
+                Destroy(character.characterEffectsManager.activeSpellWarmUpFX);
+        }
+
         //A server rpc is a function called from a client, to the server(in our case the host)
         [ServerRpc]
         public void NotifyTheServerOfActionAnimationServerRpc(ulong clientID, string animationID, bool applyRootMotion)
@@ -446,7 +463,9 @@ namespace baodeag
             damageEffect.characterCausingDamage = characterCausingDamage;
 
             damagedCharacter.characterEffectsManager.ProcessInstantEffect(damageEffect);
-            damagedCharacter.characterAnimatorManager.PlayTargetActionAnimationInstantly(criticalDamageAnimation, true);
+
+            if (damagedCharacter.IsOwner)
+                damagedCharacter.characterAnimatorManager.PlayTargetActionAnimationInstantly(criticalDamageAnimation, true);
 
             //move the enemy to the proper ripost position
             StartCoroutine(damagedCharacter.characterCombatManager.ForceMoveEnemyCharacterToRipostePosition(

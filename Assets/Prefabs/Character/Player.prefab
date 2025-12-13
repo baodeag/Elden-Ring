@@ -4845,7 +4845,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 00c7c97a002a22b439e1e236b455d6e0, type: 2}
   - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   leftHandWeaponIndex: 0
-  currentSpell: {fileID: 11400000, guid: f02384e9fd8056545989242700aa4df7, type: 2}
+  currentSpell: {fileID: 11400000, guid: 6024a7c4a7617e44b9782fd48fae9747, type: 2}
   headEquipment: {fileID: 0}
   bodyEquipment: {fileID: 0}
   legEquipment: {fileID: 0}
@@ -5059,11 +5059,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4e42db543e37b94a9efdf808e9b2643, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  activeSpellWarmUpFX: {fileID: 0}
   bloodSplatterVFX: {fileID: 0}
   criticalBloodSplatterVFX: {fileID: 0}
   staticEffects: []
-  effectToTest: {fileID: 11400000, guid: 52a0a31489f75054896d1e198c2f59e1, type: 2}
-  processEffect: 0
 --- !u!114 &-2751905140632614124
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -154,7 +154,9 @@ namespace baodeag
         public void OnCurrentSpellIDChange(int oldID, int newID)
         {
             SpellItem newSpell = Instantiate(WorldItemDatabase.Instance.GetSpellByID(newID));
-            player.playerInventoryManager.currentSpell = newSpell;
+
+            if (newSpell != null)
+                player.playerInventoryManager.currentSpell = newSpell;
         }
 
         public override void OnIsBlockingChanged(bool oldStatus, bool newStatus)

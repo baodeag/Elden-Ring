@@ -248,5 +248,11 @@ namespace baodeag
         {
 
         }
+
+        //used to destroy things like a drawed arraw or spell warm up fx when the character is poise broken
+        public void DestroyAllCurrentActionFX()
+        {
+            character.characterNetworkManager.DestroyAllCurrentActionFXServerRpc();
+        }
     }
 }

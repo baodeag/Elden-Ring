@@ -29,20 +29,14 @@ namespace baodeag
 
         }
 
-        //apply spell effects
-        public virtual void SuccessfullyCastSpell(PlayerManager player)
-        {
-
-        }
-
         //spell fx that are instantiated when attempting to cast the spell
         public virtual void InstantiateWarmUpSpellFX(PlayerManager player)
         {
 
         }
 
-        //spell fx that are instantiated when the spell is successfully cast
-        public virtual void InstantiateReleaseSpellFX(PlayerManager player)
+        //apply spell effects
+        public virtual void SuccessfullyCastSpell(PlayerManager player)
         {
 
         }

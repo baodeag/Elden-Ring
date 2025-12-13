@@ -23,10 +23,7 @@ namespace baodeag
             if (player.IsOwner)
             {
                 weaponAction.AttemptToPerformAction(player, weaponPerformingAction);
-
-                player.playerNetworkManager.NotifyTheServerOfWeaponActionServerRpc(NetworkManager.Singleton.LocalClientId, weaponAction.actionID, weaponPerformingAction.itemID);
-            }
-            
+            }           
         }
 
         public override void CloseAllDamageColliders()
@@ -256,12 +253,12 @@ namespace baodeag
             player.playerInventoryManager.currentSpell.InstantiateWarmUpSpellFX(player);
         }
 
-        public void InstantiateSpellReleaseFX()
+        public void SuccessfullyCastSpell()
         {
             if (player.playerInventoryManager.currentSpell == null)
                 return;
 
-            player.playerInventoryManager.currentSpell.InstantiateReleaseSpellFX(player);
+            player.playerInventoryManager.currentSpell.SuccessfullyCastSpell(player);
         }
 
         public WeaponItem SelectWeaponToPerformAshOfWar()

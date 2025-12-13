@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace baodeag
 {
-    [CreateAssetMenu(menuName = "Items/Spells/Text Spell")]
-    public class TextSpell : SpellItem
+    [CreateAssetMenu(menuName = "Items/Spells/Test Spell")]
+    public class TestSpell : SpellItem
     {
         public override void AttemptToCastSpell(PlayerManager player)
         {
@@ -34,13 +34,6 @@ namespace baodeag
             base.InstantiateWarmUpSpellFX(player);
 
             Debug.Log("Instantiated FX");
-        }
-
-        public override void InstantiateReleaseSpellFX(PlayerManager player)
-        {
-            base.InstantiateReleaseSpellFX(player);
-
-            Debug.Log("Instantiated Projectile");
         }
 
         public override bool CanICastThisSpell(PlayerManager player)

@@ -14,6 +14,9 @@ namespace baodeag
 
         CharacterManager character;
 
+        [Header("Current Active FX")]
+        public GameObject activeSpellWarmUpFX;
+
         [Header("VFX")]
         [SerializeField] GameObject bloodSplatterVFX;
         [SerializeField] GameObject criticalBloodSplatterVFX;
@@ -26,7 +29,7 @@ namespace baodeag
             character = GetComponent<CharacterManager>();
         }
 
-        public void ProcessInstantEffect(InstantCharacterEffect effect)
+        public virtual void ProcessInstantEffect(InstantCharacterEffect effect)
         {
             effect.ProcessEffect(character);
         }
