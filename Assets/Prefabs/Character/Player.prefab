@@ -4836,13 +4836,13 @@ MonoBehaviour:
   currentLeftHandWeapon: {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   currentTwoHandWeapon: {fileID: 0}
   weaponInRightHandSlots:
-  - {fileID: 11400000, guid: 11604aa6e9114404cb9df6b4e87b6a49, type: 2}
-  - {fileID: 11400000, guid: 11604aa6e9114404cb9df6b4e87b6a49, type: 2}
+  - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
+  - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   rightHandWeaponIndex: 0
   weaponInLeftHandSlots:
-  - {fileID: 11400000, guid: 00c7c97a002a22b439e1e236b455d6e0, type: 2}
-  - {fileID: 11400000, guid: 00c7c97a002a22b439e1e236b455d6e0, type: 2}
+  - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
+  - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   leftHandWeaponIndex: 0
   currentSpell: {fileID: 11400000, guid: 6024a7c4a7617e44b9782fd48fae9747, type: 2}
