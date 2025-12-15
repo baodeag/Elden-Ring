@@ -48,6 +48,7 @@ namespace baodeag
             player.playerEffectsManager.activeSpellWarmUpFX = instantiatedWarmUpSpellFX;
 
         }
+
         public override void SuccessfullyCastSpell(PlayerManager player)
         {
             base.SuccessfullyCastSpell(player);
@@ -74,14 +75,115 @@ namespace baodeag
             }
 
             //use the list of colliders from the caster and now apply the ignore physics with the colliders from the projectile
+
             instantiatedReleasedSpellFX.transform.parent = spellInstantiationLocation.transform;
             instantiatedReleasedSpellFX.transform.localPosition = Vector3.zero;
             instantiatedReleasedSpellFX.transform.localRotation = Quaternion.identity;
             instantiatedReleasedSpellFX.transform.parent = null;
 
-            //set the projectile velocity and direction
-            
+            //apply damage to the projectiles damage collider
+            FireBallManager fireBallManager = instantiatedReleasedSpellFX.GetComponent<FireBallManager>();
+            fireBallManager.InitializeFireBall(player);
 
+            //Physics.IgnoreCollision(characterCollisionCollider, fireBallManager.damageCollider.damageCollider, true);
+
+            //foreach (var collider in characterColiders)
+            //{
+            //    Physics.IgnoreCollision(collider, fireBallManager.damageCollider.damageCollider, true);
+            //}
+
+            //set the projectile velocity and direction
+            if (player.playerNetworkManager.isLockedOn.Value)
+            {
+                instantiatedReleasedSpellFX.transform.LookAt(player.playerCombatManager.currentTarget.transform.position);
+            }
+            else
+            {
+                Vector3 forwardDirection = player.transform.forward;
+                instantiatedReleasedSpellFX.transform.forward = forwardDirection;
+            }
+
+            Rigidbody spellRigidBody = instantiatedReleasedSpellFX.GetComponent<Rigidbody>();
+            Vector3 upwardVelocityVector = instantiatedReleasedSpellFX.transform.up * upwardVelocity;
+            Vector3 forwardVelocityVector = instantiatedReleasedSpellFX.transform.forward * forwardVelocity;
+            Vector3 totalVelocity = upwardVelocityVector + forwardVelocityVector;
+            spellRigidBody.linearVelocity = totalVelocity;
+        }
+
+        public override void SuccessfullyChargeSpell(PlayerManager player)
+        {
+            base.SuccessfullyChargeSpell(player);
+
+            //destroy any warm up fx remaining from spell
+            if (player.IsOwner)
+                player.playerCombatManager.DestroyAllCurrentActionFX();
+
+            //instantiate spell projectile
+            SpellInstantiationLocation spellInstantiationLocation;
+            GameObject instantiatedChargeSpellFX = Instantiate(spellChargeFX);
+
+            if (player.playerNetworkManager.isUsingRightHand.Value)
+            {
+                spellInstantiationLocation = player.playerEquipmentManager.rightWeaponManager.GetComponentInChildren<SpellInstantiationLocation>();
+            }
+            else
+            {
+                spellInstantiationLocation = player.playerEquipmentManager.leftWeaponManager.GetComponentInChildren<SpellInstantiationLocation>();
+            }
+
+            //save the charge fx as variable so it can be destroyed if player is knocked out of the animation
+            player.playerEffectsManager.activeSpellWarmUpFX = instantiatedChargeSpellFX;
+
+            instantiatedChargeSpellFX.transform.parent = spellInstantiationLocation.transform;
+            instantiatedChargeSpellFX.transform.localPosition = Vector3.zero;
+            instantiatedChargeSpellFX.transform.localRotation = Quaternion.identity;
+        }
+
+        public override void SuccessfullyCastSpellFullCharge(PlayerManager player)
+        {
+            base.SuccessfullyCastSpellFullCharge(player);
+
+            //destroy any warm up fx remaining from spell
+            if (player.IsOwner)
+                player.playerCombatManager.DestroyAllCurrentActionFX();
+
+            //get any colliders from the caster
+            Collider[] characterColiders = player.GetComponentsInChildren<Collider>();
+            Collider characterCollisionCollider = player.GetComponent<Collider>();
+
+            //instantiate spell projectile
+            SpellInstantiationLocation spellInstantiationLocation;
+            GameObject instantiatedReleasedSpellFX = Instantiate(spellCastReleaseFXFullCharge);
+
+            if (player.playerNetworkManager.isUsingRightHand.Value)
+            {
+                spellInstantiationLocation = player.playerEquipmentManager.rightWeaponManager.GetComponentInChildren<SpellInstantiationLocation>();
+            }
+            else
+            {
+                spellInstantiationLocation = player.playerEquipmentManager.leftWeaponManager.GetComponentInChildren<SpellInstantiationLocation>();
+            }
+
+            //use the list of colliders from the caster and now apply the ignore physics with the colliders from the projectile
+
+            instantiatedReleasedSpellFX.transform.parent = spellInstantiationLocation.transform;
+            instantiatedReleasedSpellFX.transform.localPosition = Vector3.zero;
+            instantiatedReleasedSpellFX.transform.localRotation = Quaternion.identity;
+            instantiatedReleasedSpellFX.transform.parent = null;
+
+            //apply damage to the projectiles damage collider
+            FireBallManager fireBallManager = instantiatedReleasedSpellFX.GetComponent<FireBallManager>();
+            fireBallManager.isFullyCharged = true;
+            fireBallManager.InitializeFireBall(player);
+
+            //Physics.IgnoreCollision(characterCollisionCollider, fireBallManager.damageCollider.damageCollider, true);
+
+            //foreach (var collider in characterColiders)
+            //{
+            //    Physics.IgnoreCollision(collider, fireBallManager.damageCollider.damageCollider, true);
+            //}
+
+            //set the projectile velocity and direction
             if (player.playerNetworkManager.isLockedOn.Value)
             {
                 instantiatedReleasedSpellFX.transform.LookAt(player.playerCombatManager.currentTarget.transform.position);

@@ -7,7 +7,7 @@ namespace baodeag
     public class DamageCollider : MonoBehaviour
     {
         [Header("Collider")]
-        [SerializeField] protected Collider damageCollider;
+        public Collider damageCollider;
 
         [Header("Damage")]
         public float physicalDamage = 0;

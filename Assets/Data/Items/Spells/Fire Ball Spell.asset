@@ -15,12 +15,14 @@ MonoBehaviour:
   itemName: Fire Ball
   itemIcon: {fileID: 0}
   itemDescription: 
-  itemID: 10
+  itemID: 11
   spellClass: 0
   fullChargeEffectMultiplier: 2
   spellSlotUsed: 1
   spellCastWarmUpFX: {fileID: 2104574147940905655, guid: 3bd22634eb04f30498964aa221b22650, type: 3}
+  spellChargeFX: {fileID: 2104574147940905655, guid: b332c574d1591f24dbc8c4a601ec5819, type: 3}
   spellCastReleaseFX: {fileID: 8797318432125854541, guid: 9887ada464f7a6143b15451363bbd7f2, type: 3}
+  spellCastReleaseFXFullCharge: {fileID: 8797318432125854541, guid: 27de0475c06a08a458d63acefe11acc1, type: 3}
   mainHandSpellAnimation: Spell_Main_Fire_Ball_Start_01
   offHandSpellAnimation: Spell_Off_Fire_Ball_Start_01
   warmUpSoundFX: {fileID: 0}

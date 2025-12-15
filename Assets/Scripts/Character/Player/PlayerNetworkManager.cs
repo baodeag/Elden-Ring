@@ -59,6 +59,16 @@ namespace baodeag
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
 
+        [Header("Spells")]
+        public NetworkVariable<bool> isChargingRightSpell = new NetworkVariable<bool>(
+            false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isChargingLeftSpell = new NetworkVariable<bool>(
+            false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+
         [Header("Armor")]
         public NetworkVariable<bool> isMale = new NetworkVariable<bool>(
             true,
@@ -157,6 +167,16 @@ namespace baodeag
 
             if (newSpell != null)
                 player.playerInventoryManager.currentSpell = newSpell;
+        }
+
+        public void OnIsChargingRightSpellChanged(bool oldStatus, bool newStatus)
+        {
+            player.animator.SetBool("isChargingRightSpell", isChargingRightSpell.Value);
+        }
+
+        public void OnIsChargingLeftSpellChanged(bool oldStatus, bool newStatus)
+        {
+            player.animator.SetBool("isChargingLeftSpell", isChargingLeftSpell.Value);
         }
 
         public override void OnIsBlockingChanged(bool oldStatus, bool newStatus)

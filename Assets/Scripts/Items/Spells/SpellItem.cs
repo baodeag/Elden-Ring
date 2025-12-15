@@ -13,7 +13,9 @@ namespace baodeag
 
         [Header("Spell FX")]
         [SerializeField] protected GameObject spellCastWarmUpFX;
+        [SerializeField] protected GameObject spellChargeFX;
         [SerializeField] protected GameObject spellCastReleaseFX;
+        [SerializeField] protected GameObject spellCastReleaseFXFullCharge;
 
         [Header("Animations")]
         [SerializeField] protected string mainHandSpellAnimation;
@@ -37,6 +39,16 @@ namespace baodeag
 
         //apply spell effects
         public virtual void SuccessfullyCastSpell(PlayerManager player)
+        {
+
+        }
+
+        public virtual void SuccessfullyChargeSpell(PlayerManager player)
+        {
+
+        }
+
+        public virtual void SuccessfullyCastSpellFullCharge(PlayerManager player)
         {
 
         }

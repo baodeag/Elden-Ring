@@ -38,7 +38,9 @@ namespace baodeag
 
         [Header("Bumper Inputs")]
         [SerializeField] bool RB_Input = false;
+        [SerializeField] bool hold_RB_Input = false;
         [SerializeField] bool LB_Input = false;
+        [SerializeField] bool hold_LB_Input = false;
 
         [Header("Trigger Inputs")]
         [SerializeField] bool RT_Input = false;
@@ -133,7 +135,13 @@ namespace baodeag
 
                 //bumper
                 playerControls.PlayerActions.RB.performed += i => RB_Input = true; // Get RB input
+                playerControls.PlayerActions.HoldRB.performed += i => hold_RB_Input = true;
+                playerControls.PlayerActions.HoldRB.canceled += i => hold_RB_Input = false;
+
                 playerControls.PlayerActions.LB.performed += i => LB_Input = true; // Get LB input
+                playerControls.PlayerActions.HoldLB.performed += i => hold_LB_Input = true;
+                playerControls.PlayerActions.HoldLB.canceled += i => hold_LB_Input = false;
+
                 playerControls.PlayerActions.LB.canceled += i => player.playerNetworkManager.isBlocking.Value = false;
 
                 //triggers
@@ -209,7 +217,9 @@ namespace baodeag
             HandleSprintInput();
             HandleJumpInput();
             HandleRBInput();
+            HandleHoldRBInput();
             HandleLBInput();
+            HandleHoldLBInput();
             HandleRTInput();
             HandleChargeRTInput();
             HandleLTInput();
@@ -531,6 +541,30 @@ namespace baodeag
                 player.playerCombatManager.PerformWeaponBasedAction(
                     player.playerInventoryManager.currentRightHandWeapon.oh_RB_Action,
                     player.playerInventoryManager.currentRightHandWeapon);
+            }
+        }
+
+        private void HandleHoldRBInput()
+        {
+            if (hold_RB_Input)
+            {
+                player.playerNetworkManager.isChargingRightSpell.Value = true;
+            }
+            else
+            {
+                player.playerNetworkManager.isChargingRightSpell.Value = false;
+            }
+        }
+
+        private void HandleHoldLBInput()
+        {
+            if (hold_LB_Input)
+            {
+                player.playerNetworkManager.isChargingLeftSpell.Value = true;
+            }
+            else
+            {
+                player.playerNetworkManager.isChargingLeftSpell.Value = false;
             }
         }
 

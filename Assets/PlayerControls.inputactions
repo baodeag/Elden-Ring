@@ -186,6 +186,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Hold RB",
+                    "type": "Button",
+                    "id": "4cdfcd9f-192c-4bae-8916-16b5863f7b8c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "X",
                     "type": "Button",
                     "id": "8b7e34c1-ac23-461e-ab13-bfaa25dea9cc",
@@ -198,6 +207,15 @@
                     "name": "LB",
                     "type": "Button",
                     "id": "4f36d820-62ae-4cc8-802d-8d72c745f3f4",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Hold LB",
+                    "type": "Button",
+                    "id": "6eaed369-2efd-4f17-9587-cff0e699a064",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -375,6 +393,17 @@
                 },
                 {
                     "name": "",
+                    "id": "1cc87d5d-9c9b-43c3-be6a-6f72b221fae7",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Hold RB",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "1507aedc-02e9-4f39-95df-ba3ab8d01587",
                     "path": "<Keyboard>/x",
                     "interactions": "",
@@ -414,6 +443,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "LB",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c9d80ef3-ea7a-4110-8b0c-90e704ec4165",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Hold LB",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
