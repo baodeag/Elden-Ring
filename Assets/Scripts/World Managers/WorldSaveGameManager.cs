@@ -238,6 +238,7 @@ namespace baodeag {
             //saves the newly created character  stats, and items (when creation screen is added)
             player.playerNetworkManager.vitality.Value = 15;
             player.playerNetworkManager.endurance.Value = 10;
+            player.playerNetworkManager.mind.Value = 10;
 
             SaveGame();
 

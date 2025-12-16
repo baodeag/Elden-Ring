@@ -9,7 +9,7 @@ namespace baodeag
 
         [Header("Stamina Regeneration")]
         [SerializeField] float staminaRegenerationAmount = 2;
-        public float staminaRegenerationTimer = 0;
+        private float staminaRegenerationTimer = 0;
         private float staminaTickTimer = 0;
         [SerializeField] float staminaRegenerationDelay = 2;
 
@@ -72,6 +72,13 @@ namespace baodeag
             stamina = endurance * 10;
 
             return Mathf.RoundToInt(stamina);
+        }
+
+        public int CalculateFocusPointsBasedOnMindLevel(int mind)
+        {
+            int focusPoints = 0;
+            focusPoints = mind * 10;
+            return Mathf.RoundToInt(focusPoints);
         }
 
         public virtual void RegenerateStamina()

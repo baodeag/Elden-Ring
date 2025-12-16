@@ -20,6 +20,7 @@ namespace baodeag
             //until then however, stats are never calculated, so we do it here
             CalculateHealthBasedOnVitalityLevel(player.playerNetworkManager.vitality.Value);
             CalculateStaminaBasedOnEnduranceLevel(player.playerNetworkManager.endurance.Value);
+            CalculateFocusPointsBasedOnMindLevel(player.playerNetworkManager.mind.Value);
         }
 
         public void CalculateTotalArmorAbsorption()

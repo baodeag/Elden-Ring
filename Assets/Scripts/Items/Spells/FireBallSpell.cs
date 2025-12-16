@@ -200,20 +200,5 @@ namespace baodeag
             Vector3 totalVelocity = upwardVelocityVector + forwardVelocityVector;
             spellRigidBody.linearVelocity = totalVelocity;
         }
-
-        public override bool CanICastThisSpell(PlayerManager player)
-        {
-            if (player.isPerformingAction)
-                return false;
-
-            if (player.playerNetworkManager.isJumping.Value)
-                return false;
-
-            if (player.playerNetworkManager.currentStamina.Value <= 0)
-                return false;
-
-
-            return true;
-        }
     }
 }

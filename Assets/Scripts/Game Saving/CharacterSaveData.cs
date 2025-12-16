@@ -29,10 +29,12 @@ namespace baodeag
         [Header("Resources")]
         public int currentHealth;
         public float currentStamina;
+        public int currentFocusPoints;
 
         [Header("Stats")]
         public int vitality;
         public int endurance;
+        public int mind;
 
         [Header("Sites of Grace")]
         public SerializableDictionary<int, bool> sitesOfGrace; //the int is the site of grace ID, the bool is the activated state
@@ -59,6 +61,9 @@ namespace baodeag
         public int leftWeapon01;
         public int leftWeapon02;
         public int leftWeapon03;
+
+        //this will change when we add multiple spells
+        public int currentSpell;
 
         public CharacterSaveData()
         {

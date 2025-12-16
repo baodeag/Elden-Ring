@@ -84,10 +84,12 @@ namespace baodeag
                 //update the total amount of health when the sts linked to either changes
                 playerNetworkManager.vitality.OnValueChanged += playerNetworkManager.SetNewMaxHealthValue;
                 playerNetworkManager.endurance.OnValueChanged += playerNetworkManager.SetNewMaxStaminaValue;
+                playerNetworkManager.mind.OnValueChanged += playerNetworkManager.SetNewMaxFocusPointsValue;
 
                 //updates ui stat bars when a stats change (health or stamina)
                 playerNetworkManager.currentHealth.OnValueChanged += PlayerUIManager.instance.playerUIHudManager.SetNewHealthValue;
                 playerNetworkManager.currentStamina.OnValueChanged += PlayerUIManager.instance.playerUIHudManager.SetNewStaminaValue;
+                playerNetworkManager.currentFocusPoints.OnValueChanged += PlayerUIManager.instance.playerUIHudManager.SetNewFocusPointValue;
                 playerNetworkManager.currentStamina.OnValueChanged += playerStatsManager.ResetStaminaRegenTimer;
 
                 
@@ -150,10 +152,12 @@ namespace baodeag
                 //update the total amount of health when the sts linked to either changes
                 playerNetworkManager.vitality.OnValueChanged -= playerNetworkManager.SetNewMaxHealthValue;
                 playerNetworkManager.endurance.OnValueChanged -= playerNetworkManager.SetNewMaxStaminaValue;
+                playerNetworkManager.mind.OnValueChanged -= playerNetworkManager.SetNewMaxFocusPointsValue;
 
                 //updates ui stat bars when a stats change (health or stamina)
                 playerNetworkManager.currentHealth.OnValueChanged -= PlayerUIManager.instance.playerUIHudManager.SetNewHealthValue;
                 playerNetworkManager.currentStamina.OnValueChanged -= PlayerUIManager.instance.playerUIHudManager.SetNewStaminaValue;
+                playerNetworkManager.currentFocusPoints.OnValueChanged -= PlayerUIManager.instance.playerUIHudManager.SetNewFocusPointValue;
                 playerNetworkManager.currentStamina.OnValueChanged -= playerStatsManager.ResetStaminaRegenTimer;
             }
 
@@ -248,9 +252,11 @@ namespace baodeag
 
             currentCharacterData.currentHealth = playerNetworkManager.currentHealth.Value;
             currentCharacterData.currentStamina = playerNetworkManager.currentStamina.Value;
+            currentCharacterData.currentFocusPoints = playerNetworkManager.currentFocusPoints.Value;
 
             currentCharacterData.vitality = playerNetworkManager.vitality.Value;
             currentCharacterData.endurance = playerNetworkManager.endurance.Value;
+            currentCharacterData.mind = playerNetworkManager.mind.Value;
 
             //equipment
             currentCharacterData.headEquipment = playerNetworkManager.headEquipmentID.Value;
@@ -267,6 +273,9 @@ namespace baodeag
             currentCharacterData.leftWeapon01 = playerInventoryManager.weaponInLeftHandSlots[0].itemID;
             currentCharacterData.leftWeapon02 = playerInventoryManager.weaponInLeftHandSlots[1].itemID;
             currentCharacterData.leftWeapon03 = playerInventoryManager.weaponInLeftHandSlots[2].itemID;
+
+            if (playerInventoryManager.currentSpell != null)
+                currentCharacterData.currentSpell = playerInventoryManager.currentSpell.itemID;
         }
 
         public void LoadGameDataFromCurrentCharacterData(ref CharacterSaveData currentCharacterData)
@@ -284,13 +293,15 @@ namespace baodeag
 
             playerNetworkManager.vitality.Value = currentCharacterData.vitality;
             playerNetworkManager.endurance.Value= currentCharacterData.endurance;
+            playerNetworkManager.mind.Value = currentCharacterData.mind;
 
             //this will be moved when saving and loading is added
             playerNetworkManager.maxHealth.Value = playerStatsManager.CalculateHealthBasedOnVitalityLevel(playerNetworkManager.vitality.Value);
             playerNetworkManager.maxStamina.Value = playerStatsManager.CalculateStaminaBasedOnEnduranceLevel(playerNetworkManager.endurance.Value);
+            playerNetworkManager.maxFocusPoints.Value = playerStatsManager.CalculateFocusPointsBasedOnMindLevel(playerNetworkManager.mind.Value);
             playerNetworkManager.currentHealth.Value = currentCharacterData.currentHealth;
             playerNetworkManager.currentStamina.Value = currentCharacterData.currentStamina;
-            PlayerUIManager.instance.playerUIHudManager.SetMaxStaminaValue(playerNetworkManager.maxStamina.Value);
+            playerNetworkManager.currentFocusPoints.Value = currentCharacterData.currentFocusPoints;
 
             //equipment
 
@@ -392,6 +403,16 @@ namespace baodeag
             else
             {
                 playerInventoryManager.weaponInLeftHandSlots[2] = null;
+            }
+
+            if (WorldItemDatabase.Instance.GetSpellByID(currentCharacterData.currentSpell))
+            {
+                SpellItem currentSpell = Instantiate(WorldItemDatabase.Instance.GetSpellByID(currentCharacterData.currentSpell));
+                playerNetworkManager.currentSpellID.Value = currentSpell.itemID;
+            }
+            else
+            {
+                playerNetworkManager.currentSpellID.Value = -1;
             }
 
             playerEquipmentManager.EquipArmor();
