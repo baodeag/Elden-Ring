@@ -8,8 +8,10 @@ namespace baodeag
     {
         [SerializeField] string heavy_Attack_01 = "Main_Heavy_Attack_01";
         [SerializeField] string heavy_Attack_02 = "Main_Heavy_Attack_02";
+        [SerializeField] string heavy_Jumping_Attack_01 = "Main_Heavy_Jump_Attack_01";
         [SerializeField] string th_heavy_Attack_01 = "TH_Heavy_Attack_01";
         [SerializeField] string th_heavy_Attack_02 = "TH_Heavy_Attack_02";
+        [SerializeField] string th_heavy_Jumping_Attack_01 = "TH_Heavy_Jump_Attack_01";
 
         public override void AttemptToPerformAction(PlayerManager playerPerformingAction, WeaponItem weaponPerformingAction)
         {
@@ -21,11 +23,15 @@ namespace baodeag
             if (playerPerformingAction.playerNetworkManager.currentStamina.Value <= 0)
                 return;
 
+            // if we are in the air, perform a jumping heavy attack
             if (!playerPerformingAction.characterLocomotionManager.isGrounded)
+            {
+                PerformJumpingHeavyAttack(playerPerformingAction, weaponPerformingAction);
                 return;
+            }
 
-            if (playerPerformingAction.IsOwner)
-                playerPerformingAction.playerNetworkManager.isAttacking.Value = true;
+            if (playerPerformingAction.playerNetworkManager.isJumping.Value)
+                return;
 
             PerformHeavyAttack(playerPerformingAction, weaponPerformingAction);
         }
@@ -85,6 +91,34 @@ namespace baodeag
             {
                 playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(weaponPerformingAction, AttackType.HeavyAttack01, th_heavy_Attack_01, true);
             }
+        }
+
+        private void PerformJumpingHeavyAttack(PlayerManager playerPerformingAction, WeaponItem weaponPerformingAction)
+        {
+            if (playerPerformingAction.playerNetworkManager.isTwoHandingWeapon.Value)
+            {
+                PerformTwoHandJumpingAttack(playerPerformingAction, weaponPerformingAction);
+            }
+            else
+            {
+                PerformMainHandJumpingAttack(playerPerformingAction, weaponPerformingAction);
+            }
+        }
+
+        private void PerformMainHandJumpingAttack(PlayerManager playerPerformingAction, WeaponItem weaponPerformingAction)
+        {
+            if (playerPerformingAction.isPerformingAction)
+                return;
+
+            playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(weaponPerformingAction, AttackType.HeavyJumpingAttack01, heavy_Jumping_Attack_01, true);
+        }
+
+        private void PerformTwoHandJumpingAttack(PlayerManager playerPerformingAction, WeaponItem weaponPerformingAction)
+        {
+            if (playerPerformingAction.isPerformingAction)
+                return;
+
+            playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(weaponPerformingAction, AttackType.HeavyJumpingAttack01, th_heavy_Jumping_Attack_01, true);
         }
     }
 }

@@ -115,7 +115,9 @@ public enum AttackType
     ChargedAttack02,
     RunningAttack01,
     RollingAttack01,
-    BackstepAttack01
+    BackstepAttack01,
+    LightJumpingAttack01,
+    HeavyJumpingAttack01
 }
 
 public enum DamageIntensity

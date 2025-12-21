@@ -9,6 +9,7 @@ namespace baodeag
         [Header("Light Attacks")]
         [SerializeField] string light_Attack_01 = "Main_Light_Attack_01";
         [SerializeField] string light_Attack_02 = "Main_Light_Attack_02";
+        [SerializeField] string light_Jumping_Attack_01 = "Main_Light_Jump_Attack_01";
 
         [Header("Running Attacks")]
         [SerializeField] string run_Attack_01 = "Main_Run_Attack_01";
@@ -23,6 +24,7 @@ namespace baodeag
         [Header("Light Attacks")]
         [SerializeField] string th_light_Attack_01 = "TH_Light_Attack_01";
         [SerializeField] string th_light_Attack_02 = "TH_Light_Attack_02";
+        [SerializeField] string th_light_Jumping_Attack_01 = "TH_Light_Jump_Attack_01";
 
         [Header("Running Attacks")]
         [SerializeField] string th_run_Attack_01 = "TH_Run_Attack_01";
@@ -43,11 +45,15 @@ namespace baodeag
             if (playerPerformingAction.playerNetworkManager.currentStamina.Value <= 0)
                 return;
 
+            //if we are in the air, perform a jumping attack
             if (!playerPerformingAction.characterLocomotionManager.isGrounded)
+            {
+                PerformJumpingLightAttack(playerPerformingAction, weaponPerformingAction);
                 return;
+            }
 
-            if (playerPerformingAction.IsOwner)
-                playerPerformingAction.playerNetworkManager.isAttacking.Value = true;
+            if (playerPerformingAction.playerNetworkManager.isJumping.Value)
+                return;
 
             //if we are sprinting, perform a running attack
             if (playerPerformingAction.characterNetworkManager.isSprinting.Value)
@@ -173,6 +179,34 @@ namespace baodeag
             {
                 playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(weaponPerformingAction, AttackType.BackstepAttack01, backstep_Attack_01, true);
             }
+        }
+
+        private void PerformJumpingLightAttack(PlayerManager playerPerformingAction, WeaponItem weaponPerformingAction)
+        {
+            if (playerPerformingAction.playerNetworkManager.isTwoHandingWeapon.Value)
+            {
+                PerformTwoHandJumpingLightAttack(playerPerformingAction, weaponPerformingAction);
+            }
+            else
+            {
+                PerformMainHandJumpingLightAttack(playerPerformingAction, weaponPerformingAction);
+            }
+        }
+
+        private void PerformMainHandJumpingLightAttack(PlayerManager playerPerformingAction, WeaponItem weaponPerformingAction)
+        {
+            if (playerPerformingAction.isPerformingAction)
+                return;
+
+            playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(weaponPerformingAction, AttackType.LightJumpingAttack01, light_Jumping_Attack_01, true);
+        }
+
+        private void PerformTwoHandJumpingLightAttack(PlayerManager playerPerformingAction, WeaponItem weaponPerformingAction)
+        {
+            if (playerPerformingAction.isPerformingAction)
+                return;
+
+            playerPerformingAction.playerAnimatorManager.PlayTargetAttackActionAnimation(weaponPerformingAction, AttackType.LightJumpingAttack01, th_light_Jumping_Attack_01, true);
         }
     }
 }

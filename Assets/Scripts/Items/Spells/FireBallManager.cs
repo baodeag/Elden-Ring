@@ -29,13 +29,7 @@ namespace baodeag
             base.Update();
 
             if (spellTarget != null)
-                transform.LookAt(spellTarget.transform);
-
-            if (fireballRigidbody != null)
-            {
-                Vector3 currentVelocity = fireballRigidbody.linearVelocity;
-                fireballRigidbody.linearVelocity = transform.forward + currentVelocity;
-            }
+                transform.LookAt(spellTarget.characterCombatManager.lockOnTransform.position);
         }
 
         private void OnCollisionEnter(Collision collision)

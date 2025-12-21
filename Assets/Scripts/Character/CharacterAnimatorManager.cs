@@ -231,6 +231,7 @@ namespace baodeag
             character.isPerformingAction = isPerformingAction;
             character.characterLocomotionManager.canRotate = canRotate;
             character.characterLocomotionManager.canMove = canMove;
+            character.characterNetworkManager.isAttacking.Value = true;
 
             //tell the server/host we played an animation, and to play that animation on all clients
             character.characterNetworkManager.NotifyTheServerOfAttackActionAnimationServerRpc(
