@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b8f4cae03672764ea3f801fbe8bd5ee, type: 3}
+  m_Name: Bow
+  m_EditorClassIdentifier: 
+  itemName: 
+  itemIcon: {fileID: 21300000, guid: 5116170416a261a459c79b986cb5ce43, type: 3}
+  itemDescription: A standard bow
+  itemID: 0
+  itemWeight: 0
+  weaponAnimator: {fileID: 22100000, guid: ae5b11afa9dfb164c86676d67a99f419, type: 2}
+  weaponModelType: 0
+  weaponModel: {fileID: 1136813735396486659, guid: 370d85b9e5aa61345b0f8187623ef326, type: 3}
+  weaponClass: 5
+  strengthREQ: 8
+  dexREQ: 10
+  intREQ: 0
+  faithREQ: 0
+  physicalDamage: 72
+  magicDamage: 0
+  fireDamage: 0
+  holyDamage: 0
+  lightningDamage: 0
+  poiseDamage: 10
+  light_Attack_01_Modifier: 1
+  light_Attack_02_Modifier: 1.2
+  light_Jumping_Attack_01_Modifier: 1
+  heavy_Attack_01_Modifier: 1.4
+  heavy_Attack_02_Modifier: 1.6
+  heavy_Jumping_Attack_01_Modifier: 1.8
+  charge_Attack_01_Modifier: 2
+  charge_Attack_02_Modifier: 2.2
+  running_Attack_01_Modifier: 1.1
+  rolling_Attack_01_Modifier: 1.1
+  backstep_Attack_01_Modifier: 1.1
+  baseStaminaCost: 20
+  lightAttackStaminaCostMultiplier: 1
+  heavyAttackStaminaCostMultiplier: 1.3
+  chargedAttackStaminaCostMultiplier: 1.5
+  runningAttackStaminaCostMultiplier: 1.1
+  rollingAttackStaminaCostMultiplier: 1.1
+  backstepAttackStaminaCostMultiplier: 1.1
+  physicalBaseDamageAbsorption: 50
+  magicBaseDamageAbsorption: 50
+  fireBaseDamageAbsorption: 50
+  lightningBaseDamageAbsorption: 50
+  holyBaseDamageAbsorption: 50
+  stability: 50
+  oh_RB_Action: {fileID: 0}
+  oh_RT_Action: {fileID: 0}
+  oh_LB_Action: {fileID: 0}
+  ashOfWarAction: {fileID: 0}
+  whooshes: []
+  blocking: []
+  drawSounds: []
+  releaseSounds: []

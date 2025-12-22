@@ -34,6 +34,9 @@ namespace baodeag
         [Header("Spells")]
         [SerializeField] List<SpellItem> spells = new List<SpellItem>();
 
+        [Header("Projectiles")]
+        [SerializeField] List<RangedProjectileItem> projectiles = new List<RangedProjectileItem>();
+
         [Header("Items")]
         private List<Item> items = new List<Item>();
 
@@ -84,6 +87,11 @@ namespace baodeag
                 items.Add(item); 
             }
 
+            foreach (var item in projectiles)
+            {
+                items.Add(item);
+            }
+
             //assign all of our items a unique item id
             for (int i = 0; i < items.Count; i++)
             {
@@ -129,6 +137,11 @@ namespace baodeag
         public SpellItem GetSpellByID(int ID)
         {
             return spells.FirstOrDefault(item => item.itemID == ID);
+        }
+
+        public RangedProjectileItem GetProjectileByID(int ID)
+        {
+            return projectiles.FirstOrDefault(item => item.itemID == ID);
         }
     }
 }
