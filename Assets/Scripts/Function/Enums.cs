@@ -61,13 +61,20 @@ public enum WeaponClass
     Spear,
     MediumShield,
     Fist,
-    LightShield
+    LightShield,
+    Bow
 }
 
 public enum SpellClass
 {
     Incantation,
     Sorcery
+}
+
+public enum ProjectileClass
+{
+    Arrow,
+    Bolt
 }
 
 public enum EquipmentModelType

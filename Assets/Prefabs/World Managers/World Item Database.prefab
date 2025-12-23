@@ -53,6 +53,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 00c7c97a002a22b439e1e236b455d6e0, type: 2}
   - {fileID: 11400000, guid: 9db1c68afd41f204eb9ce916a7bea945, type: 2}
   - {fileID: 11400000, guid: 11604aa6e9114404cb9df6b4e87b6a49, type: 2}
+  - {fileID: 11400000, guid: 8e41399ba98a2184984819f023083d90, type: 2}
   headEquipment:
   - {fileID: 11400000, guid: 0367518efc15af643bab9ad92d39bba7, type: 2}
   - {fileID: 11400000, guid: f4b69d6394f36734b8ccb06f610049fe, type: 2}
@@ -66,3 +67,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dd017550295004e4d896c27346b9892d, type: 2}
   spells:
   - {fileID: 11400000, guid: 6024a7c4a7617e44b9782fd48fae9747, type: 2}
+  projectiles:
+  - {fileID: 11400000, guid: b3b7afc2dba10754ba9c8b6c86e890a9, type: 2}
