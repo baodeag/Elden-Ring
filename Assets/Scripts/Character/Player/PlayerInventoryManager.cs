@@ -24,6 +24,10 @@ namespace baodeag
         public LegEquipmentItem legEquipment;
         public HandEquipmentItem handEquipment;
 
+        [Header("Pojectiles")]
+        public RangedProjectileItem mainProjectile;
+        public RangedProjectileItem secondaryProjectile;
+
         [Header("Inventory")]
         public List<Item> itemsInInventory;
 

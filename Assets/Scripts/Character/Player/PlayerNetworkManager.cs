@@ -1,5 +1,6 @@
 using Unity.Collections;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 
@@ -88,6 +89,20 @@ namespace baodeag
             NetworkVariableWritePermission.Owner);
         public NetworkVariable<int> handEquipmentID = new NetworkVariable<int>(
             -1,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+
+        [Header("Projectiles")]
+        public NetworkVariable<int> mainProjectileID = new NetworkVariable<int>(
+            -1,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<int> secondaryProjectileID = new NetworkVariable<int>(
+            -1,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> hasArrowNotched = new NetworkVariable<bool>(
+            false,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
 
@@ -182,6 +197,28 @@ namespace baodeag
                 if (player.IsOwner)
                     PlayerUIManager.instance.playerUIHudManager.SetSpellItemQuickSlotIcon(newID);
             }
+        }
+
+        public void OnMainProjectileIDChange(int oldID, int newID)
+        {
+            RangedProjectileItem newProjectile = null;
+
+            if (WorldItemDatabase.Instance.GetProjectileByID(newID))
+                newProjectile = Instantiate(WorldItemDatabase.Instance.GetProjectileByID(newID));
+
+            if (newProjectile != null)
+                player.playerInventoryManager.mainProjectile = newProjectile;
+        }
+
+        public void OnSecondaryProjectileIDChange(int oldID, int newID)
+        {
+            RangedProjectileItem newProjectile = null;
+
+            if (WorldItemDatabase.Instance.GetProjectileByID(newID))
+                newProjectile = Instantiate(WorldItemDatabase.Instance.GetProjectileByID(newID));
+
+            if (newProjectile != null)
+                player.playerInventoryManager.secondaryProjectile = newProjectile;
         }
 
         public void OnIsChargingRightSpellChanged(bool oldStatus, bool newStatus)
@@ -368,6 +405,39 @@ namespace baodeag
             {
                 Debug.LogError("Action is null, cant be performed");
             }
+        }
+
+        //draw projectile
+        [ServerRpc]
+        public void NotifyServerOfDrawnProjectileServerRpc(int projectileID)
+        {
+            if (IsServer)
+            {
+                NotifyServerOfDrawnProjectileClientRpc(projectileID);
+            }
+        }
+
+        [ClientRpc]
+        private void NotifyServerOfDrawnProjectileClientRpc(int projectileID)
+        {
+            Animator bowAnimator;
+
+            if (isTwoHandingLeftWeapon.Value)
+            {
+                bowAnimator = player.playerEquipmentManager.leftHandWeaponSlot.GetComponentInChildren<Animator>();
+            }
+            else
+            {
+                bowAnimator = player.playerEquipmentManager.rightHandWeaponSlot.GetComponentInChildren<Animator>();
+            }
+
+            //animate the bow
+            bowAnimator.SetBool("isDrawn", true);
+            bowAnimator.Play("Bow_Draw_01");
+
+            //instantiate the arrow
+            GameObject arrow = Instantiate(WorldItemDatabase.Instance.GetProjectileByID(projectileID).drawProjectileModel, player.playerEquipmentManager.leftHandWeaponSlot.transform);
+            player.playerEffectsManager.activeDrawnProjectileFX = arrow;
         }
     }
 }

@@ -77,6 +77,12 @@ public enum ProjectileClass
     Bolt
 }
 
+public enum ProjectileSlot
+{
+    Main,
+    Secondary
+}
+
 public enum EquipmentModelType
 {
     FullHelmet, //hide face, hair, etc

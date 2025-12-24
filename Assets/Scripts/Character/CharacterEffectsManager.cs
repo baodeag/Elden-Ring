@@ -16,6 +16,7 @@ namespace baodeag
 
         [Header("Current Active FX")]
         public GameObject activeSpellWarmUpFX;
+        public GameObject activeDrawnProjectileFX;
 
         [Header("VFX")]
         [SerializeField] GameObject bloodSplatterVFX;
