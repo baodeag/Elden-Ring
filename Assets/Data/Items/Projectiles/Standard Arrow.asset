@@ -21,11 +21,11 @@ MonoBehaviour:
   upwardVelocity: 0
   ammoMass: 0.01
   maxAmmoAmount: 30
-  currentAmmoAmount: 30
+  currentAmmoAmount: 22
   physicalDamage: 72
   magicDamage: 0
   fireDamage: 0
   holyDamage: 0
   lightningDamage: 0
   drawProjectileModel: {fileID: 1009956618734049686, guid: 98ba7931c56e9204d83c68c49152c019, type: 3}
-  releaseProjectileModel: {fileID: 0}
+  releaseProjectileModel: {fileID: 1027526947263467410, guid: d9215852a43de8f45a4e9aee92228db3, type: 3}

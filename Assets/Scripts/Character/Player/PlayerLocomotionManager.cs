@@ -266,6 +266,7 @@ namespace baodeag
             }
 
             player.playerNetworkManager.currentStamina.Value -= dodgeStaminaCost;
+            player.playerNetworkManager.DestroyAllCurrentActionFXServerRpc();
         }
 
         public void AttemptToPerformJump()

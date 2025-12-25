@@ -470,20 +470,29 @@ namespace baodeag
                 player.playerNetworkManager.isMoving.Value = false;
             }
 
-            // if we are not locked on, only use the move amount
+            if (!player.playerLocomotionManager.canRun)
+            {
+                if (moveAmount > 0.5f)
+                    moveAmount = 0.5f;
+
+                if (vertical_Input > 0.5f)
+                    vertical_Input = 0.5f;
+
+                if (horizontal_Input > 0.5f)
+                    horizontal_Input = 0.5f;
+            }
+
 
             if (!player.playerNetworkManager.isLockedOn.Value || player.playerNetworkManager.isSprinting.Value)
             {
+                // if we are not locked on, only use the move amount
                 player.playerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.playerNetworkManager.isSprinting.Value);
             }
             else
             {
+                // if we are locked on pass the horizontal movement as well
                 player.playerAnimatorManager.UpdateAnimatorMovementParameters(horizontal_Input, vertical_Input, player.playerNetworkManager.isSprinting.Value);
             }
-            
-
-            // if we are locked on pass the horizontal movement as well
-
         }
 
         private void HandleCameraMovementInput()
@@ -549,22 +558,12 @@ namespace baodeag
             if (hold_RB_Input)
             {
                 player.playerNetworkManager.isChargingRightSpell.Value = true;
+                player.playerNetworkManager.isHoldingArrow.Value = true;
             }
             else
             {
                 player.playerNetworkManager.isChargingRightSpell.Value = false;
-            }
-        }
-
-        private void HandleHoldLBInput()
-        {
-            if (hold_LB_Input)
-            {
-                player.playerNetworkManager.isChargingLeftSpell.Value = true;
-            }
-            else
-            {
-                player.playerNetworkManager.isChargingLeftSpell.Value = false;
+                player.playerNetworkManager.isHoldingArrow.Value = false;
             }
         }
 
@@ -582,6 +581,18 @@ namespace baodeag
                 player.playerCombatManager.PerformWeaponBasedAction(
                     player.playerInventoryManager.currentLeftHandWeapon.oh_LB_Action,
                     player.playerInventoryManager.currentLeftHandWeapon);
+            }
+        }
+
+        private void HandleHoldLBInput()
+        {
+            if (hold_LB_Input)
+            {
+                player.playerNetworkManager.isChargingLeftSpell.Value = true;
+            }
+            else
+            {
+                player.playerNetworkManager.isChargingLeftSpell.Value = false;
             }
         }
 

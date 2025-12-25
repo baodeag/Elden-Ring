@@ -49,7 +49,15 @@ MonoBehaviour:
   bossIntroPlayer: {fileID: -4778866460423146414}
   bossLoopPlayer: {fileID: -8622924454675418879}
   physicalDamageSFX: []
+  pickUpItemSFX: {fileID: 0}
   rollSFX: {fileID: 8300000, guid: e919655170d10d04eba4ac8e8c4ecf55, type: 3}
+  stanceBreakSFX: {fileID: 0}
+  criticalStrikeSFX: {fileID: 0}
+  releaseArrowSFX:
+  - {fileID: 8300000, guid: 95663fc1a65376a41879020351369e4a, type: 3}
+  - {fileID: 8300000, guid: 7ca14b4ff36d8674e918923f1bad3642, type: 3}
+  notchArrowSFX:
+  - {fileID: 8300000, guid: 2c1ffdcfea733824e8e622d9c6f29063, type: 3}
 --- !u!82 &-4778866460423146414
 AudioSource:
   m_ObjectHideFlags: 0

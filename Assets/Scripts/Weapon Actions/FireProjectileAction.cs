@@ -53,6 +53,8 @@ namespace baodeag
             //if the player does not have an arrow notched, do so now
             if (!playerPerformingAction.playerNetworkManager.hasArrowNotched.Value)
             {
+                playerPerformingAction.playerNetworkManager.hasArrowNotched.Value = true;
+
                 bool canIDrawAProjectile = CanIFireThisProjectile(weaponPerformingAction, projectileItem);
 
                 if (!canIDrawAProjectile)
@@ -64,6 +66,7 @@ namespace baodeag
                     return;
                 }
 
+                playerPerformingAction.playerCombatManager.currentProjectileBeingUsed = projectileSlot;
                 playerPerformingAction.playerAnimatorManager.PlayTargetActionAnimation("Bow_Draw_01", true);
                 playerPerformingAction.playerNetworkManager.NotifyServerOfDrawnProjectileServerRpc(projectileItem.itemID);
             }

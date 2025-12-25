@@ -105,6 +105,10 @@ namespace baodeag
             false,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isHoldingArrow = new NetworkVariable<bool>(
+            false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
 
         protected override void Awake()
         {
@@ -219,6 +223,11 @@ namespace baodeag
 
             if (newProjectile != null)
                 player.playerInventoryManager.secondaryProjectile = newProjectile;
+        }
+
+        public void OnIsHoldingArrowChanged(bool oldStatus, bool newStatus)
+        {
+            player.animator.SetBool("isHoldingArrow", isHoldingArrow.Value);
         }
 
         public void OnIsChargingRightSpellChanged(bool oldStatus, bool newStatus)
@@ -407,6 +416,34 @@ namespace baodeag
             }
         }
 
+        [ClientRpc]
+        public override void DestroyAllCurrentActionFXClientRpc()
+        {
+            base.DestroyAllCurrentActionFXClientRpc();
+
+            if (hasArrowNotched.Value)
+            {
+                //animate the bow
+                Animator bowAnimator;
+
+                if (player.playerNetworkManager.isTwoHandingLeftWeapon.Value)
+                {
+                    bowAnimator = player.playerEquipmentManager.leftHandWeaponSlot.GetComponentInChildren<Animator>();
+                }
+                else
+                {
+                    bowAnimator = player.playerEquipmentManager.rightHandWeaponSlot.GetComponentInChildren<Animator>();
+                }
+
+                //animate the bow
+                bowAnimator.SetBool("isDrawn", false);
+                bowAnimator.Play("Bow_Fire_01");
+
+                if (player.IsOwner)
+                    hasArrowNotched.Value = false;
+            }
+        }
+
         //draw projectile
         [ServerRpc]
         public void NotifyServerOfDrawnProjectileServerRpc(int projectileID)
@@ -438,6 +475,9 @@ namespace baodeag
             //instantiate the arrow
             GameObject arrow = Instantiate(WorldItemDatabase.Instance.GetProjectileByID(projectileID).drawProjectileModel, player.playerEquipmentManager.leftHandWeaponSlot.transform);
             player.playerEffectsManager.activeDrawnProjectileFX = arrow;
+
+            //play sfx
+            player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(WorldSoundFXManager.instance.notchArrowSFX));
         }
     }
 }

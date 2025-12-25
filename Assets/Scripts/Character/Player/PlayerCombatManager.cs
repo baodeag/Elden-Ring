@@ -1,5 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
+using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace baodeag
 {
@@ -8,6 +10,7 @@ namespace baodeag
         PlayerManager player;
 
         public WeaponItem currentWeaponBeingUsed;
+        public ProjectileSlot currentProjectileBeingUsed;
 
         [Header("Flags")]
         public bool canComboWithMainHandWeapon = false;
@@ -251,6 +254,102 @@ namespace baodeag
 
         }
 
+        //projectile
+        public void ReleaseArrow()
+        {
+            if (player.IsOwner)
+                player.playerNetworkManager.hasArrowNotched.Value = false;
+
+            //destroy warm up projectile 
+            if (player.playerEffectsManager.activeDrawnProjectileFX != null)
+                Destroy(player.playerEffectsManager.activeDrawnProjectileFX);
+
+            //play release arrow sfx
+            player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(WorldSoundFXManager.instance.releaseArrowSFX));
+
+            //animate the bow
+            Animator bowAnimator;
+
+            if (player.playerNetworkManager.isTwoHandingLeftWeapon.Value)
+            {
+                bowAnimator = player.playerEquipmentManager.leftHandWeaponSlot.GetComponentInChildren<Animator>();
+            }
+            else
+            {
+                bowAnimator = player.playerEquipmentManager.rightHandWeaponSlot.GetComponentInChildren<Animator>();
+            }
+
+            //animate the bow
+            bowAnimator.SetBool("isDrawn", false);
+            bowAnimator.Play("Bow_Fire_01");
+
+            if (!player.IsOwner)
+                return;
+
+            //the projectile we are firing
+            RangedProjectileItem projectileItem = null;
+
+            switch (currentProjectileBeingUsed)
+            {
+                case ProjectileSlot.Main:
+                    projectileItem = player.playerInventoryManager.mainProjectile;
+                    break;
+                case ProjectileSlot.Secondary:
+                    projectileItem = player.playerInventoryManager.secondaryProjectile;
+                    break;
+                default:
+                    break;
+            }
+
+            if (projectileItem == null)
+                return;
+
+            if (projectileItem.currentAmmoAmount <= 0)
+                return;
+
+            Transform projectileInstantiateLocation;
+            GameObject projectileGameObject;
+            Rigidbody projectileRigidbody;
+            RangedProjectileDamageCollider projectileDamageCollider;
+
+            //substract ammo
+            projectileItem.currentAmmoAmount -= 1;
+            
+            //make and update arrow count UI
+            projectileInstantiateLocation = player.playerCombatManager.lockOnTransform;
+            projectileGameObject = Instantiate(projectileItem.releaseProjectileModel, projectileInstantiateLocation);
+            projectileDamageCollider = projectileGameObject.GetComponent<RangedProjectileDamageCollider>();
+            projectileRigidbody = projectileGameObject.GetComponent<Rigidbody>();
+
+            //make formula to set range projectile damage
+            projectileDamageCollider.physicalDamage = 100;
+            projectileDamageCollider.characterShootingProjectile = player;
+
+            //fire an arrow based on 1 of 3 variations
+            //1. locked onto a target
+            if (player.playerCombatManager.currentTarget != null)
+            {
+                Quaternion arrowRotation = Quaternion.LookRotation(player.playerCombatManager.currentTarget.characterCombatManager.lockOnTransform.position 
+                    - projectileGameObject.transform.position);
+
+                projectileGameObject.transform.rotation = arrowRotation;
+            }
+
+            //get all character colliders and ignore self
+            Collider[] characterColliders = player.GetComponentsInChildren<Collider>();
+            List<Collider> collidersArrowWillIgnore = new List<Collider>();
+
+            foreach (var item in characterColliders)
+                collidersArrowWillIgnore.Add(item);
+
+            foreach (Collider hitBox in collidersArrowWillIgnore)
+                Physics.IgnoreCollision(projectileDamageCollider.damageCollider, hitBox, true);
+
+            projectileRigidbody.AddForce(projectileGameObject.transform.forward * projectileItem.forwardVelocity);
+            projectileGameObject.transform.parent = null;
+        }
+
+        //spell
         public void InstantiateSpellWarmUpFX()
         {
             if (player.playerInventoryManager.currentSpell == null)
