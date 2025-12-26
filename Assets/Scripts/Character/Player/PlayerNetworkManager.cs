@@ -109,6 +109,10 @@ namespace baodeag
             false,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isAiming = new NetworkVariable<bool>(
+            false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
 
         protected override void Awake()
         {
@@ -228,6 +232,25 @@ namespace baodeag
         public void OnIsHoldingArrowChanged(bool oldStatus, bool newStatus)
         {
             player.animator.SetBool("isHoldingArrow", isHoldingArrow.Value);
+        }
+
+        public void OnIsAimingChanged(bool oldStatus, bool newStatus)
+        {
+            if (!isAiming.Value)
+            {
+                PlayerCamera.instance.cameraObject.transform.localEulerAngles = new Vector3(0, 0, 0);
+                PlayerCamera.instance.cameraObject.fieldOfView = 60;
+                PlayerCamera.instance.cameraObject.nearClipPlane = 0.3f;
+                PlayerUIManager.instance.playerUIHudManager.crossHair.SetActive(false);
+            }
+            else
+            {
+                PlayerCamera.instance.gameObject.transform.eulerAngles = new Vector3(0, 0, 0);
+                PlayerCamera.instance.cameraPivotTransform.localEulerAngles = new Vector3(0, 0, 0);
+                PlayerCamera.instance.cameraObject.fieldOfView = 40;
+                PlayerCamera.instance.cameraObject.nearClipPlane = 1.3f;
+                PlayerUIManager.instance.playerUIHudManager.crossHair.SetActive(true);
+            }
         }
 
         public void OnIsChargingRightSpellChanged(bool oldStatus, bool newStatus)
@@ -428,11 +451,11 @@ namespace baodeag
 
                 if (player.playerNetworkManager.isTwoHandingLeftWeapon.Value)
                 {
-                    bowAnimator = player.playerEquipmentManager.leftHandWeaponSlot.GetComponentInChildren<Animator>();
+                    bowAnimator = player.playerEquipmentManager.leftHandWeaponModel.GetComponentInChildren<Animator>();
                 }
                 else
                 {
-                    bowAnimator = player.playerEquipmentManager.rightHandWeaponSlot.GetComponentInChildren<Animator>();
+                    bowAnimator = player.playerEquipmentManager.rightHandWeaponModel.GetComponentInChildren<Animator>();
                 }
 
                 //animate the bow
@@ -461,11 +484,11 @@ namespace baodeag
 
             if (isTwoHandingLeftWeapon.Value)
             {
-                bowAnimator = player.playerEquipmentManager.leftHandWeaponSlot.GetComponentInChildren<Animator>();
+                bowAnimator = player.playerEquipmentManager.leftHandWeaponModel.GetComponentInChildren<Animator>();
             }
             else
             {
-                bowAnimator = player.playerEquipmentManager.rightHandWeaponSlot.GetComponentInChildren<Animator>();
+                bowAnimator = player.playerEquipmentManager.rightHandWeaponModel.GetComponentInChildren<Animator>();
             }
 
             //animate the bow

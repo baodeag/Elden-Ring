@@ -11,7 +11,7 @@ namespace baodeag
         public static PlayerCamera instance;
         public PlayerManager player;
         public Camera cameraObject;
-        [SerializeField] Transform cameraPivotTransform;
+        public Transform cameraPivotTransform;
 
         //change these to tweak camera behaviour
         [Header("Camera Settings")]
@@ -45,6 +45,9 @@ namespace baodeag
         public CharacterManager leftLockOnTarget;
         public CharacterManager rightLockOnTarget;
 
+        [Header("Ranged Aim")]
+        private Transform followTransformWhenAiming;
+
         private void Awake()
         {
             if (instance == null)
@@ -75,15 +78,60 @@ namespace baodeag
 
         private void HandleFollowTarget()
         {
-            Vector3 targetCameraPosition = Vector3.SmoothDamp
-                (transform.position, 
-                player.transform.position, 
-                ref cameraVelocity, 
-                cameraSmoothSpeed);
-            transform.position = targetCameraPosition;
+            if (player.playerNetworkManager.isAiming.Value)
+            {
+                if (followTransformWhenAiming == null)
+                {
+                    followTransformWhenAiming = player.GetComponentInChildren<PlayerAimCameraFollowTransform>().transform;
+                    return;
+                }
+
+                Vector3 targetCameraPosition = Vector3.SmoothDamp(transform.position, followTransformWhenAiming.position, ref cameraVelocity, cameraSmoothSpeed * Time.deltaTime);
+                transform.position = targetCameraPosition;
+            }
+            else
+            {
+                Vector3 targetCameraPosition = Vector3.SmoothDamp(transform.position, player.transform.position, ref cameraVelocity, cameraSmoothSpeed * Time.deltaTime);
+                transform.position = targetCameraPosition;
+            }
         }
 
         private void HandleRotations()
+        {
+            if (player.playerNetworkManager.isAiming.Value)
+            {
+                HandleAimRotations();
+            }
+            else
+            {
+                HandleStandardRotations();
+            }
+        }
+
+        private void HandleAimRotations()
+        {
+            if (!player.playerLocomotionManager.isGrounded)
+                player.playerNetworkManager.isAiming.Value = false;
+
+            if (player.isPerformingAction)
+                return;
+
+            //left and right look
+            Vector3 cameraRotationY = Vector3.zero;
+            //up and down look
+            Vector3 cameraRotationX = Vector3.zero;
+
+            leftAndRightLookAngle += (PlayerInputManager.instance.cameraHorizontal_Input * leftAndRightRotationSpeed) * Time.deltaTime;
+            upAndDownLookAngle -= (PlayerInputManager.instance.cameraVertical_Input * upAndDownRotationSpeed) * Time.deltaTime;
+            upAndDownLookAngle = Mathf.Clamp(upAndDownLookAngle, minimumPivot, maximumPivot);
+
+            cameraRotationY.y = leftAndRightLookAngle;
+            cameraRotationX.x = upAndDownLookAngle;
+
+            cameraObject.transform.localEulerAngles = new Vector3(upAndDownLookAngle, leftAndRightLookAngle, 0);
+        }
+
+        private void HandleStandardRotations()
         {
             if (player.playerNetworkManager.isLockedOn.Value)
             {
@@ -128,8 +176,6 @@ namespace baodeag
                 targetRotation = Quaternion.Euler(cameraRotation);
                 cameraPivotTransform.localRotation = targetRotation;
             }
-
-            
         }
 
         private void HandleCollisions()

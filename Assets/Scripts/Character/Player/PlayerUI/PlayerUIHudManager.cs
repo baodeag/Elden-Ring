@@ -22,6 +22,9 @@ namespace baodeag
         public Transform bossHealthBarParent;
         public GameObject bossHealthBarObject;
 
+        [Header("Crosshair")]
+        public GameObject crossHair;
+
         public void ToggleHUD(bool status)
         {
             //to do fade in and out over time

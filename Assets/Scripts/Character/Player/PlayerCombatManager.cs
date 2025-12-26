@@ -327,13 +327,31 @@ namespace baodeag
 
             //fire an arrow based on 1 of 3 variations
             //1. locked onto a target
-            if (player.playerCombatManager.currentTarget != null)
-            {
-                Quaternion arrowRotation = Quaternion.LookRotation(player.playerCombatManager.currentTarget.characterCombatManager.lockOnTransform.position 
-                    - projectileGameObject.transform.position);
 
-                projectileGameObject.transform.rotation = arrowRotation;
+            //2.aiming
+            if (player.playerNetworkManager.isAiming.Value)
+            {
+
             }
+            else
+            {
+                //2. locked and not aiming
+                if (player.playerCombatManager.currentTarget != null)
+                {
+                    Quaternion arrowRotation = Quaternion.LookRotation(player.playerCombatManager.currentTarget.characterCombatManager.lockOnTransform.position
+                        - projectileGameObject.transform.position);
+
+                    projectileGameObject.transform.rotation = arrowRotation;
+                }
+                //3. unlocked and not aiming
+                else
+                {
+                    Quaternion arrowRotation = Quaternion.LookRotation(player.transform.forward);
+
+                    projectileGameObject.transform.rotation = arrowRotation;
+                }
+            }
+            
 
             //get all character colliders and ignore self
             Collider[] characterColliders = player.GetComponentsInChildren<Collider>();

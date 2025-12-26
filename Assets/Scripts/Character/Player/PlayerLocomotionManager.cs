@@ -57,7 +57,7 @@ namespace baodeag
 
                 //if not locked on, pass move amount
                 
-                if (player.playerNetworkManager.isLockedOn.Value || player.playerNetworkManager.isSprinting.Value)
+                if (!player.playerNetworkManager.isLockedOn.Value || player.playerNetworkManager.isSprinting.Value)
                 {
                     player.playerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.playerNetworkManager.isSprinting.Value);
                 }
@@ -155,6 +155,30 @@ namespace baodeag
             if (!player.characterLocomotionManager.canRotate)
                 return;
 
+            if (player.playerNetworkManager.isAiming.Value)
+            {
+                HandleAimRotations();
+            }
+            else
+            {
+                HandleStandardRotation();
+            }
+        }
+
+        private void HandleAimRotations()
+        {
+            Vector3 targetDirection;
+            targetDirection = PlayerCamera.instance.cameraObject.transform.forward;
+            targetDirection.y = 0;
+            targetDirection.Normalize();
+
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            Quaternion finalRotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            transform.rotation = finalRotation;
+        }
+
+        private void HandleStandardRotation()
+        {
             if (player.playerNetworkManager.isLockedOn.Value)
             {
                 if (player.playerNetworkManager.isSprinting.Value || player.playerLocomotionManager.isRolling)

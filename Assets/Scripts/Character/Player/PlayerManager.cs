@@ -92,7 +92,8 @@ namespace baodeag
                 playerNetworkManager.currentFocusPoints.OnValueChanged += PlayerUIManager.instance.playerUIHudManager.SetNewFocusPointValue;
                 playerNetworkManager.currentStamina.OnValueChanged += playerStatsManager.ResetStaminaRegenTimer;
 
-                
+                //reset camera rotation to standard when aiming is disabled
+                playerNetworkManager.isAiming.OnValueChanged += playerNetworkManager.OnIsAimingChanged;
             }
 
             //only update the floating hp bar if this character is not the local players character
@@ -163,6 +164,9 @@ namespace baodeag
                 playerNetworkManager.currentStamina.OnValueChanged -= PlayerUIManager.instance.playerUIHudManager.SetNewStaminaValue;
                 playerNetworkManager.currentFocusPoints.OnValueChanged -= PlayerUIManager.instance.playerUIHudManager.SetNewFocusPointValue;
                 playerNetworkManager.currentStamina.OnValueChanged -= playerStatsManager.ResetStaminaRegenTimer;
+
+                //reset camera rotation to standard when aiming is disabled
+                playerNetworkManager.isAiming.OnValueChanged -= playerNetworkManager.OnIsAimingChanged;
             }
 
             if (!IsOwner)

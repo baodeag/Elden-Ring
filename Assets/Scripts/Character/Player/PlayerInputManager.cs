@@ -139,10 +139,11 @@ namespace baodeag
                 playerControls.PlayerActions.HoldRB.canceled += i => hold_RB_Input = false;
 
                 playerControls.PlayerActions.LB.performed += i => LB_Input = true; // Get LB input
+                playerControls.PlayerActions.LB.canceled += i => player.playerNetworkManager.isBlocking.Value = false;
+                playerControls.PlayerActions.LB.canceled += i => player.playerNetworkManager.isAiming.Value = false;
                 playerControls.PlayerActions.HoldLB.performed += i => hold_LB_Input = true;
                 playerControls.PlayerActions.HoldLB.canceled += i => hold_LB_Input = false;
 
-                playerControls.PlayerActions.LB.canceled += i => player.playerNetworkManager.isBlocking.Value = false;
 
                 //triggers
                 playerControls.PlayerActions.RT.performed += i => RT_Input = true;
@@ -578,9 +579,14 @@ namespace baodeag
 
                 player.playerNetworkManager.SetCharacterActionHand(false);
 
-                player.playerCombatManager.PerformWeaponBasedAction(
-                    player.playerInventoryManager.currentLeftHandWeapon.oh_LB_Action,
-                    player.playerInventoryManager.currentLeftHandWeapon);
+                if (player.playerNetworkManager.isTwoHandingRightWeapon.Value)
+                {
+                    player.playerCombatManager.PerformWeaponBasedAction(player.playerInventoryManager.currentRightHandWeapon.oh_LB_Action, player.playerInventoryManager.currentRightHandWeapon);
+                }
+                else
+                {
+                    player.playerCombatManager.PerformWeaponBasedAction(player.playerInventoryManager.currentLeftHandWeapon.oh_LB_Action, player.playerInventoryManager.currentLeftHandWeapon);
+                }
             }
         }
 
