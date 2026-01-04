@@ -79,50 +79,6 @@ Transform:
   - {fileID: 807208994847729271}
   m_Father: {fileID: 6657481286654222276}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &5404786008595569574
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8934790231202775366}
-  - component: {fileID: 1804331135946232578}
-  m_Layer: 6
-  m_Name: Aim Camera Follow Transform
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8934790231202775366
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5404786008595569574}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 3}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 6664187449844757054}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1804331135946232578
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5404786008595569574}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7eba56b2f8b5ae4ab6aa4c0ddc1fa5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &5551283973748847303
 GameObject:
   m_ObjectHideFlags: 0
@@ -4083,9 +4039,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4571756472629890, guid: 3f581b8f5dacdc54b8e405d2157e1d8b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2936586836690909199}
-    - targetCorrespondingSourceObject: {fileID: 4571756472629890, guid: 3f581b8f5dacdc54b8e405d2157e1d8b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8934790231202775366}
     - targetCorrespondingSourceObject: {fileID: 4378122170247284, guid: 3f581b8f5dacdc54b8e405d2157e1d8b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4631032958853372553}

@@ -99,10 +99,21 @@ namespace baodeag
                 return;
 
             // our movement direction is relative to our camera and our movement input
-            moveDirection = PlayerCamera.instance.transform.forward * verticalMovement;
-            moveDirection = moveDirection + PlayerCamera.instance.transform.right * horizontalMovement;
-            moveDirection.Normalize();
-            moveDirection.y = 0;
+
+            if (player.playerNetworkManager.isAiming.Value)
+            {
+                moveDirection = transform.forward * verticalMovement;
+                moveDirection = moveDirection + transform.right * horizontalMovement;
+                moveDirection.Normalize();
+                moveDirection.y = 0;
+            }
+            else
+            {
+                moveDirection = PlayerCamera.instance.transform.forward * verticalMovement;
+                moveDirection = moveDirection + PlayerCamera.instance.transform.right * horizontalMovement;
+                moveDirection.Normalize();
+                moveDirection.y = 0;
+            }
 
             if(player.playerNetworkManager.isSprinting.Value)
             {

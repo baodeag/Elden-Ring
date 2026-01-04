@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Netcode;
 using Unity.VisualScripting;
@@ -241,6 +242,7 @@ namespace baodeag
                 PlayerCamera.instance.cameraObject.transform.localEulerAngles = new Vector3(0, 0, 0);
                 PlayerCamera.instance.cameraObject.fieldOfView = 60;
                 PlayerCamera.instance.cameraObject.nearClipPlane = 0.3f;
+                PlayerCamera.instance.cameraPivotTransform.localPosition = new Vector3(0, PlayerCamera.instance.cameraPivotYPositionOffSet, 0); 
                 PlayerUIManager.instance.playerUIHudManager.crossHair.SetActive(false);
             }
             else
@@ -249,6 +251,7 @@ namespace baodeag
                 PlayerCamera.instance.cameraPivotTransform.localEulerAngles = new Vector3(0, 0, 0);
                 PlayerCamera.instance.cameraObject.fieldOfView = 40;
                 PlayerCamera.instance.cameraObject.nearClipPlane = 1.3f;
+                PlayerCamera.instance.cameraPivotTransform.localPosition = Vector3.zero;
                 PlayerUIManager.instance.playerUIHudManager.crossHair.SetActive(true);
             }
         }
@@ -501,6 +504,92 @@ namespace baodeag
 
             //play sfx
             player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(WorldSoundFXManager.instance.notchArrowSFX));
+        }
+
+        //release projectile
+        [ServerRpc]
+        public void NotifyServerOfReleasedProjectileServerRpc(ulong playerClientID, int projectileID, float xPosition, float yPosition, float zPosition, float yCharacterRotation)
+        {
+            if (IsServer)
+            {
+                NotifyServerOfReleasedProjectileClientRpc(playerClientID, projectileID, xPosition, yPosition, zPosition, yCharacterRotation);
+            }
+        }
+
+        [ClientRpc]
+        public void NotifyServerOfReleasedProjectileClientRpc(ulong playerClientID, int projectileID, float xPosition, float yPosition, float zPosition, float yCharacterRotation)
+        {
+            if (playerClientID != NetworkManager.Singleton.LocalClientId)
+                PerformReleasedProjectileFromRpc(projectileID, xPosition, yPosition, zPosition, yCharacterRotation);
+        }
+
+        private void PerformReleasedProjectileFromRpc(int projectileID, float xPosition, float yPosition, float zPosition, float yCharacterRotation)
+        {
+            RangedProjectileItem projectileItem = null;
+
+            //the projectile we are firing
+            if (WorldItemDatabase.Instance.GetProjectileByID(projectileID) != null)
+                projectileItem = Instantiate(WorldItemDatabase.Instance.GetProjectileByID(projectileID));
+
+            if (projectileItem == null)
+                return;
+
+            Transform projectileInstantiateLocation;
+            GameObject projectileGameObject;
+            Rigidbody projectileRigidbody;
+            RangedProjectileDamageCollider projectileDamageCollider;
+
+            //make and update arrow count UI
+            projectileInstantiateLocation = player.playerCombatManager.lockOnTransform;
+            projectileGameObject = Instantiate(projectileItem.releaseProjectileModel, projectileInstantiateLocation);
+            projectileDamageCollider = projectileGameObject.GetComponent<RangedProjectileDamageCollider>();
+            projectileRigidbody = projectileGameObject.GetComponent<Rigidbody>();
+
+            //make formula to set range projectile damage
+            projectileDamageCollider.physicalDamage = 100;
+            projectileDamageCollider.characterShootingProjectile = player;
+
+            //fire an arrow based on 1 of 3 variations
+            //1. locked onto a target
+
+            //2.aiming
+            if (player.playerNetworkManager.isAiming.Value)
+            {
+                projectileGameObject.transform.LookAt(new Vector3(xPosition, yPosition, zPosition));
+            }
+            else
+            {
+                //2. locked and not aiming
+                if (player.playerCombatManager.currentTarget != null)
+                {
+                    Quaternion arrowRotation = Quaternion.LookRotation(player.playerCombatManager.currentTarget.characterCombatManager.lockOnTransform.position
+                        - projectileGameObject.transform.position);
+
+                    projectileGameObject.transform.rotation = arrowRotation;
+                }
+                //3. unlocked and not aiming
+                else
+                {
+                    player.transform.rotation = Quaternion.Euler(player.transform.rotation.x, yCharacterRotation, player.transform.rotation.z);
+                    Quaternion arrowRotation = Quaternion.LookRotation(player.transform.forward);
+
+                    projectileGameObject.transform.rotation = arrowRotation;
+                }
+            }
+
+
+            //get all character colliders and ignore self
+            Collider[] characterColliders = player.GetComponentsInChildren<Collider>();
+            List<Collider> collidersArrowWillIgnore = new List<Collider>();
+
+            foreach (var item in characterColliders)
+                collidersArrowWillIgnore.Add(item);
+
+            foreach (Collider hitBox in collidersArrowWillIgnore)
+                Physics.IgnoreCollision(projectileDamageCollider.damageCollider, hitBox, true);
+
+            projectileRigidbody.AddForce(projectileGameObject.transform.forward * projectileItem.forwardVelocity);
+            projectileGameObject.transform.parent = null;
         }
     }
 }

@@ -12,6 +12,7 @@ namespace baodeag
         public PlayerManager player;
         public Camera cameraObject;
         public Transform cameraPivotTransform;
+        public float cameraPivotYPositionOffSet = 1.5f;
 
         //change these to tweak camera behaviour
         [Header("Camera Settings")]
@@ -47,6 +48,7 @@ namespace baodeag
 
         [Header("Ranged Aim")]
         private Transform followTransformWhenAiming;
+        public Vector3 aimDirection;
 
         private void Awake()
         {
@@ -80,13 +82,7 @@ namespace baodeag
         {
             if (player.playerNetworkManager.isAiming.Value)
             {
-                if (followTransformWhenAiming == null)
-                {
-                    followTransformWhenAiming = player.GetComponentInChildren<PlayerAimCameraFollowTransform>().transform;
-                    return;
-                }
-
-                Vector3 targetCameraPosition = Vector3.SmoothDamp(transform.position, followTransformWhenAiming.position, ref cameraVelocity, cameraSmoothSpeed * Time.deltaTime);
+                Vector3 targetCameraPosition = Vector3.SmoothDamp(transform.position, player.playerCombatManager.lockOnTransform.position, ref cameraVelocity, cameraSmoothSpeed * Time.deltaTime);
                 transform.position = targetCameraPosition;
             }
             else
@@ -94,6 +90,7 @@ namespace baodeag
                 Vector3 targetCameraPosition = Vector3.SmoothDamp(transform.position, player.transform.position, ref cameraVelocity, cameraSmoothSpeed * Time.deltaTime);
                 transform.position = targetCameraPosition;
             }
+            
         }
 
         private void HandleRotations()
@@ -115,6 +112,8 @@ namespace baodeag
 
             if (player.isPerformingAction)
                 return;
+
+            aimDirection = cameraObject.transform.forward.normalized;
 
             //left and right look
             Vector3 cameraRotationY = Vector3.zero;
@@ -204,6 +203,14 @@ namespace baodeag
             }
 
             //we then apply our final position using a lerp over a time of 0.2f
+
+            if (player.playerNetworkManager.isAiming.Value)
+            {
+                cameraObjectPosition.z = 0;
+                cameraObject.transform.localPosition = cameraObjectPosition;
+                return;
+            }
+
             cameraObjectPosition.z = Mathf.Lerp(cameraObject.transform.localPosition.z, targetCameraZPosition, 0.2f);
             cameraObject.transform.localPosition = cameraObjectPosition;
         }

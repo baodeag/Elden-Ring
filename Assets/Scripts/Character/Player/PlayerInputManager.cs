@@ -484,16 +484,22 @@ namespace baodeag
             }
 
 
-            if (!player.playerNetworkManager.isLockedOn.Value || player.playerNetworkManager.isSprinting.Value)
-            {
-                // if we are not locked on, only use the move amount
-                player.playerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.playerNetworkManager.isSprinting.Value);
-            }
-            else
+            if (player.playerNetworkManager.isLockedOn.Value && !player.playerNetworkManager.isSprinting.Value)
             {
                 // if we are locked on pass the horizontal movement as well
                 player.playerAnimatorManager.UpdateAnimatorMovementParameters(horizontal_Input, vertical_Input, player.playerNetworkManager.isSprinting.Value);
+                return;
             }
+
+            if (player.playerNetworkManager.isAiming.Value)
+            {
+                // if we are locked on pass the horizontal movement as well
+                player.playerAnimatorManager.UpdateAnimatorMovementParameters(horizontal_Input, vertical_Input, player.playerNetworkManager.isSprinting.Value);
+                return;
+            }
+
+            // if we are not locked on, only use the move amount
+            player.playerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.playerNetworkManager.isSprinting.Value);
         }
 
         private void HandleCameraMovementInput()

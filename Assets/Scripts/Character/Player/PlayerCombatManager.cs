@@ -12,6 +12,9 @@ namespace baodeag
         public WeaponItem currentWeaponBeingUsed;
         public ProjectileSlot currentProjectileBeingUsed;
 
+        [Header("projectile")]
+        private Vector3 projectileAimDirection;
+
         [Header("Flags")]
         public bool canComboWithMainHandWeapon = false;
 
@@ -326,16 +329,19 @@ namespace baodeag
             projectileDamageCollider.characterShootingProjectile = player;
 
             //fire an arrow based on 1 of 3 variations
-            //1. locked onto a target
 
-            //2.aiming
+            float yRotationDuringFire = player.transform.localEulerAngles.y;
+
+            //aiming
             if (player.playerNetworkManager.isAiming.Value)
             {
-
+                Ray newRay = new Ray(lockOnTransform.position, PlayerCamera.instance.aimDirection);
+                projectileAimDirection = newRay.GetPoint(5000);
+                projectileGameObject.transform.LookAt(projectileAimDirection);
             }
             else
             {
-                //2. locked and not aiming
+                //locked and not aiming
                 if (player.playerCombatManager.currentTarget != null)
                 {
                     Quaternion arrowRotation = Quaternion.LookRotation(player.playerCombatManager.currentTarget.characterCombatManager.lockOnTransform.position
@@ -343,7 +349,7 @@ namespace baodeag
 
                     projectileGameObject.transform.rotation = arrowRotation;
                 }
-                //3. unlocked and not aiming
+                //unlocked and not aiming
                 else
                 {
                     Quaternion arrowRotation = Quaternion.LookRotation(player.transform.forward);
@@ -365,6 +371,15 @@ namespace baodeag
 
             projectileRigidbody.AddForce(projectileGameObject.transform.forward * projectileItem.forwardVelocity);
             projectileGameObject.transform.parent = null;
+
+            //sync arrow fire with server rpc
+            player.playerNetworkManager.NotifyServerOfReleasedProjectileServerRpc(
+                player.OwnerClientId, 
+                projectileItem.itemID, 
+                projectileAimDirection.x, 
+                projectileAimDirection.y, 
+                projectileAimDirection.z, 
+                yRotationDuringFire);
         }
 
         //spell
