@@ -231,6 +231,9 @@ namespace baodeag
 
             if (character.characterEffectsManager.activeDrawnProjectileFX != null)
                 Destroy(character.characterEffectsManager.activeDrawnProjectileFX);
+
+            if (character.characterEffectsManager.activeQuickSlotItemFX != null)
+                Destroy(character.characterEffectsManager.activeQuickSlotItemFX);
         }
 
         //A server rpc is a function called from a client, to the server(in our case the host)

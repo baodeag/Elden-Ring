@@ -15,6 +15,7 @@ namespace baodeag
         CharacterManager character;
 
         [Header("Current Active FX")]
+        public GameObject activeQuickSlotItemFX;
         public GameObject activeSpellWarmUpFX;
         public GameObject activeDrawnProjectileFX;
 

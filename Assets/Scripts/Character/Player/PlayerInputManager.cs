@@ -35,6 +35,7 @@ namespace baodeag
         [SerializeField] bool switch_Right_Weapon_Input = false;
         [SerializeField] bool switch_Left_Weapon_Input = false;
         [SerializeField] bool interaction_Input = false;
+        [SerializeField] bool use_Item_Input = false;
 
         [Header("Bumper Inputs")]
         [SerializeField] bool RB_Input = false;
@@ -132,6 +133,7 @@ namespace baodeag
                 playerControls.PlayerActions.SwitchRightWeapon.performed += i => switch_Right_Weapon_Input = true;
                 playerControls.PlayerActions.SwitchLeftWeapon.performed += i => switch_Left_Weapon_Input = true;
                 playerControls.PlayerActions.Interact.performed += i => interaction_Input = true;
+                playerControls.PlayerActions.X.performed += i => use_Item_Input = true;
 
                 //bumper
                 playerControls.PlayerActions.RB.performed += i => RB_Input = true; // Get RB input
@@ -209,6 +211,7 @@ namespace baodeag
 
         private void HandleAllInputs()
         {
+            HandleUseItemInput();
             HandleTwoHandInput();
             HandleLockOnInput();
             HandleLockOnSwitchTargetInput();
@@ -230,6 +233,25 @@ namespace baodeag
             HandleQuedInput();
             HandleCloseUIInputs();
             HandleOpenCharacterMenuInput();
+        }
+
+        //use item
+        private void HandleUseItemInput()
+        {
+            if (use_Item_Input)
+            {
+                use_Item_Input = false;
+                
+                if (PlayerUIManager.instance.menuWindowIsOpen)
+                    return;
+
+                if (player.playerInventoryManager.currentQuickSlotItem != null)
+                {
+                    player.playerInventoryManager.currentQuickSlotItem.AttemptToUseItem(player);
+
+                    //send server rpc so our player perform item action on other clients game windows
+                }
+            }
         }
 
         //two hand

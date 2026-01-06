@@ -16,6 +16,17 @@ namespace baodeag
             NetworkVariableReadPermission.Everyone, 
             NetworkVariableWritePermission.Owner);
 
+        [Header("Actions")]
+        public NetworkVariable<bool> isUsingRightHand = new NetworkVariable<bool>(
+            false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isUsingLeftHand = new NetworkVariable<bool>(
+            false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+
+
         [Header("Equipment")]
         public NetworkVariable<int> currentWeaponBeingUsed = new NetworkVariable<int>(
             0,
@@ -34,12 +45,8 @@ namespace baodeag
             0,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
-        public NetworkVariable<bool> isUsingRightHand = new NetworkVariable<bool>(
-            false,
-            NetworkVariableReadPermission.Everyone,
-            NetworkVariableWritePermission.Owner);
-        public NetworkVariable<bool> isUsingLeftHand = new NetworkVariable<bool>(
-            false,
+        public NetworkVariable<int> currentQuickSlotItemID = new NetworkVariable<int>(
+            0,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
 
@@ -205,6 +212,22 @@ namespace baodeag
 
                 if (player.IsOwner)
                     PlayerUIManager.instance.playerUIHudManager.SetSpellItemQuickSlotIcon(newID);
+            }
+        }
+
+        public void OnCurrentQuickSlotItemIDChange(int oldID, int newID)
+        {
+            QuickSlotItem newQuickSlotItem = null;
+
+            if (WorldItemDatabase.Instance.GetQuickSlotItemByID(newID))
+                newQuickSlotItem = Instantiate(WorldItemDatabase.Instance.GetQuickSlotItemByID(newID));
+
+            if (newQuickSlotItem != null)
+            {
+                player.playerInventoryManager.currentQuickSlotItem = newQuickSlotItem;
+
+                if (player.IsOwner)
+                    PlayerUIManager.instance.playerUIHudManager.SetQuickSlotItemQuickSlotIcon(newID);
             }
         }
 

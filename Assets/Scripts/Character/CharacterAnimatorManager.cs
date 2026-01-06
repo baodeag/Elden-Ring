@@ -171,7 +171,8 @@ namespace baodeag
             bool isPerformingAction, 
             bool applyRootMotion = true, 
             bool canRotate = false, 
-            bool canMove = false)
+            bool canMove = false,
+            bool canRun = true)
         {
             this.applyRootMotion = applyRootMotion;
             character.animator.CrossFade(targetAnimation, 0.2f);
@@ -182,6 +183,7 @@ namespace baodeag
             character.isPerformingAction = isPerformingAction;
             character.characterLocomotionManager.canRotate = canRotate;
             character.characterLocomotionManager.canMove = canMove;
+            character.characterLocomotionManager.canRun = canRun;
 
             //tell the server/host we played an animation, and to play that animation on all clients
             character.characterNetworkManager.NotifyTheServerOfActionAnimationServerRpc(
@@ -195,7 +197,8 @@ namespace baodeag
             bool isPerformingAction,
             bool applyRootMotion = true,
             bool canRotate = false,
-            bool canMove = false)
+            bool canMove = false,
+            bool canRun = true)
         {
             this.applyRootMotion = applyRootMotion;
             character.animator.Play(targetAnimation);
@@ -206,6 +209,7 @@ namespace baodeag
             character.isPerformingAction = isPerformingAction;
             character.characterLocomotionManager.canRotate = canRotate;
             character.characterLocomotionManager.canMove = canMove;
+            character.characterLocomotionManager.canRun = canRun;
 
             //tell the server/host we played an animation, and to play that animation on all clients
             character.characterNetworkManager.NotifyTheServerOfInstantActionAnimationServerRpc(

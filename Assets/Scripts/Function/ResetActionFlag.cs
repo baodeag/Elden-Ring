@@ -29,6 +29,9 @@ namespace baodeag
             if (character.characterEffectsManager.activeSpellWarmUpFX != null)
                 Destroy(character.characterEffectsManager.activeSpellWarmUpFX);
 
+            if (character.characterEffectsManager.activeQuickSlotItemFX != null)
+                Destroy(character.characterEffectsManager.activeQuickSlotItemFX);
+
             if (character.IsOwner)
             {
                 character.characterNetworkManager.isJumping.Value = false;

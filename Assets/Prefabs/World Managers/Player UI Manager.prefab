@@ -270,6 +270,7 @@ MonoBehaviour:
   rightWeaponQuickSlotIcon: {fileID: 4659269394806000637}
   leftWeaponQuickSlotIcon: {fileID: 6529990411773308413}
   spellItemQuickSlotIcon: {fileID: 4591524538905370786}
+  quickSlotItemQuickSlotIcon: {fileID: 1663572876695595163}
   bossHealthBarParent: {fileID: 5294246230974863095}
   bossHealthBarObject: {fileID: 4017481473675416964, guid: 186acec091db6fe48b480243b0dd361a, type: 3}
   crossHair: {fileID: 1308963716202610647}
@@ -8868,6 +8869,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 88ce3559b48f11e45a7e3b384986f444, type: 3}
+--- !u!114 &1663572876695595163 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7104434677764226981, guid: 88ce3559b48f11e45a7e3b384986f444, type: 3}
+  m_PrefabInstance: {fileID: 8470768445748680510}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &5481299123148320474 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4152120427094374884, guid: 88ce3559b48f11e45a7e3b384986f444, type: 3}

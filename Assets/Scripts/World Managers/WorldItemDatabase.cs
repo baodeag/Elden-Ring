@@ -37,6 +37,10 @@ namespace baodeag
         [Header("Projectiles")]
         [SerializeField] List<RangedProjectileItem> projectiles = new List<RangedProjectileItem>();
 
+        [Header("Quick Slot")]
+        [SerializeField] List<QuickSlotItem> quickSlotItems = new List<QuickSlotItem>();
+
+        //a list of every item in the game
         [Header("Items")]
         private List<Item> items = new List<Item>();
 
@@ -92,6 +96,12 @@ namespace baodeag
                 items.Add(item);
             }
 
+            foreach (var item in quickSlotItems)
+            {
+                items.Add(item);
+            }
+
+
             //assign all of our items a unique item id
             for (int i = 0; i < items.Count; i++)
             {
@@ -142,6 +152,11 @@ namespace baodeag
         public RangedProjectileItem GetProjectileByID(int ID)
         {
             return projectiles.FirstOrDefault(item => item.itemID == ID);
+        }
+
+        public QuickSlotItem GetQuickSlotItemByID(int ID)
+        {
+            return quickSlotItems.FirstOrDefault(item => item.itemID == ID);
         }
     }
 }
