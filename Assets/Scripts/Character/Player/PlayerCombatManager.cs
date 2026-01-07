@@ -17,6 +17,7 @@ namespace baodeag
 
         [Header("Flags")]
         public bool canComboWithMainHandWeapon = false;
+        public bool isUsingItem = false;
 
         protected override void Awake()
         {
@@ -335,8 +336,8 @@ namespace baodeag
             //aiming
             if (player.playerNetworkManager.isAiming.Value)
             {
-                Ray newRay = new Ray(lockOnTransform.position, PlayerCamera.instance.aimDirection);
-                projectileAimDirection = newRay.GetPoint(5000);
+                Ray newRay = new Ray(player.playerCombatManager.lockOnTransform.position, PlayerCamera.instance.aimDirection);
+                projectileAimDirection = newRay.GetPoint(5);
                 projectileGameObject.transform.LookAt(projectileAimDirection);
             }
             else
@@ -413,6 +414,13 @@ namespace baodeag
                 return;
 
             player.playerInventoryManager.currentSpell.SuccessfullyCastSpellFullCharge(player);
+        }
+
+        //quick slot
+        public void SuccesfullyUseQuickSlotItem()
+        {
+            if (player.playerInventoryManager.currentQuickSlotItem != null)
+                player.playerInventoryManager.currentQuickSlotItem.SuccessfullyUseItem(player);
         }
 
         public WeaponItem SelectWeaponToPerformAshOfWar()

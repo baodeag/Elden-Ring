@@ -16,6 +16,21 @@ namespace baodeag
             NetworkVariableReadPermission.Everyone, 
             NetworkVariableWritePermission.Owner);
 
+        [Header("Flasks")]
+        public NetworkVariable<int> remainingHealthFlasks = new NetworkVariable<int>(
+            3,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<int> remainingFocusPointsFlasks = new NetworkVariable<int>(
+            3,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isChugging = new NetworkVariable<bool>(
+            false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+
+
         [Header("Actions")]
         public NetworkVariable<bool> isUsingRightHand = new NetworkVariable<bool>(
             false,
@@ -356,6 +371,11 @@ namespace baodeag
             player.playerEquipmentManager.TwoHandLeftWeapon();
         }
 
+        public void OnIsChuggingChanged(bool oldStatus, bool newStatus)
+        {
+            player.animator.SetBool("isChuggingFlask", isChugging.Value);
+        }
+
         public void OnHeadEquipmentChanged(int oldValue, int newValue)
         {
             //we already run the logic on the owner side, so there no point running it again here
@@ -613,6 +633,39 @@ namespace baodeag
 
             projectileRigidbody.AddForce(projectileGameObject.transform.forward * projectileItem.forwardVelocity);
             projectileGameObject.transform.parent = null;
+        }
+
+        [ServerRpc]
+        public void HideWeaponsServerRPC()
+        {
+            if (IsServer)
+                HideWeaponsClientRPC();
+        }
+
+        [ClientRpc]
+        private void HideWeaponsClientRPC()
+        {
+            if (player.playerEquipmentManager.rightHandWeaponModel != null)
+                player.playerEquipmentManager.rightHandWeaponModel.SetActive(false);
+
+            if (player.playerEquipmentManager.leftHandWeaponModel != null)
+                player.playerEquipmentManager.leftHandWeaponModel.SetActive(false);
+        }
+
+        [ServerRpc]
+        public void NotifyServerOfQuickSlotItemActionServerRpc(ulong clientID, int quickSlotItemID)
+        {
+            NotifyServerOfQuickSlotItemActionClientRpc(clientID, quickSlotItemID);
+        }
+
+        [ClientRpc]
+        private void NotifyServerOfQuickSlotItemActionClientRpc(ulong clientID, int quickSlotItemID)
+        {
+            if (clientID != NetworkManager.Singleton.LocalClientId)
+            {
+                QuickSlotItem item = WorldItemDatabase.Instance.GetQuickSlotItemByID(quickSlotItemID);
+                item.AttemptToUseItem(player);
+            }
         }
     }
 }

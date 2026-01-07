@@ -1,6 +1,8 @@
 ﻿using System;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.Netcode;
 
 namespace baodeag
 {
@@ -250,6 +252,8 @@ namespace baodeag
                     player.playerInventoryManager.currentQuickSlotItem.AttemptToUseItem(player);
 
                     //send server rpc so our player perform item action on other clients game windows
+                    player.playerNetworkManager.NotifyServerOfQuickSlotItemActionServerRpc
+                        (NetworkManager.Singleton.LocalClientId, player.playerInventoryManager.currentQuickSlotItem.itemID);
                 }
             }
         }

@@ -1111,5 +1111,15 @@ namespace baodeag
                 leftWeaponManager.meleeDamageCollider.DisableDamageCollider();
             }
         }
+
+        //unique weapons
+        public void UnHideWeapons()
+        {
+            if (player.playerEquipmentManager.rightHandWeaponModel != null)
+                player.playerEquipmentManager.rightHandWeaponModel.SetActive(true);
+
+            if (player.playerEquipmentManager.leftHandWeaponModel != null)
+                player.playerEquipmentManager.leftHandWeaponModel.SetActive(true);
+        }
     }
 }

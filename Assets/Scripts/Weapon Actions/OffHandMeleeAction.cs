@@ -13,6 +13,10 @@ namespace baodeag
             if (!playerPerformingAction.playerCombatManager.canBlock)
                 return;
 
+            //if we are using item, do not proceed
+            if (playerPerformingAction.playerCombatManager.isUsingItem)
+                return;
+
             //check for attack
             if (playerPerformingAction.playerNetworkManager.isAttacking.Value)
             {

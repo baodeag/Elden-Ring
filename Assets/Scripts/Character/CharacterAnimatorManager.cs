@@ -172,7 +172,8 @@ namespace baodeag
             bool applyRootMotion = true, 
             bool canRotate = false, 
             bool canMove = false,
-            bool canRun = true)
+            bool canRun = true,
+            bool canRoll = false)
         {
             this.applyRootMotion = applyRootMotion;
             character.animator.CrossFade(targetAnimation, 0.2f);
@@ -184,6 +185,7 @@ namespace baodeag
             character.characterLocomotionManager.canRotate = canRotate;
             character.characterLocomotionManager.canMove = canMove;
             character.characterLocomotionManager.canRun = canRun;
+            character.characterLocomotionManager.canRoll = canRoll;
 
             //tell the server/host we played an animation, and to play that animation on all clients
             character.characterNetworkManager.NotifyTheServerOfActionAnimationServerRpc(
@@ -198,7 +200,8 @@ namespace baodeag
             bool applyRootMotion = true,
             bool canRotate = false,
             bool canMove = false,
-            bool canRun = true)
+            bool canRun = true,
+            bool canRoll = false)
         {
             this.applyRootMotion = applyRootMotion;
             character.animator.Play(targetAnimation);
@@ -210,6 +213,7 @@ namespace baodeag
             character.characterLocomotionManager.canRotate = canRotate;
             character.characterLocomotionManager.canMove = canMove;
             character.characterLocomotionManager.canRun = canRun;
+            character.characterLocomotionManager.canRoll = canRoll;
 
             //tell the server/host we played an animation, and to play that animation on all clients
             character.characterNetworkManager.NotifyTheServerOfInstantActionAnimationServerRpc(
@@ -225,17 +229,19 @@ namespace baodeag
             bool isPerformingAction,
             bool applyRootMotion = true,
             bool canRotate = false,
-            bool canMove = false)
+            bool canMove = false,
+            bool canRoll = false)
         {
             character.characterCombatManager.currentAttackType = attackType;
             character.characterCombatManager.lastAttackAnimationPerformed = targetAnimation;
             UpdateAnimatorController(weapon.weaponAnimator);
-            character.characterAnimatorManager.applyRootMotion = applyRootMotion;
+            this.applyRootMotion = applyRootMotion;
             character.animator.CrossFade(targetAnimation, 0.2f);
             character.isPerformingAction = isPerformingAction;
             character.characterLocomotionManager.canRotate = canRotate;
             character.characterLocomotionManager.canMove = canMove;
             character.characterNetworkManager.isAttacking.Value = true;
+            character.characterLocomotionManager.canRoll = canRoll;
 
             //tell the server/host we played an animation, and to play that animation on all clients
             character.characterNetworkManager.NotifyTheServerOfAttackActionAnimationServerRpc(

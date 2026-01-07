@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace baodeag
 {
-    [CreateAssetMenu(menuName = "Character Actions/Weapon Actions/Fie Projectile Action")]
+    [CreateAssetMenu(menuName = "Character Actions/Weapon Actions/Fire Projectile Action")]
     public class FireProjectileAction : WeaponItemAction
     {
         [SerializeField] ProjectileSlot projectileSlot;
@@ -15,6 +15,10 @@ namespace baodeag
                 return;
 
             if (playerPerformingAction.playerNetworkManager.currentStamina.Value <= 0)
+                return;
+
+            //if we are using item, do not proceed
+            if (playerPerformingAction.playerCombatManager.isUsingItem)
                 return;
 
             RangedProjectileItem projectileItem = null;
@@ -72,7 +76,7 @@ namespace baodeag
             }
         }
 
-        private bool CanIFireThisProjectile(WeaponItem weaponPerrformingAction, RangedProjectileItem projectileItem)
+        private bool CanIFireThisProjectile(WeaponItem weaponPerformingAction, RangedProjectileItem projectileItem)
         {
             //check for crossbow, bow, etc requirements here
             return true;

@@ -23,6 +23,10 @@ namespace baodeag
             if (playerPerformingAction.playerNetworkManager.currentStamina.Value <= 0)
                 return;
 
+            //if we are using item, do not proceed
+            if (playerPerformingAction.playerCombatManager.isUsingItem)
+                return;
+
             // if we are in the air, perform a jumping heavy attack
             if (!playerPerformingAction.characterLocomotionManager.isGrounded)
             {

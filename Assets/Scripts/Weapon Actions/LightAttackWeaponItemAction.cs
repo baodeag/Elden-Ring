@@ -42,6 +42,9 @@ namespace baodeag
             if (!playerPerformingAction.IsOwner)
                 return;
 
+            if (playerPerformingAction.playerCombatManager.isUsingItem)
+                return;
+
             if (playerPerformingAction.playerNetworkManager.currentStamina.Value <= 0)
                 return;
 

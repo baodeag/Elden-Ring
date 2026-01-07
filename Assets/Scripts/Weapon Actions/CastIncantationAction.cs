@@ -12,6 +12,10 @@ namespace baodeag
             if (!playerPerformingAction.IsOwner)
                 return;
 
+            //if we are using item, do not proceed
+            if (playerPerformingAction.playerCombatManager.isUsingItem)
+                return;
+
             if (playerPerformingAction.playerNetworkManager.currentStamina.Value <= 0)
                 return;
 

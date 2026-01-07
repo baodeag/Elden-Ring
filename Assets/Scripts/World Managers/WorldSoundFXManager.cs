@@ -21,6 +21,7 @@ namespace baodeag
         public AudioClip criticalStrikeSFX;
         public AudioClip[] releaseArrowSFX;
         public AudioClip[] notchArrowSFX;
+        public AudioClip healingFlaskSFX;
 
         private void Awake()
         {

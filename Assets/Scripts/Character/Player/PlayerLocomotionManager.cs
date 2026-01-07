@@ -21,7 +21,7 @@ namespace baodeag
         [SerializeField] int sprintingStaminaCost = 2;
 
         [Header("Jump")]
-        [SerializeField] float jumpStaminaCost = 2;
+        [SerializeField] float jumpStaminaCost = 25;
         [SerializeField] float jumpHeight = 4;
         private Vector3 jumpDirection;
         [SerializeField] float jumpForwardSpeed = 5;
@@ -30,7 +30,7 @@ namespace baodeag
 
         [Header("Dodge ")]
         private Vector3 rollDirection;
-        [SerializeField] float dodgeStaminaCost = 2;
+        [SerializeField] float dodgeStaminaCost = 25;
 
         protected override void Awake()
         {
@@ -272,7 +272,7 @@ namespace baodeag
 
         public void AttemptToPerformDodge()
         {
-            if (player.isPerformingAction)
+            if (!player.playerLocomotionManager.canRoll)
                 return;
 
             if(player.playerNetworkManager.currentStamina.Value <= 0)

@@ -25,6 +25,10 @@ namespace baodeag
             if (playerPerformingAction.playerNetworkManager.isLockedOn.Value)
                 return;
 
+            //if we are using item, do not proceed
+            if (playerPerformingAction.playerCombatManager.isUsingItem)
+                return;
+
             if (playerPerformingAction.IsOwner)
             {
                 //two hand the weapon(bow) before we aim

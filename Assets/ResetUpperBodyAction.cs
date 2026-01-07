@@ -18,6 +18,20 @@ namespace baodeag
                 Destroy(player.playerEffectsManager.activeQuickSlotItemFX);
 
             player.playerLocomotionManager.canRun = true;
+            player.playerEquipmentManager.UnHideWeapons();
+
+            if (player.playerEffectsManager.activeQuickSlotItemFX != null)
+                Destroy(player.playerEffectsManager.activeQuickSlotItemFX);
+
+            //we check if the player is using an item
+            if (player.playerCombatManager.isUsingItem)
+            {
+                player.playerCombatManager.isUsingItem = false;
+
+                //only if the player is not interacting, do we allow rolling
+                if (!player.isPerformingAction)
+                    player.playerLocomotionManager.canRoll = true;
+            }
         }
 
         // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
