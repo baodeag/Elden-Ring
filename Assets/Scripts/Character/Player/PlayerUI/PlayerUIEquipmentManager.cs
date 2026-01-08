@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using NUnit.Framework;
 using System.Collections.Generic;
 using Unity.Netcode;
+using TMPro;
 
 namespace baodeag
 {
@@ -33,6 +34,12 @@ namespace baodeag
         private Button legEquipmentSlotButton;
         [SerializeField] Image handEquipmentSlot;
         private Button handEquipmentSlotButton;
+        [SerializeField] Image mainProjectileEquipmentSlot;
+        [SerializeField] TextMeshProUGUI mainProjectileCount;
+        private Button mainProjectileEquipmentSlotButton;
+        [SerializeField] Image secondaryProjectileEquipmentSlot;
+        [SerializeField] TextMeshProUGUI secondaryProjectileCount;
+        private Button secondaryProjectileEquipmentSlotButton;
 
         [Header("Equiment Inventory")]
         public EquipmentType currentSelectedEquipmentSlot;
@@ -55,6 +62,9 @@ namespace baodeag
             bodyEquipmentSlotButton = bodyEquipmentSlot.GetComponentInParent<Button>(true);
             handEquipmentSlotButton = handEquipmentSlot.GetComponentInParent<Button>(true);
             legEquipmentSlotButton = legEquipmentSlot.GetComponentInParent<Button>(true);
+
+            mainProjectileEquipmentSlotButton = mainProjectileEquipmentSlot.GetComponentInParent<Button>(true);
+            secondaryProjectileEquipmentSlotButton = secondaryProjectileEquipmentSlot.GetComponentInParent<Button>(true);
         }
 
         public void OpenEquipmentManagerMenu()
@@ -88,6 +98,9 @@ namespace baodeag
             bodyEquipmentSlotButton.enabled = isEnabled;
             legEquipmentSlotButton.enabled = isEnabled;
             handEquipmentSlotButton.enabled = isEnabled;
+
+            mainProjectileEquipmentSlotButton.enabled = isEnabled;
+            secondaryProjectileEquipmentSlotButton.enabled = isEnabled;
         }
 
         // this function simply return to the last selected button when you are finished equipping a new item
@@ -126,6 +139,12 @@ namespace baodeag
                     break;
                 case EquipmentType.Hands:
                     lastSelectedButton = handEquipmentSlotButton;
+                    break;
+                case EquipmentType.MainProjectile:
+                    lastSelectedButton = mainProjectileEquipmentSlotButton;
+                    break;
+                case EquipmentType.SecondaryProjectile:
+                    lastSelectedButton = secondaryProjectileEquipmentSlotButton;
                     break;
                 default:
                     break;
@@ -271,6 +290,35 @@ namespace baodeag
             {
                 handEquipmentSlot.enabled = false;
             }
+
+            // projectile equipment
+            RangedProjectileItem mainProjectileEquipment = player.playerInventoryManager.mainProjectile;
+            if (mainProjectileEquipment != null)
+            {
+                mainProjectileEquipmentSlot.enabled = true;
+                mainProjectileEquipmentSlot.sprite = mainProjectileEquipment.itemIcon;
+                mainProjectileCount.enabled = true;
+                mainProjectileCount.text = mainProjectileEquipment.currentAmmoAmount.ToString();
+            }
+            else
+            {
+                mainProjectileEquipmentSlot.enabled = false;
+                mainProjectileCount.enabled = false;
+            }
+
+            RangedProjectileItem secondaryProjectileEquipment = player.playerInventoryManager.secondaryProjectile;
+            if (secondaryProjectileEquipment != null)
+            {
+                secondaryProjectileEquipmentSlot.enabled = true;
+                secondaryProjectileEquipmentSlot.sprite = secondaryProjectileEquipment.itemIcon;
+                secondaryProjectileCount.enabled = true;
+                secondaryProjectileCount.text = secondaryProjectileEquipment.currentAmmoAmount.ToString();
+            }
+            else
+            {
+                secondaryProjectileEquipmentSlot.enabled = false;
+                secondaryProjectileCount.enabled = false;
+            }
         }
 
         private void ClearEquipmentInventory()
@@ -317,6 +365,12 @@ namespace baodeag
                     break;
                 case EquipmentType.Hands:
                     LoadHandEquipmentInventory();
+                    break;
+                case EquipmentType.MainProjectile:
+                    LoadProjectileInventory();
+                    break;
+                case EquipmentType.SecondaryProjectile:
+                    LoadProjectileInventory();
                     break;
                 default:
                     break;
@@ -533,6 +587,48 @@ namespace baodeag
             }
         }
 
+        private void LoadProjectileInventory()
+        {
+            PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            List<RangedProjectileItem> projectilesInInventory = new List<RangedProjectileItem>();
+
+            for (int i = 0; i < player.playerInventoryManager.itemsInInventory.Count; i++)
+            {
+                RangedProjectileItem projectile = player.playerInventoryManager.itemsInInventory[i] as RangedProjectileItem;
+
+                if (projectile != null)
+                    projectilesInInventory.Add(projectile);
+            }
+
+            if (projectilesInInventory.Count <= 0)
+            {
+                //send a player a message that there are no weapons in the inventory
+                equipmentInventoryWindow.SetActive(false);
+                ToggleEquipmentButtons(true);
+                RefreshMenu();
+                return;
+            }
+
+            bool hasSelectedFirstInventorySlot = false;
+
+            for (int i = 0; i < projectilesInInventory.Count; i++)
+            {
+                GameObject inventorySlotGameObject = Instantiate(equipmentInventorySlotPrefab, equipmentInventoryContentWindow);
+                UI_EquipmentInventorySlot equipmentInventorySlot = inventorySlotGameObject.GetComponent<UI_EquipmentInventorySlot>();
+                equipmentInventorySlot.AddItem(projectilesInInventory[i]);
+
+                //this will select the first button on the list
+                if (!hasSelectedFirstInventorySlot)
+                {
+                    hasSelectedFirstInventorySlot = true;
+                    Button inventorySlotButton = inventorySlotGameObject.GetComponent<Button>();
+                    inventorySlotButton.Select();
+                    inventorySlotButton.OnSelect(null);
+                }
+            }
+        }
+
         public void SelectEquipmentSlot(int equipmentSlot)
         {
             currentSelectedEquipmentSlot = (EquipmentType)equipmentSlot;
@@ -667,6 +763,29 @@ namespace baodeag
 
                     break;
 
+                case EquipmentType.MainProjectile:
+
+                    unequippedItem = player.playerInventoryManager.mainProjectile;
+
+                    if (unequippedItem != null)
+                        player.playerInventoryManager.AddItemToInventory(unequippedItem);
+
+                    player.playerInventoryManager.mainProjectile = null;
+                    player.playerEquipmentManager.LoadMainProjectileEquipment(player.playerInventoryManager.mainProjectile);
+
+                    break;
+
+                case EquipmentType.SecondaryProjectile:
+
+                    unequippedItem = player.playerInventoryManager.secondaryProjectile;
+
+                    if (unequippedItem != null)
+                        player.playerInventoryManager.AddItemToInventory(unequippedItem);
+
+                    player.playerInventoryManager.secondaryProjectile = null;
+                    player.playerEquipmentManager.LoadSecondaryProjectileEquipment(player.playerInventoryManager.secondaryProjectile);
+
+                    break;
                 default:
                     break;
             }

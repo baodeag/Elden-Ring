@@ -51,8 +51,9 @@ public enum EquipmentType
     Head, //6
     Body, //7
     Legs, //8
-    Hands //9
-
+    Hands, //9
+    MainProjectile,//10
+    SecondaryProjectile //11
 }
 
 public enum WeaponClass

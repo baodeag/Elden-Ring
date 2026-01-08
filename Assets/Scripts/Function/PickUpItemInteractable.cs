@@ -94,6 +94,9 @@ namespace baodeag
             if (player.isPerformingAction)
                 return;
 
+            if (player.playerCombatManager.isUsingItem)
+                return;
+
             base.Interact(player);
 
             player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.pickUpItemSFX);

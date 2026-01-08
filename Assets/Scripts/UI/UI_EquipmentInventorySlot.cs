@@ -264,6 +264,50 @@ namespace baodeag
 
                     break;
 
+                case EquipmentType.MainProjectile:
+                    //if our current weapon in this slot, is not a null item, add it to inventory
+                    equippedItem = player.playerInventoryManager.mainProjectile;
+
+                    if (equippedItem != null)
+                    {
+                        player.playerInventoryManager.AddItemToInventory(equippedItem);
+                    }
+                    //then replace the item in that slot with our new item
+                    player.playerInventoryManager.mainProjectile = currentItem as RangedProjectileItem;
+
+                    //then remove the new item from inventory
+                    player.playerInventoryManager.RemoveItemFromInventory(currentItem);
+
+                    //re-equip the new item if wea are holding the current item in this slot
+                    player.playerEquipmentManager.LoadMainProjectileEquipment(player.playerInventoryManager.mainProjectile);
+
+                    //refresh the equipment window
+                    PlayerUIManager.instance.playerUIEquipmentManager.RefreshMenu();
+
+                    break;
+
+                case EquipmentType.SecondaryProjectile:
+                    //if our current weapon in this slot, is not a null item, add it to inventory
+                    equippedItem = player.playerInventoryManager.secondaryProjectile;
+
+                    if (equippedItem != null)
+                    {
+                        player.playerInventoryManager.AddItemToInventory(equippedItem);
+                    }
+                    //then replace the item in that slot with our new item
+                    player.playerInventoryManager.secondaryProjectile = currentItem as RangedProjectileItem;
+
+                    //then remove the new item from inventory
+                    player.playerInventoryManager.RemoveItemFromInventory(currentItem);
+
+                    //re-equip the new item if wea are holding the current item in this slot
+                    player.playerEquipmentManager.LoadSecondaryProjectileEquipment(player.playerInventoryManager.secondaryProjectile);
+
+                    //refresh the equipment window
+                    PlayerUIManager.instance.playerUIEquipmentManager.RefreshMenu();
+
+                    break;
+
                 default:
                     break;
             } 

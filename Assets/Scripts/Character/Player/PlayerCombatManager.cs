@@ -318,6 +318,19 @@ namespace baodeag
 
             //substract ammo
             projectileItem.currentAmmoAmount -= 1;
+
+            switch (currentProjectileBeingUsed)
+            {
+                case ProjectileSlot.Main:
+                    PlayerUIManager.instance.playerUIHudManager.SetMainProjectileQuickSlotIcon(projectileItem);
+                    break;
+                case ProjectileSlot.Secondary:
+                    projectileItem = player.playerInventoryManager.secondaryProjectile;
+                    PlayerUIManager.instance.playerUIHudManager.SetSecondaryProjectileQuickSlotIcon(projectileItem);
+                    break;
+                default:
+                    break;
+            }
             
             //make and update arrow count UI
             projectileInstantiateLocation = player.playerCombatManager.lockOnTransform;

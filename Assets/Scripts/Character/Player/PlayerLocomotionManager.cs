@@ -310,6 +310,10 @@ namespace baodeag
             if (player.isPerformingAction)
                 return;
 
+            //if we are using an item, we cannot jump
+            if (player.playerCombatManager.isUsingItem)
+                return;
+
             //if we have no stamina, we cannot jump
             if (player.playerNetworkManager.currentStamina.Value <= 0)
                 return;

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Standard Arrow
   m_EditorClassIdentifier: 
   itemName: Standard Arrow
-  itemIcon: {fileID: 0}
+  itemIcon: {fileID: 21300000, guid: 2d01faf7231269a4cb226ec0b866ce96, type: 3}
   itemDescription: A well balanced arrow
   itemID: 12
   projectileClass: 0
@@ -21,7 +21,7 @@ MonoBehaviour:
   upwardVelocity: 0
   ammoMass: 0.01
   maxAmmoAmount: 30
-  currentAmmoAmount: 22
+  currentAmmoAmount: 2
   physicalDamage: 72
   magicDamage: 0
   fireDamage: 0

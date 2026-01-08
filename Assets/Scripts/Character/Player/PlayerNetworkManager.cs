@@ -187,6 +187,15 @@ namespace baodeag
             if (player.IsOwner)
             {
                 PlayerUIManager.instance.playerUIHudManager.SetRightWeaponQuickSlotIcon(newID);
+
+                if (newWeapon.weaponClass == WeaponClass.Bow)
+                {
+                    PlayerUIManager.instance.playerUIHudManager.ToggleProjectileQuickSlotsVisibility(true);
+                }
+                else
+                {
+                    PlayerUIManager.instance.playerUIHudManager.ToggleProjectileQuickSlotsVisibility(false);
+                }
             }
         }
 
@@ -199,6 +208,15 @@ namespace baodeag
             if (player.IsOwner)
             {
                 PlayerUIManager.instance.playerUIHudManager.SetLeftWeaponQuickSlotIcon(newID);
+
+                if (newWeapon.weaponClass == WeaponClass.Bow)
+                {
+                    PlayerUIManager.instance.playerUIHudManager.ToggleProjectileQuickSlotsVisibility(true);
+                }
+                else
+                {
+                    PlayerUIManager.instance.playerUIHudManager.ToggleProjectileQuickSlotsVisibility(false);
+                }
             }
         }
 
@@ -255,6 +273,9 @@ namespace baodeag
 
             if (newProjectile != null)
                 player.playerInventoryManager.mainProjectile = newProjectile;
+
+            if (player.IsOwner)
+                PlayerUIManager.instance.playerUIHudManager.SetMainProjectileQuickSlotIcon(player.playerInventoryManager.mainProjectile);
         }
 
         public void OnSecondaryProjectileIDChange(int oldID, int newID)
@@ -266,6 +287,9 @@ namespace baodeag
 
             if (newProjectile != null)
                 player.playerInventoryManager.secondaryProjectile = newProjectile;
+
+            if (player.IsOwner)
+                PlayerUIManager.instance.playerUIHudManager.SetSecondaryProjectileQuickSlotIcon(player.playerInventoryManager.secondaryProjectile);
         }
 
         public void OnIsHoldingArrowChanged(bool oldStatus, bool newStatus)

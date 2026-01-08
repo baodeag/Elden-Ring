@@ -116,6 +116,12 @@ namespace baodeag
         {
             base.Interact(player);
 
+            if (player.isPerformingAction)
+                return;
+
+            if (player.playerCombatManager.isUsingItem)
+                return;
+
             if (!isActivated.Value)
             {
                 RestoreSiteOfGrace(player);

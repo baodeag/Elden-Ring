@@ -799,6 +799,42 @@ namespace baodeag
             player.playerBodyManager.EnableArms();
         }
 
+        //projectile
+        public void LoadMainProjectileEquipment(RangedProjectileItem equipment)
+        {
+            if (equipment == null)
+            {
+                if (player.IsOwner)
+                    player.playerNetworkManager.mainProjectileID.Value = -1; // -1 will never be an item id, its always null
+
+                player.playerInventoryManager.mainProjectile = null;
+                return;
+            }
+
+            player.playerInventoryManager.mainProjectile = equipment;
+
+            if (player.IsOwner)
+                player.playerNetworkManager.mainProjectileID.Value = equipment.itemID;
+        }
+
+        public void LoadSecondaryProjectileEquipment(RangedProjectileItem equipment)
+        {
+            if (equipment == null)
+            {
+                if (player.IsOwner)
+                    player.playerNetworkManager.secondaryProjectileID.Value = -1; // -1 will never be an item id, its always null
+
+                player.playerInventoryManager.secondaryProjectile = null;
+                return;
+            }
+
+            player.playerInventoryManager.secondaryProjectile = equipment;
+
+            if (player.IsOwner)
+                player.playerNetworkManager.secondaryProjectileID.Value = equipment.itemID;
+        }
+
+        //weapons
         private void InitializeWeaponSlot()
         {
             WeaponModelInstantiationSlot[] weaponSlots = GetComponentsInChildren<WeaponModelInstantiationSlot>();
@@ -831,6 +867,7 @@ namespace baodeag
             LoadLeftWeapon();
         }
 
+        //right weapon
         public void SwitchRightWeapon()
         {
             if(!player.IsOwner)
@@ -915,6 +952,7 @@ namespace baodeag
 
         }
 
+        //left weapon
         public void SwitchLeftWeapon()
         {
             if (!player.IsOwner)

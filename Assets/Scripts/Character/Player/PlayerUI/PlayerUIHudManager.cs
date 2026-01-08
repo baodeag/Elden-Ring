@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
+using TMPro;
 
 namespace baodeag
 {
@@ -18,6 +19,11 @@ namespace baodeag
         [SerializeField] Image leftWeaponQuickSlotIcon;
         [SerializeField] Image spellItemQuickSlotIcon;
         [SerializeField] Image quickSlotItemQuickSlotIcon;
+        [SerializeField] GameObject projectileQuickSlotsGameObject;
+        [SerializeField] Image mainProjectileQuickSlotIcon;
+        [SerializeField] TextMeshProUGUI mainProjectileCount;
+        [SerializeField] Image secondaryProjectileQuickSlotIcon;
+        [SerializeField] TextMeshProUGUI secondaryProjectileCount;
 
         [Header("Boss Health Bar")]
         public Transform bossHealthBarParent;
@@ -176,6 +182,63 @@ namespace baodeag
 
             quickSlotItemQuickSlotIcon.sprite = quickSlotItem.itemIcon;
             quickSlotItemQuickSlotIcon.enabled = true;
+        }
+
+        public void ToggleProjectileQuickSlotsVisibility(bool status)
+        {
+            projectileQuickSlotsGameObject.SetActive(status);
+        }
+
+        public void SetMainProjectileQuickSlotIcon(RangedProjectileItem projectileItem)
+        {
+            if (projectileItem == null)
+            {
+                Debug.Log("Item is null");
+                mainProjectileQuickSlotIcon.enabled = false;
+                mainProjectileQuickSlotIcon.sprite = null;
+                mainProjectileCount.enabled = false;
+                return;
+            }
+
+            if (projectileItem.itemIcon == null)
+            {
+                Debug.Log("Item has no icon");
+                mainProjectileQuickSlotIcon.enabled = false;
+                mainProjectileQuickSlotIcon.sprite = null;
+                mainProjectileCount.enabled = false;
+                return;
+            }
+
+            mainProjectileQuickSlotIcon.sprite = projectileItem.itemIcon;
+            mainProjectileCount.text = projectileItem.currentAmmoAmount.ToString();
+            mainProjectileQuickSlotIcon.enabled = true;
+            mainProjectileCount.enabled = true;
+        }
+
+        public void SetSecondaryProjectileQuickSlotIcon(RangedProjectileItem projectileItem)
+        {
+            if (projectileItem == null)
+            {
+                Debug.Log("Item is null");
+                secondaryProjectileQuickSlotIcon.enabled = false;
+                secondaryProjectileQuickSlotIcon.sprite = null;
+                secondaryProjectileCount.enabled = false;
+                return;
+            }
+
+            if (projectileItem.itemIcon == null)
+            {
+                Debug.Log("Item has no icon");
+                secondaryProjectileQuickSlotIcon.enabled = false;
+                secondaryProjectileQuickSlotIcon.sprite = null;
+                secondaryProjectileCount.enabled = true;
+                return;
+            }
+
+            secondaryProjectileQuickSlotIcon.sprite = projectileItem.itemIcon;
+            secondaryProjectileCount.text = projectileItem.currentAmmoAmount.ToString();
+            secondaryProjectileQuickSlotIcon.enabled = true;
+            secondaryProjectileCount.enabled = true;
         }
     }
 }
