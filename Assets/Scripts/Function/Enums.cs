@@ -53,7 +53,10 @@ public enum EquipmentType
     Legs, //8
     Hands, //9
     MainProjectile,//10
-    SecondaryProjectile //11
+    SecondaryProjectile, //11
+    QuickSlot01, //12
+    QuickSlot02, //13
+    QuickSlot03, //14
 }
 
 public enum WeaponClass

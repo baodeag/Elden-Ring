@@ -308,6 +308,76 @@ namespace baodeag
 
                     break;
 
+                case EquipmentType.QuickSlot01:
+                    //if our current weapon in this slot, is not a null item, add it to inventory
+                    equippedItem = player.playerInventoryManager.quickSlotItemsInQuickSlots[0];
+
+                    if (equippedItem != null)
+                    {
+                        player.playerInventoryManager.AddItemToInventory(equippedItem);
+                    }
+                    //then replace the item in that slot with our new item
+                    player.playerInventoryManager.quickSlotItemsInQuickSlots[0] = currentItem as QuickSlotItem;
+
+                    //then remove the new item from inventory
+                    player.playerInventoryManager.RemoveItemFromInventory(currentItem);
+
+                    //re-equip the new item
+                    if (player.playerInventoryManager.quickSlotItemIndex == 0)
+                        player.playerNetworkManager.currentQuickSlotItemID.Value = currentItem.itemID;
+
+                    //refresh the equipment window
+                    PlayerUIManager.instance.playerUIEquipmentManager.RefreshMenu();
+
+                    break;
+
+                case EquipmentType.QuickSlot02:
+                    //if our current weapon in this slot, is not a null item, add it to inventory
+                    equippedItem = player.playerInventoryManager.quickSlotItemsInQuickSlots[1];
+
+                    if (equippedItem != null)
+                    {
+                        player.playerInventoryManager.AddItemToInventory(equippedItem);
+                    }
+
+                    //then replace the item in that slot with our new item
+                    player.playerInventoryManager.quickSlotItemsInQuickSlots[1] = currentItem as QuickSlotItem;
+
+                    //then remove the new item from inventory
+                    player.playerInventoryManager.RemoveItemFromInventory(currentItem);
+
+                    //re-equip the new item
+                    if (player.playerInventoryManager.quickSlotItemIndex == 1)
+                        player.playerNetworkManager.currentQuickSlotItemID.Value = currentItem.itemID;
+
+                    //refresh the equipment window
+                    PlayerUIManager.instance.playerUIEquipmentManager.RefreshMenu();
+
+                    break;
+
+                case EquipmentType.QuickSlot03:
+                    //if our current weapon in this slot, is not a null item, add it to inventory
+                    equippedItem = player.playerInventoryManager.quickSlotItemsInQuickSlots[2];
+
+                    if (equippedItem != null)
+                    {
+                        player.playerInventoryManager.AddItemToInventory(equippedItem);
+                    }
+                    //then replace the item in that slot with our new item
+                    player.playerInventoryManager.quickSlotItemsInQuickSlots[2] = currentItem as QuickSlotItem;
+
+                    //then remove the new item from inventory
+                    player.playerInventoryManager.RemoveItemFromInventory(currentItem);
+
+                    //re-equip the new item
+                    if (player.playerInventoryManager.quickSlotItemIndex == 2)
+                        player.playerNetworkManager.currentQuickSlotItemID.Value = currentItem.itemID;
+
+                    //refresh the equipment window
+                    PlayerUIManager.instance.playerUIEquipmentManager.RefreshMenu();
+
+                    break;
+
                 default:
                     break;
             } 

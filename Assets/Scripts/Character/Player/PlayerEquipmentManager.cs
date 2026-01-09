@@ -23,9 +23,6 @@ namespace baodeag
         public WeaponManager rightWeaponManager;
         public WeaponManager leftWeaponManager;
 
-        [Header("Debug Delete Later")]
-        [SerializeField] bool equipNewItems = false;
-
         [Header("General Equipment Models")]
         public GameObject hatsObject;
         [HideInInspector] public GameObject[] hats;
@@ -114,21 +111,79 @@ namespace baodeag
             EquipWeapons();
         }
 
-        private void Update()
-        {
-            if (equipNewItems)
-            {
-                equipNewItems = false;
-                EquipArmor();
-            }
-        }
-
         public void EquipArmor()
         {
             LoadHeadEquipment(player.playerInventoryManager.headEquipment);
             LoadBodyEquipment(player.playerInventoryManager.bodyEquipment);
             LoadLegEquipment(player.playerInventoryManager.legEquipment);
             LoadHandEquipment(player.playerInventoryManager.handEquipment);
+        }
+
+        //quick slots
+        public void SwitchQuickSlotItem()
+        {
+            if (!player.IsOwner)
+                return;
+
+            QuickSlotItem selectedItem = null;
+
+            player.playerInventoryManager.quickSlotItemIndex += 1;
+
+            if (player.playerInventoryManager.quickSlotItemIndex < 0 || player.playerInventoryManager.quickSlotItemIndex > 2)
+            {
+                player.playerInventoryManager.quickSlotItemIndex = 0;
+
+                //we check if we are holding more than one weapon
+                float itemCount = 0;
+                QuickSlotItem firstItem = null;
+                int firstItemPosition = 0;
+
+                for (int i = 0; i < player.playerInventoryManager.quickSlotItemsInQuickSlots.Length; i++)
+                {
+                    if (player.playerInventoryManager.quickSlotItemsInQuickSlots[i] != null)
+                    {
+                        itemCount += 1;
+
+                        if (firstItem == null)
+                        {
+                            firstItem = player.playerInventoryManager.quickSlotItemsInQuickSlots[i];
+                            firstItemPosition = i;
+                        }
+                    }
+                }
+
+                if (itemCount <= 1)
+                {
+                    //if we are only holding one weapon, we just equip it
+                    player.playerInventoryManager.quickSlotItemIndex = -1;
+                    selectedItem = null;
+                    player.playerNetworkManager.currentQuickSlotItemID.Value = -1;
+                }
+                else
+                {
+                    player.playerInventoryManager.quickSlotItemIndex = firstItemPosition;
+                    player.playerNetworkManager.currentQuickSlotItemID.Value = firstItem.itemID;
+                }
+
+                return;
+            }
+
+            //if the next weapon does not equal the unarmed weapon
+            if (player.playerInventoryManager.quickSlotItemsInQuickSlots[player.playerInventoryManager.quickSlotItemIndex] != null)
+            {
+                selectedItem = player.playerInventoryManager.quickSlotItemsInQuickSlots[player.playerInventoryManager.quickSlotItemIndex];
+                //assign the network weapon id so it switches for everyone
+                player.playerNetworkManager.currentQuickSlotItemID.Value = player.playerInventoryManager.quickSlotItemsInQuickSlots[player.playerInventoryManager.quickSlotItemIndex].itemID;
+            }
+            else
+            {
+                player.playerNetworkManager.currentQuickSlotItemID.Value = -1;
+            }
+
+            if (selectedItem == null && player.playerInventoryManager.quickSlotItemIndex <= 2)
+            {
+                SwitchQuickSlotItem();
+            }
         }
 
         //equipment

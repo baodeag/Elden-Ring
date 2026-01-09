@@ -89,7 +89,7 @@ namespace baodeag
             {
                 player.playerAnimatorManager.PlayTargetActionAnimation(useItemAnimation, false, false, true, true, false);
                 player.playerNetworkManager.HideWeaponsServerRPC();
-            }          
+            }
         }
 
         public override void SuccessfullyUseItem(PlayerManager player)
@@ -131,6 +131,19 @@ namespace baodeag
         {
             Instantiate(WorldCharacterEffectsManager.instance.healingFlaskVFX, player.transform);
             player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.healingFlaskSFX);
+        }
+
+        public override int GetCurrentAmount(PlayerManager player)
+        {
+            int currentAmount = 0;
+
+            if (healthFlask)
+                currentAmount = player.playerNetworkManager.remainingHealthFlasks.Value;
+
+            if (!healthFlask)
+                currentAmount = player.playerNetworkManager.remainingFocusPointsFlasks.Value;
+
+            return currentAmount;
         }
     }
 }

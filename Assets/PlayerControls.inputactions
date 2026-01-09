@@ -339,6 +339,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Switch Quick Slot Item",
+                    "type": "Button",
+                    "id": "1c1bc46f-61de-4b7d-8292-7b600e1d4ae9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Seek Left Lock On Target",
                     "type": "Button",
                     "id": "5ac8c5b0-2493-425f-b930-28c429553ac9",
@@ -520,6 +529,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Switch Left Weapon",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2b5d336d-dc24-4a77-a1da-0abb3deaec6f",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Switch Quick Slot Item",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
