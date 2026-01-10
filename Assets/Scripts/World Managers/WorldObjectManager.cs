@@ -15,6 +15,9 @@ namespace baodeag
         [Header("Fog Wall")]
         public List<FogWallInteractable> fogWalls;
 
+        [Header("Site Of Grace")]
+        public List<SiteOfGraceInteractable> sitesOfGrace;
+
         private void Awake()
         {
             if (instance == null)
@@ -49,6 +52,22 @@ namespace baodeag
             if (fogWalls.Contains(fogWall))
             {
                 fogWalls.Remove(fogWall);
+            }
+        }
+
+        public void AddSiteOfGraceToList(SiteOfGraceInteractable siteOfGrace)
+        {
+            if (!sitesOfGrace.Contains(siteOfGrace))
+            {
+                sitesOfGrace.Add(siteOfGrace);
+            }
+        }
+
+        public void RemoveSiteOfGraceFromList(SiteOfGraceInteractable siteOfGrace)
+        {
+            if (sitesOfGrace.Contains(siteOfGrace))
+            {
+                sitesOfGrace.Remove(siteOfGrace);
             }
         }
     }

@@ -7,7 +7,7 @@ namespace baodeag
     public class SiteOfGraceInteractable : Interactable
     {
         [Header("Site of Grace Info")]
-        [SerializeField] int siteOfGraceID = 0;
+        public int siteOfGraceID = 0;
         public NetworkVariable<bool> isActivated = new NetworkVariable<bool>
             (false,
             NetworkVariableReadPermission.Everyone,
@@ -19,6 +19,9 @@ namespace baodeag
         [Header("Interaction Text")]
         [SerializeField] string unactivatedInteractionText = "Restore Site of Grace";
         [SerializeField] string activatedInteractionText = "Rest";
+
+        [Header("Teleport Transform")]
+        [SerializeField] Transform teleportTransform;
 
         protected override void Start()
         {
@@ -55,6 +58,8 @@ namespace baodeag
                 OnIsActivatedChanged(false, isActivated.Value);
 
             isActivated.OnValueChanged += OnIsActivatedChanged;
+
+            WorldObjectManager.instance.AddSiteOfGraceToList(this);
         }
 
         public override void OnNetworkDespawn()
@@ -84,6 +89,7 @@ namespace baodeag
 
         private void RestAtSiteOfGrace(PlayerManager player)
         {
+            PlayerUIManager.instance.playerUISiteOfGraceManager.OpenSiteOfGraceManagerMenu();
             Debug.Log("Resting");
             interactableCollider.enabled = true; //temporarily re-enabling the collider here until we add the menu so you can respawn monsters indefinitely
             player.playerNetworkManager.currentHealth.Value = player.playerNetworkManager.maxHealth.Value;
@@ -130,6 +136,17 @@ namespace baodeag
             {
                 RestAtSiteOfGrace(player);
             }
+        }
+
+        public void TeleportToSiteOfGrace()
+        {
+            //the player is only able to teleport when not in a co-op game, so we can grab the local player from the network manager
+            PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            //enable loading screen
+
+            //teleport player
+            player.transform.position = teleportTransform.position;
         }
     }
 }

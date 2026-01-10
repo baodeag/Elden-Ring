@@ -97,6 +97,13 @@ namespace baodeag
             RefreshEquipmentSlotIcons();
         }
 
+        public void CloseEquipmentManagerMenu()
+        {
+            PlayerUIManager.instance.menuWindowIsOpen = false;
+            menu.SetActive(false);
+
+        }
+
         public void RefreshMenu()
         {
             ClearEquipmentInventory();
@@ -189,13 +196,6 @@ namespace baodeag
             }
 
             equipmentInventoryWindow.SetActive(false);
-        }
-
-        public void CloseEquipmentManagerMenu()
-        {
-            PlayerUIManager.instance.menuWindowIsOpen = false;
-            menu.SetActive(false);
-
         }
 
         private void RefreshEquipmentSlotIcons()

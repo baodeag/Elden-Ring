@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Netcode;
+using baodead;
 namespace baodeag
 {
     public class PlayerUIManager : MonoBehaviour
@@ -13,6 +14,8 @@ namespace baodeag
         [HideInInspector] public PlayerUIPopUpManager playerUIPopUpManager;
         [HideInInspector] public PlayerUICharacterMenuManager playerUICharacterMenuManager;
         [HideInInspector] public PlayerUIEquipmentManager playerUIEquipmentManager;
+        [HideInInspector] public PlayerUISiteOfGraceManager playerUISiteOfGraceManager;
+        [HideInInspector] public PlayerUITeleportLocationManager playerUITeleportLocationManager;
 
         [Header("UI Flags")]
         public bool menuWindowIsOpen = false;
@@ -32,6 +35,8 @@ namespace baodeag
             playerUIPopUpManager = GetComponentInChildren<PlayerUIPopUpManager>();
             playerUICharacterMenuManager = GetComponentInChildren<PlayerUICharacterMenuManager>();
             playerUIEquipmentManager = GetComponentInChildren<PlayerUIEquipmentManager>();
+            playerUISiteOfGraceManager = GetComponentInChildren<PlayerUISiteOfGraceManager>();
+            playerUITeleportLocationManager = GetComponentInChildren<PlayerUITeleportLocationManager>();
         }
 
         private void Start()
@@ -55,6 +60,8 @@ namespace baodeag
         {
             playerUICharacterMenuManager.CloseCharacterMenu();
             playerUIEquipmentManager.CloseEquipmentManagerMenu();
+            playerUISiteOfGraceManager.CloseSiteOfGraceManagerMenu();
+            playerUITeleportLocationManager.CloseTeleportLocationManagerMenu();
         }
     }
 }

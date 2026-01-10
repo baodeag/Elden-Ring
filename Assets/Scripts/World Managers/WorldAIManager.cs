@@ -63,6 +63,7 @@ namespace baodeag
             return spawnedInBosses.FirstOrDefault(boss => boss.bossID == ID);
         }
 
+        //if you have more than 25-30 enemies per area, reset their stats and animations instead of despawning and respawning them
         public void ResetAllCharacter()
         {
             DespawnAllCharacters();
