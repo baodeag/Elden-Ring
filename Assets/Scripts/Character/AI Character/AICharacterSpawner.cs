@@ -8,6 +8,7 @@ namespace baodeag
         [Header("Character")]
         [SerializeField] GameObject characterGameObject;
         [SerializeField] GameObject instantiateGameObject;
+        private AICharacterManager aiCharacter;
 
         private void Awake()
         {
@@ -27,8 +28,32 @@ namespace baodeag
                 instantiateGameObject.transform.position = transform.position;
                 instantiateGameObject.transform.rotation = transform.rotation;
                 instantiateGameObject.GetComponent<NetworkObject>().Spawn();
-                WorldAIManager.instance.AddCharacterToSpawnedCharacterList(instantiateGameObject.GetComponent<AICharacterManager>());
+                aiCharacter = instantiateGameObject.GetComponent<AICharacterManager>();
+
+                if (aiCharacter != null) 
+                    WorldAIManager.instance.AddCharacterToSpawnedCharacterList(aiCharacter);
             }
+        }
+
+        public void ResetCharacter()
+        {
+            if (instantiateGameObject == null)
+                return;
+
+            if (aiCharacter == null)
+                return;
+
+            instantiateGameObject.transform.position = transform.position;
+            instantiateGameObject.transform.rotation = transform.rotation;
+            aiCharacter.aiCharacterNetworkManager.currentHealth.Value = aiCharacter.aiCharacterNetworkManager.maxHealth.Value;
+
+            if (aiCharacter.isDead.Value)
+            {
+                aiCharacter.isDead.Value = false;
+                aiCharacter.characterAnimatorManager.PlayTargetActionAnimation("Empty", false, false, true, true, true, true);
+            }
+
+            aiCharacter.characterUIManager.ResetCharacterHPBar();
         }
     }
 }

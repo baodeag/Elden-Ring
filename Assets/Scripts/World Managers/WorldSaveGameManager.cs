@@ -324,6 +324,7 @@ namespace baodeag {
 
         public void LoadWorldScene(int buildIndex)
         {
+            PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
             string worldScene = SceneUtility.GetScenePathByBuildIndex(buildIndex);
             NetworkManager.Singleton.SceneManager.LoadScene(worldScene, LoadSceneMode.Single);
 

@@ -1,6 +1,6 @@
 using UnityEngine;
 using Unity.Netcode;
-using baodead;
+
 namespace baodeag
 {
     public class PlayerUIManager : MonoBehaviour
@@ -16,6 +16,7 @@ namespace baodeag
         [HideInInspector] public PlayerUIEquipmentManager playerUIEquipmentManager;
         [HideInInspector] public PlayerUISiteOfGraceManager playerUISiteOfGraceManager;
         [HideInInspector] public PlayerUITeleportLocationManager playerUITeleportLocationManager;
+        [HideInInspector] public PlayerUILoadingScreenManager playerUILoadingScreenManager;
 
         [Header("UI Flags")]
         public bool menuWindowIsOpen = false;
@@ -29,7 +30,7 @@ namespace baodeag
             }
             else
             {
-                Destroy(this.gameObject);
+                Destroy(gameObject);
             }
             playerUIHudManager = GetComponentInChildren<PlayerUIHudManager>();
             playerUIPopUpManager = GetComponentInChildren<PlayerUIPopUpManager>();
@@ -37,6 +38,7 @@ namespace baodeag
             playerUIEquipmentManager = GetComponentInChildren<PlayerUIEquipmentManager>();
             playerUISiteOfGraceManager = GetComponentInChildren<PlayerUISiteOfGraceManager>();
             playerUITeleportLocationManager = GetComponentInChildren<PlayerUITeleportLocationManager>();
+            playerUILoadingScreenManager = GetComponentInChildren<PlayerUILoadingScreenManager>();
         }
 
         private void Start()

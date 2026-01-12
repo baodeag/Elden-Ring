@@ -1,8 +1,7 @@
-using baodeag;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace baodead
+namespace baodeag
 {
     public class PlayerUITeleportLocationManager : MonoBehaviour
     {

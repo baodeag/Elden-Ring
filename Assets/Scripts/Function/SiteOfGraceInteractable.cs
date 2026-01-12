@@ -7,7 +7,7 @@ namespace baodeag
     public class SiteOfGraceInteractable : Interactable
     {
         [Header("Site of Grace Info")]
-        public int siteOfGraceID = 0;
+        public int siteOfGraceID;
         public NetworkVariable<bool> isActivated = new NetworkVariable<bool>
             (false,
             NetworkVariableReadPermission.Everyone,
@@ -90,12 +90,12 @@ namespace baodeag
         private void RestAtSiteOfGrace(PlayerManager player)
         {
             PlayerUIManager.instance.playerUISiteOfGraceManager.OpenSiteOfGraceManagerMenu();
-            Debug.Log("Resting");
+
             interactableCollider.enabled = true; //temporarily re-enabling the collider here until we add the menu so you can respawn monsters indefinitely
             player.playerNetworkManager.currentHealth.Value = player.playerNetworkManager.maxHealth.Value;
             player.playerNetworkManager.currentStamina.Value = player.playerNetworkManager.maxStamina.Value;
 
-            WorldAIManager.instance.ResetAllCharacter();
+            WorldAIManager.instance.ResetAllCharacters();
         }
 
         private IEnumerator WaitForAnimationAndPopUpThenRestoreCollider()
@@ -144,9 +144,13 @@ namespace baodeag
             PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
 
             //enable loading screen
+            PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
 
             //teleport player
             player.transform.position = teleportTransform.position;
+
+            //disable loading screen
+            PlayerUIManager.instance.playerUILoadingScreenManager.DeactivateLoadingScreen(1);
         }
     }
 }
