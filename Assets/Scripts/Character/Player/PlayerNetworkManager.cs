@@ -180,15 +180,19 @@ namespace baodeag
 
         public void OnCurrentRightHandWeaponIDChange(int oldID, int newID)
         {
-            WeaponItem newWeapon = Instantiate(WorldItemDatabase.Instance.GetWeaponByID(newID));
-            player.playerInventoryManager.currentRightHandWeapon = newWeapon;
+            if (!player.IsOwner)
+            {
+                WeaponItem newWeapon = Instantiate(WorldItemDatabase.Instance.GetWeaponByID(newID));
+                player.playerInventoryManager.currentRightHandWeapon = newWeapon;
+            }
+            
             player.playerEquipmentManager.LoadRightWeapon();
 
             if (player.IsOwner)
             {
                 PlayerUIManager.instance.playerUIHudManager.SetRightWeaponQuickSlotIcon(newID);
 
-                if (newWeapon.weaponClass == WeaponClass.Bow)
+                if (player.playerInventoryManager.currentRightHandWeapon.weaponClass == WeaponClass.Bow)
                 {
                     PlayerUIManager.instance.playerUIHudManager.ToggleProjectileQuickSlotsVisibility(true);
                 }
@@ -201,15 +205,19 @@ namespace baodeag
 
         public void OnCurrentLeftHandWeaponIDChange(int oldID, int newID)
         {
-            WeaponItem newWeapon = Instantiate(WorldItemDatabase.Instance.GetWeaponByID(newID));
-            player.playerInventoryManager.currentLeftHandWeapon = newWeapon;
+            if (!player.IsOwner)
+            {
+                WeaponItem newWeapon = Instantiate(WorldItemDatabase.Instance.GetWeaponByID(newID));
+                player.playerInventoryManager.currentLeftHandWeapon = newWeapon;
+            }
+
             player.playerEquipmentManager.LoadLeftWeapon();
 
             if (player.IsOwner)
             {
                 PlayerUIManager.instance.playerUIHudManager.SetLeftWeaponQuickSlotIcon(newID);
 
-                if (newWeapon.weaponClass == WeaponClass.Bow)
+                if (player.playerInventoryManager.currentLeftHandWeapon.weaponClass == WeaponClass.Bow)
                 {
                     PlayerUIManager.instance.playerUIHudManager.ToggleProjectileQuickSlotsVisibility(true);
                 }

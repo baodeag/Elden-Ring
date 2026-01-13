@@ -963,11 +963,13 @@ namespace baodeag
                     //if we are only holding one weapon, we just equip it
                     player.playerInventoryManager.rightHandWeaponIndex = -1;
                     selectedWeapon = WorldItemDatabase.Instance.unarmedWeapon;
+                    player.playerInventoryManager.currentRightHandWeapon = selectedWeapon;
                     player.playerNetworkManager.currentRightHandWeaponID.Value = selectedWeapon.itemID;
                 }
                 else
                 {
                     player.playerInventoryManager.rightHandWeaponIndex = firstWeaponPosition;
+                    player.playerInventoryManager.currentRightHandWeapon = selectedWeapon;
                     player.playerNetworkManager.currentRightHandWeaponID.Value = firstWeapon.itemID;
                 }
 
@@ -981,7 +983,8 @@ namespace baodeag
                 {
                     selectedWeapon = player.playerInventoryManager.weaponInRightHandSlots[player.playerInventoryManager.rightHandWeaponIndex];
                     //assign the network weapon id so it switches for everyone
-                    player.playerNetworkManager.currentRightHandWeaponID.Value = player.playerInventoryManager.weaponInRightHandSlots[player.playerInventoryManager.rightHandWeaponIndex].itemID;
+                    player.playerInventoryManager.currentRightHandWeapon = selectedWeapon;
+                    player.playerNetworkManager.currentRightHandWeaponID.Value = selectedWeapon.itemID;
                     return;
                 }
             }
@@ -1050,11 +1053,13 @@ namespace baodeag
                     //if we are only holding one weapon, we just equip it
                     player.playerInventoryManager.leftHandWeaponIndex = -1;
                     selectedWeapon = WorldItemDatabase.Instance.unarmedWeapon;
+                    player.playerInventoryManager.currentLeftHandWeapon = selectedWeapon;
                     player.playerNetworkManager.currentLeftHandWeaponID.Value = selectedWeapon.itemID;
                 }
                 else
                 {
                     player.playerInventoryManager.leftHandWeaponIndex = firstWeaponPosition;
+                    player.playerInventoryManager.currentLeftHandWeapon = selectedWeapon;
                     player.playerNetworkManager.currentLeftHandWeaponID.Value = firstWeapon.itemID;
                 }
 
@@ -1068,7 +1073,8 @@ namespace baodeag
                 {
                     selectedWeapon = player.playerInventoryManager.weaponInLeftHandSlots[player.playerInventoryManager.leftHandWeaponIndex];
                     //assign the network weapon id so it switches for everyone
-                    player.playerNetworkManager.currentLeftHandWeaponID.Value = player.playerInventoryManager.weaponInLeftHandSlots[player.playerInventoryManager.leftHandWeaponIndex].itemID;
+                    player.playerInventoryManager.currentLeftHandWeapon = selectedWeapon;
+                    player.playerNetworkManager.currentLeftHandWeaponID.Value = selectedWeapon.itemID;
                     return;
                 }
             }

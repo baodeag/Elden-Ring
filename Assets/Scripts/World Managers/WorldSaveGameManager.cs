@@ -335,5 +335,44 @@ namespace baodeag {
         {
             return worldSceneIndex;
         }
+
+        public SerializableWeapon GetSerializableWeaponFromWeaponItem(WeaponItem weapon)
+        {
+            SerializableWeapon serializableWeapon = new SerializableWeapon();
+
+            //get weapon id
+            serializableWeapon.itemID = weapon.itemID;
+
+            //get ash of war id if one is present
+            if (weapon.ashOfWarAction != null)
+            {
+                serializableWeapon.ashOfWarID = weapon.ashOfWarAction.itemID;
+            }
+            else
+            {
+                //we use an invalid id if there is no ash of war, so the value will be null if it tries to search for one using the id
+                serializableWeapon.ashOfWarID = -1;
+            }
+
+            return serializableWeapon;
+        }
+
+        public SerializableRangedProjectile GetSerializableRangedProjectileFromRangedProjectileItem(RangedProjectileItem projectile)
+        {
+            SerializableRangedProjectile serializableProjectile = new SerializableRangedProjectile();
+
+            if (projectile != null)
+            {
+                //get projectile id
+                serializableProjectile.itemID = projectile.itemID;
+                serializableProjectile.itemAmount = projectile.currentAmmoAmount;
+            }
+            else
+            {
+                serializableProjectile.itemID = -1;
+            }
+
+            return serializableProjectile;
+        }
     }
 }

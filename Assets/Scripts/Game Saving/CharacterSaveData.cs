@@ -53,14 +53,17 @@ namespace baodeag
         public int handEquipment;
 
         public int rightWeaponIndex;
-        public int rightWeapon01;
-        public int rightWeapon02;
-        public int rightWeapon03;
+        public SerializableWeapon rightWeapon01;
+        public SerializableWeapon rightWeapon02;
+        public SerializableWeapon rightWeapon03;
 
         public int leftWeaponIndex;
-        public int leftWeapon01;
-        public int leftWeapon02;
-        public int leftWeapon03;
+        public SerializableWeapon leftWeapon01;
+        public SerializableWeapon leftWeapon02;
+        public SerializableWeapon leftWeapon03;
+
+        public SerializableRangedProjectile mainProjectile;
+        public SerializableRangedProjectile secondaryProjectile;
 
         //this will change when we add multiple spells
         public int currentSpell;
