@@ -374,5 +374,40 @@ namespace baodeag {
 
             return serializableProjectile;
         }
+
+        public SerializableFlask GetSerializableFlaskFromFlaskItem(FlaskItem flask)
+        {
+            SerializableFlask serializableFlask = new SerializableFlask();
+
+            if (flask != null)
+            {
+                //get flask id
+                serializableFlask.itemID = flask.itemID;
+            }
+            else
+            {
+                serializableFlask.itemID = -1;
+            }
+
+            return serializableFlask;
+        }
+
+        public SerializableQuickSlotItem GetSerializableQuickSlotItemFromQuickSlotItem(QuickSlotItem quickSlotItem)
+        {
+            SerializableQuickSlotItem serializableQuickSlotItem = new SerializableQuickSlotItem();
+
+            if (quickSlotItem != null)
+            {
+                //get flask id
+                serializableQuickSlotItem.itemID = quickSlotItem.itemID;
+                serializableQuickSlotItem.itemAmount = quickSlotItem.itemAmount;
+            }
+            else
+            {
+                serializableQuickSlotItem.itemID = -1;
+            }
+
+            return serializableQuickSlotItem;
+        }
     }
 }

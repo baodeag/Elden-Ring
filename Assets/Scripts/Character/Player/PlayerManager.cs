@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Netcode;
+using System.Collections.Generic;
 
 namespace baodeag
 {
@@ -275,6 +276,9 @@ namespace baodeag
             currentCharacterData.endurance = playerNetworkManager.endurance.Value;
             currentCharacterData.mind = playerNetworkManager.mind.Value;
 
+            currentCharacterData.currentHealthFlasksRamaining = playerNetworkManager.remainingHealthFlasks.Value;
+            currentCharacterData.currentFocusPointsFlaskRamaining = playerNetworkManager.remainingFocusPointsFlasks.Value;
+
             //equipment
             currentCharacterData.headEquipment = playerNetworkManager.headEquipmentID.Value;
             currentCharacterData.bodyEquipment = playerNetworkManager.bodyEquipmentID.Value;
@@ -291,11 +295,60 @@ namespace baodeag
             currentCharacterData.leftWeapon02 = WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(playerInventoryManager.weaponInLeftHandSlots[1]);
             currentCharacterData.leftWeapon03 = WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(playerInventoryManager.weaponInLeftHandSlots[2]);
 
+            currentCharacterData.quickSlotIndex = playerInventoryManager.quickSlotItemIndex;
+            currentCharacterData.quickSlotItem01 = WorldSaveGameManager.instance.GetSerializableQuickSlotItemFromQuickSlotItem(playerInventoryManager.quickSlotItemsInQuickSlots[0]);
+            currentCharacterData.quickSlotItem02 = WorldSaveGameManager.instance.GetSerializableQuickSlotItemFromQuickSlotItem(playerInventoryManager.quickSlotItemsInQuickSlots[1]);
+            currentCharacterData.quickSlotItem03 = WorldSaveGameManager.instance.GetSerializableQuickSlotItemFromQuickSlotItem(playerInventoryManager.quickSlotItemsInQuickSlots[2]);
+
             currentCharacterData.mainProjectile = WorldSaveGameManager.instance.GetSerializableRangedProjectileFromRangedProjectileItem(playerInventoryManager.mainProjectile);
             currentCharacterData.secondaryProjectile = WorldSaveGameManager.instance.GetSerializableRangedProjectileFromRangedProjectileItem(playerInventoryManager.secondaryProjectile);
 
             if (playerInventoryManager.currentSpell != null)
                 currentCharacterData.currentSpell = playerInventoryManager.currentSpell.itemID;
+
+            //clear lists before save
+            currentCharacterData.weaponsInInventory = new List<SerializableWeapon>();
+            currentCharacterData.projectilesInInventory = new List<SerializableRangedProjectile>();
+            currentCharacterData.quickSlotItemsInInventory = new List<SerializableQuickSlotItem>();
+            currentCharacterData.headEquipmentInInventory = new List<int>();
+            currentCharacterData.bodyEquipmentInInventory = new List<int>();
+            currentCharacterData.legEquipmentInInventory = new List<int>();
+            currentCharacterData.handEquipmentInInventory = new List<int>();
+
+            for (int i = 0; i < playerInventoryManager.itemsInInventory.Count; i++)
+            {
+                if (playerInventoryManager.itemsInInventory[i] == null)
+                    continue;
+
+                WeaponItem weaponInInventory = playerInventoryManager.itemsInInventory[i] as WeaponItem;
+                HeadEquipmentItem headEquipmentInInventory = playerInventoryManager.itemsInInventory[i] as HeadEquipmentItem;
+                BodyEquipmentItem bodyEquipmentInInventory = playerInventoryManager.itemsInInventory[i] as BodyEquipmentItem;
+                LegEquipmentItem legEquipmentInInventory = playerInventoryManager.itemsInInventory[i] as LegEquipmentItem;
+                HandEquipmentItem handEquipmentInInventory = playerInventoryManager.itemsInInventory[i] as HandEquipmentItem;
+                QuickSlotItem quickSlotItemInInventory = playerInventoryManager.itemsInInventory[i] as QuickSlotItem;
+                RangedProjectileItem projectileItemInInventory = playerInventoryManager.itemsInInventory[i] as RangedProjectileItem;
+
+                if (weaponInInventory != null)
+                    currentCharacterData.weaponsInInventory.Add(WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(weaponInInventory));
+
+                if (headEquipmentInInventory != null)
+                    currentCharacterData.headEquipmentInInventory.Add(headEquipmentInInventory.itemID);
+
+                if (bodyEquipmentInInventory != null)
+                    currentCharacterData.bodyEquipmentInInventory.Add(bodyEquipmentInInventory.itemID);
+
+                if (legEquipmentInInventory != null)
+                    currentCharacterData.legEquipmentInInventory.Add(legEquipmentInInventory.itemID);
+
+                if (handEquipmentInInventory != null)
+                    currentCharacterData.handEquipmentInInventory.Add(handEquipmentInInventory.itemID);
+
+                if (projectileItemInInventory != null)
+                    currentCharacterData.projectilesInInventory.Add(WorldSaveGameManager.instance.GetSerializableRangedProjectileFromRangedProjectileItem(projectileItemInInventory));
+
+                if (quickSlotItemInInventory != null)
+                    currentCharacterData.quickSlotItemsInInventory.Add(WorldSaveGameManager.instance.GetSerializableQuickSlotItemFromQuickSlotItem(quickSlotItemInInventory));
+            }
         }
 
         public void LoadGameDataFromCurrentCharacterData(ref CharacterSaveData currentCharacterData)
@@ -322,6 +375,9 @@ namespace baodeag
             playerNetworkManager.currentHealth.Value = currentCharacterData.currentHealth;
             playerNetworkManager.currentStamina.Value = currentCharacterData.currentStamina;
             playerNetworkManager.currentFocusPoints.Value = currentCharacterData.currentFocusPoints;
+
+            playerNetworkManager.remainingHealthFlasks.Value = currentCharacterData.currentHealthFlasksRamaining;
+            playerNetworkManager.remainingFocusPointsFlasks.Value = currentCharacterData.currentFocusPointsFlaskRamaining;
 
             //equipment
 
@@ -365,6 +421,7 @@ namespace baodeag
                 playerInventoryManager.legEquipment = null;
             }
 
+            //weapons
             playerInventoryManager.rightHandWeaponIndex = currentCharacterData.rightWeaponIndex;
             playerInventoryManager.weaponInRightHandSlots[0] = currentCharacterData.rightWeapon01.GetWeapon();
             playerInventoryManager.weaponInRightHandSlots[1] = currentCharacterData.rightWeapon02.GetWeapon();
@@ -374,6 +431,13 @@ namespace baodeag
             playerInventoryManager.weaponInLeftHandSlots[0] = currentCharacterData.leftWeapon01.GetWeapon();
             playerInventoryManager.weaponInLeftHandSlots[1] = currentCharacterData.leftWeapon02.GetWeapon();
             playerInventoryManager.weaponInLeftHandSlots[2] = currentCharacterData.leftWeapon03.GetWeapon();
+
+            //quick slot items
+            playerInventoryManager.quickSlotItemIndex = currentCharacterData.quickSlotIndex;
+            playerInventoryManager.quickSlotItemsInQuickSlots[0] = currentCharacterData.quickSlotItem01.GetQuickSlotItem();
+            playerInventoryManager.quickSlotItemsInQuickSlots[1] = currentCharacterData.quickSlotItem02.GetQuickSlotItem();
+            playerInventoryManager.quickSlotItemsInQuickSlots[2] = currentCharacterData.quickSlotItem03.GetQuickSlotItem();
+            playerEquipmentManager.LoadQuickSlotEquipment(playerInventoryManager.quickSlotItemsInQuickSlots[playerInventoryManager.quickSlotItemIndex]); //this refreshes the hud
 
             if (currentCharacterData.rightWeaponIndex >= 0)
             {
@@ -407,8 +471,49 @@ namespace baodeag
                 playerNetworkManager.currentSpellID.Value = -1;
             }
 
-            playerEquipmentManager.EquipArmor();
+            for (int i = 0; i < currentCharacterData.weaponsInInventory.Count; i++)
+            {
+                WeaponItem weapon = currentCharacterData.weaponsInInventory[i].GetWeapon();
+                playerInventoryManager.AddItemToInventory(weapon);
+            }
 
+            for (int i = 0; i < currentCharacterData.headEquipmentInInventory.Count; i++)
+            {
+                EquipmentItem equipment = WorldItemDatabase.Instance.GetHeadEquipmentByID(currentCharacterData.headEquipmentInInventory[i]);
+                playerInventoryManager.AddItemToInventory(equipment);
+            }
+
+            for (int i = 0; i < currentCharacterData.bodyEquipmentInInventory.Count; i++)
+            {
+                EquipmentItem equipment = WorldItemDatabase.Instance.GetBodyEquipmentByID(currentCharacterData.bodyEquipmentInInventory[i]);
+                playerInventoryManager.AddItemToInventory(equipment);
+            }
+
+            for (int i = 0; i < currentCharacterData.legEquipmentInInventory.Count; i++)
+            {
+                EquipmentItem equipment = WorldItemDatabase.Instance.GetLegEquipmentByID(currentCharacterData.legEquipmentInInventory[i]);
+                playerInventoryManager.AddItemToInventory(equipment);
+            }
+
+            for (int i = 0; i < currentCharacterData.handEquipmentInInventory.Count; i++)
+            {
+                EquipmentItem equipment = WorldItemDatabase.Instance.GetHandEquipmentByID(currentCharacterData.handEquipmentInInventory[i]);
+                playerInventoryManager.AddItemToInventory(equipment);
+            }
+
+            for (int i = 0; i < currentCharacterData.quickSlotItemsInInventory.Count; i++)
+            {
+                QuickSlotItem quickSlotItem = currentCharacterData.quickSlotItemsInInventory[i].GetQuickSlotItem();
+                playerInventoryManager.AddItemToInventory(quickSlotItem);
+            }
+
+            for (int i = 0; i < currentCharacterData.projectilesInInventory.Count; i++)
+            {
+                RangedProjectileItem projectile = currentCharacterData.projectilesInInventory[i].GetProjectile();
+                playerInventoryManager.AddItemToInventory(projectile);
+            }
+
+            playerEquipmentManager.EquipArmor();
             playerEquipmentManager.LoadMainProjectileEquipment(currentCharacterData.mainProjectile.GetProjectile());
             playerEquipmentManager.LoadSecondaryProjectileEquipment(currentCharacterData.secondaryProjectile.GetProjectile());
         }

@@ -889,6 +889,24 @@ namespace baodeag
                 player.playerNetworkManager.secondaryProjectileID.Value = equipment.itemID;
         }
 
+        //quick slot
+        public void LoadQuickSlotEquipment(QuickSlotItem equipment)
+        {
+            if (equipment == null)
+            {
+                if (player.IsOwner)
+                    player.playerNetworkManager.currentQuickSlotItemID.Value = -1; // -1 will never be an item id, its always null
+
+                player.playerInventoryManager.currentQuickSlotItem = null;
+                return;
+            }
+
+            player.playerInventoryManager.currentQuickSlotItem = equipment;
+
+            if (player.IsOwner)
+                player.playerNetworkManager.currentQuickSlotItemID.Value = equipment.itemID;
+        }
+
         //weapons
         private void InitializeWeaponSlot()
         {

@@ -194,5 +194,28 @@ namespace baodeag
 
             return rangedProjectile;
         }
+
+        public FlaskItem GetFlaskFromSerializedData(SerializableFlask serializableFlask)
+        {
+            FlaskItem flask = null;
+
+            if (GetQuickSlotItemByID(serializableFlask.itemID))
+                flask = Instantiate(GetQuickSlotItemByID(serializableFlask.itemID)) as FlaskItem;
+
+            return flask;
+        }
+
+        public QuickSlotItem GetQuickSlotFromSerializedData(SerializableQuickSlotItem serializableQuickSlotItem)
+        {
+            QuickSlotItem quickSlotItem = null;
+
+            if (GetQuickSlotItemByID(serializableQuickSlotItem.itemID))
+            {
+                quickSlotItem = Instantiate(GetQuickSlotItemByID(serializableQuickSlotItem.itemID));
+                quickSlotItem.itemAmount = serializableQuickSlotItem.itemAmount;
+            }
+
+            return quickSlotItem;
+        }
     }
 }

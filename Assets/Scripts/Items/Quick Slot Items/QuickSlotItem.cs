@@ -14,6 +14,7 @@ namespace baodeag
         //not all quick slot items are consumable
         [Header("Consumable")]
         public bool isConsumable = true;
+        public int itemAmount = 1;
 
         public virtual void AttemptToUseItem(PlayerManager player)
         {

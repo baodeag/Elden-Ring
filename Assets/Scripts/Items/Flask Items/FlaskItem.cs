@@ -108,6 +108,8 @@ namespace baodeag
                     player.playerNetworkManager.currentFocusPoints.Value += flaskRestoration;
                     player.playerNetworkManager.remainingFocusPointsFlasks.Value -= 1;
                 }
+
+                PlayerUIManager.instance.playerUIHudManager.SetQuickSlotItemQuickSlotIcon(player.playerInventoryManager.currentQuickSlotItem);
             }
 
             if (healthFlask && player.playerNetworkManager.remainingHealthFlasks.Value <= 0)

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -62,8 +63,25 @@ namespace baodeag
         public SerializableWeapon leftWeapon02;
         public SerializableWeapon leftWeapon03;
 
+        public int quickSlotIndex;
+        public SerializableQuickSlotItem quickSlotItem01;
+        public SerializableQuickSlotItem quickSlotItem02;
+        public SerializableQuickSlotItem quickSlotItem03;
+
         public SerializableRangedProjectile mainProjectile;
         public SerializableRangedProjectile secondaryProjectile;
+
+        public int currentHealthFlasksRamaining = 3;
+        public int currentFocusPointsFlaskRamaining = 1;
+
+        [Header("Inventory")]
+        public List<SerializableWeapon> weaponsInInventory;
+        public List<SerializableRangedProjectile> projectilesInInventory;
+        public List<SerializableQuickSlotItem> quickSlotItemsInInventory;
+        public List<int> headEquipmentInInventory;
+        public List<int> bodyEquipmentInInventory;
+        public List<int> handEquipmentInInventory;
+        public List<int> legEquipmentInInventory;
 
         //this will change when we add multiple spells
         public int currentSpell;
@@ -74,6 +92,14 @@ namespace baodeag
             bossesAwakened = new SerializableDictionary<int, bool>();
             bossesDefeated = new SerializableDictionary<int, bool>();
             worldItemsLooted = new SerializableDictionary<int, bool>();
+
+            weaponsInInventory = new List<SerializableWeapon>();
+            projectilesInInventory = new List<SerializableRangedProjectile>();
+            quickSlotItemsInInventory = new List<SerializableQuickSlotItem>();
+            headEquipmentInInventory = new List<int>();
+            bodyEquipmentInInventory = new List<int>();
+            handEquipmentInInventory = new List<int>();
+            legEquipmentInInventory = new List<int>();
         }
     }
 }

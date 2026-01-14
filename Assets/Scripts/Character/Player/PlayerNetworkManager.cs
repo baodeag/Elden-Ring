@@ -273,7 +273,7 @@ namespace baodeag
             }
 
             if (player.IsOwner)
-                PlayerUIManager.instance.playerUIHudManager.SetQuickSlotItemQuickSlotIcon(newID);
+                PlayerUIManager.instance.playerUIHudManager.SetQuickSlotItemQuickSlotIcon(player.playerInventoryManager.currentQuickSlotItem);
         }
 
         public void OnMainProjectileIDChange(int oldID, int newID)
