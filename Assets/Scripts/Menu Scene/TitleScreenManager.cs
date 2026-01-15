@@ -9,6 +9,7 @@ namespace baodeag {
         [Header("Menus")]
         [SerializeField] GameObject titleScreenMainMenu;
         [SerializeField] GameObject titleScreenLoadMenu;
+        [SerializeField] GameObject titleScreenCharacterCreationMenu;
 
         [Header("Buttons")]
         [SerializeField] Button loadMenuReturnButton;
@@ -43,6 +44,19 @@ namespace baodeag {
             NetworkManager.Singleton.StartHost();
         }
 
+        public void AttemptToCreateNewCharacter()
+        {
+            if (WorldSaveGameManager.instance.HasFreeCharacterSlot())
+            {
+                OpenCharacterCreationMenu();
+            }
+            else
+            {
+                //if there are no available slots, notify the player
+                DisplayNoFreeCharacterSlotPopUp();
+            }
+        }
+
         public void StartNewGame()
         {
             WorldSaveGameManager.instance.AttemptToCreateNewGame();
@@ -70,6 +84,16 @@ namespace baodeag {
 
             //select the load button
             mainMenuLoadGameButton.Select();
+        }
+
+        public void OpenCharacterCreationMenu()
+        {
+            titleScreenCharacterCreationMenu.SetActive(true);
+        }
+
+        public void CloseCharacterCreationMenu()
+        {
+            titleScreenCharacterCreationMenu.SetActive(false);
         }
 
         public void DisplayNoFreeCharacterSlotPopUp()
