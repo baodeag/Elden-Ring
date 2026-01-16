@@ -1,29 +1,47 @@
-using UnityEngine;
 using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.InputManagerEntry;
 
 namespace baodeag { 
     public class TitleScreenManager : MonoBehaviour
     {
         public static TitleScreenManager Instance;
-        [Header("Menus")]
+
+        //main menu
+        [Header("Main Menu Menus")]
         [SerializeField] GameObject titleScreenMainMenu;
         [SerializeField] GameObject titleScreenLoadMenu;
         [SerializeField] GameObject titleScreenCharacterCreationMenu;
 
-        [Header("Buttons")]
+        [Header("Main Menu Buttons")]
         [SerializeField] Button loadMenuReturnButton;
         [SerializeField] Button mainMenuLoadGameButton;
         [SerializeField] Button mainMenuNewGameButton;
         [SerializeField] Button deleteCharacterPopUpConfirmButton;
 
-        [Header("Pop Ups")]
+        [Header("Main Menu Pop Ups")]
         [SerializeField] GameObject noCharacterSlotsPopUp;
         [SerializeField] Button noCharacterSlotsOkayButton;
         [SerializeField] GameObject deleteCharacterSlotPopup;
 
+        //character creation menu
+        [Header("Character Creation Main Panel Buttons")]
+        [SerializeField] Button characterNameButton;
+        [SerializeField] Button characterClassButton;
+        [SerializeField] Button startGameButton;
+
+        [Header("Character Creation Class Panel Buttons")]
+        [SerializeField] Button[] characterClassButtons;
+
+        [Header("Character Creation Secondary Panel Menus")]
+        [SerializeField] GameObject characterClassMenu;
+
         [Header("Character Slots")]
         public CharacterSlot currentSelectedSlot = CharacterSlot.NO_SLOT;
+
+        [Header("Classes")]
+        public CharacterClass[] startingClasses;
 
 
         private void Awake()
@@ -96,6 +114,35 @@ namespace baodeag {
             titleScreenCharacterCreationMenu.SetActive(false);
         }
 
+        public void OpenChooseCharacterClassSubMenu()
+        {
+            ToggleCharacterCreationScreenMainMenuButtons(false);
+
+            characterClassMenu.SetActive(true);
+
+            if (characterClassButtons.Length > 0)
+            {
+                characterClassButtons[0].Select();
+                characterClassButtons[0].OnSelect(null);
+            }
+        }
+        public void CloseChooseCharacterClassSubMenu()
+        {
+            ToggleCharacterCreationScreenMainMenuButtons(true);
+
+            characterClassMenu.SetActive(false);
+
+            characterClassButton.Select();
+            characterClassButton.OnSelect(null);
+        }
+
+        private void ToggleCharacterCreationScreenMainMenuButtons(bool status)
+        {
+            characterNameButton.enabled = status;
+            characterClassButton.enabled = status;
+            startGameButton.enabled = status;
+        }
+
         public void DisplayNoFreeCharacterSlotPopUp()
         {
             noCharacterSlotsPopUp.SetActive(true);
@@ -143,6 +190,118 @@ namespace baodeag {
         {
             deleteCharacterSlotPopup.SetActive(false);
             loadMenuReturnButton.Select();
+        }
+
+        //character class
+
+        public void SelectClass(int classID)
+        {
+            PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            if (startingClasses.Length <= 0)
+                return;
+
+            startingClasses[classID].SetClass(player);
+            CloseChooseCharacterClassSubMenu();
+        }
+
+        public void PreviewClass(int classID)
+        {
+            PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            if (startingClasses.Length <= 0)
+                return;
+
+            startingClasses[classID].SetClass(player);
+        }
+
+        public void SetCharacterClass(PlayerManager player, int vitality, int endurance, int mind, int strength, int dexterity, int intelligence, int faith,
+            WeaponItem[] mainHandWeapons, WeaponItem[] offHandWeapons, 
+            HeadEquipmentItem headEquipment, BodyEquipmentItem bodyEquipment, LegEquipmentItem legEquipment, HandEquipmentItem handEquipment,
+            QuickSlotItem[] quickSlotItems)
+        {
+            //set the stats
+            player.playerNetworkManager.vitality.Value = vitality;
+            player.playerNetworkManager.endurance.Value = endurance;
+            player.playerNetworkManager.mind.Value = mind;
+            player.playerNetworkManager.strength.Value = strength;
+            player.playerNetworkManager.dexterity.Value = dexterity;
+            player.playerNetworkManager.intelligence.Value = intelligence;
+            player.playerNetworkManager.faith.Value = faith;
+
+            //set the weapons
+            player.playerInventoryManager.weaponInRightHandSlots[0] = Instantiate(mainHandWeapons[0]);
+            player.playerInventoryManager.weaponInRightHandSlots[1] = Instantiate(mainHandWeapons[1]);
+            player.playerInventoryManager.weaponInRightHandSlots[2] = Instantiate(mainHandWeapons[2]);
+            player.playerInventoryManager.currentRightHandWeapon = player.playerInventoryManager.weaponInRightHandSlots[0];
+            player.playerNetworkManager.currentRightHandWeaponID.Value = player.playerInventoryManager.weaponInRightHandSlots[0].itemID;
+
+            player.playerInventoryManager.weaponInLeftHandSlots[0] = Instantiate(offHandWeapons[0]);
+            player.playerInventoryManager.weaponInLeftHandSlots[1] = Instantiate(offHandWeapons[1]);
+            player.playerInventoryManager.weaponInLeftHandSlots[2] = Instantiate(offHandWeapons[2]);
+            player.playerInventoryManager.currentLeftHandWeapon = player.playerInventoryManager.weaponInLeftHandSlots[0];
+            player.playerNetworkManager.currentLeftHandWeaponID.Value = player.playerInventoryManager.weaponInLeftHandSlots[0].itemID;
+
+            //set the armor
+            //head equipment
+            if (headEquipment != null)
+            {
+                HeadEquipmentItem equipment = Instantiate(headEquipment);
+                player.playerInventoryManager.headEquipment = equipment;
+            }
+            else
+            {
+                player.playerInventoryManager.headEquipment = null;
+            }
+
+            //body equipment
+            if (bodyEquipment != null)
+            {
+                BodyEquipmentItem equipment = Instantiate(bodyEquipment);
+                player.playerInventoryManager.bodyEquipment = equipment;
+            }
+            else
+            {
+                player.playerInventoryManager.bodyEquipment = null;
+            }
+
+            //leg equipment
+            if (legEquipment != null)
+            {
+                LegEquipmentItem equipment = Instantiate(legEquipment);
+                player.playerInventoryManager.legEquipment = equipment;
+            }
+            else
+            {
+                player.playerInventoryManager.legEquipment = null;
+            }
+
+            //hand equipment
+            if (handEquipment != null)
+            {
+                HandEquipmentItem equipment = Instantiate(handEquipment);
+                player.playerInventoryManager.handEquipment = equipment;
+            }
+            else
+            {
+                player.playerInventoryManager.handEquipment = null;
+            }
+
+            player.playerEquipmentManager.EquipArmor();
+
+            //set the quick slot items
+            player.playerInventoryManager.quickSlotItemIndex = 0;
+
+            if (quickSlotItems[0] != null)
+                player.playerInventoryManager.quickSlotItemsInQuickSlots[0] = Instantiate(quickSlotItems[0]);
+
+            if (quickSlotItems[1] != null)
+                player.playerInventoryManager.quickSlotItemsInQuickSlots[1] = Instantiate(quickSlotItems[1]);
+
+            if (quickSlotItems[2] != null)
+                player.playerInventoryManager.quickSlotItemsInQuickSlots[2] = Instantiate(quickSlotItems[2]);
+
+            player.playerEquipmentManager.LoadQuickSlotEquipment(player.playerInventoryManager.quickSlotItemsInQuickSlots[player.playerInventoryManager.quickSlotItemIndex]);
         }
     }
 }

@@ -141,6 +141,18 @@ namespace baodeag
             (1,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
+        public NetworkVariable<int> dexterity = new NetworkVariable<int>
+            (1,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<int> intelligence = new NetworkVariable<int>
+            (1,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<int> faith = new NetworkVariable<int>
+            (1,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
 
         [Header("Stats Modifiers")]
         public NetworkVariable<int> strengthModifier = new NetworkVariable<int>
