@@ -8,6 +8,7 @@ namespace baodeag
 
         [Header("Hair Object")]
         [SerializeField] public GameObject hair; //hair object to enable when unequipping helmets
+        [SerializeField] private GameObject[] hairObjects;
         [SerializeField] public GameObject facialHair; //facial hair object to enable when unequipping helmets
 
         [Header("Male")]
@@ -163,6 +164,37 @@ namespace baodeag
             }
 
             player.playerEquipmentManager.EquipArmor();
+        }
+
+        public void ToggleHairType(int hairType)
+        {
+            //disable all hair
+            for (int i = 0; i < hairObjects.Length; i++)
+            {
+                hairObjects[i].SetActive(false);
+            }
+
+            //enable selected hair
+            hairObjects[hairType].SetActive(true);
+        }
+
+        public void SetHairColor()
+        {
+            Color32 hairColor;
+
+            byte red = (byte)player.playerNetworkManager.hairColorRed.Value;
+            byte green = (byte)player.playerNetworkManager.hairColorGreen.Value;
+            byte blue = (byte)player.playerNetworkManager.hairColorBlue.Value;
+
+            hairColor = new Color32(red, green, blue, 255);
+
+            for (int i = 0; i < hairObjects.Length; i++)
+            {
+                SkinnedMeshRenderer skinnedMeshRenderer = hairObjects[i].GetComponent<SkinnedMeshRenderer>();
+
+                if (skinnedMeshRenderer != null)
+                    skinnedMeshRenderer.material.SetColor("_Color_Hair", hairColor);
+            }
         }
     }
 }

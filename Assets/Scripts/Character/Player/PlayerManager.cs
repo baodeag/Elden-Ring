@@ -103,6 +103,9 @@ namespace baodeag
 
             // body type
             playerNetworkManager.isMale.OnValueChanged += playerNetworkManager.OnIsMaleChanged;
+            playerNetworkManager.hairColorRed.OnValueChanged += playerNetworkManager.OnHairColorRedChanged;
+            playerNetworkManager.hairColorGreen.OnValueChanged += playerNetworkManager.OnHairColorGreenChanged;
+            playerNetworkManager.hairColorBlue.OnValueChanged += playerNetworkManager.OnHairColorBlueChanged;
 
             //stats
             playerNetworkManager.currentHealth.OnValueChanged += playerNetworkManager.CheckHP;
@@ -110,6 +113,12 @@ namespace baodeag
             //lock on
             playerNetworkManager.isLockedOn.OnValueChanged += playerNetworkManager.OnIsLockedOnChanged;
             playerNetworkManager.currentTargetNetworkObjectID.OnValueChanged += playerNetworkManager.OnLockOnTargetIDChange;
+
+            //body
+            playerNetworkManager.hairStyleID.OnValueChanged += playerNetworkManager.OnHairStyleIDChanged;
+            playerNetworkManager.hairColorRed.OnValueChanged += playerNetworkManager.OnHairColorRedChanged;
+            playerNetworkManager.hairColorGreen.OnValueChanged += playerNetworkManager.OnHairColorGreenChanged;
+            playerNetworkManager.hairColorBlue.OnValueChanged += playerNetworkManager.OnHairColorBlueChanged;
 
             //equipment
             playerNetworkManager.currentRightHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentRightHandWeaponIDChange;
@@ -184,6 +193,12 @@ namespace baodeag
             //lock on
             playerNetworkManager.isLockedOn.OnValueChanged -= playerNetworkManager.OnIsLockedOnChanged;
             playerNetworkManager.currentTargetNetworkObjectID.OnValueChanged -= playerNetworkManager.OnLockOnTargetIDChange;
+
+            //body
+            playerNetworkManager.hairStyleID.OnValueChanged -= playerNetworkManager.OnHairStyleIDChanged;
+            playerNetworkManager.hairColorRed.OnValueChanged -= playerNetworkManager.OnHairColorRedChanged;
+            playerNetworkManager.hairColorGreen.OnValueChanged -= playerNetworkManager.OnHairColorGreenChanged;
+            playerNetworkManager.hairColorBlue.OnValueChanged -= playerNetworkManager.OnHairColorBlueChanged;
 
             //equipment
             playerNetworkManager.currentRightHandWeaponID.OnValueChanged -= playerNetworkManager.OnCurrentRightHandWeaponIDChange;
@@ -276,8 +291,14 @@ namespace baodeag
             currentCharacterData.endurance = playerNetworkManager.endurance.Value;
             currentCharacterData.mind = playerNetworkManager.mind.Value;
 
-            currentCharacterData.currentHealthFlasksRamaining = playerNetworkManager.remainingHealthFlasks.Value;
-            currentCharacterData.currentFocusPointsFlaskRamaining = playerNetworkManager.remainingFocusPointsFlasks.Value;
+            //body
+            currentCharacterData.hairStyleID = playerNetworkManager.hairStyleID.Value;
+            currentCharacterData.hairColorRed = playerNetworkManager.hairColorRed.Value;
+            currentCharacterData.hairColorGreen = playerNetworkManager.hairColorGreen.Value;
+            currentCharacterData.hairColorBlue = playerNetworkManager.hairColorBlue.Value;
+
+            currentCharacterData.currentHealthFlasksRemaining = playerNetworkManager.remainingHealthFlasks.Value;
+            currentCharacterData.currentFocusPointsFlaskRemaining = playerNetworkManager.remainingFocusPointsFlasks.Value;
 
             //equipment
             currentCharacterData.headEquipment = playerNetworkManager.headEquipmentID.Value;
@@ -376,8 +397,14 @@ namespace baodeag
             playerNetworkManager.currentStamina.Value = currentCharacterData.currentStamina;
             playerNetworkManager.currentFocusPoints.Value = currentCharacterData.currentFocusPoints;
 
-            playerNetworkManager.remainingHealthFlasks.Value = currentCharacterData.currentHealthFlasksRamaining;
-            playerNetworkManager.remainingFocusPointsFlasks.Value = currentCharacterData.currentFocusPointsFlaskRamaining;
+            playerNetworkManager.remainingHealthFlasks.Value = currentCharacterData.currentHealthFlasksRemaining;
+            playerNetworkManager.remainingFocusPointsFlasks.Value = currentCharacterData.currentFocusPointsFlaskRemaining;
+
+            //body
+            playerNetworkManager.hairStyleID.Value = currentCharacterData.hairStyleID;
+            playerNetworkManager.hairColorRed.Value = currentCharacterData.hairColorRed;
+            playerNetworkManager.hairColorGreen.Value = currentCharacterData.hairColorGreen;
+            playerNetworkManager.hairColorBlue.Value = currentCharacterData.hairColorBlue;
 
             //equipment
 
@@ -522,6 +549,10 @@ namespace baodeag
         {
             //sync body type
             playerNetworkManager.OnIsMaleChanged(false, playerNetworkManager.isMale.Value);
+            playerNetworkManager.OnHairStyleIDChanged(0, playerNetworkManager.hairStyleID.Value);
+            playerNetworkManager.OnHairColorRedChanged(0, playerNetworkManager.hairColorRed.Value);
+            playerNetworkManager.OnHairColorGreenChanged(0, playerNetworkManager.hairColorGreen.Value);
+            playerNetworkManager.OnHairColorBlueChanged(0, playerNetworkManager.hairColorBlue.Value);
 
             //sync weapons
             playerNetworkManager.OnCurrentRightHandWeaponIDChange(0, playerNetworkManager.currentRightHandWeaponID.Value);

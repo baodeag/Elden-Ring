@@ -29,13 +29,27 @@ namespace baodeag {
         [Header("Character Creation Main Panel Buttons")]
         [SerializeField] Button characterNameButton;
         [SerializeField] Button characterClassButton;
+        [SerializeField] Button characterHairButton;
+        [SerializeField] Button characterHairColorButton;
         [SerializeField] Button startGameButton;
 
         [Header("Character Creation Class Panel Buttons")]
         [SerializeField] Button[] characterClassButtons;
+        [SerializeField] Button[] characterHairButtons;
+        [SerializeField] Button[] characterHairColorButtons;
 
         [Header("Character Creation Secondary Panel Menus")]
         [SerializeField] GameObject characterClassMenu;
+        [SerializeField] GameObject characterHairMenu;
+        [SerializeField] GameObject characterHairColorMenu;
+
+        [Header("Color Sliders")]
+        [SerializeField] Slider redSlider;
+        [SerializeField] Slider greenSlider;
+        [SerializeField] Slider blueSlider;
+
+        [Header("Hidden Gear")]
+        private HeadEquipmentItem hiddenHelmet;
 
         [Header("Character Slots")]
         public CharacterSlot currentSelectedSlot = CharacterSlot.NO_SLOT;
@@ -126,6 +140,7 @@ namespace baodeag {
                 characterClassButtons[0].OnSelect(null);
             }
         }
+
         public void CloseChooseCharacterClassSubMenu()
         {
             ToggleCharacterCreationScreenMainMenuButtons(true);
@@ -136,10 +151,88 @@ namespace baodeag {
             characterClassButton.OnSelect(null);
         }
 
+        public void OpenChooseHairStyleSubMenu()
+        {
+            PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            ToggleCharacterCreationScreenMainMenuButtons(false);
+
+            characterHairMenu.SetActive(true);
+
+            if (characterHairButtons.Length > 0)
+            {
+                characterHairButtons[0].Select();
+                characterHairButtons[0].OnSelect(null);
+            }
+
+            //store the helmet the player had on
+            if (player.playerInventoryManager.headEquipment != null)
+                hiddenHelmet = Instantiate(player.playerInventoryManager.headEquipment);
+
+            //unequip the helmet and reload the gear
+            player.playerInventoryManager.headEquipment = null;
+            player.playerEquipmentManager.EquipArmor();
+        }
+
+        public void CloseChooseHairStyleSubMenu()
+        {
+            PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            ToggleCharacterCreationScreenMainMenuButtons(true);
+            characterHairMenu.SetActive(false);
+            characterHairButton.Select();
+            characterHairButton.OnSelect(null);
+
+            if (hiddenHelmet != null)
+                player.playerInventoryManager.headEquipment = hiddenHelmet;
+
+            player.playerEquipmentManager.EquipArmor();
+        }
+
+        public void OpenChooseHairColorSubMenu()
+        {
+            PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            ToggleCharacterCreationScreenMainMenuButtons(false);
+
+            characterHairColorMenu.SetActive(true);
+
+            if (characterHairColorButtons.Length > 0)
+            {
+                characterHairColorButtons[0].Select();
+                characterHairColorButtons[0].OnSelect(null);
+            }
+
+            //store the helmet the player had on
+            if (player.playerInventoryManager.headEquipment != null)
+                hiddenHelmet = Instantiate(player.playerInventoryManager.headEquipment);
+
+            //unequip the helmet and reload the gear
+            player.playerInventoryManager.headEquipment = null;
+            player.playerEquipmentManager.EquipArmor();
+        }
+
+        public void CloseChooseHairColorSubMenu()
+        {
+            PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            ToggleCharacterCreationScreenMainMenuButtons(true);
+            characterHairColorMenu.SetActive(false);
+            characterHairColorButton.Select();
+            characterHairColorButton.OnSelect(null);
+
+            if (hiddenHelmet != null)
+                player.playerInventoryManager.headEquipment = hiddenHelmet;
+
+            player.playerEquipmentManager.EquipArmor();
+        }
+
         private void ToggleCharacterCreationScreenMainMenuButtons(bool status)
         {
             characterNameButton.enabled = status;
             characterClassButton.enabled = status;
+            characterHairButton.enabled = status;
+            characterHairColorButton.enabled = status;
             startGameButton.enabled = status;
         }
 
@@ -220,6 +313,9 @@ namespace baodeag {
             HeadEquipmentItem headEquipment, BodyEquipmentItem bodyEquipment, LegEquipmentItem legEquipment, HandEquipmentItem handEquipment,
             QuickSlotItem[] quickSlotItems)
         {
+            // clear the hidden helmet
+            hiddenHelmet = null;
+
             //set the stats
             player.playerNetworkManager.vitality.Value = vitality;
             player.playerNetworkManager.endurance.Value = endurance;
@@ -302,6 +398,59 @@ namespace baodeag {
                 player.playerInventoryManager.quickSlotItemsInQuickSlots[2] = Instantiate(quickSlotItems[2]);
 
             player.playerEquipmentManager.LoadQuickSlotEquipment(player.playerInventoryManager.quickSlotItemsInQuickSlots[player.playerInventoryManager.quickSlotItemIndex]);
+        }
+
+        //character hair
+
+        public void SelectHair(int hairID)
+        {
+            PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            player.playerNetworkManager.hairStyleID.Value = hairID;
+
+            CloseChooseHairStyleSubMenu();
+        }
+
+        public void PreviewHair(int hairID)
+        {
+            PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            player.playerNetworkManager.hairStyleID.Value = hairID;
+        }
+
+        public void SelectHairColor()
+        {
+            PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            player.playerNetworkManager.hairColorRed.Value = redSlider.value;
+            player.playerNetworkManager.hairColorGreen.Value = greenSlider.value;
+            player.playerNetworkManager.hairColorBlue.Value = blueSlider.value;
+
+            CloseChooseHairColorSubMenu();
+        }
+
+        public void PreviewHairColor()
+        {
+            PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            player.playerNetworkManager.hairColorRed.Value = redSlider.value;
+            player.playerNetworkManager.hairColorGreen.Value = greenSlider.value;
+            player.playerNetworkManager.hairColorBlue.Value = blueSlider.value;
+        }
+
+        public void SetRedColorSlider(float redValue)
+        {
+            redSlider.value = redValue;
+        }
+
+        public void SetGreenColorSlider(float greenValue)
+        {
+            greenSlider.value = greenValue;
+        }
+
+        public void SetBlueColorSlider(float blueValue)
+        {
+            blueSlider.value = blueValue;
         }
     }
 }

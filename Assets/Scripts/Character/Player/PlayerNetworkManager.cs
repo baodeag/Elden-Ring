@@ -41,6 +41,23 @@ namespace baodeag
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
 
+        [Header("Body")]
+        public NetworkVariable<int> hairStyleID = new NetworkVariable<int>(
+            0,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<float> hairColorRed = new NetworkVariable<float>(
+            0,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<float> hairColorGreen = new NetworkVariable<float>(
+            0,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<float> hairColorBlue = new NetworkVariable<float>(
+            0,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
 
         [Header("Equipment")]
         public NetworkVariable<int> currentWeaponBeingUsed = new NetworkVariable<int>(
@@ -176,6 +193,26 @@ namespace baodeag
             maxFocusPoints.Value = player.playerStatsManager.CalculateFocusPointsBasedOnMindLevel(newMind);
             PlayerUIManager.instance.playerUIHudManager.SetMaxFocusPointValue(maxFocusPoints.Value);
             currentFocusPoints.Value = maxFocusPoints.Value;
+        }
+
+        public void OnHairStyleIDChanged(int oldValue, int newValue)
+        {
+            player.playerBodyManager.ToggleHairType(hairStyleID.Value);
+        }
+
+        public void OnHairColorRedChanged(float oldValue, float newValue)
+        {
+            player.playerBodyManager.SetHairColor();
+        }
+
+        public void OnHairColorGreenChanged(float oldValue, float newValue)
+        {
+            player.playerBodyManager.SetHairColor();
+        }
+
+        public void OnHairColorBlueChanged(float oldValue, float newValue)
+        {
+            player.playerBodyManager.SetHairColor();
         }
 
         public void OnCurrentRightHandWeaponIDChange(int oldID, int newID)

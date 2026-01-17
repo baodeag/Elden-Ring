@@ -18,7 +18,7 @@ namespace baodeag
         {
             if (playerControls == null)
             {
-                playerControls = GetComponent<PlayerControls>();
+                playerControls = new PlayerControls();
 
                 playerControls.PlayerCamera.Movement.performed += i => cameraInput = i.ReadValue<Vector2>();
             }

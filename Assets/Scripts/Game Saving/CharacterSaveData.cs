@@ -16,6 +16,10 @@ namespace baodeag
 
         [Header("Body Type")]
         public bool isMale = true;
+        public int hairStyleID;
+        public float hairColorRed;
+        public float hairColorGreen;
+        public float hairColorBlue;
 
         [Header("Time Played")]
         public float secondsPlayed;
@@ -71,8 +75,8 @@ namespace baodeag
         public SerializableRangedProjectile mainProjectile;
         public SerializableRangedProjectile secondaryProjectile;
 
-        public int currentHealthFlasksRamaining = 3;
-        public int currentFocusPointsFlaskRamaining = 1;
+        public int currentHealthFlasksRemaining = 3;
+        public int currentFocusPointsFlaskRemaining = 1;
 
         [Header("Inventory")]
         public List<SerializableWeapon> weaponsInInventory;
