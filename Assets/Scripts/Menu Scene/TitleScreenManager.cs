@@ -2,6 +2,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.InputManagerEntry;
+using TMPro;
 
 namespace baodeag { 
     public class TitleScreenManager : MonoBehaviour
@@ -31,6 +32,8 @@ namespace baodeag {
         [SerializeField] Button characterClassButton;
         [SerializeField] Button characterHairButton;
         [SerializeField] Button characterHairColorButton;
+        [SerializeField] Button characterSexButton;
+        [SerializeField] TextMeshProUGUI characterSexText;
         [SerializeField] Button startGameButton;
 
         [Header("Character Creation Class Panel Buttons")]
@@ -42,6 +45,8 @@ namespace baodeag {
         [SerializeField] GameObject characterClassMenu;
         [SerializeField] GameObject characterHairMenu;
         [SerializeField] GameObject characterHairColorMenu;
+        [SerializeField] GameObject characterNameMenu;
+        [SerializeField] TMP_InputField characterNameInputField;
 
         [Header("Color Sliders")]
         [SerializeField] Slider redSlider;
@@ -118,14 +123,49 @@ namespace baodeag {
             mainMenuLoadGameButton.Select();
         }
 
+        public void ToggleBodyType()
+        {
+            PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            player.playerNetworkManager.isMale.Value = !player.playerNetworkManager.isMale.Value;
+
+            if (player.playerNetworkManager.isMale.Value)
+            {
+                characterSexText.text = "MALE";
+            }
+            else
+            {
+                characterSexText.text = "FEMALE";
+            }
+        }
+
+        public void OpenTitleScreenMainMenu()
+        {
+            titleScreenMainMenu.SetActive(true);
+        }
+
+        public void CloseTitleScreenMainMenu()
+        {
+            titleScreenMainMenu.SetActive(false);
+        }
+
         public void OpenCharacterCreationMenu()
         {
+            CloseTitleScreenMainMenu();
+
             titleScreenCharacterCreationMenu.SetActive(true);
+
+            PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            //set default body type
+            player.playerBodyManager.ToggleBodyType(true);
         }
 
         public void CloseCharacterCreationMenu()
         {
             titleScreenCharacterCreationMenu.SetActive(false);
+
+            OpenTitleScreenMainMenu();
         }
 
         public void OpenChooseCharacterClassSubMenu()
@@ -227,12 +267,37 @@ namespace baodeag {
             player.playerEquipmentManager.EquipArmor();
         }
 
+        public void OpenChooseNameSubMenu()
+        {
+            PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            ToggleCharacterCreationScreenMainMenuButtons(false);
+
+            characterNameButton.gameObject.SetActive(false);
+            characterNameMenu.SetActive(true);
+            characterNameInputField.Select();
+        }
+
+        public void CloseChooseNameSubMenu()
+        {
+            PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            ToggleCharacterCreationScreenMainMenuButtons(true);
+
+            characterNameMenu.SetActive(false);
+            characterNameButton.gameObject.SetActive(true);
+            characterNameButton.Select();
+
+            player.playerNetworkManager.characterName.Value = characterNameInputField.text;
+        }
+
         private void ToggleCharacterCreationScreenMainMenuButtons(bool status)
         {
             characterNameButton.enabled = status;
             characterClassButton.enabled = status;
             characterHairButton.enabled = status;
             characterHairColorButton.enabled = status;
+            characterSexButton.enabled = status;
             startGameButton.enabled = status;
         }
 
