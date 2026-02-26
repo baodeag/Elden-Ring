@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.Video;
 using TMPro;
 using Unity.Netcode;
+using System.Collections;
 
 namespace baodeag
 {
@@ -14,6 +15,13 @@ namespace baodeag
         [SerializeField] UI_StatBar healthBar;
         [SerializeField] UI_StatBar staminaBar;
         [SerializeField] UI_StatBar focusPointBar;
+
+        [Header("Runes")]
+        [SerializeField] float runeUpdateCountDelayTimer = 2.5f;
+        private int pendingRunesToAdd = 0;
+        private Coroutine waitThenAddRunesCoroutine;
+        [SerializeField] TextMeshProUGUI runesToAddText;
+        [SerializeField] TextMeshProUGUI runesCountText;
 
         [Header("Quick Slots")]
         [SerializeField] Image rightWeaponQuickSlotIcon;
@@ -61,6 +69,48 @@ namespace baodeag
             staminaBar.gameObject.SetActive(true);
             focusPointBar.gameObject.SetActive(false);
             focusPointBar.gameObject.SetActive(true);
+        }
+
+        public void SetRunesCount(int runesToAdd)
+        {
+            //add runes to pending runes to add
+            pendingRunesToAdd += runesToAdd;
+
+            //wait for potetially more runes, then add them all after x time
+            if (waitThenAddRunesCoroutine != null)
+                StopCoroutine(waitThenAddRunesCoroutine);
+
+            waitThenAddRunesCoroutine = StartCoroutine(WaitThenUpdateRuneCount());
+        }
+
+        private IEnumerator WaitThenUpdateRuneCount()
+        {
+            //wait for timer to reach 0 incase more runes are queued up
+            float timer = runeUpdateCountDelayTimer;
+            int runesToAdd = pendingRunesToAdd;
+            runesToAddText.text = "+ " + runesToAdd.ToString();
+            runesToAddText.enabled = true;
+
+            while (timer > 0)
+            {
+                timer -= Time.deltaTime;
+
+                //if more runes are queued up, re-update total new rune count
+                if (runesToAdd != pendingRunesToAdd)
+                {
+                    runesToAdd = pendingRunesToAdd;
+                    runesToAddText.text = "+ " + runesToAdd.ToString();
+                }
+
+                yield return null;
+            }
+
+            //update rune count, reset pending runes and hide pending runes
+            runesToAddText.enabled = false;
+            pendingRunesToAdd = 0;
+            runesCountText.text = PlayerUIManager.instance.localPlayer.playerStatsManager.runes.ToString();
+
+            yield return null;
         }
 
         public void SetNewHealthValue(int oldValue, int newValue)
@@ -187,8 +237,7 @@ namespace baodeag
 
             if (quickSlotItem.isConsumable)
             {
-                PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
-                quickSlotItemCount.text = quickSlotItem.GetCurrentAmount(player).ToString();
+                quickSlotItemCount.text = quickSlotItem.GetCurrentAmount(PlayerUIManager.instance.localPlayer).ToString();
                 quickSlotItemCount.enabled = true;
             }
             else

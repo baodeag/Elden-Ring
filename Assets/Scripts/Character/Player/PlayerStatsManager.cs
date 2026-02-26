@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 namespace baodeag
@@ -5,6 +6,10 @@ namespace baodeag
     public class PlayerStatsManager : CharacterStatsManager
     {
         PlayerManager player;
+
+        [Header("Runes")]
+        public int runes = 0;
+
         protected override void Awake()
         {
             base.Awake();
@@ -118,6 +123,12 @@ namespace baodeag
                 //poise
                 basePoiseDefense += player.playerInventoryManager.handEquipment.poise;
             }
+        }
+
+        public void AddRunes(int runesToAdd)
+        {
+            runes += runesToAdd;
+            PlayerUIManager.instance.playerUIHudManager.SetRunesCount(runesToAdd);
         }
     }
 }

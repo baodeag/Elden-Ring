@@ -9507,6 +9507,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 409580, guid: fd479d726efdf3d4da9cb024a97137e4, type: 3}
   m_PrefabInstance: {fileID: 329259640}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &331835814
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 193164658868625703, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_Name
+      value: AI Spawner Undead (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
 --- !u!1001 &336757712
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26050,7 +26107,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 193164658868625703, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
       propertyPath: m_Name
-      value: AI Spawner
+      value: AI Spawner Undead
       objectReference: {fileID: 0}
     - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
       propertyPath: m_LocalPosition.x
@@ -53412,7 +53469,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 193164658868625703, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
       propertyPath: m_Name
-      value: AI Spawner (1)
+      value: AI Spawner Durk
       objectReference: {fileID: 0}
     - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
       propertyPath: m_LocalPosition.x
@@ -61349,6 +61406,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 454930, guid: 196b993d2b0354842bd6fa90eb970550, type: 3}
   m_PrefabInstance: {fileID: 2139008493}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &2139859005
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 193164658868625703, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_Name
+      value: AI Spawner Undead (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 713137294348286877, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
 --- !u!1001 &2139968777
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -61887,6 +62001,8 @@ SceneRoots:
   - {fileID: 885278684}
   - {fileID: 1729749206}
   - {fileID: 910266262}
+  - {fileID: 331835814}
+  - {fileID: 2139859005}
   - {fileID: 1894679649}
   - {fileID: 8728803972578006783}
   - {fileID: 498268137410877163}

@@ -1,5 +1,6 @@
 using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace baodeag
 {
@@ -47,6 +48,22 @@ namespace baodeag
         private void FixedUpdate()
         {
             HandleStanceBreak();
+        }
+
+        public void AwardRunesOnDeath(PlayerManager player)
+        {
+            //check if player is friendly to host (not an invader)
+            if (player.characterGroup == CharacterGroup.Team02)
+                return;
+
+            //give less or more runes to a client vs a host
+            //if (NetworkManager.Singleton.IsHost)
+            //{
+
+            //}
+
+            //award runes to player
+            player.playerStatsManager.AddRunes(aiCharacter.characterStatsManager.runesDroppedOnDeath);
         }
 
         private void HandleStanceBreak()

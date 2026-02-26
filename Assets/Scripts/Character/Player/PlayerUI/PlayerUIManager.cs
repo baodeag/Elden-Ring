@@ -6,6 +6,7 @@ namespace baodeag
     public class PlayerUIManager : MonoBehaviour
     {
         public static PlayerUIManager instance;
+        [HideInInspector] public PlayerManager localPlayer;
 
         [Header("NETWORK JOIN")]
         [SerializeField] bool startGameAsClient;

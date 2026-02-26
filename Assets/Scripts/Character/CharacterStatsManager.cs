@@ -7,6 +7,9 @@ namespace baodeag
     {
         CharacterManager character;
 
+        [Header("Runes")]
+        public int runesDroppedOnDeath = 50;
+
         [Header("Stamina Regeneration")]
         [SerializeField] float staminaRegenerationAmount = 2;
         private float staminaRegenerationTimer = 0;

@@ -80,6 +80,7 @@ namespace baodeag
             {
                 PlayerCamera.instance.player = this;
                 PlayerInputManager.instance.player = this;
+                PlayerUIManager.instance.localPlayer = this;
                 WorldSaveGameManager.instance.player = this;
 
                 //update the total amount of health when the sts linked to either changes
