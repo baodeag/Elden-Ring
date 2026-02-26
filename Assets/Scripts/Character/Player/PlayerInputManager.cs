@@ -2,7 +2,6 @@
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Unity.Netcode;
 
 namespace baodeag
 {
@@ -543,6 +542,11 @@ namespace baodeag
             if (dodge_Input)
             {
                 dodge_Input = false;
+
+                //do nothing if menu window is open
+                if (PlayerUIManager.instance.menuWindowIsOpen)
+                    return;
+
                 player.playerLocomotionManager.AttemptToPerformDodge();
             }
         }
@@ -795,7 +799,7 @@ namespace baodeag
 
                 PlayerUIManager.instance.playerUIPopUpManager.CloseAllPopUpWindows();
                 PlayerUIManager.instance.CloseAllMenuWindows();
-                PlayerUIManager.instance.playerUICharacterMenuManager.OpenCharacterMenu();
+                PlayerUIManager.instance.playerUICharacterMenuManager.OpenMenu();
             }
         }
 

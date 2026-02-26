@@ -18,6 +18,7 @@ namespace baodeag
         [HideInInspector] public PlayerUISiteOfGraceManager playerUISiteOfGraceManager;
         [HideInInspector] public PlayerUITeleportLocationManager playerUITeleportLocationManager;
         [HideInInspector] public PlayerUILoadingScreenManager playerUILoadingScreenManager;
+        [HideInInspector] public PlayerUILevelUpManager playerUILevelUpManager;
 
         [Header("UI Flags")]
         public bool menuWindowIsOpen = false;
@@ -40,6 +41,7 @@ namespace baodeag
             playerUISiteOfGraceManager = GetComponentInChildren<PlayerUISiteOfGraceManager>();
             playerUITeleportLocationManager = GetComponentInChildren<PlayerUITeleportLocationManager>();
             playerUILoadingScreenManager = GetComponentInChildren<PlayerUILoadingScreenManager>();
+            playerUILevelUpManager = GetComponentInChildren<PlayerUILevelUpManager>();
         }
 
         private void Start()
@@ -61,10 +63,11 @@ namespace baodeag
 
         public void CloseAllMenuWindows()
         {
-            playerUICharacterMenuManager.CloseCharacterMenu();
-            playerUIEquipmentManager.CloseEquipmentManagerMenu();
-            playerUISiteOfGraceManager.CloseSiteOfGraceManagerMenu();
-            playerUITeleportLocationManager.CloseTeleportLocationManagerMenu();
+            playerUICharacterMenuManager.CloseMenuAfterFixedFrame();
+            playerUIEquipmentManager.CloseMenuAfterFixedFrame();
+            playerUISiteOfGraceManager.CloseMenuAfterFixedFrame();
+            playerUITeleportLocationManager.CloseMenuAfterFixedFrame();
+            playerUILevelUpManager.CloseMenuAfterFixedFrame();
         }
     }
 }

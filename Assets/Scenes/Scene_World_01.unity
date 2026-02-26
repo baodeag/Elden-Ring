@@ -48968,7 +48968,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 0}
+  m_NavMeshData: {fileID: 23800000, guid: 34a2ad8d4d6d4ae439af073afdba5780, type: 2}
   m_BuildHeightMesh: 0
 --- !u!4 &1729749206
 Transform:
@@ -61633,17 +61633,41 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 149235388953461674, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 366360127395232395, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 2717503837697941633, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201952733563429959, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 3826712812059733888, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 5820057668025370491, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 6337761122279210393, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6337761122279210393, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6337761122279210393, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6337761122279210393, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
       propertyPath: m_LocalPosition.x
@@ -61685,9 +61709,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6552899595057273506, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 6683219277074130723, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
       propertyPath: m_Name
       value: Interactable Site Of Grace (0)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6683219277074130723, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 6710328116671664822, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
       propertyPath: GlobalObjectIdHash
@@ -61696,6 +61728,18 @@ PrefabInstance:
     - target: {fileID: 6710328116671664822, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
       value: 1693618378
+      objectReference: {fileID: 0}
+    - target: {fileID: 7148480682128802916, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
+      propertyPath: m_Radius
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913043396876375128, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 9094954279311198507, guid: 3a7a4e6753dfbc04d84f2626bf069d64, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

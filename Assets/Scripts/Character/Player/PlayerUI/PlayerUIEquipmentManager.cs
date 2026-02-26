@@ -8,11 +8,8 @@ using TMPro;
 
 namespace baodeag
 {
-    public class PlayerUIEquipmentManager : MonoBehaviour
+    public class PlayerUIEquipmentManager : PlayerUIMenu
     {
-        [Header("Menu")]
-        [SerializeField] GameObject menu;
-
         [Header("Weapon Slots")]
         [SerializeField] Image rightHandSlot01;
         private Button rightHandSlot01Button;
@@ -86,22 +83,14 @@ namespace baodeag
             quickSlot03Button = quickSlot03EquipmentSlot.GetComponentInParent<Button>(true);
         }
 
-        public void OpenEquipmentManagerMenu()
+        public override void OpenMenu()
         {
-            PlayerUIManager.instance.menuWindowIsOpen = true;
-            ToggleEquipmentButtons(true);
-            menu.SetActive(true);
-            equipmentInventoryWindow.SetActive(false);
+            base.OpenMenu();
 
+            ToggleEquipmentButtons(true);
+            equipmentInventoryWindow.SetActive(false);
             ClearEquipmentInventory();
             RefreshEquipmentSlotIcons();
-        }
-
-        public void CloseEquipmentManagerMenu()
-        {
-            PlayerUIManager.instance.menuWindowIsOpen = false;
-            menu.SetActive(false);
-
         }
 
         public void RefreshMenu()
@@ -312,7 +301,7 @@ namespace baodeag
             }
 
             // hand equipment
-            EquipmentItem handEquipment = player.playerInventoryManager.handEquipment;
+            HandEquipmentItem handEquipment = player.playerInventoryManager.handEquipment;
             if (handEquipment != null)
             {
                 handEquipmentSlot.enabled = true;
@@ -578,17 +567,17 @@ namespace baodeag
         {
             PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
 
-            List<BodyEquipmentItem> BodyEquipmentInInventory = new List<BodyEquipmentItem>();
+            List<BodyEquipmentItem> bodyEquipmentInInventory = new List<BodyEquipmentItem>();
 
             for (int i = 0; i < player.playerInventoryManager.itemsInInventory.Count; i++)
             {
                 BodyEquipmentItem equipment = player.playerInventoryManager.itemsInInventory[i] as BodyEquipmentItem;
 
                 if (equipment != null)
-                    BodyEquipmentInInventory.Add(equipment);
+                    bodyEquipmentInInventory.Add(equipment);
             }
 
-            if (BodyEquipmentInInventory.Count <= 0)
+            if (bodyEquipmentInInventory.Count <= 0)
             {
                 //send a player a message that there are no body equipment in the inventory
                 equipmentInventoryWindow.SetActive(false);
@@ -599,11 +588,11 @@ namespace baodeag
 
             bool hasSelectedFirstInventorySlot = false;
 
-            for (int i = 0; i < BodyEquipmentInInventory.Count; i++)
+            for (int i = 0; i < bodyEquipmentInInventory.Count; i++)
             {
                 GameObject inventorySlotGameObject = Instantiate(equipmentInventorySlotPrefab, equipmentInventoryContentWindow);
                 UI_EquipmentInventorySlot equipmentInventorySlot = inventorySlotGameObject.GetComponent<UI_EquipmentInventorySlot>();
-                equipmentInventorySlot.AddItem(BodyEquipmentInInventory[i]);
+                equipmentInventorySlot.AddItem(bodyEquipmentInInventory[i]);
 
                 //this will select the first button on the list
                 if (!hasSelectedFirstInventorySlot)
