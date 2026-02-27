@@ -284,13 +284,20 @@ namespace baodeag
             currentCharacterData.yPosition = transform.position.y;
             currentCharacterData.zPosition = transform.position.z;
 
+            //stats
             currentCharacterData.currentHealth = playerNetworkManager.currentHealth.Value;
             currentCharacterData.currentStamina = playerNetworkManager.currentStamina.Value;
             currentCharacterData.currentFocusPoints = playerNetworkManager.currentFocusPoints.Value;
 
             currentCharacterData.vitality = playerNetworkManager.vigor.Value;
-            currentCharacterData.endurance = playerNetworkManager.endurance.Value;
             currentCharacterData.mind = playerNetworkManager.mind.Value;
+            currentCharacterData.endurance = playerNetworkManager.endurance.Value;
+            currentCharacterData.strength = playerNetworkManager.strength.Value;
+            currentCharacterData.dexterity = playerNetworkManager.dexterity.Value;
+            currentCharacterData.intelligence = playerNetworkManager.intelligence.Value;
+            currentCharacterData.faith = playerNetworkManager.faith.Value;
+
+            currentCharacterData.runes = playerStatsManager.runes;
 
             //body
             currentCharacterData.hairStyleID = playerNetworkManager.hairStyleID.Value;
@@ -386,9 +393,14 @@ namespace baodeag
                 currentCharacterData.zPosition);
             transform.position = myPosition;
 
+            //stats
             playerNetworkManager.vigor.Value = currentCharacterData.vitality;
-            playerNetworkManager.endurance.Value= currentCharacterData.endurance;
             playerNetworkManager.mind.Value = currentCharacterData.mind;
+            playerNetworkManager.endurance.Value= currentCharacterData.endurance;
+            playerNetworkManager.strength.Value = currentCharacterData.strength;
+            playerNetworkManager.dexterity.Value = currentCharacterData.dexterity;
+            playerNetworkManager.intelligence.Value = currentCharacterData.intelligence;
+            playerNetworkManager.faith.Value = currentCharacterData.faith;
 
             //this will be moved when saving and loading is added
             playerNetworkManager.maxHealth.Value = playerStatsManager.CalculateHealthBasedOnVitalityLevel(playerNetworkManager.vigor.Value);
@@ -397,6 +409,11 @@ namespace baodeag
             playerNetworkManager.currentHealth.Value = currentCharacterData.currentHealth;
             playerNetworkManager.currentStamina.Value = currentCharacterData.currentStamina;
             playerNetworkManager.currentFocusPoints.Value = currentCharacterData.currentFocusPoints;
+
+            //playerStatsManager.runes = currentCharacterData.runes;
+            //PlayerUIManager.instance.playerUIHudManager.SetRunesCount(currentCharacterData.runes);
+            //or
+            playerStatsManager.AddRunes(currentCharacterData.runes);
 
             playerNetworkManager.remainingHealthFlasks.Value = currentCharacterData.currentHealthFlasksRemaining;
             playerNetworkManager.remainingFocusPointsFlasks.Value = currentCharacterData.currentFocusPointsFlaskRemaining;

@@ -157,6 +157,9 @@ namespace baodeag
             {
                 confirmLevelsButton.interactable = true;
             }
+
+            //change projected stats text colors to reflect feed back 
+            ChangeTextColorsDependingOnCosts();
         }
 
         public void ConfirmLevels()
@@ -176,6 +179,10 @@ namespace baodeag
             player.playerNetworkManager.faith.Value = Mathf.RoundToInt(faithSlider.value);
 
             SetCurrentStats();
+            ChangeTextColorsDependingOnCosts();
+
+            //save game after setting stats
+            WorldSaveGameManager.instance.SaveGame();
         }
 
         private void SetAllLevelsCost()
@@ -201,6 +208,9 @@ namespace baodeag
                 if (i < currentLevel)
                     continue;
 
+                if (i > playerLevels.Length)
+                    continue;
+
                 totalCost += playerLevels[i];
             }
 
@@ -215,6 +225,87 @@ namespace baodeag
             else
             {
                 projectedRunesHeldText.color = Color.white;
+            }
+        }
+
+        private void ChangeTextColorsDependingOnCosts()
+        {
+            PlayerManager player = PlayerUIManager.instance.localPlayer;
+
+            int projectedVigorLevel = Mathf.RoundToInt(vigorSlider.value);
+            int projectedMindLevel = Mathf.RoundToInt(mindSlider.value);
+            int projectedEnduranceLevel = Mathf.RoundToInt(enduranceSlider.value);
+            int projectedStrengthLevel = Mathf.RoundToInt(strengthSlider.value);
+            int projectedDexterityLevel = Mathf.RoundToInt(dexteritySlider.value);
+            int projectedIntelligenceLevel = Mathf.RoundToInt(intelligenceSlider.value);
+            int projectedFaithLevel = Mathf.RoundToInt(faithSlider.value);
+
+            ChangeTextFieldToSpecificColorBaseOnStat(player, projectedVigorLevelText, player.playerNetworkManager.vigor.Value, projectedVigorLevel);
+            ChangeTextFieldToSpecificColorBaseOnStat(player, projectedMindLevelText, player.playerNetworkManager.mind.Value, projectedMindLevel);
+            ChangeTextFieldToSpecificColorBaseOnStat(player, projectedEnduranceLevelText, player.playerNetworkManager.endurance.Value, projectedEnduranceLevel);
+            ChangeTextFieldToSpecificColorBaseOnStat(player, projectedStrengthLevelText, player.playerNetworkManager.strength.Value, projectedStrengthLevel);
+            ChangeTextFieldToSpecificColorBaseOnStat(player, projectedDexterityLevelText, player.playerNetworkManager.dexterity.Value, projectedDexterityLevel);
+            ChangeTextFieldToSpecificColorBaseOnStat(player, projectedIntelligenceLevelText, player.playerNetworkManager.intelligence.Value, projectedIntelligenceLevel);
+            ChangeTextFieldToSpecificColorBaseOnStat(player, projectedFaithLevelText, player.playerNetworkManager.faith.Value, projectedFaithLevel);
+
+            int projectedPlayerLevel = player.characterStatsManager.CalculateCharacterLevelBasedOnAttributes(true);
+            int playerLevel = player.characterStatsManager.CalculateCharacterLevelBasedOnAttributes();
+
+            if (projectedPlayerLevel == playerLevel)
+            {
+                projectedCharacterLevelText.color = Color.white;
+                projectedRunesHeldText.color = Color.white;
+                runesNeededText.color = Color.white;
+            }
+
+            if (totalLevelUpCost <= player.playerStatsManager.runes)
+            {
+                runesNeededText.color = Color.white;
+
+                if (projectedPlayerLevel > playerLevel)
+                {
+                    projectedRunesHeldText.color = Color.red;
+                    projectedCharacterLevelText.color = Color.blue;
+                }
+            }
+            else
+            {
+                runesNeededText.color = Color.red;
+
+                if (projectedPlayerLevel > playerLevel)
+                    projectedCharacterLevelText.color = Color.red;
+            }
+
+        }
+
+        private void ChangeTextFieldToSpecificColorBaseOnStat(PlayerManager player, TextMeshProUGUI textField, int stat, int projectedStat)
+        {
+            if (projectedStat == stat)
+                textField.color = Color.white;
+
+            if (totalLevelUpCost <= player.playerStatsManager.runes)
+            {
+                //if our projected stat is higher, give the player visual feedback by changing color
+                if (projectedStat > stat)
+                {
+                    textField.color = Color.blue;
+                }
+                //if our projected stat is the same, keep the color white
+                else
+                {
+                    textField.color = Color.white;
+                }
+            }
+            else
+            {
+                if (projectedStat > stat)
+                {
+                    textField.color = Color.red;
+                }
+                else
+                {
+                    textField.color = Color.white;
+                }
             }
         }
     }

@@ -35,11 +35,16 @@ namespace baodeag
         public int currentHealth;
         public float currentStamina;
         public int currentFocusPoints;
+        public int runes;
 
         [Header("Stats")]
         public int vitality;
-        public int endurance;
         public int mind;
+        public int endurance;
+        public int strength;
+        public int dexterity;
+        public int intelligence;
+        public int faith;
 
         [Header("Sites of Grace")]
         public SerializableDictionary<int, bool> sitesOfGrace; //the int is the site of grace ID, the bool is the activated state

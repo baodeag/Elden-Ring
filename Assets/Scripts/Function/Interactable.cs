@@ -31,6 +31,9 @@ namespace baodeag
             interactableCollider.enabled = false;
             player.playerInteractionManager.RemoveInteractionFromList(this);
             PlayerUIManager.instance.playerUIPopUpManager.CloseAllPopUpWindows();
+
+            //save the game after interaction
+            WorldSaveGameManager.instance.SaveGame();
         }
 
         public virtual void OnTriggerEnter(Collider other)
