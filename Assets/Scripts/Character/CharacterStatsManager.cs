@@ -84,9 +84,29 @@ namespace baodeag
             return Mathf.RoundToInt(focusPoints);
         }
 
-        public int CalculateCharacterLevelBasedOnAttributes()
+        public int CalculateCharacterLevelBasedOnAttributes(bool calculatedProjectedLevel = false)
         {
-            int totalAtributes = character.characterNetworkManager.vigor.Value +
+            if (calculatedProjectedLevel)
+            {
+                int totalProjectedAtributes = 
+                Mathf.RoundToInt(PlayerUIManager.instance.playerUILevelUpManager.vigorSlider.value) +
+                Mathf.RoundToInt(PlayerUIManager.instance.playerUILevelUpManager.mindSlider.value) +
+                Mathf.RoundToInt(PlayerUIManager.instance.playerUILevelUpManager.enduranceSlider.value) +
+                Mathf.RoundToInt(PlayerUIManager.instance.playerUILevelUpManager.strengthSlider.value) +
+                Mathf.RoundToInt(PlayerUIManager.instance.playerUILevelUpManager.dexteritySlider.value) +
+                Mathf.RoundToInt(PlayerUIManager.instance.playerUILevelUpManager.intelligenceSlider.value) +
+                Mathf.RoundToInt(PlayerUIManager.instance.playerUILevelUpManager.faithSlider.value);
+
+                int projectedCharacterLevel = totalProjectedAtributes - 70 + 1;
+
+                if (projectedCharacterLevel < 1)
+                    projectedCharacterLevel = 1;
+
+                return projectedCharacterLevel;
+            }
+
+            int totalAtributes = 
+                character.characterNetworkManager.vigor.Value +
                 character.characterNetworkManager.endurance.Value +
                 character.characterNetworkManager.mind.Value +
                 character.characterNetworkManager.strength.Value +
@@ -96,7 +116,7 @@ namespace baodeag
 
             int characterLevel = totalAtributes - 70 + 1;
 
-            if (characterLevel < 1) 
+            if (characterLevel < 1)
                 characterLevel = 1;
 
             return characterLevel;
