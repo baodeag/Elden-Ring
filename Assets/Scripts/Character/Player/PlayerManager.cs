@@ -84,7 +84,7 @@ namespace baodeag
                 WorldSaveGameManager.instance.player = this;
 
                 //update the total amount of health when the sts linked to either changes
-                playerNetworkManager.vitality.OnValueChanged += playerNetworkManager.SetNewMaxHealthValue;
+                playerNetworkManager.vigor.OnValueChanged += playerNetworkManager.SetNewMaxHealthValue;
                 playerNetworkManager.endurance.OnValueChanged += playerNetworkManager.SetNewMaxStaminaValue;
                 playerNetworkManager.mind.OnValueChanged += playerNetworkManager.SetNewMaxFocusPointsValue;
 
@@ -168,7 +168,7 @@ namespace baodeag
             if (IsOwner)
             {
                 //update the total amount of health when the sts linked to either changes
-                playerNetworkManager.vitality.OnValueChanged -= playerNetworkManager.SetNewMaxHealthValue;
+                playerNetworkManager.vigor.OnValueChanged -= playerNetworkManager.SetNewMaxHealthValue;
                 playerNetworkManager.endurance.OnValueChanged -= playerNetworkManager.SetNewMaxStaminaValue;
                 playerNetworkManager.mind.OnValueChanged -= playerNetworkManager.SetNewMaxFocusPointsValue;
 
@@ -288,7 +288,7 @@ namespace baodeag
             currentCharacterData.currentStamina = playerNetworkManager.currentStamina.Value;
             currentCharacterData.currentFocusPoints = playerNetworkManager.currentFocusPoints.Value;
 
-            currentCharacterData.vitality = playerNetworkManager.vitality.Value;
+            currentCharacterData.vitality = playerNetworkManager.vigor.Value;
             currentCharacterData.endurance = playerNetworkManager.endurance.Value;
             currentCharacterData.mind = playerNetworkManager.mind.Value;
 
@@ -386,12 +386,12 @@ namespace baodeag
                 currentCharacterData.zPosition);
             transform.position = myPosition;
 
-            playerNetworkManager.vitality.Value = currentCharacterData.vitality;
+            playerNetworkManager.vigor.Value = currentCharacterData.vitality;
             playerNetworkManager.endurance.Value= currentCharacterData.endurance;
             playerNetworkManager.mind.Value = currentCharacterData.mind;
 
             //this will be moved when saving and loading is added
-            playerNetworkManager.maxHealth.Value = playerStatsManager.CalculateHealthBasedOnVitalityLevel(playerNetworkManager.vitality.Value);
+            playerNetworkManager.maxHealth.Value = playerStatsManager.CalculateHealthBasedOnVitalityLevel(playerNetworkManager.vigor.Value);
             playerNetworkManager.maxStamina.Value = playerStatsManager.CalculateStaminaBasedOnEnduranceLevel(playerNetworkManager.endurance.Value);
             playerNetworkManager.maxFocusPoints.Value = playerStatsManager.CalculateFocusPointsBasedOnMindLevel(playerNetworkManager.mind.Value);
             playerNetworkManager.currentHealth.Value = currentCharacterData.currentHealth;

@@ -125,7 +125,7 @@ namespace baodeag
             NetworkVariableWritePermission.Owner);
 
         [Header("Stats")]
-        public NetworkVariable<int> vitality = new NetworkVariable<int>
+        public NetworkVariable<int> vigor = new NetworkVariable<int>
             (1,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);

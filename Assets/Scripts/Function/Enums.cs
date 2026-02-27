@@ -26,6 +26,17 @@ public enum CharacterGroup
     Team02,
 }
 
+public enum CharacterAttribute
+{
+    Vigor,
+    Mind,
+    Endurance,
+    Strength,
+    Dexterity,
+    Intelligence,
+    Faith
+}
+
 public enum WeaponModelSlot 
 {
     RightHand,

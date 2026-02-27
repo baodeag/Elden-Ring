@@ -23,6 +23,9 @@ namespace baodeag
 
         public virtual void CloseMenuAfterFixedFrame()
         {
+            if (!menu.activeInHierarchy)
+                return;
+
             StartCoroutine(WaitThenCloseMenu());
         }
 

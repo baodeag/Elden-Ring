@@ -84,6 +84,24 @@ namespace baodeag
             return Mathf.RoundToInt(focusPoints);
         }
 
+        public int CalculateCharacterLevelBasedOnAttributes()
+        {
+            int totalAtributes = character.characterNetworkManager.vigor.Value +
+                character.characterNetworkManager.endurance.Value +
+                character.characterNetworkManager.mind.Value +
+                character.characterNetworkManager.strength.Value +
+                character.characterNetworkManager.dexterity.Value +
+                character.characterNetworkManager.intelligence.Value +
+                character.characterNetworkManager.faith.Value;
+
+            int characterLevel = totalAtributes - 70 + 1;
+
+            if (characterLevel < 1) 
+                characterLevel = 1;
+
+            return characterLevel;
+        }
+
         public virtual void RegenerateStamina()
         {
             //only owners can edit their network variables

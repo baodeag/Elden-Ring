@@ -23,7 +23,7 @@ namespace baodeag
 
             //when we make a character creation menu, and set the stas depending on the class, this will be calculated there
             //until then however, stats are never calculated, so we do it here
-            CalculateHealthBasedOnVitalityLevel(player.playerNetworkManager.vitality.Value);
+            CalculateHealthBasedOnVitalityLevel(player.playerNetworkManager.vigor.Value);
             CalculateStaminaBasedOnEnduranceLevel(player.playerNetworkManager.endurance.Value);
             CalculateFocusPointsBasedOnMindLevel(player.playerNetworkManager.mind.Value);
         }
