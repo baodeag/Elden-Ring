@@ -158,7 +158,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 535524011901711528}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 3.5
@@ -2032,11 +2032,23 @@ MonoBehaviour:
     m_InternalValue: 500
   maxStamina:
     m_InternalValue: 500
-  vitality:
+  currentFocusPoints:
+    m_InternalValue: 400
+  maxFocusPoints:
+    m_InternalValue: 400
+  vigor:
     m_InternalValue: 1
   endurance:
     m_InternalValue: 1
+  mind:
+    m_InternalValue: 1
   strength:
+    m_InternalValue: 1
+  dexterity:
+    m_InternalValue: 1
+  intelligence:
+    m_InternalValue: 1
+  faith:
     m_InternalValue: 1
   strengthModifier:
     m_InternalValue: 1
@@ -2102,6 +2114,8 @@ MonoBehaviour:
   isRolling: 0
   canRotate: 1
   canMove: 1
+  canRun: 1
+  canRoll: 1
   isGrounded: 1
 --- !u!114 &8107840978433157235
 MonoBehaviour:
@@ -2214,8 +2228,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77eddea6ec0f1344b8b5ae20ffd6d1a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  runesDroppedOnDeath: 50
   staminaRegenerationAmount: 2
-  staminaRegenerationTimer: 0
   staminaRegenerationDelay: 2
   blockingPhysicalAbsorption: 0
   blockingFireAbsorption: 0
@@ -2269,6 +2283,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e9273db4bbbe4b4c92abbb927a1f1a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  activeQuickSlotItemFX: {fileID: 0}
+  activeSpellWarmUpFX: {fileID: 0}
+  activeDrawnProjectileFX: {fileID: 0}
   bloodSplatterVFX: {fileID: 0}
   criticalBloodSplatterVFX: {fileID: 0}
   staticEffects: []

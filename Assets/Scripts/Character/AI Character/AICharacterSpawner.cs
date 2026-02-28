@@ -10,6 +10,10 @@ namespace baodeag
         [SerializeField] GameObject instantiateGameObject;
         private AICharacterManager aiCharacter;
 
+        [Header("Patrol")]
+        [SerializeField] bool hasPatrolPath = false;
+        [SerializeField] int patrolPathID = 0;
+
         private void Awake()
         {
             
@@ -30,8 +34,13 @@ namespace baodeag
                 instantiateGameObject.GetComponent<NetworkObject>().Spawn();
                 aiCharacter = instantiateGameObject.GetComponent<AICharacterManager>();
 
-                if (aiCharacter != null) 
-                    WorldAIManager.instance.AddCharacterToSpawnedCharacterList(aiCharacter);
+                if (aiCharacter == null)
+                    return;
+
+                WorldAIManager.instance.AddCharacterToSpawnedCharacterList(aiCharacter);
+
+                if (hasPatrolPath)
+                    aiCharacter.idle.aiPatrolPath = WorldAIManager.instance.GetAIPatrolPathByID(patrolPathID);
             }
         }
 
