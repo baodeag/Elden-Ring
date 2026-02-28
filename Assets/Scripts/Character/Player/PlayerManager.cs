@@ -109,7 +109,9 @@ namespace baodeag
             playerNetworkManager.hairColorBlue.OnValueChanged += playerNetworkManager.OnHairColorBlueChanged;
 
             //stats
-            playerNetworkManager.currentHealth.OnValueChanged += playerNetworkManager.CheckHP;
+            playerNetworkManager.currentHealth.OnValueChanged += playerNetworkManager.OnHPChanged;
+            playerNetworkManager.currentFocusPoints.OnValueChanged += playerNetworkManager.OnFocusPointsChanged;
+            playerNetworkManager.maxFocusPoints.OnValueChanged += playerNetworkManager.OnMaxFocusPointsChanged;
 
             //lock on
             playerNetworkManager.isLockedOn.OnValueChanged += playerNetworkManager.OnIsLockedOnChanged;
@@ -189,7 +191,9 @@ namespace baodeag
             playerNetworkManager.isMale.OnValueChanged -= playerNetworkManager.OnIsMaleChanged;
 
             //stats
-            playerNetworkManager.currentHealth.OnValueChanged -= playerNetworkManager.CheckHP;
+            playerNetworkManager.currentHealth.OnValueChanged -= playerNetworkManager.OnHPChanged;
+            playerNetworkManager.currentFocusPoints.OnValueChanged -= playerNetworkManager.OnFocusPointsChanged;
+            playerNetworkManager.maxFocusPoints.OnValueChanged -= playerNetworkManager.OnMaxFocusPointsChanged;
 
             //lock on
             playerNetworkManager.isLockedOn.OnValueChanged -= playerNetworkManager.OnIsLockedOnChanged;

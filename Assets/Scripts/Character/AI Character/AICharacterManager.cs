@@ -17,13 +17,14 @@ namespace baodeag
         public NavMeshAgent navMeshAgent;
 
         [Header("Current State")]
-        [SerializeField] protected AIState currentState;
+        public AIState currentState;
 
         [Header("States")]
         public IdleState idle;
         public PursueTargetState pursueTarget;
         public CombatStanceState combatStance;
         public AttackState attack;
+        public InvestigateSoundState investigateSound;
 
         protected override void Awake()
         {
@@ -47,17 +48,18 @@ namespace baodeag
                 pursueTarget = Instantiate(pursueTarget);
                 combatStance = Instantiate(combatStance);
                 attack = Instantiate(attack);
+                investigateSound = Instantiate(investigateSound);
                 currentState = idle;
             }
 
-            aiCharacterNetworkManager.currentHealth.OnValueChanged += aiCharacterNetworkManager.CheckHP;
+            aiCharacterNetworkManager.currentHealth.OnValueChanged += aiCharacterNetworkManager.OnHPChanged;
         }
 
         public override void OnNetworkDespawn()
         {
             base.OnNetworkDespawn();
 
-            aiCharacterNetworkManager.currentHealth.OnValueChanged -= aiCharacterNetworkManager.CheckHP;
+            aiCharacterNetworkManager.currentHealth.OnValueChanged -= aiCharacterNetworkManager.OnHPChanged;
         }
 
         protected override void OnEnable()
@@ -88,7 +90,7 @@ namespace baodeag
             if (IsOwner)
                 ProcessStateMachine();
 
-            if (navMeshAgent.enabled)
+            if (!navMeshAgent.enabled)
                 return;
 
             Vector3 positionDifference = navMeshAgent.transform.position - transform.position;

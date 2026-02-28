@@ -17,5 +17,12 @@ namespace baodeag
         {
             PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(player.playerCombatManager.currentWeaponBeingUsed.blocking));
         }
+
+        public override void PlayFootStepSoundFX()
+        {
+            base.PlayFootStepSoundFX();
+
+            WorldSoundFXManager.instance.AlertNearbyCharactersToSound(transform.position, 2);
+        }
     }
 }

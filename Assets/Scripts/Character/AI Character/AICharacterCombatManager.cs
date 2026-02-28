@@ -37,6 +37,10 @@ namespace baodeag
         private float stanceTickTimer = 0;
         [SerializeField] float defaultTimeUntilStanceRegenerationBegins = 15;
 
+        [Header("Debig delete later")]
+        [SerializeField] bool investigateSound = false;
+        [SerializeField] Vector3 positionOfSound = Vector3.zero;
+
         protected override void Awake()
         {
             base.Awake();
@@ -45,9 +49,15 @@ namespace baodeag
             lockOnTransform = GetComponentInChildren<LockOnTransform>().transform;
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
             HandleStanceBreak();
+
+            if (investigateSound)
+            {
+                investigateSound = false;
+                AlertCharacterToSound(positionOfSound);
+            }
         }
 
         public void AwardRunesOnDeath(PlayerManager player)
@@ -125,7 +135,28 @@ namespace baodeag
             currentStance -= stanceDamage;
         }
 
-        public void FindATargetViaLineOfSight(AICharacterManager aiCharacter)
+        public virtual void AlertCharacterToSound(Vector3 positionOfSound)
+        {
+            if (!aiCharacter.IsOwner)
+                return;
+
+            if (aiCharacter.isDead.Value)
+                return;
+
+            if (aiCharacter.idle == null)
+                return;
+
+            if (aiCharacter.investigateSound == null)
+                return;
+
+            if (!aiCharacter.idle.willInvestigateSound)
+                return;
+
+            aiCharacter.investigateSound.positionOfSound = positionOfSound;
+            aiCharacter.currentState = aiCharacter.currentState.SwitchState(aiCharacter, aiCharacter.investigateSound);
+        }
+
+        public virtual void FindATargetViaLineOfSight(AICharacterManager aiCharacter)
         {
             if (currentTarget != null)
                 return;
@@ -176,6 +207,28 @@ namespace baodeag
         {
             if (aiCharacter.isPerformingAction)
                 return;
+
+            if (viewableAngle >= 20 && viewableAngle <= 160)
+            {
+                aiCharacter.characterAnimatorManager.PlayTargetActionAnimation("Turn_Right_90", true);
+            }
+            else if (viewableAngle <= -20 && viewableAngle >= -160)
+            {
+                aiCharacter.characterAnimatorManager.PlayTargetActionAnimation("Turn_Left_90", true);
+            }
+            else if (viewableAngle > 160 || viewableAngle < -160)
+            {
+                aiCharacter.characterAnimatorManager.PlayTargetActionAnimation("Turn_Right_180", true);
+            }
+        }
+
+        public virtual void PivotTowardsPosition(AICharacterManager aiCharacter, Vector3 position)
+        {
+            if (aiCharacter.isPerformingAction)
+                return;
+
+            Vector3 targetsDirection = position - aiCharacter.transform.position;
+            float viewableAngle = WorldUtilityManager.Instance.GetAngleOfTarget(aiCharacter.transform, targetsDirection);
 
             if (viewableAngle >= 20 && viewableAngle <= 160)
             {

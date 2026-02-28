@@ -32,6 +32,8 @@ namespace baodeag
         {
             CreatePenetrationIntoObject(collision);
 
+            WorldSoundFXManager.instance.AlertNearbyCharactersToSound(transform.position, 3);
+
             CharacterManager potentialTarget = collision.transform.gameObject.GetComponent<CharacterManager>();
 
             if (characterShootingProjectile == null)

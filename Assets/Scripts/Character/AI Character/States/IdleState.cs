@@ -21,6 +21,9 @@ namespace baodeag
         [SerializeField] float timeBetweenPatrols = 15;
         [SerializeField] float restTimer = 0;
 
+        [Header("Sleep Options")]
+        public bool willInvestigateSound = true;
+
         public override AIState Tick(AICharacterManager aiCharacter)
         { 
             aiCharacter.aiCharacterCombatManager.FindATargetViaLineOfSight(aiCharacter);

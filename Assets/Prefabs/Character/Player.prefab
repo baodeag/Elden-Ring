@@ -4356,6 +4356,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1352343783096026, guid: 3f581b8f5dacdc54b8e405d2157e1d8b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4411172348607588834}
+    - targetCorrespondingSourceObject: {fileID: 1352343783096026, guid: 3f581b8f5dacdc54b8e405d2157e1d8b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2765685646364775027}
     - targetCorrespondingSourceObject: {fileID: 1423455852810112, guid: 3f581b8f5dacdc54b8e405d2157e1d8b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8931809361050231604}
@@ -4365,6 +4368,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1620438952089352, guid: 3f581b8f5dacdc54b8e405d2157e1d8b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2920156793169332081}
+    - targetCorrespondingSourceObject: {fileID: 1620438952089352, guid: 3f581b8f5dacdc54b8e405d2157e1d8b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8038715145943287344}
   m_SourcePrefab: {fileID: 100100000, guid: 3f581b8f5dacdc54b8e405d2157e1d8b, type: 3}
 --- !u!4 &6657481286654222276 stripped
 Transform:
@@ -4798,7 +4804,7 @@ MonoBehaviour:
     m_InternalValue: 400
   maxFocusPoints:
     m_InternalValue: 400
-  vitality:
+  vigor:
     m_InternalValue: 1
   endurance:
     m_InternalValue: 1
@@ -4894,6 +4900,12 @@ MonoBehaviour:
   isUsingLeftHand:
     m_InternalValue: 0
   hairStyleID:
+    m_InternalValue: 0
+  hairColorRed:
+    m_InternalValue: 0
+  hairColorGreen:
+    m_InternalValue: 0
+  hairColorBlue:
     m_InternalValue: 0
   currentWeaponBeingUsed:
     m_InternalValue: 0
@@ -5014,6 +5026,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eec520231612b014f93d74e9b44db142, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  runesDroppedOnDeath: 50
   staminaRegenerationAmount: 2
   staminaRegenerationDelay: 2
   blockingPhysicalAbsorption: 0
@@ -5036,6 +5049,7 @@ MonoBehaviour:
   basePoiseDefense: 0
   defaultPoiseResetTime: 8
   poiseResetTimer: 0
+  runes: 0
 --- !u!114 &-5518382285501829735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5573,6 +5587,19 @@ CapsuleCollider:
   m_Height: 0.29
   m_Direction: 0
   m_Center: {x: 0.03, y: 0.03, z: 0}
+--- !u!114 &8038715145943287344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6660277493474172852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b5901259fe42234c999d93ec92f6e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  distanceToGround: 0.05
 --- !u!1 &6660294592340406330 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1636574671911046, guid: 3f581b8f5dacdc54b8e405d2157e1d8b, type: 3}
@@ -5864,6 +5891,19 @@ CapsuleCollider:
   m_Height: 0.29
   m_Direction: 0
   m_Center: {x: -0.03, y: -0.03, z: 0}
+--- !u!114 &2765685646364775027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6660545824690157158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b5901259fe42234c999d93ec92f6e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  distanceToGround: 0.05
 --- !u!1 &6660551042712416530 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1347117518633390, guid: 3f581b8f5dacdc54b8e405d2157e1d8b, type: 3}

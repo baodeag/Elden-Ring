@@ -66,6 +66,8 @@ namespace baodeag
                 instantiatedDestructionFX = Instantiate(impactParticle, transform.position, Quaternion.identity);
             }
 
+            WorldSoundFXManager.instance.AlertNearbyCharactersToSound(transform.position, 5);
+
             Destroy(gameObject);
         }
 

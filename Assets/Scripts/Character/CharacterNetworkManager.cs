@@ -167,7 +167,7 @@ namespace baodeag
             character = GetComponent<CharacterManager>();
         }
 
-        public virtual void CheckHP(int oldValue, int newValue)
+        public virtual void OnHPChanged(int oldValue, int newValue)
         {
             if(currentHealth.Value <= 0)
             {
