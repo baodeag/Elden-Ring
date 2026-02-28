@@ -2,6 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using Unity.Netcode;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace baodeag
 {
@@ -12,6 +13,8 @@ namespace baodeag
         [Header("Active Players In Session")]
         public List<PlayerManager> players = new List<PlayerManager>();
 
+        private Coroutine revivalCoroutine;
+
         private void Awake()
         {
             if (instance == null)
@@ -21,6 +24,32 @@ namespace baodeag
             else
             {
                 Destroy(gameObject);
+            }
+        }
+
+        public void WaitThenReviveHost()
+        {
+            if (revivalCoroutine != null)
+                StopCoroutine(revivalCoroutine);
+
+            revivalCoroutine = StartCoroutine(ReviveHostCoroutine(5));
+        }
+
+        private IEnumerator ReviveHostCoroutine(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+
+            PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
+
+            PlayerUIManager.instance.localPlayer.ReviveCharacter();
+
+            for (int i = 0; i < WorldObjectManager.instance.sitesOfGrace.Count; i++)
+            {
+                if (WorldObjectManager.instance.sitesOfGrace[i].siteOfGraceID == WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt)
+                {
+                    WorldObjectManager.instance.sitesOfGrace[i].TeleportToSiteOfGrace();
+                    break;
+                }
             }
         }
 

@@ -88,7 +88,16 @@ namespace baodeag
             //wait for timer to reach 0 incase more runes are queued up
             float timer = runeUpdateCountDelayTimer;
             int runesToAdd = pendingRunesToAdd;
-            runesToAddText.text = "+ " + runesToAdd.ToString();
+
+            if (runesToAdd >= 0)
+            {
+                runesToAddText.text = "+ " + runesToAdd.ToString();
+            }
+            else
+            {
+                runesToAddText.text = "- " + Mathf.Abs(runesToAdd).ToString();
+            }
+
             runesToAddText.enabled = true;
 
             while (timer > 0)

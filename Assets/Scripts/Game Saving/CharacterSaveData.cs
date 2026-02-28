@@ -14,6 +14,13 @@ namespace baodeag
         [Header("Character Name")]
         public string characterName = "Character";
 
+        [Header("Dead Spot")]
+        public bool hasDeadSpot = false;
+        public float deadSpotPositionX;
+        public float deadSpotPositionY;
+        public float deadSpotPositionZ;
+        public int deadSpotRuneCount;
+
         [Header("Body Type")]
         public bool isMale = true;
         public int hairStyleID;
@@ -47,6 +54,7 @@ namespace baodeag
         public int faith;
 
         [Header("Sites of Grace")]
+        public int lastSiteOfGraceRestedAt = 0;
         public SerializableDictionary<int, bool> sitesOfGrace; //the int is the site of grace ID, the bool is the activated state
 
         [Header("Boss")]

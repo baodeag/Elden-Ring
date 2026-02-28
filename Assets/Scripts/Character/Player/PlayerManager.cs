@@ -252,9 +252,9 @@ namespace baodeag
         public override IEnumerator ProcessDeathEvent(bool manuallySelectDeathAnimation = false)
         {
             if (IsOwner)
-            {
                 PlayerUIManager.instance.playerUIPopUpManager.SendYouDiedPopUp();
-            }
+
+            WorldGameSessionManager.instance.WaitThenReviveHost();
 
             return base.ProcessDeathEvent(manuallySelectDeathAnimation);
         }
@@ -410,9 +410,6 @@ namespace baodeag
             playerNetworkManager.currentStamina.Value = currentCharacterData.currentStamina;
             playerNetworkManager.currentFocusPoints.Value = currentCharacterData.currentFocusPoints;
 
-            //playerStatsManager.runes = currentCharacterData.runes;
-            //PlayerUIManager.instance.playerUIHudManager.SetRunesCount(currentCharacterData.runes);
-            //or
             playerStatsManager.AddRunes(currentCharacterData.runes);
 
             playerNetworkManager.remainingHealthFlasks.Value = currentCharacterData.currentHealthFlasksRemaining;

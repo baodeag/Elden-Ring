@@ -12,6 +12,7 @@ namespace baodeag
         public GameObject bloodSplatterVFX;
         public GameObject criticalBloodSplatterVFX;
         public GameObject healingFlaskVFX;
+        public GameObject deadspotVFX;
 
         [Header("Damage")]
         public TakeDamageEffect takeDamageEffect;
