@@ -1,5 +1,13 @@
 fileFormatVersion: 2
 guid: 4bba72656c94a5b468d3989b3cda06d9
+AssetOrigin:
+  serializedVersion: 1
+  productId: 247709
+  packageName: Spear Animation Set
+  packageVersion: 2.0
+  assetPath: Assets/Nephilite Studios/Spear Animation Set/Animations/Spear Animations/Nephilim
+    Animations (Remastered)/Spear Critical Strike/core_riposte_death_01.fbx
+  uploadId: 696082
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -16,14 +24,8 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'core_up_death_01' has import animation warnings
-      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
-      to improve retargeting quality.\n\t'Ball_R' is inbetween humanoid transforms
-      and has rotation animation that will be discarded.\n\t'Ball_L' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n"
+    animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -753,8 +755,7 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 0ad932253e8dc8841948afa5d1a0d051,
-    type: 3}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 0ad932253e8dc8841948afa5d1a0d051, type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
@@ -766,11 +767,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 247709
-  packageName: Spear Animation Set
-  packageVersion: 2.0
-  assetPath: Assets/Nephilite Studios/Spear Animation Set/Animations/Spear Animations/Nephilim
-    Animations (Remastered)/Spear Critical Strike/core_riposte_death_01.fbx
-  uploadId: 696082
