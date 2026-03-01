@@ -23,6 +23,9 @@ namespace baodeag
         private Coroutine despawnAllCharactersCoroutine;
         private Coroutine resetAllCharactersCoroutine;
 
+        [Header("Beacon Prefab")]
+        public GameObject beaconGameObject;
+
         [Header("Bosses")]
         [SerializeField] List<AIBossCharacterManager> spawnedInBosses;
 

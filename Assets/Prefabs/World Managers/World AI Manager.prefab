@@ -44,6 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 578abe0ebec306a4e8b8a0d4859d26bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aiCharacters:
-  - {fileID: 6944900050668453464, guid: fa5635c953acd49479ed91b42d7d4af0, type: 3}
+  isPerformingLoadingOperation: 0
+  aiCharacterSpawners: []
   spawnedInCharacters: []
+  beaconGameObject: {fileID: 1806600203928118652, guid: 9dbeb2ccee60de744babb8dee4534c64, type: 3}
+  spawnedInBosses: []
+  aiPatrolPaths: []
