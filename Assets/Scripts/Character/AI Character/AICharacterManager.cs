@@ -38,6 +38,13 @@ namespace baodeag
             navMeshAgent = GetComponentInChildren<NavMeshAgent>();
         }
 
+        protected override void Start()
+        {
+            base.Start();
+
+            animator.keepAnimatorStateOnDisable = true;
+        }
+
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
@@ -53,6 +60,12 @@ namespace baodeag
             }
 
             aiCharacterNetworkManager.currentHealth.OnValueChanged += aiCharacterNetworkManager.OnHPChanged;
+
+            if (!aiCharacterNetworkManager.isAwake.Value)
+                animator.Play(aiCharacterNetworkManager.sleepingAnimation.Value.ToString());
+
+            if (isDead.Value)
+                animator.Play("Dead_01");
         }
 
         public override void OnNetworkDespawn()

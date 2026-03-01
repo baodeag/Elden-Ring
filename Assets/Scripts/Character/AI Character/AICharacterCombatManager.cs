@@ -152,6 +152,12 @@ namespace baodeag
             if (!aiCharacter.idle.willInvestigateSound)
                 return;
 
+            if (aiCharacter.idle.idleStateMode == IdleStateMode.Sleep && !aiCharacter.aiCharacterNetworkManager.isAwake.Value)
+            {
+                aiCharacter.aiCharacterNetworkManager.isAwake.Value = true;
+                aiCharacter.characterAnimatorManager.PlayTargetActionAnimation(aiCharacter.aiCharacterNetworkManager.wakingAnimation.Value.ToString(), true);
+            }
+
             aiCharacter.investigateSound.positionOfSound = positionOfSound;
             aiCharacter.currentState = aiCharacter.currentState.SwitchState(aiCharacter, aiCharacter.investigateSound);
         }
