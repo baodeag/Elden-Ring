@@ -166,6 +166,13 @@ namespace baodeag
 
         }
 
+        //this function will just pass the raw number
+        public void SetAnimatorMovementParameters(float horizontalMovement, float verticalMovement)
+        {
+            character.animator.SetFloat(vertical, verticalMovement, 0.1f, Time.deltaTime);
+            character.animator.SetFloat(horizontal, horizontalMovement, 0.1f, Time.deltaTime);
+        }
+
         public virtual void PlayTargetActionAnimation(
             string targetAnimation, 
             bool isPerformingAction, 

@@ -130,6 +130,9 @@ namespace baodeag
 
             WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = siteOfGraceID;
 
+            if (player.IsHost)
+                player.playerNetworkManager.lastSiteOfGraceUsed.Value = siteOfGraceID;
+
             if (!isActivated.Value)
             {
                 RestoreSiteOfGrace(player);

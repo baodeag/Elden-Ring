@@ -5,12 +5,10 @@ namespace baodeag
     public class AIUndeadCombatManager : AICharacterCombatManager
     {
         [Header("Damage Colliders")]
-        [SerializeField] UndeadHandDamageCollider rightHandDamageCollider;
-        [SerializeField] UndeadHandDamageCollider leftHandDamageCollider;
+        [SerializeField] ManualDamageCollider rightHandDamageCollider;
+        [SerializeField] ManualDamageCollider leftHandDamageCollider;
 
-        [Header("Damage")]
-        [SerializeField] int baseDamage = 25;
-        [SerializeField] int basePoiseDamage = 25;
+        [Header("Damage Modifiers")]
         [SerializeField] float attack01DamageModifier = 1.0f;
         [SerializeField] float attack02DamageModifier = 1.4f;
 

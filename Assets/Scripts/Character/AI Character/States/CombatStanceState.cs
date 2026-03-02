@@ -23,6 +23,11 @@ namespace baodeag
         [Header("Engagement Distance")]
         [SerializeField] public float maximumEngagementDistance = 5;
 
+        [Header("Circling")]
+        [SerializeField] bool willCircleTarget = false;
+        private bool hasChoosenCirclePath = false;
+        private float strafeMoveAmount;
+
         public override AIState Tick(AICharacterManager aiCharacter)
         {
             if (aiCharacter.isPerformingAction)
@@ -44,6 +49,9 @@ namespace baodeag
 
             if (aiCharacter.aiCharacterCombatManager.currentTarget == null)
                 return SwitchState(aiCharacter, aiCharacter.idle);
+
+            if (willCircleTarget)
+                SetCirclePath(aiCharacter);
 
             if (!hasAttack)
             {
@@ -97,7 +105,7 @@ namespace baodeag
                 totalWeight += attack.attackWeight;
             }
 
-            var randomWeightValue = Random.Range(0, totalWeight + 1);
+            var randomWeightValue = Random.Range(1, totalWeight + 1);
             var processedWeight = 0;
 
             foreach (var attack in potentialAttacks)
@@ -128,12 +136,47 @@ namespace baodeag
             return outcomeWillBePerformed;
         }
 
+        protected virtual void SetCirclePath(AICharacterManager aiCharacter)
+        {
+            if (Physics.CheckSphere(aiCharacter.aiCharacterCombatManager.lockOnTransform.position, aiCharacter.characterController.radius + 0.25f, WorldUtilityManager.Instance.GetEnviroLayers()))
+            {
+                //stop strafing/circling because we've hit something, instead path towards enemy
+                Debug.Log("We are collidong with something, ending strafe");
+                aiCharacter.characterAnimatorManager.SetAnimatorMovementParameters(0, Mathf.Abs(strafeMoveAmount));
+                return;
+            }
+
+            //strafe
+            Debug.Log("Strafing");
+            aiCharacter.characterAnimatorManager.SetAnimatorMovementParameters(strafeMoveAmount, 0);
+
+            if (hasChoosenCirclePath)
+                return;
+
+            hasChoosenCirclePath = true;
+
+            int leftOrRightIndex = Random.Range(0, 100);
+
+            if (leftOrRightIndex >= 50)
+            {
+                //left
+                strafeMoveAmount = -0.5f;
+            }
+            else
+            {
+                //right
+                strafeMoveAmount = 0.5f;
+            }
+        }
+
         protected override void ResetStateFlags(AICharacterManager aiCharacter)
         {
             base.ResetStateFlags(aiCharacter);
 
             hasAttack = false;
             hasRolledForComboChance = false;
+            hasChoosenCirclePath = false;
+            strafeMoveAmount = 0;
         }
     }
 }

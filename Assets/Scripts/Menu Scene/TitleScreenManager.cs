@@ -77,8 +77,7 @@ namespace baodeag {
 
         public void StartNetworkAsHost()
         {
-            // Code to start network as host
-            NetworkManager.Singleton.StartHost();
+            WorldGameSessionManager.instance.StartGameAsHost();
         }
 
         public void AttemptToCreateNewCharacter()

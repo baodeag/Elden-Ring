@@ -2,21 +2,21 @@ using UnityEngine;
 
 namespace baodeag
 {
-    public class UndeadHandDamageCollider : DamageCollider
+    public class ManualDamageCollider : DamageCollider
     {
-        [SerializeField] AICharacterManager undeadCharacter;
+        [SerializeField] AICharacterManager characterCausingDamage;
 
         protected override void Awake()
         {
             base.Awake();
 
             damageCollider = GetComponent<Collider>();
-            undeadCharacter = GetComponentInParent<AICharacterManager>();
+            characterCausingDamage = GetComponentInParent<AICharacterManager>();
         }
 
         protected override void GetBlockingDotValues(CharacterManager damageTarget)
         {
-            directionFromAttackToDamageTarget = undeadCharacter.transform.position - damageTarget.transform.position;
+            directionFromAttackToDamageTarget = characterCausingDamage.transform.position - damageTarget.transform.position;
             dotValueFromAttackToDamageTarget = Vector3.Dot(directionFromAttackToDamageTarget, damageTarget.transform.forward);
         }
 
@@ -35,14 +35,14 @@ namespace baodeag
             damageEffect.holyDamage = holyDamage;
             damageEffect.poiseDamage = poiseDamage;
             damageEffect.contactPoint = contactPoint;
-            damageEffect.angleHitFrom = Vector3.SignedAngle(undeadCharacter.transform.forward, damageTarget.transform.forward, Vector3.up);
+            damageEffect.angleHitFrom = Vector3.SignedAngle(characterCausingDamage.transform.forward, damageTarget.transform.forward, Vector3.up);
 
             if (damageTarget.IsOwner)
             {
                 //send a damage request to the server
                 damageTarget.characterNetworkManager.NotifyTheServerOfCharacterDamageServerRpc(
                     damageTarget.NetworkObjectId,
-                    undeadCharacter.NetworkObjectId,
+                    characterCausingDamage.NetworkObjectId,
                     damageEffect.physicalDamage,
                     damageEffect.magicDamage,
                     damageEffect.fireDamage,
@@ -61,7 +61,7 @@ namespace baodeag
             if (charactersDamaged.Contains(damageTarget))
                 return;
 
-            if (!undeadCharacter.characterNetworkManager.isParryable.Value)
+            if (!characterCausingDamage.characterNetworkManager.isParryable.Value)
                 return;
 
             if (!damageTarget.IsOwner)
@@ -70,7 +70,7 @@ namespace baodeag
             if (damageTarget.characterNetworkManager.isParrying.Value)
             {
                 charactersDamaged.Add(damageTarget);
-                damageTarget.characterNetworkManager.NotifyServerOfParryServerRpc(undeadCharacter.NetworkObjectId);
+                damageTarget.characterNetworkManager.NotifyServerOfParryServerRpc(characterCausingDamage.NetworkObjectId);
                 damageTarget.characterAnimatorManager.PlayTargetActionAnimationInstantly("Parry_Land_01", true);
             }
         }

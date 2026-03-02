@@ -250,7 +250,29 @@ namespace baodeag
                         player.LoadOtherPlayerCharacterWhenJoiningServer();
                     }
                 }
+
+                StartCoroutine(EmergeAtMostRecentSiteOfGrace());
             }
+        }
+
+        private IEnumerator EmergeAtMostRecentSiteOfGrace()
+        {
+            PlayerManager hostPlayer = null;
+
+            while (hostPlayer == null)
+            {
+                for (int i = 0; i < WorldGameSessionManager.instance.players.Count; i++)
+                {
+                    if (WorldGameSessionManager.instance.players[i].IsHost)
+                    {
+                        hostPlayer = WorldGameSessionManager.instance.players[i];
+                    }
+                }
+
+                yield return null;
+            }
+
+            WorldObjectManager.instance.sitesOfGrace[hostPlayer.playerNetworkManager.lastSiteOfGraceUsed.Value].TeleportToSiteOfGrace();
         }
 
         public override IEnumerator ProcessDeathEvent(bool manuallySelectDeathAnimation = false)

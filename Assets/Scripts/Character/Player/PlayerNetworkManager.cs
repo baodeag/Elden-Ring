@@ -16,6 +16,12 @@ namespace baodeag
             NetworkVariableReadPermission.Everyone, 
             NetworkVariableWritePermission.Owner);
 
+        [Header("Site Of Grace")]
+        public NetworkVariable<int> lastSiteOfGraceUsed = new NetworkVariable<int>(
+            0,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+
         [Header("Flasks")]
         public NetworkVariable<int> remainingHealthFlasks = new NetworkVariable<int>(
             3,
