@@ -27114,6 +27114,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2076382501041996191, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: health
+      value: 377
+      objectReference: {fileID: 0}
+    - target: {fileID: 2076382501041996191, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
       propertyPath: isSleeping
       value: 0
       objectReference: {fileID: 0}

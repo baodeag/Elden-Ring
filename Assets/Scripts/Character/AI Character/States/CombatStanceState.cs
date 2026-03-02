@@ -28,6 +28,12 @@ namespace baodeag
         private bool hasChoosenCirclePath = false;
         private float strafeMoveAmount;
 
+        [Header("Blocking")]
+        [SerializeField] bool canBlock = false;
+        [SerializeField] int percentageOfTimeWillBlock = 75;
+        private bool hasRolledForBlockChance = false;
+        private bool willBlockDuringThisCombatRotation = false;
+
         public override AIState Tick(AICharacterManager aiCharacter)
         {
             if (aiCharacter.isPerformingAction)
@@ -52,6 +58,15 @@ namespace baodeag
 
             if (willCircleTarget)
                 SetCirclePath(aiCharacter);
+
+            if (canBlock && !hasRolledForBlockChance)
+            {
+                hasRolledForBlockChance = true;
+                willBlockDuringThisCombatRotation = RollForOutcomeChance(percentageOfTimeWillBlock);
+            }
+
+            if (willBlockDuringThisCombatRotation)
+                aiCharacter.aiCharacterNetworkManager.isBlocking.Value = true;
 
             if (!hasAttack)
             {
@@ -175,7 +190,9 @@ namespace baodeag
 
             hasAttack = false;
             hasRolledForComboChance = false;
+            hasRolledForBlockChance = false;
             hasChoosenCirclePath = false;
+            willBlockDuringThisCombatRotation = false;
             strafeMoveAmount = 0;
         }
     }
