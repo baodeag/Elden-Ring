@@ -17,7 +17,8 @@ namespace baodeag
 
         [Header("Combo")]
         [SerializeField] protected bool canPerformCombo = false;
-        [SerializeField] protected int chanceToPerformCombo = 25;
+        [SerializeField] protected int percentageOfTimeWillPerformCombo = 25;
+        [SerializeField] public bool onlyPerformComboIfInitialAttackHits = false;
         protected bool hasRolledForComboChance = false;
 
         [Header("Engagement Distance")]
@@ -59,10 +60,18 @@ namespace baodeag
             if (willCircleTarget)
                 SetCirclePath(aiCharacter);
 
+            //roll for block chance
             if (canBlock && !hasRolledForBlockChance)
             {
                 hasRolledForBlockChance = true;
                 willBlockDuringThisCombatRotation = RollForOutcomeChance(percentageOfTimeWillBlock);
+            }
+
+            //roll for combo chance
+            if (canPerformCombo && !hasRolledForComboChance)
+            {
+                hasRolledForComboChance = true;
+                aiCharacter.attack.willPerformCombo = RollForOutcomeChance(percentageOfTimeWillPerformCombo);
             }
 
             if (willBlockDuringThisCombatRotation)

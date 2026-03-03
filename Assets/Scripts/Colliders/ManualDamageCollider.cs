@@ -25,6 +25,8 @@ namespace baodeag
             if (charactersDamaged.Contains(damageTarget))
                 return;
 
+            characterCausingDamage.aiCharacterCombatManager.hasHitTargetDuringCombo = true;
+
             charactersDamaged.Add(damageTarget);
 
             TakeDamageEffect damageEffect = Instantiate(WorldCharacterEffectsManager.instance.takeDamageEffect);

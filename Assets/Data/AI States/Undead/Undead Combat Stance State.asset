@@ -18,9 +18,12 @@ MonoBehaviour:
   potentialAttacks:
   - {fileID: 11400000, guid: dfba3f0a36e76c94c81440bec8037005, type: 2}
   - {fileID: 11400000, guid: 1d825cd212a17ac4e9c7449398ead4ca, type: 2}
-  chosenAttack: {fileID: 11400000, guid: 1d825cd212a17ac4e9c7449398ead4ca, type: 2}
-  previousAttack: {fileID: 11400000, guid: 1d825cd212a17ac4e9c7449398ead4ca, type: 2}
-  canPerformCombo: 0
-  chanceToPerformCombo: 25
-  enablePivot: 1
+  chosenAttack: {fileID: 0}
+  previousAttack: {fileID: 0}
+  canPerformCombo: 1
+  percentageOfTimeWillPerformCombo: 100
+  onlyPerformComboIfInitialAttackHits: 1
   maximumEngagementDistance: 5
+  willCircleTarget: 0
+  canBlock: 0
+  percentageOfTimeWillBlock: 75

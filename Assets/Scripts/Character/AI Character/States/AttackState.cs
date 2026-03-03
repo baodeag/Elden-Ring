@@ -29,14 +29,8 @@ namespace baodeag
 
             aiCharacter.characterAnimatorManager.UpdateAnimatorMovementParameters(0, 0, false);
 
-            if (willPerformCombo && !hasPerformedCombo)
-            {
-                if (currentAttack.comboAction != null)
-                {
-                    //hasPerformedCombo = true;
-                    //currentAttack.comboAction.AttemptToPerformAction(aiCharacter);
-                }
-            }
+            //perform a combo
+            PerformCombo(aiCharacter);
 
             if (aiCharacter.isPerformingAction)
                 return this;
@@ -70,6 +64,38 @@ namespace baodeag
 
             hasPerformedAttack = false;
             hasPerformedCombo = false;
+            willPerformCombo = false;
+        }
+
+        protected virtual void PerformCombo(AICharacterManager aiCharacter)
+        {
+            bool canPerformTheCombo = false;
+
+            if (!willPerformCombo)
+                return;
+
+            if (hasPerformedCombo)
+                return;
+
+            if (currentAttack.comboAction == null)
+                return;
+
+            //if we dont need to hit our current target, we will perform the combo anyway
+            if (aiCharacter.aiCharacterCombatManager.canPerformCombo
+                && !aiCharacter.combatStance.onlyPerformComboIfInitialAttackHits)
+                canPerformTheCombo = true;
+
+            //if we do need to hit the target, and we have hit the target, perform the combo
+            if (aiCharacter.aiCharacterCombatManager.canPerformCombo
+                && aiCharacter.combatStance.onlyPerformComboIfInitialAttackHits
+                && aiCharacter.aiCharacterCombatManager.hasHitTargetDuringCombo)
+                canPerformTheCombo = true;
+
+            if (canPerformTheCombo)
+            {
+                hasPerformedCombo = true;
+                currentAttack.comboAction.AttemptToPerformAction(aiCharacter);
+            }
         }
     }
 }

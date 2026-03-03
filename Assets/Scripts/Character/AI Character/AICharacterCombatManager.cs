@@ -20,6 +20,12 @@ namespace baodeag
         [Header("Pivot")]
         public bool enablePivot = true;
 
+        [Header("Combo")]
+        public bool canPerformCombo = false;
+
+        [Header("Hit Check")]
+        public bool hasHitTargetDuringCombo = false; //this is a flag to determine whether or not we hit our target during a combo
+
         [Header("Target Information")]
         public float distanceFromTarget;
         public float viewableAngle;
@@ -203,7 +209,7 @@ namespace baodeag
 
                 if (targetCharacter == null)
                     continue;
-                
+
                 if (targetCharacter == aiCharacter)
                     continue;
 
@@ -217,8 +223,8 @@ namespace baodeag
 
                     if (angleOfPotentialTarget > minimumFOV && angleOfPotentialTarget < maximumFOV)
                     {
-                        if (Physics.Linecast(aiCharacter.characterCombatManager.lockOnTransform.position, 
-                            targetCharacter.characterCombatManager.lockOnTransform.position, 
+                        if (Physics.Linecast(aiCharacter.characterCombatManager.lockOnTransform.position,
+                            targetCharacter.characterCombatManager.lockOnTransform.position,
                             WorldUtilityManager.Instance.GetEnviroLayers()))
                         {
                             Debug.DrawLine(aiCharacter.characterCombatManager.lockOnTransform.position, targetCharacter.characterCombatManager.lockOnTransform.position);
@@ -318,6 +324,19 @@ namespace baodeag
                     actionRecoveryTimer -= Time.deltaTime;
                 }
             }
+        }
+
+        //combo
+        public override void EnableCanDoCombo()
+        {
+            canPerformCombo = true;
+        }
+
+        public override void DisableCanDoCombo()
+        {
+            canPerformCombo = false;
+
+            hasHitTargetDuringCombo = false;
         }
     }
 }

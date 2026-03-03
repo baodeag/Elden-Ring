@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fd14f40868fdd0a4b9ba9fc3481110d9, type: 3}
-  m_Name: Attack 01
+  m_Name: Attack 01 Combo
   m_EditorClassIdentifier: 
-  attackAnimation: Attack_01
+  attackAnimation: Attack_01_Combo
   isParryable: 1
-  comboAction: {fileID: 11400000, guid: 7e9010474fc2d7240b86ae23e9c15630, type: 2}
+  comboAction: {fileID: 0}
   attackType: 0
   attackWeight: 50
   actionRecoveryTime: 1.5
