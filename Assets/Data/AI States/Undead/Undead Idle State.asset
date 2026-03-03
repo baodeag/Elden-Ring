@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f95573d503d01634ab5bd5ca3ae2c2d3, type: 3}
   m_Name: Undead Idle State
   m_EditorClassIdentifier: 
-  idleStateMode: 2
+  idleStateMode: 1
   aiPatrolPath: {fileID: 0}
   hasFoundClosestPointNearCharacterSpawn: 0
   patrolComplete: 0
@@ -23,6 +23,6 @@ MonoBehaviour:
   distanceFromCurrentDestination: 0
   timeBetweenPatrols: 0
   restTimer: 0
-  willInvestigateSound: 0
+  willInvestigateSound: 1
   sleepAnimation: Sleep_01
   wakingAnimation: Wake_01
