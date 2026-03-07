@@ -38,6 +38,7 @@ namespace baodeag
         [Header("Boss Health Bar")]
         public Transform bossHealthBarParent;
         public GameObject bossHealthBarObject;
+        [HideInInspector] public UI_Boss_HP_Bar currentBossHealthBar;
 
         [Header("Crosshair")]
         public GameObject crossHair;
@@ -302,7 +303,7 @@ namespace baodeag
                 Debug.Log("Item has no icon");
                 secondaryProjectileQuickSlotIcon.enabled = false;
                 secondaryProjectileQuickSlotIcon.sprite = null;
-                secondaryProjectileCount.enabled = true;
+                secondaryProjectileCount.enabled = false;
                 return;
             }
 

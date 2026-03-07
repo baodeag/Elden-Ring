@@ -43,6 +43,9 @@ namespace baodeag
             if (!aiCharacter.navMeshAgent.enabled)
                 aiCharacter.navMeshAgent.enabled = true;
 
+            if (aiCharacter.aiCharacterCombatManager.currentTarget.isDead.Value)
+                aiCharacter.aiCharacterCombatManager.SetTarget(null);
+
             if (aiCharacter.aiCharacterCombatManager.enablePivot)
             {
                 if (!aiCharacter.aiCharacterNetworkManager.isMoving.Value)

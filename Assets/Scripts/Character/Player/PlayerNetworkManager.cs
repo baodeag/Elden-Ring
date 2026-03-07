@@ -172,6 +172,15 @@ namespace baodeag
 
             if (player.isDead.Value)
                 player.playerCombatManager.CreateDeadSpot(player.transform.position, player.playerStatsManager.runes);
+
+            if (player.isDead.Value && NetworkManager.Singleton.IsServer)
+            {
+                //remove the boss hp bar from the ui
+                if (PlayerUIManager.instance.playerUIHudManager.currentBossHealthBar != null)
+                    PlayerUIManager.instance.playerUIHudManager.currentBossHealthBar.RemoveHPBar(1f);
+
+                WorldAIManager.instance.DisableAllBossFights();
+            }
         }
 
         public void SetCharacterActionHand(bool rightHandedAction)
@@ -678,7 +687,7 @@ namespace baodeag
 
             //the projectile we are firing
             if (WorldItemDatabase.Instance.GetProjectileByID(projectileID) != null)
-                projectileItem = Instantiate(WorldItemDatabase.Instance.GetProjectileByID(projectileID));
+                projectileItem = WorldItemDatabase.Instance.GetProjectileByID(projectileID);
 
             if (projectileItem == null)
                 return;

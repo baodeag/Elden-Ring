@@ -33,8 +33,6 @@ namespace baodeag
 
         protected virtual void Awake()
         {
-            DontDestroyOnLoad(this);
-
             characterController = GetComponent<CharacterController>();
             animator = GetComponent<Animator>();
             characterNetworkManager = GetComponent<CharacterNetworkManager>();
@@ -54,7 +52,7 @@ namespace baodeag
 
         protected virtual void Update()
         {
-            animator.SetBool("IsGrounded", characterLocomotionManager.isGrounded);
+            animator.SetBool("isGrounded", characterLocomotionManager.isGrounded);
 
             //if this char is being controlled by the local player, update the networked position
             if (IsOwner)
@@ -87,11 +85,11 @@ namespace baodeag
 
         protected virtual void LateUpdate()
         {
-            //if we own this char, handle the camera actions
-            if (IsOwner)
-            {
-                PlayerCamera.instance.HandleAllCameraActions();
-            }
+            ////if we own this char, handle the camera actions
+            //if (IsOwner)
+            //{
+            //    PlayerCamera.instance.HandleAllCameraActions();
+            //}
         }
 
         protected virtual void OnEnable()
@@ -134,7 +132,7 @@ namespace baodeag
 
                 //reset any flags here that need to be reset on death
 
-                if(!manuallySelectDeathAnimation && characterNetworkManager.isBeingCriticallyDamaged.Value)
+                if(!manuallySelectDeathAnimation && !characterNetworkManager.isBeingCriticallyDamaged.Value)
                 {
                     characterAnimatorManager.PlayTargetActionAnimation("Dead_01", true);
                 }

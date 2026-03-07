@@ -196,6 +196,8 @@ namespace baodeag
 
             PlayerUIManager.instance.localPlayer.ReviveCharacter();
 
+            WorldAIManager.instance.ResetAllCharacters();
+
             for (int i = 0; i < WorldObjectManager.instance.sitesOfGrace.Count; i++)
             {
                 if (WorldObjectManager.instance.sitesOfGrace[i].siteOfGraceID == WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt)

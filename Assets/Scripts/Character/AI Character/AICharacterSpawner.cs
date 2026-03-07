@@ -87,6 +87,14 @@ namespace baodeag
             }
 
             aiCharacter.characterUIManager.ResetCharacterHPBar();
+
+            if (aiCharacter is AIBossCharacterManager)
+            {
+                AIBossCharacterManager boss = aiCharacter as AIBossCharacterManager;
+                boss.aiCharacterNetworkManager.isAwake.Value = false;
+                boss.sleepState.hasBeenAwakened = boss.hasBeenAwakened.Value;
+                boss.currentState = boss.currentState.SwitchState(boss, boss.sleepState);
+            }
         }
     }
 }

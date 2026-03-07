@@ -36,7 +36,7 @@ namespace baodeag
         [SerializeField] CombatStanceState phase02CombatStanceState;
 
         [Header("States")]
-        [SerializeField] BossSleepState sleepState;
+        public BossSleepState sleepState;
 
         protected override void Awake()
         {
@@ -67,6 +67,7 @@ namespace baodeag
                 {
                     hasBeenDefeated.Value = WorldSaveGameManager.instance.currentCharacterData.bossesDefeated[bossID];
                     hasBeenAwakened.Value = WorldSaveGameManager.instance.currentCharacterData.bossesAwakened[bossID];
+                    sleepState.hasBeenAwakened = hasBeenAwakened.Value;
                 }
 
                 StartCoroutine(GetFogWallsFromWorldObjectManager());
@@ -172,6 +173,7 @@ namespace baodeag
 
                 bossFightIsActive.Value = true;
                 hasBeenAwakened.Value = true;
+                aiCharacterNetworkManager.isAwake.Value = true;
                 currentState = idle;
 
                 if (!WorldSaveGameManager.instance.currentCharacterData.bossesAwakened.ContainsKey(bossID))
@@ -199,10 +201,11 @@ namespace baodeag
 
                 //create  a hp bar for each boss that is in the fight
                 GameObject bossHealthBar =
-                    Instantiate(PlayerUIManager.instance.playerUIHudManager.bossHealthBarObject, PlayerUIManager.instance.playerUIHudManager.bossHealthBarParent);
+                Instantiate(PlayerUIManager.instance.playerUIHudManager.bossHealthBarObject, PlayerUIManager.instance.playerUIHudManager.bossHealthBarParent);
 
                 UI_Boss_HP_Bar bossHPBar = bossHealthBar.GetComponentInChildren<UI_Boss_HP_Bar>();
                 bossHPBar.EnableBossHPBar(this);
+                PlayerUIManager.instance.playerUIHudManager.currentBossHealthBar = bossHPBar;
             }
             else
             {
