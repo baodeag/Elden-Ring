@@ -338,5 +338,22 @@ namespace baodeag
 
             hasHitTargetDuringCombo = false;
         }
+
+        //evasion
+        public virtual void PerformEvasion()
+        {
+            if (currentTarget == null)
+                return;
+
+            if (distanceFromTarget > 5)
+                return;
+
+            aiCharacter.aiCharacterNetworkManager.isInvulnerable.Value = true;
+            aiCharacter.characterAnimatorManager.PlayTargetActionAnimation("Evade_01", true);
+            Vector3 directionToDodge = Random.insideUnitSphere.normalized;
+            directionToDodge.y = 0;
+
+            aiCharacter.transform.rotation = Quaternion.LookRotation(directionToDodge);
+        }
     }
 }

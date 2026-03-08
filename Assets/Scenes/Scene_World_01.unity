@@ -27054,7 +27054,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2076382501041996191, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
       propertyPath: hasPatrolPath
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2076382501041996191, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
       propertyPath: manuallySetStats
@@ -27063,7 +27063,7 @@ PrefabInstance:
     - target: {fileID: 2076382501041996191, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
       propertyPath: characterGameObject
       value: 
-      objectReference: {fileID: 6944900050668453464, guid: fa5635c953acd49479ed91b42d7d4af0, type: 3}
+      objectReference: {fileID: 3337088047118750431, guid: 5a4f6aa839506e3478df557f307cdd7a, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

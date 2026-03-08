@@ -219,5 +219,39 @@ namespace baodeag
             combatStance = Instantiate(phase02CombatStanceState);
             currentState = combatStance;
         }
+
+        public override void ActivateCharacter(PlayerManager player)
+        {
+            if (hasBeenDefeated.Value)
+            {
+                DeactivateCharacter(player);
+                return;
+            }
+
+            aiCharacterCombatManager.AddPlayerToPlayersWithinRange(player);
+
+            if (player.IsLocalPlayer)
+            {
+
+            }
+
+            if (beacon != null)
+            {
+                beacon.gameObject.transform.position = transform.position;
+                beacon.gameObject.SetActive(true);
+            }
+
+            if (!NetworkManager.Singleton.IsHost)
+                return;
+
+            if (aiCharacterCombatManager.playersWithinActivationRange.Count > 0)
+            {
+                aiCharacterNetworkManager.isActive.Value = true;
+            }
+            else
+            {
+                aiCharacterNetworkManager.isActive.Value = false;
+            }
+        }
     }
 }

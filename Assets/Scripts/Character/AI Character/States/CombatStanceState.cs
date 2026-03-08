@@ -35,6 +35,13 @@ namespace baodeag
         private bool hasRolledForBlockChance = false;
         private bool willBlockDuringThisCombatRotation = false;
 
+        [Header("Evasion")]
+        [SerializeField] bool canEvade = false;
+        [SerializeField] int percentageOfTimeWillEvade = 75;
+        private bool hasEvaded = false;
+        private bool hasRolledForEvasionChance = false;
+        private bool willEvadeDuringThisCombatRotation = false;
+
         public override AIState Tick(AICharacterManager aiCharacter)
         {
             if (aiCharacter.isPerformingAction)
@@ -70,6 +77,13 @@ namespace baodeag
                 willBlockDuringThisCombatRotation = RollForOutcomeChance(percentageOfTimeWillBlock);
             }
 
+            //roll for evasion chance
+            if (canEvade && !hasRolledForEvasionChance)
+            {
+                hasRolledForEvasionChance = true;
+                willEvadeDuringThisCombatRotation = RollForOutcomeChance(percentageOfTimeWillEvade);
+            }
+
             //roll for combo chance
             if (canPerformCombo && !hasRolledForComboChance)
             {
@@ -80,6 +94,13 @@ namespace baodeag
             if (willBlockDuringThisCombatRotation)
                 aiCharacter.aiCharacterNetworkManager.isBlocking.Value = true;
 
+            if (willEvadeDuringThisCombatRotation && aiCharacter.aiCharacterCombatManager.currentTarget.characterNetworkManager.isAttacking.Value && !hasEvaded)
+            {
+                hasEvaded = true;
+                aiCharacter.aiCharacterCombatManager.PerformEvasion();
+            }
+
+            //if we dont have an attack, get one
             if (!hasAttack)
             {
                 GetNewAttack(aiCharacter);
@@ -201,6 +222,8 @@ namespace baodeag
             base.ResetStateFlags(aiCharacter);
 
             hasAttack = false;
+            hasEvaded = false;
+            hasRolledForEvasionChance = false;
             hasRolledForComboChance = false;
             hasRolledForBlockChance = false;
             hasChoosenCirclePath = false;
