@@ -13,14 +13,29 @@ namespace baodeag
         //loaded scenes
         public List<Scene> loadedScenes = new List<Scene>();
 
+        //do not unload
+        public List<string> doNotUnLoadList = new List<string>();
+
         //qued scenes
         private List<string> quedSceneIDs = new List<string>();
-        private int quedSceneToLoad = 0;
-        private Coroutine loadingAdditiveSceneCoroutine;
+        private List<string> quedUnloadSceneIDs = new List<string>();
+        private int quedScenesToLoad = 0;
+        private int quedScenesToUnload = 0;
+        private Coroutine loadingAdditiveScenesCoroutine;
+        private Coroutine unloadAdditiveScenesCoroutine;
 
         //loading status
         private bool sceneIsLoading = false;
         private bool sceneIsUnloading = false;
+
+        [Header("Scene ID")]
+        public string world = "World_01";
+        public string area_01_Subarea_00 = "Area_01_Subarea_00";
+        public string area_01_Subarea_01 = "Area_01_Subarea_01";
+        public string area_01_Subarea_02 = "Area_01_Subarea_02";
+        public string area_01_Subarea_03 = "Area_01_Subarea_03";
+        public string area_01_Subarea_04 = "Area_01_Subarea_04";
+        public string area_01_Subarea_05 = "Area_01_Subarea_05";
 
         private void Awake()
         {
@@ -60,24 +75,30 @@ namespace baodeag
                 case SceneEventType.Load:
                     sceneIsLoading = true;
                     break;
+
                 case SceneEventType.Unload:
                     sceneIsUnloading = true;
                     break;
+
                 case SceneEventType.Synchronize:
                     break;
+
                 case SceneEventType.ReSynchronize:
                     break;
+
                 case SceneEventType.LoadEventCompleted:
                     break;
+
                 case SceneEventType.UnloadEventCompleted:
                     sceneIsUnloading = false;
                     break;
+
                 case SceneEventType.LoadComplete:
                     //called when the scene is finished loading, add it to the list of loaded scenes
                     loadedScenes.Add(sceneEvent.Scene); 
                     
                     //clear the list ids of the scenes to load count it 0
-                    if (quedSceneToLoad <= 0)
+                    if (quedScenesToLoad <= 0)
                         quedSceneIDs.Clear();
 
                     //double check loaded scenes to make sure they are loaded, if not remove them from the loaded list
@@ -89,18 +110,35 @@ namespace baodeag
 
                     sceneIsLoading = false;
                     break;
+
                 case SceneEventType.UnloadComplete:
+                    if (quedScenesToUnload <= 0)
+                        quedUnloadSceneIDs.Clear();
+
+                    for(int i = 0; i < loadedScenes.Count; i++)
+                    {
+                        if (!loadedScenes[i].isLoaded)
+                            loadedScenes.RemoveAt(i);
+                    }
+
+                    sceneIsUnloading = false;
                     break;
+
                 case SceneEventType.SynchronizeComplete:
                     break;
+
                 case SceneEventType.ActiveSceneChanged:
                     break;
+
                 case SceneEventType.ObjectSceneChanged:
                     break;
+
                 default:
                     break;
             }
         }
+
+        //scene loading
 
         //used to load our main world scene
         public void LoadWorldScene(int buildIndex)
@@ -146,12 +184,12 @@ namespace baodeag
                 quedSceneIDs.Add(scenesToLoad[i]);
             }
 
-            quedSceneToLoad = quedSceneIDs.Count;
+            quedScenesToLoad = quedSceneIDs.Count;
 
-            if (loadingAdditiveSceneCoroutine != null)
-                StopCoroutine(loadingAdditiveSceneCoroutine);
+            if (loadingAdditiveScenesCoroutine != null)
+                StopCoroutine(loadingAdditiveScenesCoroutine);
 
-            loadingAdditiveSceneCoroutine = StartCoroutine(LoadAdditiveScenesCoroutine());
+            loadingAdditiveScenesCoroutine = StartCoroutine(LoadAdditiveScenesCoroutine());
         }
 
         private IEnumerator LoadAdditiveScenesCoroutine()
@@ -169,15 +207,80 @@ namespace baodeag
 
                 //sort through a qued list of scenes, and load them one by one
                 LoadAdditiveScene(quedSceneIDs[i]);
-                quedSceneToLoad--;
+                quedScenesToLoad--;
 
                 yield return new WaitForFixedUpdate();
             }
 
-            quedSceneToLoad = 0;
-            loadingAdditiveSceneCoroutine = null;
+            quedScenesToLoad = 0;
+            loadingAdditiveScenesCoroutine = null;
 
             yield return null;
+        }
+
+        //scene unloading
+
+        //used to unload additive scenes in main world scene
+        private void UnloadAdditiveScene(string sceneName)
+        {
+            if (!NetworkManager.Singleton.IsServer)
+                return;
+
+            //check the do not unload list, because another player may still need a specific scene loaded from thei pov
+            for (int i = 0; i < doNotUnLoadList.Count; i++)
+            {
+                if (sceneName == doNotUnLoadList[i])
+                    return;
+            }
+
+            for (int i = 0; i < loadedScenes.Count; i++)
+            {
+                if (loadedScenes[i] == null)
+                    continue;
+
+                if (loadedScenes[i].name == sceneName && loadedScenes[i].isLoaded)
+                {
+                    var sceneLoad = NetworkManager.SceneManager.UnloadScene(loadedScenes[i]);
+                    break;
+                }
+            }
+        }
+
+        public void UnloadAdditiveScenes(List<string> sceneList)
+        {
+            if (!NetworkManager.Singleton.IsServer)
+                return;
+
+            for (int i = 0; i < sceneList.Count; i++)
+            {
+                quedUnloadSceneIDs.Add(sceneList[i]);
+            }
+
+            quedScenesToUnload = quedUnloadSceneIDs.Count;
+
+            if (unloadAdditiveScenesCoroutine != null)
+                StopCoroutine(unloadAdditiveScenesCoroutine);
+
+            unloadAdditiveScenesCoroutine = StartCoroutine(UnloadAdditiveScenesCoroutine());
+        }
+
+        private IEnumerator UnloadAdditiveScenesCoroutine()
+        {
+            for (int i = 0; i < quedUnloadSceneIDs.Count; i++)
+            {
+                while (sceneIsLoading || sceneIsUnloading)
+                {
+                    yield return new WaitForFixedUpdate();
+                }
+
+                UnloadAdditiveScene(quedUnloadSceneIDs[i]);
+                quedScenesToUnload--;
+
+                yield return null;
+            }
+
+            quedScenesToUnload = 0;
+            unloadAdditiveScenesCoroutine = null;
         }
     }
 }
