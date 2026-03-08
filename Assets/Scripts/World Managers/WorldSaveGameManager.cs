@@ -301,7 +301,7 @@ namespace baodeag {
 
             SaveGame();
 
-            LoadWorldScene(worldSceneIndex);
+            WorldSceneManager.instance.LoadWorldScene(worldSceneIndex);
         }
 
         public void LoadGame()
@@ -315,7 +315,7 @@ namespace baodeag {
             saveFileDataWriter.saveFilename = saveFileName;
             currentCharacterData = saveFileDataWriter.LoadSaveFile();
 
-            LoadWorldScene(worldSceneIndex);
+            WorldSceneManager.instance.LoadWorldScene(worldSceneIndex);
         }
 
         public void SaveGame()
@@ -379,15 +379,6 @@ namespace baodeag {
 
             saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlot.CharacterSlot_10);
             characterSlots10 = saveFileDataWriter.LoadSaveFile();
-        }
-
-        public void LoadWorldScene(int buildIndex)
-        {
-            PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
-            string worldScene = SceneUtility.GetScenePathByBuildIndex(buildIndex);
-            NetworkManager.Singleton.SceneManager.LoadScene(worldScene, LoadSceneMode.Single);
-
-            player.LoadGameDataFromCurrentCharacterData(ref currentCharacterData);
         }
 
         public int GetWorldSceneIndex()
