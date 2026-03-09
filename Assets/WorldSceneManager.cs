@@ -47,6 +47,8 @@ namespace baodeag
             {
                 Destroy(gameObject);
             }
+
+            DontDestroyOnLoad(gameObject);
         }
 
         public override void OnNetworkSpawn()
@@ -173,7 +175,7 @@ namespace baodeag
         }
 
         //used to load multiple additive scenes at once when entering new area
-        public void LoadAdditiveScene(List<string> scenesToLoad)
+        public void LoadAdditiveScenes(List<string> scenesToLoad)
         {
             if (!NetworkManager.IsServer)
                 return;
@@ -281,6 +283,28 @@ namespace baodeag
 
             quedScenesToUnload = 0;
             unloadAdditiveScenesCoroutine = null;
+        }
+
+        public void CheckForUnrequiredScenes()
+        {
+            List<string> scenesToUnload = new List<string>();
+
+            //get all currently loaded scenes
+            for (int i = 0; i < loadedScenes.Count; i++)
+            {
+                scenesToUnload.Add(loadedScenes[i].name);
+            }
+
+            doNotUnLoadList = WorldSubsceneManager.instance.GenerateDoNotUnloadListBasedOnPlayerLocations();
+
+            //compare all loaded scenes
+            for (int i = 0; i < scenesToUnload.Count; i++)
+            {
+                if (doNotUnLoadList.Contains(scenesToUnload[i]))
+                    scenesToUnload.Remove(scenesToUnload[i]);
+            }
+
+            UnloadAdditiveScenes(scenesToUnload);
         }
     }
 }

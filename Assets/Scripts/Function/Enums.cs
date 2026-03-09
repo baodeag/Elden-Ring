@@ -171,3 +171,14 @@ public enum IdleStateMode
     Patrol,
     Sleep
 }
+
+//scenes 
+public enum WorldSceneLocation
+{
+    Area01_Subarea00,
+    Area01_Subarea01,
+    Area01_Subarea02,
+    Area01_Subarea03,
+    Area01_Subarea04,
+    Area01_Subarea05
+}
