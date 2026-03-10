@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace baodeag
@@ -32,7 +33,11 @@ namespace baodeag
         [SerializeField] float slopeSlideSpeedMultiplier = 3;
         [SerializeField] float slipperySurfaceMaxAngle = 15;
         private bool isSliding = false;
+        private bool isSlidingOffCharacter = false;
+        private Coroutine slideOffCharacterCoroutine;
         private bool slideUntilGrounded = false;
+        [SerializeField] float characterSlideOffHeadCollisionMaxDistanceCheck = 5;
+        [SerializeField] float characterCollisionCheckSphereMultiplier = 1.5f;
 
         protected virtual void Awake()
         {
@@ -72,9 +77,37 @@ namespace baodeag
             character.characterController.Move(yVelocity * Time.deltaTime);
         }
 
+        protected void OnControllerColliderHit(ControllerColliderHit hit)
+        {
+            //if player hit a collider whilist in the air, it will slide until grounded on any step colliders
+            if (!isGrounded)
+                slideUntilGrounded = true;
+        }
+
         protected void HandleGroundCheck()
         {
-            isGrounded = Physics.CheckSphere(character.transform.position, groundCheckSphereRadius, groundLayer);
+            if (isGrounded)
+            {
+                isGrounded = Physics.CheckSphere(character.transform.position, groundCheckSphereRadius, groundLayer, QueryTriggerInteraction.Ignore);
+
+                if (!isGrounded)
+                    OnIsNotGrounded();
+            }
+            else
+            {
+                isGrounded = Physics.CheckSphere(character.transform.position, groundCheckSphereRadius, groundLayer, QueryTriggerInteraction.Ignore);
+
+                //if player are jumping or gaining height, player is not grounded
+                if (yVelocity.y > 0)
+                {
+                    isGrounded = false;
+                    return;
+                }
+
+                if (isGrounded)
+                    OnIsGrounded();
+            }
+
         }
 
         //draws our ground check sphere in editor
@@ -177,9 +210,29 @@ namespace baodeag
                 if (yVelocity.y <= 0 && !isSliding)
                     yVelocity.y = groundedYVelocity;
             }
-            else
+            else if (!isGrounded && !isSlidingOffCharacter)
             {
-                //handle sliding off a character
+                Collider[] characterColliders = 
+                    Physics.OverlapSphere(transform.position, 
+                    groundCheckSphereRadius * characterCollisionCheckSphereMultiplier, 
+                    WorldUtilityManager.Instance.GetCharacterLayers());
+
+                for (int i = 0; i < characterColliders.Length; i++)
+                {
+                    if (characterColliders[i].gameObject.transform.root == character.gameObject.transform.root)
+                        continue;
+
+                    CharacterController controller = characterColliders[i].GetComponent<CharacterController>();
+
+                    if (controller == null)
+                        continue;
+
+                    if ((controller.collisionFlags & CollisionFlags.CollidedBelow) != 0)
+                    {
+                        isSlidingOffCharacter = true;
+                        SlideOffCharacter();
+                    }
+                }
             }
 
             if (!character.characterController.enabled)
@@ -196,6 +249,53 @@ namespace baodeag
                     character.transform.position = character.characterNetworkManager.networkPosition.Value;
                 }
             }
+        }
+
+        //character sliding
+        protected virtual void SlideOffCharacter()
+        {
+            if (slideOffCharacterCoroutine != null) 
+                StopCoroutine(slideOffCharacterCoroutine);
+
+            slideOffCharacterCoroutine = StartCoroutine(SlideOffCharacterCoroutine());
+        }
+
+        protected virtual IEnumerator SlideOffCharacterCoroutine()
+        {
+            while (!isGrounded)
+            {
+                if (Physics.SphereCast(character.transform.position, 
+                    groundCheckSphereRadius, Vector3.down, out RaycastHit hitInfo, 
+                    characterSlideOffHeadCollisionMaxDistanceCheck,
+                    WorldUtilityManager.Instance.GetCharacterLayers()))
+                {
+                    Vector3 characterSlideVelocity = Vector3.ProjectOnPlane(new Vector3(0, yVelocity.y, 0), hitInfo.normal);
+                    yVelocity.y += WorldUtilityManager.Instance.slopeSlideForce * Time.deltaTime;
+                    Vector3 slideVelocity = characterSlideVelocity;
+
+                    if (character.characterController.enabled)
+                        character.characterController.Move(slideVelocity * Time.deltaTime);
+
+                    yield return null;
+                }
+
+                yield return null;
+            }
+
+            isSlidingOffCharacter = false;
+
+            yield return null;
+        }
+
+        //on is/not grounded
+        protected virtual void OnIsGrounded()
+        {
+            slideUntilGrounded = false;
+        }
+
+        protected virtual void OnIsNotGrounded()
+        {
+
         }
     }
 }

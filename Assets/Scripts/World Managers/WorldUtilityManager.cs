@@ -24,6 +24,8 @@ namespace baodeag
             {
                 Destroy(gameObject);
             }
+
+            DontDestroyOnLoad(gameObject);
         }
 
         public LayerMask GetCharacterLayers()
