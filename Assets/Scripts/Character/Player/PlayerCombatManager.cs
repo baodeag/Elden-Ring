@@ -285,6 +285,15 @@ namespace baodeag
                 case AttackType.DualRunAttack:
                     staminaDeducted = currentWeaponBeingUsed.baseStaminaCost * currentWeaponBeingUsed.lightAttackStaminaCostMultiplier;
                     break;
+                case AttackType.DualJumpAttack:
+                    staminaDeducted = currentWeaponBeingUsed.baseStaminaCost * currentWeaponBeingUsed.lightAttackStaminaCostMultiplier;
+                    break;
+                case AttackType.DualRollAttack:
+                    staminaDeducted = currentWeaponBeingUsed.baseStaminaCost * currentWeaponBeingUsed.lightAttackStaminaCostMultiplier;
+                    break;
+                case AttackType.DualBackstepAttack:
+                    staminaDeducted = currentWeaponBeingUsed.baseStaminaCost * currentWeaponBeingUsed.lightAttackStaminaCostMultiplier;
+                    break;
                 default:
                     break;
             }

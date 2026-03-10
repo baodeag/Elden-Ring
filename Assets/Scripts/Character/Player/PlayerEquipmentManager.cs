@@ -1195,7 +1195,7 @@ namespace baodeag
             
             backSlot.PlaceWeaponModelInUnequippedSlot(rightHandWeaponModel, player.playerInventoryManager.currentRightHandWeapon.weaponClass, player);
             
-            leftHandWeaponSlot.PlaceWeaponModelIntoSlot(leftHandWeaponModel);
+            rightHandWeaponSlot.PlaceWeaponModelIntoSlot(leftHandWeaponModel);
 
             rightWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentRightHandWeapon);
             leftWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentLeftHandWeapon);
