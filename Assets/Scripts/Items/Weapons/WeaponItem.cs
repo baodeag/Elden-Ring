@@ -44,6 +44,12 @@ namespace baodeag
         public float running_Attack_01_Modifier = 1.1f;
         public float rolling_Attack_01_Modifier = 1.1f;
         public float backstep_Attack_01_Modifier = 1.1f;
+        public float dw_Attack_01_Modifier = 0.77f;
+        public float dw_Attack_02_Modifier = 0.87f;
+        public float dw_Jump_Attack_01_Modifier = 1.27f;
+        public float dw_Run_Attack_01_Modifier = 0.75f;
+        public float dw_Roll_Attack_01_Modifier = 0.72f;
+        public float dw_Backstep_Attack_01_Modifier = 0.77f;
 
 
         [Header("Stamina Cost Modifiers")]

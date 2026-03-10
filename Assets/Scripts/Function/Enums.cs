@@ -145,7 +145,14 @@ public enum AttackType
     RollingAttack01,
     BackstepAttack01,
     LightJumpingAttack01,
-    HeavyJumpingAttack01
+    HeavyJumpingAttack01,
+    DualAttack01,
+    DualAttack02,
+    DualJumpAttack,
+    DualRunAttack,
+    DualRollAttack,
+    DualBackstepAttack
+
 }
 
 public enum DamageIntensity

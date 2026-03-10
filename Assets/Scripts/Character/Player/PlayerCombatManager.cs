@@ -18,6 +18,7 @@ namespace baodeag
 
         [Header("Flags")]
         public bool canComboWithMainHandWeapon = false;
+        public bool canComboWithOffHandWeapon = false;
         public bool isUsingItem = false;
 
         protected override void Awake()
@@ -275,6 +276,15 @@ namespace baodeag
                 case AttackType.BackstepAttack01:
                     staminaDeducted = currentWeaponBeingUsed.baseStaminaCost * currentWeaponBeingUsed.backstepAttackStaminaCostMultiplier;
                     break;
+                case AttackType.DualAttack01:
+                    staminaDeducted = currentWeaponBeingUsed.baseStaminaCost * currentWeaponBeingUsed.lightAttackStaminaCostMultiplier;
+                    break;
+                case AttackType.DualAttack02:
+                    staminaDeducted = currentWeaponBeingUsed.baseStaminaCost * currentWeaponBeingUsed.lightAttackStaminaCostMultiplier;
+                    break;
+                case AttackType.DualRunAttack:
+                    staminaDeducted = currentWeaponBeingUsed.baseStaminaCost * currentWeaponBeingUsed.lightAttackStaminaCostMultiplier;
+                    break;
                 default:
                     break;
             }
@@ -302,14 +312,14 @@ namespace baodeag
             }
             else
             {
-
+                player.playerCombatManager.canComboWithOffHandWeapon = true;
             }
         }
 
         public override void DisableCanDoCombo()
         {
             player.playerCombatManager.canComboWithMainHandWeapon = false;
-
+            player.playerCombatManager.canComboWithOffHandWeapon = false;
         }
 
         //projectile

@@ -1233,6 +1233,28 @@ namespace baodeag
             }
         }
 
+        public void OpenMainHandDamageCollider()
+        {
+            rightWeaponManager.meleeDamageCollider.EnableDamageCollider();
+            player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(player.playerInventoryManager.currentRightHandWeapon.whooshes));
+        }
+
+        public void CloseMainHandDamageCollider()
+        {
+            rightWeaponManager.meleeDamageCollider.DisableDamageCollider();
+        }
+
+        public void OpenOffHandDamageCollider()
+        {
+            leftWeaponManager.meleeDamageCollider.EnableDamageCollider();
+            player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(player.playerInventoryManager.currentLeftHandWeapon.whooshes));
+        }
+
+        public void CloseOffHandDamageCollider()
+        {
+            leftWeaponManager.meleeDamageCollider.DisableDamageCollider();
+        }
+
         //unique weapons
         public void UnHideWeapons()
         {
