@@ -41,6 +41,7 @@ namespace baodeag
                 character.characterNetworkManager.isRipostable.Value = false;
                 character.characterNetworkManager.isBeingCriticallyDamaged.Value = false;
                 character.characterNetworkManager.isParrying.Value = false;
+                character.characterNetworkManager.isRolling.Value = false;
             }
         }
 

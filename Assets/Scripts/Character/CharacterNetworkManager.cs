@@ -96,7 +96,10 @@ namespace baodeag
             (false,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
-
+        public NetworkVariable<bool> isRolling = new NetworkVariable<bool>
+            (false, 
+            NetworkVariableReadPermission.Everyone, 
+            NetworkVariableWritePermission.Owner);
 
         [Header("Resources")]
         public NetworkVariable<int> currentHealth = new NetworkVariable<int>
@@ -108,11 +111,11 @@ namespace baodeag
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
         public NetworkVariable<float> currentStamina = new NetworkVariable<float>
-            (0,
+            (100,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
         public NetworkVariable<int> maxStamina = new NetworkVariable<int>
-            (0,
+            (100,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
         public NetworkVariable<int> currentFocusPoints = new NetworkVariable<int>
@@ -126,31 +129,31 @@ namespace baodeag
 
         [Header("Stats")]
         public NetworkVariable<int> vigor = new NetworkVariable<int>
-            (1,
+            (10,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
         public NetworkVariable<int> endurance = new NetworkVariable<int>
-            (1,
+            (10,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
         public NetworkVariable<int> mind = new NetworkVariable<int>
-            (1,
+            (10,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
         public NetworkVariable<int> strength = new NetworkVariable<int>
-            (1,
+            (10,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
         public NetworkVariable<int> dexterity = new NetworkVariable<int>
-            (1,
+            (10,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
         public NetworkVariable<int> intelligence = new NetworkVariable<int>
-            (1,
+            (10,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
         public NetworkVariable<int> faith = new NetworkVariable<int>
-            (1,
+            (10,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
 

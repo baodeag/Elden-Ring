@@ -25,13 +25,15 @@ namespace baodeag
         [SerializeField] AudioClip[] brokenSFX;
 
         [Header("Instantiated Broken Object")]
-        private GameObject brokenObjectPrefab;
+        [SerializeField] private GameObject brokenObjectPrefab;
         private GameObject instantiatedBrokenObject;
 
         [Header("On Break Settings")]
         [SerializeField] bool addForceOnBreak = false;
         [SerializeField] float addedExplosionDebrisForce = 350;
         [SerializeField] float addedForceDebrisRadius = 5;
+        [SerializeField] float addedTorqueForceMinimum = 250;
+        [SerializeField] float addedTorqueForceMaximum = 500;
 
         private void Awake()
         {
@@ -86,7 +88,7 @@ namespace baodeag
             if (player != null)
             {
                 //check for rolling and jumping
-                if (player.playerNetworkManager.isJumping.Value)
+                if (player.playerNetworkManager.isJumping.Value || player.playerNetworkManager.isRolling.Value)
                     BreakObject();
             }
 
@@ -105,15 +107,20 @@ namespace baodeag
             BreakObjectServerRpc();
         }
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         private void BreakObjectServerRpc()
         {
-
+            if (IsServer)
+                isBroken.Value = true;
         }
 
         private void OnIsBrokenChanged(bool oldStatus, bool newStatus)
         {
+            if (isBroken.Value && !isBrokenLocal)
+                PlayBreakFX();
 
+            if (!isBroken.Value && instantiatedBrokenObject != null)
+                Destroy(instantiatedBrokenObject);
         }
 
         private void PlayBreakFX()
@@ -133,24 +140,49 @@ namespace baodeag
                 {
                     rigidbodies[i].AddExplosionForce(addedExplosionDebrisForce, rigidbodies[i].transform.position, addedForceDebrisRadius);
                     Vector3 torqueDirection = Random.onUnitSphere;
-                    rigidbodies[i].AddTorque(torqueDirection * Random.Range(addedForceDebrisRadius, addedForceDebrisRadius * 1.5f), ForceMode.Force);
+                    rigidbodies[i].AddTorque(torqueDirection * Random.Range(addedTorqueForceMinimum, addedTorqueForceMaximum), ForceMode.Impulse);
                 }
             }
+
+            ToggleMeshRenderers(false);
+            ToggleMeshColliders(false);
+
+            if (audioSource == null)
+                return;
+
+            audioSource.PlayOneShot(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(brokenSFX));
         }
 
         private void OnNetworkPositionChanged(Vector3 oldPosition, Vector3 newPosition)
         {
-
+            transform.position = newPosition;
         }
 
-        private void OnNetworkRotationChanged(Quaternion oldPosition, Quaternion newPosition)
+        private void OnNetworkRotationChanged(Quaternion oldRotation, Quaternion newRotation)
         {
-
+            transform.rotation = newRotation;
         }
 
         private void ToggleMeshRenderers(bool status)
         {
+            for (int i = 0; i < meshRenderers.Length; i++)
+            {
+                if (meshRenderers[i] == null)
+                    continue;
 
+                meshRenderers[i].enabled = status;
+            }
+        }
+
+        private void ToggleMeshColliders(bool status)
+        {
+            for (int i = 0; i < meshColliders.Length; i++)
+            {
+                if (meshColliders[i] == null)
+                    continue;
+
+                meshColliders[i].enabled = status;
+            }
         }
     }
 }

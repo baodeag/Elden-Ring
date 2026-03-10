@@ -278,6 +278,9 @@ namespace baodeag
             if(player.playerNetworkManager.currentStamina.Value <= 0)
                 return;
 
+            if (player.IsOwner)
+                player.playerNetworkManager.isRolling.Value = true;
+
             //if we are moving when we attempt to dodge, we perform a roll
             if (PlayerInputManager.instance.moveAmount > 0)
             {
