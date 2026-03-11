@@ -13,6 +13,7 @@ namespace baodeag
         [HideInInspector] public AICharacterNetworkManager aiCharacterNetworkManager;
         [HideInInspector] public AICharacterLocomotionManager aiCharacterLocomotionManager;
         [HideInInspector] public AICharacterInventoryManager aiCharacterInventoryManager;
+        [HideInInspector] public AICharacterSoundFXManager aiCharacterSoundFXManager;
 
         [Header("Nav Mesh Agent")]
         public NavMeshAgent navMeshAgent;
@@ -38,6 +39,7 @@ namespace baodeag
             aiCharacterNetworkManager = GetComponent<AICharacterNetworkManager>();
             aiCharacterLocomotionManager = GetComponent<AICharacterLocomotionManager>();
             aiCharacterInventoryManager = GetComponent<AICharacterInventoryManager>();
+            aiCharacterSoundFXManager = GetComponent<AICharacterSoundFXManager>();
 
             navMeshAgent = GetComponentInChildren<NavMeshAgent>();
         }
@@ -178,12 +180,6 @@ namespace baodeag
 
             }
 
-            if (beacon != null)
-            {
-                beacon.gameObject.transform.position = transform.position;
-                beacon.gameObject.SetActive(true);
-            }
-
             if (!NetworkManager.Singleton.IsHost)
                 return;
 
@@ -204,6 +200,12 @@ namespace baodeag
             if (player.IsLocalPlayer)
             {
 
+            }
+
+            if (beacon != null)
+            {
+                beacon.gameObject.transform.position = transform.position;
+                beacon.gameObject.SetActive(true);
             }
 
             if (!NetworkManager.Singleton.IsHost)

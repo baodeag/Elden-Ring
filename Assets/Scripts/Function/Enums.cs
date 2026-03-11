@@ -37,6 +37,12 @@ public enum CharacterAttribute
     Faith
 }
 
+public enum CharacterDialogueID
+{
+    NoDialogueID,
+    NamelessKnightDialogueID
+}
+
 public enum WeaponModelSlot 
 {
     RightHand,
