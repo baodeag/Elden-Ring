@@ -26,10 +26,7 @@ namespace baodeag
             }
 
             if (NetworkManager.Singleton.IsServer)
-            {
                 WorldSaveGameManager.instance.SaveGame();
-                //close all pop up windows
-            }
 
             aiCharacter.aiCharacterSoundFXManager.PlayCurrentDialogueEvent();
         }

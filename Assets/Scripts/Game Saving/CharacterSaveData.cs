@@ -100,6 +100,9 @@ namespace baodeag
         public List<int> handEquipmentInInventory;
         public List<int> legEquipmentInInventory;
 
+        [Header("Dialogue")]
+        public int namelessKnightStageID = 0;
+
         //this will change when we add multiple spells
         public int currentSpell;
 

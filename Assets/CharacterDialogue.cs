@@ -7,6 +7,9 @@ namespace baodeag
     [CreateAssetMenu(menuName = "A.I/Dialogue")]
     public class CharacterDialogue : ScriptableObject
     {
+        [Header("Dialogue Requirements")]
+        public int requiredStageID = 0;
+
         [Header("Greeting Dialogue")]
         [TextArea] public List<string> greetingDialogueString = new List<string>();
         public List<AudioClip> greetingDialogueAudio = new List<AudioClip>();
@@ -20,6 +23,11 @@ namespace baodeag
         [Header("End Triggers")]
         [SerializeField] bool setStageIndex = false;
         [SerializeField] int stageID = 0;
+
+        [Header("Farewell Dialogue")]
+        [TextArea] public List<string> farewellDialogueString = new List<string>();
+        public List<AudioClip> farewellDialogueAudio = new List<AudioClip>();
+        private bool farewellHasPlayed = false;
 
         public void PlayDialogueEvent(AICharacterManager aiCharacter)
         {
@@ -45,12 +53,22 @@ namespace baodeag
                 yield return new WaitForSeconds(greetingDialogueAudio[randomGreetingDialogueIndex].length);
             } 
 
-            while (dialogueIndex < dialogueAudio.Count)
+            while (dialogueIndex < dialogueString.Count)
             {
                 PlayerUIManager.instance.playerUIPopUpManager.SetDialoguePopUpSubtitles(dialogueString[dialogueIndex]);
                 aiCharacter.aiCharacterSoundFXManager.PlaySoundFX(dialogueAudio[dialogueIndex]);
-                dialogueIndex++;
                 yield return new WaitForSeconds(dialogueAudio[dialogueIndex].length + 1);
+                dialogueIndex++;
+            }
+
+            //play a random farewell dialogue, then wait the length of that audio clip + a second
+            if (farewellDialogueAudio.Count != 0 && !greetingHasPlayed)
+            {
+                farewellHasPlayed = true;
+                int randomFarewellDialogueIndex = Random.Range(0, farewellDialogueAudio.Count);
+                PlayerUIManager.instance.playerUIPopUpManager.SetDialoguePopUpSubtitles(farewellDialogueString[randomFarewellDialogueIndex]);
+                aiCharacter.aiCharacterSoundFXManager.PlaySoundFX(farewellDialogueAudio[randomFarewellDialogueIndex]);
+                yield return new WaitForSeconds(farewellDialogueAudio[randomFarewellDialogueIndex].length + 1);
             }
 
             OnDialogueEnded(aiCharacter);
@@ -64,7 +82,8 @@ namespace baodeag
             greetingHasPlayed = false;
             dialogueIndex = 0;
 
-            //if (setStageIndex)
+            if (setStageIndex)
+                WorldSaveGameManager.instance.SetStageOfDialogue(aiCharacter.aiCharacterSoundFXManager.characterDialogueID, stageID);
 
             aiCharacter.aiCharacterSoundFXManager.OnCurrentDialogueEnded();
         }

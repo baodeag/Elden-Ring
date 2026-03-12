@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 namespace baodeag
@@ -10,9 +11,10 @@ namespace baodeag
         [SerializeField] AudioClip[] blockingSFX;
 
         [Header("Dialogue")]
+        public CharacterDialogueID characterDialogueID;
         public GameObject interactableDialogueCollider;
         public CharacterDialogue currentDialogue;
-        public CharacterDialogue farewellDialogue;
+        public GameObject interactableDialogueObject;
         public bool dialogueIsPlaying = false;
 
         protected override void Awake()
@@ -20,6 +22,21 @@ namespace baodeag
             base.Awake();
 
             aiCharacter = GetComponent<AICharacterManager>();
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+
+            if (characterDialogueID != CharacterDialogueID.NoDialogueID)
+            {
+                currentDialogue = WorldSaveGameManager.instance.GetCharacterDialogueByEnum(characterDialogueID);
+
+                interactableDialogueObject = Instantiate(WorldAIManager.instance.dialogueInteractable, transform);
+                NetworkObject networkObject = interactableDialogueObject.GetComponent<NetworkObject>();
+                networkObject.Spawn();
+                networkObject.TrySetParent(gameObject, true);
+            }
         }
 
         public override void PlayBlockSoundFX()
@@ -42,22 +59,7 @@ namespace baodeag
             }
             else
             {
-                PlayerUIManager.instance.playerUIPopUpManager.SendNextDialoguePopUpIndex(currentDialogue, aiCharacter);
-            }
-        }
-
-        public void PlayFarewellDialogueEvent()
-        {
-            if (farewellDialogue == null)
-                return;
-
-            if (!dialogueIsPlaying)
-            {
-                farewellDialogue.PlayDialogueEvent(aiCharacter);
-            }
-            else
-            {
-                PlayerUIManager.instance.playerUIPopUpManager.SendNextDialoguePopUpIndex(farewellDialogue, aiCharacter);
+                PlayerUIManager.instance.playerUIPopUpManager.SendNextDialoguePopUpInIndex(currentDialogue, aiCharacter);
             }
         }
 
@@ -75,6 +77,7 @@ namespace baodeag
         public void OnCurrentDialogueEnded()
         {
             //get new dialogue based on stage ID
+            currentDialogue = WorldSaveGameManager.instance.GetCharacterDialogueByEnum(characterDialogueID);
         }
     }
 }

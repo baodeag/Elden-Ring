@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f339a62a8df763a46b4732192d071f5a, type: 3}
+  m_Name: Nameless_Knight_Dialogue_02
+  m_EditorClassIdentifier: 
+  requiredStageID: 5
+  greetingDialogueString:
+  - You again?
+  greetingDialogueAudio:
+  - {fileID: 8300000, guid: 711187e0f33831b43828abde2ad71ea8, type: 3}
+  dialogueString:
+  - 'You already spoke to me. Go away!
+
+'
+  dialogueAudio:
+  - {fileID: 8300000, guid: 1452d73f435bb294c894034d3443259b, type: 3}
+  dialogueIndex: 0
+  setStageIndex: 0
+  stageID: 0
+  farewellDialogueString:
+  - Goodbye again!
+  farewellDialogueAudio:
+  - {fileID: 8300000, guid: 3a63b7ca5c3c40943bb00234813ef502, type: 3}

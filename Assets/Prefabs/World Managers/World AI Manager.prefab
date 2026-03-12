@@ -48,5 +48,6 @@ MonoBehaviour:
   aiCharacterSpawners: []
   spawnedInCharacters: []
   beaconGameObject: {fileID: 1806600203928118652, guid: 9dbeb2ccee60de744babb8dee4534c64, type: 3}
+  dialogueInteractable: {fileID: 301485598854540069, guid: c5e54b821463d4b43ad25efd52eb7e5f, type: 3}
   spawnedInBosses: []
   aiPatrolPaths: []

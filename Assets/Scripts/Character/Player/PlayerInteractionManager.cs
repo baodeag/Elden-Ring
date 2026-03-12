@@ -8,7 +8,7 @@ namespace baodeag
     {
         PlayerManager player;
 
-        private List<Interactable> currentInteractableActions;
+        [HideInInspector] public List<Interactable> currentInteractableActions;
 
         private void Awake()
         {

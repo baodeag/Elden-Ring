@@ -38,5 +38,18 @@ namespace baodeag
                 aiCharacter.aiCharacterCombatManager.AwardRunesOnDeath(PlayerUIManager.instance.localPlayer);
             }
         }
+
+        public override void OnLockOnTargetIDChange(ulong oldID, ulong newID)
+        {
+            base.OnLockOnTargetIDChange(oldID, newID);
+
+            //if your character has a target, disable the interactable collider
+            if (aiCharacter.aiCharacterCombatManager.currentTarget != null && aiCharacter.aiCharacterSoundFXManager.interactableDialogueObject  != null)
+                aiCharacter.aiCharacterSoundFXManager.interactableDialogueObject.SetActive(false);
+
+            //optionally re-anable it when the target is gone
+            if (aiCharacter.aiCharacterCombatManager.currentTarget == null && aiCharacter.aiCharacterSoundFXManager.interactableDialogueObject != null)
+                aiCharacter.aiCharacterSoundFXManager.interactableDialogueObject.SetActive(true);
+        }
     }
 }

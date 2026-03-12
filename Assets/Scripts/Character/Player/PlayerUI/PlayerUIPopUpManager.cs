@@ -111,11 +111,14 @@ namespace baodeag
             if (dialogueCoroutine != null)
                 StopCoroutine(dialogueCoroutine);
 
-            dialogueCoroutine = StartCoroutine(dialogue.PlayDialogueCoroutine(aiCharacter));
+            //close all pop up windows
+            PlayerUIManager.instance.playerUIPopUpManager.CloseAllPopUpWindows();
             PlayerUIManager.instance.popUpWindowIsOpen = true;
+
+            dialogueCoroutine = StartCoroutine(dialogue.PlayDialogueCoroutine(aiCharacter));
         }
 
-        public void SendNextDialoguePopUpIndex(CharacterDialogue dialogue, AICharacterManager aiCharacter)
+        public void SendNextDialoguePopUpInIndex(CharacterDialogue dialogue, AICharacterManager aiCharacter)
         {
             currentDialogue = dialogue;
 
@@ -124,6 +127,10 @@ namespace baodeag
 
             if (aiCharacter.aiCharacterSoundFXManager.dialogueIsPlaying)
                 aiCharacter.aiCharacterSoundFXManager.audioSource.Stop();
+
+            //close all pop up windows
+            PlayerUIManager.instance.playerUIPopUpManager.CloseAllPopUpWindows();
+            PlayerUIManager.instance.popUpWindowIsOpen = true;
 
             currentDialogue.dialogueIndex++;
             dialogueCoroutine = StartCoroutine(dialogue.PlayDialogueCoroutine(aiCharacter));
