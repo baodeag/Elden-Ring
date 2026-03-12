@@ -35,6 +35,12 @@ namespace baodeag
         [SerializeField] TextMeshProUGUI graceRestoredPopUpText;
         [SerializeField] CanvasGroup graceRestoredPopUpCanvasGroup;
 
+        [Header("Dialogue Pop Up")]
+        [SerializeField] GameObject dialoguePopUpGameObject;
+        [SerializeField] TextMeshProUGUI dialoguePopUpText;
+        [SerializeField] CharacterDialogue currentDialogue;
+        private Coroutine dialogueCoroutine;
+
         public void CloseAllPopUpWindows()
         {
             popUpMessageGameObject.SetActive(false);
@@ -95,6 +101,58 @@ namespace baodeag
             StartCoroutine(StretchPopUpTextOverTime(graceRestoredPopUpBackgroundText, 8, 19));
             StartCoroutine(FadeInPopUpOverTime(graceRestoredPopUpCanvasGroup, 5));
             StartCoroutine(WaitThenFadeOutPopUpOverTime(graceRestoredPopUpCanvasGroup, 2, 5));
+        }
+
+        public void SendDialoguePopUp(CharacterDialogue dialogue, AICharacterManager aiCharacter)
+        {
+            PlayerUIManager.instance.playerUIHudManager.ToggleHUDWithOutPopUps(false);
+            currentDialogue = dialogue;
+
+            if (dialogueCoroutine != null)
+                StopCoroutine(dialogueCoroutine);
+
+            dialogueCoroutine = StartCoroutine(dialogue.PlayDialogueCoroutine(aiCharacter));
+            PlayerUIManager.instance.popUpWindowIsOpen = true;
+        }
+
+        public void SendNextDialoguePopUpIndex(CharacterDialogue dialogue, AICharacterManager aiCharacter)
+        {
+            currentDialogue = dialogue;
+
+            if (dialogueCoroutine != null)
+                StopCoroutine(dialogueCoroutine);
+
+            if (aiCharacter.aiCharacterSoundFXManager.dialogueIsPlaying)
+                aiCharacter.aiCharacterSoundFXManager.audioSource.Stop();
+
+            currentDialogue.dialogueIndex++;
+            dialogueCoroutine = StartCoroutine(dialogue.PlayDialogueCoroutine(aiCharacter));
+        }
+
+        public void SetDialoguePopUpSubtitles(string dialogueText)
+        {
+            dialoguePopUpGameObject.SetActive(true);
+            dialoguePopUpText.text = dialogueText;
+        }
+
+        public void EndDialoguePopUp()
+        {
+            dialoguePopUpGameObject.SetActive(false);
+            PlayerUIManager.instance.playerUIHudManager.ToggleHUDWithOutPopUps(true);
+        }
+
+        public void CancelDialoguePopUp(AICharacterManager aiCharacter)
+        {
+            PlayerUIManager.instance.playerUIHudManager.ToggleHUDWithOutPopUps(true);
+
+            if (dialogueCoroutine != null)
+                StopCoroutine(dialogueCoroutine);
+
+            if (aiCharacter.aiCharacterSoundFXManager.audioSource.isPlaying)
+                aiCharacter.aiCharacterSoundFXManager.audioSource.Stop();
+
+            dialoguePopUpGameObject.SetActive(false);
+            currentDialogue.OnDialogueCancelled(aiCharacter);
         }
 
         private IEnumerator StretchPopUpTextOverTime(TextMeshProUGUI text, float duration, float stretchAmount)

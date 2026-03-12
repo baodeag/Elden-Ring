@@ -23,17 +23,50 @@ namespace baodeag
 
         public void PlayDialogueEvent(AICharacterManager aiCharacter)
         {
+            if (dialogueString.Count != dialogueAudio.Count)
+            {
+                Debug.LogError("Audio Clip Count Does Not Match Subtitle Count, Missing Files");
+                return;
+            }
 
+            aiCharacter.aiCharacterSoundFXManager.dialogueIsPlaying = true;
+            PlayerUIManager.instance.playerUIPopUpManager.SendDialoguePopUp(this, aiCharacter);
         }
 
-        private IEnumerator PlayDialogueCoroutine(AICharacterManager aiCharacter)
+        public IEnumerator PlayDialogueCoroutine(AICharacterManager aiCharacter)
         {
+            //play a random greeting dialogue, then wait the length of that audio clip + a second
+            if (greetingDialogueAudio.Count != 0 && !greetingHasPlayed)
+            {
+                greetingHasPlayed = true;
+                int randomGreetingDialogueIndex = Random.Range(0, greetingDialogueAudio.Count);
+                PlayerUIManager.instance.playerUIPopUpManager.SetDialoguePopUpSubtitles(greetingDialogueString[randomGreetingDialogueIndex]);
+                aiCharacter.aiCharacterSoundFXManager.PlaySoundFX(greetingDialogueAudio[randomGreetingDialogueIndex]);
+                yield return new WaitForSeconds(greetingDialogueAudio[randomGreetingDialogueIndex].length);
+            } 
+
+            while (dialogueIndex < dialogueAudio.Count)
+            {
+                PlayerUIManager.instance.playerUIPopUpManager.SetDialoguePopUpSubtitles(dialogueString[dialogueIndex]);
+                aiCharacter.aiCharacterSoundFXManager.PlaySoundFX(dialogueAudio[dialogueIndex]);
+                dialogueIndex++;
+                yield return new WaitForSeconds(dialogueAudio[dialogueIndex].length + 1);
+            }
+
+            OnDialogueEnded(aiCharacter);
+            PlayerUIManager.instance.playerUIPopUpManager.EndDialoguePopUp();
+
             yield return null;
         }
 
         public void OnDialogueEnded(AICharacterManager aiCharacter)
-        {
-            
+        { 
+            greetingHasPlayed = false;
+            dialogueIndex = 0;
+
+            //if (setStageIndex)
+
+            aiCharacter.aiCharacterSoundFXManager.OnCurrentDialogueEnded();
         }
 
         public void OnDialogueCancelled(AICharacterManager aiCharacter)
