@@ -390,17 +390,17 @@ namespace baodeag {
             player.playerNetworkManager.faith.Value = faith;
 
             //set the weapons
-            player.playerInventoryManager.weaponInRightHandSlots[0] = Instantiate(mainHandWeapons[0]);
-            player.playerInventoryManager.weaponInRightHandSlots[1] = Instantiate(mainHandWeapons[1]);
-            player.playerInventoryManager.weaponInRightHandSlots[2] = Instantiate(mainHandWeapons[2]);
-            player.playerInventoryManager.currentRightHandWeapon = player.playerInventoryManager.weaponInRightHandSlots[0];
-            player.playerNetworkManager.currentRightHandWeaponID.Value = player.playerInventoryManager.weaponInRightHandSlots[0].itemID;
+            player.playerInventoryManager.weaponsInRightHandSlots[0] = Instantiate(mainHandWeapons[0]);
+            player.playerInventoryManager.weaponsInRightHandSlots[1] = Instantiate(mainHandWeapons[1]);
+            player.playerInventoryManager.weaponsInRightHandSlots[2] = Instantiate(mainHandWeapons[2]);
+            player.playerInventoryManager.currentRightHandWeapon = player.playerInventoryManager.weaponsInRightHandSlots[0];
+            player.playerNetworkManager.currentRightHandWeaponID.Value = player.playerInventoryManager.weaponsInRightHandSlots[0].itemID;
 
-            player.playerInventoryManager.weaponInLeftHandSlots[0] = Instantiate(offHandWeapons[0]);
-            player.playerInventoryManager.weaponInLeftHandSlots[1] = Instantiate(offHandWeapons[1]);
-            player.playerInventoryManager.weaponInLeftHandSlots[2] = Instantiate(offHandWeapons[2]);
-            player.playerInventoryManager.currentLeftHandWeapon = player.playerInventoryManager.weaponInLeftHandSlots[0];
-            player.playerNetworkManager.currentLeftHandWeaponID.Value = player.playerInventoryManager.weaponInLeftHandSlots[0].itemID;
+            player.playerInventoryManager.weaponsInLeftHandSlots[0] = Instantiate(offHandWeapons[0]);
+            player.playerInventoryManager.weaponsInLeftHandSlots[1] = Instantiate(offHandWeapons[1]);
+            player.playerInventoryManager.weaponsInLeftHandSlots[2] = Instantiate(offHandWeapons[2]);
+            player.playerInventoryManager.currentLeftHandWeapon = player.playerInventoryManager.weaponsInLeftHandSlots[0];
+            player.playerNetworkManager.currentLeftHandWeaponID.Value = player.playerInventoryManager.weaponsInLeftHandSlots[0].itemID;
 
             //set the armor
             //head equipment

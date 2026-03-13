@@ -40,6 +40,9 @@ namespace baodeag
         [Header("Quick Slot")]
         [SerializeField] List<QuickSlotItem> quickSlotItems = new List<QuickSlotItem>();
 
+        [Header("Upgrade Materials")]
+        [SerializeField] List<UpgradeMaterial> upgradeMaterials = new List<UpgradeMaterial>();
+
         //a list of every item in the game
         [Header("Items")]
         private List<Item> items = new List<Item>();
@@ -97,6 +100,11 @@ namespace baodeag
             }
 
             foreach (var item in quickSlotItems)
+            {
+                items.Add(item);
+            }
+
+            foreach (var item in upgradeMaterials)
             {
                 items.Add(item);
             }
@@ -161,6 +169,11 @@ namespace baodeag
             return quickSlotItems.FirstOrDefault(item => item.itemID == ID);
         }
 
+        public UpgradeMaterial GetUpgradeMaterialByID(int ID)
+        {
+            return upgradeMaterials.FirstOrDefault(item => item.itemID == ID);
+        }
+
         //item serialization
 
         public WeaponItem GetWeaponFromSerializedData(SerializableWeapon serializableWeapon)
@@ -207,7 +220,7 @@ namespace baodeag
             return flask;
         }
 
-        public QuickSlotItem GetQuickSlotFromSerializedData(SerializableQuickSlotItem serializableQuickSlotItem)
+        public QuickSlotItem GetQuickSlotItemFromSerializedData(SerializableQuickSlotItem serializableQuickSlotItem)
         {
             QuickSlotItem quickSlotItem = null;
 

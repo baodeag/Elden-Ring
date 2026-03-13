@@ -192,7 +192,7 @@ namespace baodeag
             PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
 
             // right hand 01
-            WeaponItem rightHandWeapon01 = player.playerInventoryManager.weaponInRightHandSlots[0];
+            WeaponItem rightHandWeapon01 = player.playerInventoryManager.weaponsInRightHandSlots[0];
 
             if (rightHandWeapon01.itemIcon != null)
             {
@@ -205,7 +205,7 @@ namespace baodeag
             }
 
             // right hand 02
-            WeaponItem rightHandWeapon02 = player.playerInventoryManager.weaponInRightHandSlots[1];
+            WeaponItem rightHandWeapon02 = player.playerInventoryManager.weaponsInRightHandSlots[1];
             if (rightHandWeapon02.itemIcon != null)
             {
                 rightHandSlot02.enabled = true;
@@ -217,7 +217,7 @@ namespace baodeag
             }
 
             // right hand 03
-            WeaponItem rightHandWeapon03 = player.playerInventoryManager.weaponInRightHandSlots[2];
+            WeaponItem rightHandWeapon03 = player.playerInventoryManager.weaponsInRightHandSlots[2];
             if (rightHandWeapon03.itemIcon != null)
             {
                 rightHandSlot03.enabled = true;
@@ -229,7 +229,7 @@ namespace baodeag
             }
 
             // left hand 01
-            WeaponItem leftHandWeapon01 = player.playerInventoryManager.weaponInLeftHandSlots[0];
+            WeaponItem leftHandWeapon01 = player.playerInventoryManager.weaponsInLeftHandSlots[0];
             if (leftHandWeapon01.itemIcon != null)
             {
                 leftHandSlot01.enabled = true;
@@ -241,7 +241,7 @@ namespace baodeag
             }
 
             // left hand 02
-            WeaponItem leftHandWeapon02 = player.playerInventoryManager.weaponInLeftHandSlots[1];
+            WeaponItem leftHandWeapon02 = player.playerInventoryManager.weaponsInLeftHandSlots[1];
             if (leftHandWeapon02.itemIcon != null)
             {
                 leftHandSlot02.enabled = true;
@@ -253,7 +253,7 @@ namespace baodeag
             }
 
             // left hand 03
-            WeaponItem leftHandWeapon03 = player.playerInventoryManager.weaponInLeftHandSlots[2];
+            WeaponItem leftHandWeapon03 = player.playerInventoryManager.weaponsInLeftHandSlots[2];
             if (leftHandWeapon03.itemIcon != null)
             {
                 leftHandSlot03.enabled = true;
@@ -785,10 +785,10 @@ namespace baodeag
             switch (currentSelectedEquipmentSlot)
             {
                 case EquipmentType.RightWeapon01:
-                    unequippedItem = player.playerInventoryManager.weaponInRightHandSlots[0];
+                    unequippedItem = player.playerInventoryManager.weaponsInRightHandSlots[0];
                     if (unequippedItem != null)
                     {
-                        player.playerInventoryManager.weaponInRightHandSlots[0] = Instantiate(WorldItemDatabase.Instance.unarmedWeapon);
+                        player.playerInventoryManager.weaponsInRightHandSlots[0] = Instantiate(WorldItemDatabase.Instance.unarmedWeapon);
 
                         if (unequippedItem.itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
                             player.playerInventoryManager.AddItemToInventory(unequippedItem);
@@ -798,10 +798,10 @@ namespace baodeag
                         player.playerNetworkManager.currentRightHandWeaponID.Value = WorldItemDatabase.Instance.unarmedWeapon.itemID;
                     break;
                 case EquipmentType.RightWeapon02:
-                    unequippedItem = player.playerInventoryManager.weaponInRightHandSlots[1];
+                    unequippedItem = player.playerInventoryManager.weaponsInRightHandSlots[1];
                     if (unequippedItem != null)
                     {
-                        player.playerInventoryManager.weaponInRightHandSlots[1] = Instantiate(WorldItemDatabase.Instance.unarmedWeapon);
+                        player.playerInventoryManager.weaponsInRightHandSlots[1] = Instantiate(WorldItemDatabase.Instance.unarmedWeapon);
 
                         if (unequippedItem.itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
                             player.playerInventoryManager.AddItemToInventory(unequippedItem);
@@ -811,10 +811,10 @@ namespace baodeag
                         player.playerNetworkManager.currentRightHandWeaponID.Value = WorldItemDatabase.Instance.unarmedWeapon.itemID;
                     break;
                 case EquipmentType.RightWeapon03:
-                    unequippedItem = player.playerInventoryManager.weaponInRightHandSlots[2];
+                    unequippedItem = player.playerInventoryManager.weaponsInRightHandSlots[2];
                     if (unequippedItem != null)
                     {
-                        player.playerInventoryManager.weaponInRightHandSlots[2] = Instantiate(WorldItemDatabase.Instance.unarmedWeapon);
+                        player.playerInventoryManager.weaponsInRightHandSlots[2] = Instantiate(WorldItemDatabase.Instance.unarmedWeapon);
 
                         if (unequippedItem.itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
                             player.playerInventoryManager.AddItemToInventory(unequippedItem);
@@ -824,10 +824,10 @@ namespace baodeag
                         player.playerNetworkManager.currentRightHandWeaponID.Value = WorldItemDatabase.Instance.unarmedWeapon.itemID;
                     break;
                 case EquipmentType.LeftWeapon01:
-                    unequippedItem = player.playerInventoryManager.weaponInLeftHandSlots[0];
+                    unequippedItem = player.playerInventoryManager.weaponsInLeftHandSlots[0];
                     if (unequippedItem != null)
                     {
-                        player.playerInventoryManager.weaponInLeftHandSlots[0] = Instantiate(WorldItemDatabase.Instance.unarmedWeapon);
+                        player.playerInventoryManager.weaponsInLeftHandSlots[0] = Instantiate(WorldItemDatabase.Instance.unarmedWeapon);
 
                         if (unequippedItem.itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
                             player.playerInventoryManager.AddItemToInventory(unequippedItem);
@@ -837,10 +837,10 @@ namespace baodeag
                         player.playerNetworkManager.currentLeftHandWeaponID.Value = WorldItemDatabase.Instance.unarmedWeapon.itemID;
                     break;
                 case EquipmentType.LeftWeapon02:
-                    unequippedItem = player.playerInventoryManager.weaponInLeftHandSlots[1];
+                    unequippedItem = player.playerInventoryManager.weaponsInLeftHandSlots[1];
                     if (unequippedItem != null)
                     {
-                        player.playerInventoryManager.weaponInLeftHandSlots[1] = Instantiate(WorldItemDatabase.Instance.unarmedWeapon);
+                        player.playerInventoryManager.weaponsInLeftHandSlots[1] = Instantiate(WorldItemDatabase.Instance.unarmedWeapon);
 
                         if (unequippedItem.itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
                             player.playerInventoryManager.AddItemToInventory(unequippedItem);
@@ -850,10 +850,10 @@ namespace baodeag
                         player.playerNetworkManager.currentLeftHandWeaponID.Value = WorldItemDatabase.Instance.unarmedWeapon.itemID;
                     break;
                 case EquipmentType.LeftWeapon03:
-                    unequippedItem = player.playerInventoryManager.weaponInLeftHandSlots[2];
+                    unequippedItem = player.playerInventoryManager.weaponsInLeftHandSlots[2];
                     if (unequippedItem != null)
                     {
-                        player.playerInventoryManager.weaponInLeftHandSlots[2] = Instantiate(WorldItemDatabase.Instance.unarmedWeapon);
+                        player.playerInventoryManager.weaponsInLeftHandSlots[2] = Instantiate(WorldItemDatabase.Instance.unarmedWeapon);
 
                         if (unequippedItem.itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
                             player.playerInventoryManager.AddItemToInventory(unequippedItem);

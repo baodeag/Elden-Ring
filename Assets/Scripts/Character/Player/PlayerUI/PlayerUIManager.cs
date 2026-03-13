@@ -7,6 +7,7 @@ namespace baodeag
     {
         public static PlayerUIManager instance;
         [HideInInspector] public PlayerManager localPlayer;
+        private AudioSource audioSource;
 
         [Header("NETWORK JOIN")]
         [SerializeField] bool startGameAsClient;
@@ -34,6 +35,9 @@ namespace baodeag
             {
                 Destroy(gameObject);
             }
+
+            audioSource = GetComponent<AudioSource>();
+
             playerUIHudManager = GetComponentInChildren<PlayerUIHudManager>();
             playerUIPopUpManager = GetComponentInChildren<PlayerUIPopUpManager>();
             playerUICharacterMenuManager = GetComponentInChildren<PlayerUICharacterMenuManager>();
@@ -68,6 +72,31 @@ namespace baodeag
             playerUISiteOfGraceManager.CloseMenuAfterFixedFrame();
             playerUITeleportLocationManager.CloseMenuAfterFixedFrame();
             playerUILevelUpManager.CloseMenuAfterFixedFrame();
+        }
+
+        //ui sfx
+        public void PlayUnableToContinueSFX()
+        {
+            if (WorldSoundFXManager.instance.unableToContinueUISFX == null)
+                return;
+
+            audioSource.PlayOneShot(WorldSoundFXManager.instance.unableToContinueUISFX);
+        }
+
+        public void PlayConfirmSFX()
+        {
+            if (WorldSoundFXManager.instance.confirmUISFX == null)
+                return;
+
+            audioSource.PlayOneShot(WorldSoundFXManager.instance.confirmUISFX);
+        }
+
+        public void PlayHoverSFX()
+        {
+            if (WorldSoundFXManager.instance.hoverUISFX == null)
+                return;
+
+            audioSource.PlayOneShot(WorldSoundFXManager.instance.hoverUISFX);
         }
     }
 }

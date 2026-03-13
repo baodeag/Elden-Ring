@@ -345,14 +345,14 @@ namespace baodeag
             currentCharacterData.handEquipment = playerNetworkManager.handEquipmentID.Value;
 
             currentCharacterData.rightWeaponIndex = playerInventoryManager.rightHandWeaponIndex;
-            currentCharacterData.rightWeapon01 = WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(playerInventoryManager.weaponInRightHandSlots[0]);
-            currentCharacterData.rightWeapon02 = WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(playerInventoryManager.weaponInRightHandSlots[1]);
-            currentCharacterData.rightWeapon03 = WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(playerInventoryManager.weaponInRightHandSlots[2]);
+            currentCharacterData.rightWeapon01 = WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(playerInventoryManager.weaponsInRightHandSlots[0]);
+            currentCharacterData.rightWeapon02 = WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(playerInventoryManager.weaponsInRightHandSlots[1]);
+            currentCharacterData.rightWeapon03 = WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(playerInventoryManager.weaponsInRightHandSlots[2]);
 
             currentCharacterData.leftWeaponIndex = playerInventoryManager.leftHandWeaponIndex;
-            currentCharacterData.leftWeapon01 = WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(playerInventoryManager.weaponInLeftHandSlots[0]);
-            currentCharacterData.leftWeapon02 = WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(playerInventoryManager.weaponInLeftHandSlots[1]);
-            currentCharacterData.leftWeapon03 = WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(playerInventoryManager.weaponInLeftHandSlots[2]);
+            currentCharacterData.leftWeapon01 = WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(playerInventoryManager.weaponsInLeftHandSlots[0]);
+            currentCharacterData.leftWeapon02 = WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(playerInventoryManager.weaponsInLeftHandSlots[1]);
+            currentCharacterData.leftWeapon03 = WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(playerInventoryManager.weaponsInLeftHandSlots[2]);
 
             currentCharacterData.quickSlotIndex = playerInventoryManager.quickSlotItemIndex;
             currentCharacterData.quickSlotItem01 = WorldSaveGameManager.instance.GetSerializableQuickSlotItemFromQuickSlotItem(playerInventoryManager.quickSlotItemsInQuickSlots[0]);
@@ -495,14 +495,14 @@ namespace baodeag
 
             //weapons
             playerInventoryManager.rightHandWeaponIndex = currentCharacterData.rightWeaponIndex;
-            playerInventoryManager.weaponInRightHandSlots[0] = currentCharacterData.rightWeapon01.GetWeapon();
-            playerInventoryManager.weaponInRightHandSlots[1] = currentCharacterData.rightWeapon02.GetWeapon();
-            playerInventoryManager.weaponInRightHandSlots[2] = currentCharacterData.rightWeapon03.GetWeapon();
+            playerInventoryManager.weaponsInRightHandSlots[0] = currentCharacterData.rightWeapon01.GetWeapon();
+            playerInventoryManager.weaponsInRightHandSlots[1] = currentCharacterData.rightWeapon02.GetWeapon();
+            playerInventoryManager.weaponsInRightHandSlots[2] = currentCharacterData.rightWeapon03.GetWeapon();
 
             playerInventoryManager.leftHandWeaponIndex = currentCharacterData.leftWeaponIndex;
-            playerInventoryManager.weaponInLeftHandSlots[0] = currentCharacterData.leftWeapon01.GetWeapon();
-            playerInventoryManager.weaponInLeftHandSlots[1] = currentCharacterData.leftWeapon02.GetWeapon();
-            playerInventoryManager.weaponInLeftHandSlots[2] = currentCharacterData.leftWeapon03.GetWeapon();
+            playerInventoryManager.weaponsInLeftHandSlots[0] = currentCharacterData.leftWeapon01.GetWeapon();
+            playerInventoryManager.weaponsInLeftHandSlots[1] = currentCharacterData.leftWeapon02.GetWeapon();
+            playerInventoryManager.weaponsInLeftHandSlots[2] = currentCharacterData.leftWeapon03.GetWeapon();
 
             //quick slot items
             playerInventoryManager.quickSlotItemIndex = currentCharacterData.quickSlotIndex;
@@ -513,8 +513,8 @@ namespace baodeag
 
             if (currentCharacterData.rightWeaponIndex >= 0)
             {
-                playerInventoryManager.currentRightHandWeapon = playerInventoryManager.weaponInRightHandSlots[currentCharacterData.rightWeaponIndex];
-                playerNetworkManager.currentRightHandWeaponID.Value = playerInventoryManager.weaponInRightHandSlots[currentCharacterData.rightWeaponIndex].itemID;
+                playerInventoryManager.currentRightHandWeapon = playerInventoryManager.weaponsInRightHandSlots[currentCharacterData.rightWeaponIndex];
+                playerNetworkManager.currentRightHandWeaponID.Value = playerInventoryManager.weaponsInRightHandSlots[currentCharacterData.rightWeaponIndex].itemID;
             }
             else
             {
@@ -525,8 +525,8 @@ namespace baodeag
 
             if (currentCharacterData.leftWeaponIndex >= 0)
             {
-                playerInventoryManager.currentLeftHandWeapon = playerInventoryManager.weaponInLeftHandSlots[currentCharacterData.leftWeaponIndex];
-                playerNetworkManager.currentLeftHandWeaponID.Value = playerInventoryManager.weaponInLeftHandSlots[currentCharacterData.leftWeaponIndex].itemID;
+                playerInventoryManager.currentLeftHandWeapon = playerInventoryManager.weaponsInLeftHandSlots[currentCharacterData.leftWeaponIndex];
+                playerNetworkManager.currentLeftHandWeaponID.Value = playerInventoryManager.weaponsInLeftHandSlots[currentCharacterData.leftWeaponIndex].itemID;
             }
             else
             {

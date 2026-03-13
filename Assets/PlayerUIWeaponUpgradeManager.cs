@@ -1,3 +1,4 @@
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,10 @@ namespace baodeag
     {
         [Header("Menus")]
         [SerializeField] GameObject confirmUpgradePopUp;
+
+        [Header("Text Fields")]
+        [SerializeField] TextMeshProUGUI currentMaterialsText;
+        [SerializeField] TextMeshProUGUI currentCostText; 
 
         [Header("Confirm Upgrade Buttons")]
         [SerializeField] Button confirmUpgradeButton;
@@ -79,7 +84,7 @@ namespace baodeag
             PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
 
             // right hand 01
-            WeaponItem rightHandWeapon01 = player.playerInventoryManager.weaponInRightHandSlots[0];
+            WeaponItem rightHandWeapon01 = player.playerInventoryManager.weaponsInRightHandSlots[0];
 
             if (rightHandWeapon01.itemIcon != null)
             {
@@ -92,7 +97,7 @@ namespace baodeag
             }
 
             // right hand 02
-            WeaponItem rightHandWeapon02 = player.playerInventoryManager.weaponInRightHandSlots[1];
+            WeaponItem rightHandWeapon02 = player.playerInventoryManager.weaponsInRightHandSlots[1];
             if (rightHandWeapon02.itemIcon != null)
             {
                 rightHandSlot02.enabled = true;
@@ -104,7 +109,7 @@ namespace baodeag
             }
 
             // right hand 03
-            WeaponItem rightHandWeapon03 = player.playerInventoryManager.weaponInRightHandSlots[2];
+            WeaponItem rightHandWeapon03 = player.playerInventoryManager.weaponsInRightHandSlots[2];
             if (rightHandWeapon03.itemIcon != null)
             {
                 rightHandSlot03.enabled = true;
@@ -116,7 +121,7 @@ namespace baodeag
             }
 
             // left hand 01
-            WeaponItem leftHandWeapon01 = player.playerInventoryManager.weaponInLeftHandSlots[0];
+            WeaponItem leftHandWeapon01 = player.playerInventoryManager.weaponsInLeftHandSlots[0];
             if (leftHandWeapon01.itemIcon != null)
             {
                 leftHandSlot01.enabled = true;
@@ -128,7 +133,7 @@ namespace baodeag
             }
 
             // left hand 02
-            WeaponItem leftHandWeapon02 = player.playerInventoryManager.weaponInLeftHandSlots[1];
+            WeaponItem leftHandWeapon02 = player.playerInventoryManager.weaponsInLeftHandSlots[1];
             if (leftHandWeapon02.itemIcon != null)
             {
                 leftHandSlot02.enabled = true;
@@ -140,7 +145,7 @@ namespace baodeag
             }
 
             // left hand 03
-            WeaponItem leftHandWeapon03 = player.playerInventoryManager.weaponInLeftHandSlots[2];
+            WeaponItem leftHandWeapon03 = player.playerInventoryManager.weaponsInLeftHandSlots[2];
             if (leftHandWeapon03.itemIcon != null)
             {
                 leftHandSlot03.enabled = true;
@@ -154,9 +159,24 @@ namespace baodeag
 
         public void AttemptToUpgradeWeapon()
         {
+            //check for unarmed/no weapon
             if (currentSelectedWeapon.itemID == WorldItemDatabase.Instance.unarmedWeapon.itemID)
             {
+                PlayerUIManager.instance.PlayUnableToContinueSFX();
+                return;
+            }
 
+            //check if player has materials for upgrade
+            if (!PlayerHasUpgradeCost())
+            {
+                PlayerUIManager.instance.PlayUnableToContinueSFX();
+                return;
+            }
+
+            //check if already at max upgrade level
+            if (currentSelectedWeapon.upgradeLevel == UpgradeLevel.Ten)
+            {
+                PlayerUIManager.instance.PlayUnableToContinueSFX();
                 return;
             }
 
@@ -177,24 +197,68 @@ namespace baodeag
         public void SelectEquipmentSlot(int equipmentSlot)
         {
             currentSelectedEquipmentSlot = (EquipmentType)equipmentSlot;
+            Image currentSelectedEquipmentIcon = null;
+
+            //reset all icons colors
+            bool hasCost = PlayerHasUpgradeCost();
+            Color iconColor = currentSelectedEquipmentIcon.color;
+            iconColor.a = 1;
+            rightHandSlot01.color = iconColor;
+            rightHandSlot02.color = iconColor;
+            rightHandSlot03.color = iconColor;
+            leftHandSlot01.color = iconColor;
+            leftHandSlot02.color = iconColor;
+            leftHandSlot03.color = iconColor;
 
             if (currentSelectedEquipmentSlot == EquipmentType.RightWeapon01)
-                currentSelectedWeapon = PlayerUIManager.instance.localPlayer.playerInventoryManager.weaponInRightHandSlots[0];
+            {
+                currentSelectedWeapon = PlayerUIManager.instance.localPlayer.playerInventoryManager.weaponsInRightHandSlots[0];
+                currentSelectedEquipmentIcon = rightHandSlot01;
+            }
 
             if (currentSelectedEquipmentSlot == EquipmentType.RightWeapon02)
-                currentSelectedWeapon = PlayerUIManager.instance.localPlayer.playerInventoryManager.weaponInRightHandSlots[1];
+            {
+                currentSelectedWeapon = PlayerUIManager.instance.localPlayer.playerInventoryManager.weaponsInRightHandSlots[1];
+                currentSelectedEquipmentIcon = rightHandSlot02;
+            }
 
             if (currentSelectedEquipmentSlot == EquipmentType.RightWeapon03)
-                currentSelectedWeapon = PlayerUIManager.instance.localPlayer.playerInventoryManager.weaponInRightHandSlots[2];
+            {
+                currentSelectedWeapon = PlayerUIManager.instance.localPlayer.playerInventoryManager.weaponsInRightHandSlots[2];
+                currentSelectedEquipmentIcon = rightHandSlot03;
+            }
 
             if (currentSelectedEquipmentSlot == EquipmentType.LeftWeapon01)
-                currentSelectedWeapon = PlayerUIManager.instance.localPlayer.playerInventoryManager.weaponInLeftHandSlots[0];
+            {
+                currentSelectedWeapon = PlayerUIManager.instance.localPlayer.playerInventoryManager.weaponsInLeftHandSlots[0];
+                currentSelectedEquipmentIcon = leftHandSlot01;
+            }
 
             if (currentSelectedEquipmentSlot == EquipmentType.LeftWeapon02)
-                currentSelectedWeapon = PlayerUIManager.instance.localPlayer.playerInventoryManager.weaponInLeftHandSlots[1];
+            {
+                currentSelectedWeapon = PlayerUIManager.instance.localPlayer.playerInventoryManager.weaponsInLeftHandSlots[1];
+                currentSelectedEquipmentIcon = leftHandSlot02;
+            }
 
             if (currentSelectedEquipmentSlot == EquipmentType.LeftWeapon03)
-                currentSelectedWeapon = PlayerUIManager.instance.localPlayer.playerInventoryManager.weaponInLeftHandSlots[2];
+            {
+                currentSelectedWeapon = PlayerUIManager.instance.localPlayer.playerInventoryManager.weaponsInLeftHandSlots[2];
+                currentSelectedEquipmentIcon = leftHandSlot03;
+            }
+
+            //set current selected icon color depending on if has cost
+            if (hasCost)
+            {
+                iconColor.a = 1;
+                currentMaterialsText.color = Color.white;
+            }
+            else
+            {
+                iconColor.a = 0.2f;
+                currentMaterialsText.color = Color.red;
+            }
+
+            currentSelectedEquipmentIcon.color = iconColor;
         }
 
         public void SelectLastSelectedEquipmentSlot()
@@ -230,6 +294,68 @@ namespace baodeag
                 lastSelectedButton.Select();
                 lastSelectedButton.OnSelect(null);
             }
+        }
+
+        private bool PlayerHasUpgradeCost()
+        {
+            return false;
+        }
+
+        private UpgradeMaterial DetermineUpgradeCostOfWeapon(WeaponItem weapon)
+        {
+            UpgradeMaterial upgradeCost = new UpgradeMaterial();
+
+            switch (weapon.upgradeLevel)
+            {
+                case UpgradeLevel.Zero:
+                    upgradeCost.upgradeStone = UpgradeStone.small;
+                    upgradeCost.currentItemAmount = 1;
+                    break;
+                case UpgradeLevel.One:
+                    upgradeCost.upgradeStone = UpgradeStone.small;
+                    upgradeCost.currentItemAmount = 2;
+                    break;
+                case UpgradeLevel.Two:
+                    upgradeCost.upgradeStone = UpgradeStone.small;
+                    upgradeCost.currentItemAmount = 4;
+                    break;
+                case UpgradeLevel.Three:
+                    upgradeCost.upgradeStone = UpgradeStone.medium;
+                    upgradeCost.currentItemAmount = 1;
+                    break;
+                case UpgradeLevel.Four:
+                    upgradeCost.upgradeStone = UpgradeStone.medium;
+                    upgradeCost.currentItemAmount = 2;
+                    break;
+                case UpgradeLevel.Five:
+                    upgradeCost.upgradeStone = UpgradeStone.medium;
+                    upgradeCost.currentItemAmount = 4;
+                    break;
+                case UpgradeLevel.Six:
+                    upgradeCost.upgradeStone = UpgradeStone.large;
+                    upgradeCost.currentItemAmount = 1;
+                    break;
+                case UpgradeLevel.Seven:
+                    upgradeCost.upgradeStone = UpgradeStone.large;
+                    upgradeCost.currentItemAmount = 2;
+                    break;
+                case UpgradeLevel.Eight:
+                    upgradeCost.upgradeStone = UpgradeStone.large;
+                    upgradeCost.currentItemAmount = 4;
+                    break;
+                case UpgradeLevel.Nine:
+                    upgradeCost.upgradeStone = UpgradeStone.large;
+                    upgradeCost.currentItemAmount = 6;
+                    break;
+                case UpgradeLevel.Ten:
+                    upgradeCost.upgradeStone = UpgradeStone.large;
+                    upgradeCost.currentItemAmount = 8;
+                    break;
+                default:
+                    break;
+            }
+
+            return upgradeCost;
         }
     }
 }

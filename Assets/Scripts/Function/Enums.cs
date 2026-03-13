@@ -101,6 +101,13 @@ public enum UpgradeLevel
     Ten,
 }
 
+public enum UpgradeStone
+{
+    small,
+    medium,
+    large
+}
+
 public enum SpellClass
 {
     Incantation,

@@ -43,14 +43,14 @@ namespace baodeag
                 case EquipmentType.RightWeapon01:
 
                     //if our current weapon in this slot, is not an unarmed item, add it to inventory
-                    equippedItem = player.playerInventoryManager.weaponInRightHandSlots[0];
+                    equippedItem = player.playerInventoryManager.weaponsInRightHandSlots[0];
 
                     if (equippedItem.itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
                     {
                         player.playerInventoryManager.AddItemToInventory(equippedItem);
                     }
                     //then replace the weapon in that slot with our new weapon
-                    player.playerInventoryManager.weaponInRightHandSlots[0] = currentItem as WeaponItem;
+                    player.playerInventoryManager.weaponsInRightHandSlots[0] = currentItem as WeaponItem;
 
                     //then remove the newly equipped weapon from inventory
                     player.playerInventoryManager.RemoveItemFromInventory(currentItem);
@@ -65,14 +65,14 @@ namespace baodeag
                     break;
                 case EquipmentType.RightWeapon02:
                     //if our current weapon in this slot, is not an unarmed item, add it to inventory
-                    equippedItem = player.playerInventoryManager.weaponInRightHandSlots[1];
+                    equippedItem = player.playerInventoryManager.weaponsInRightHandSlots[1];
 
                     if (equippedItem.itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
                     {
                         player.playerInventoryManager.AddItemToInventory(equippedItem);
                     }
                     //then replace the weapon in that slot with our new weapon
-                    player.playerInventoryManager.weaponInRightHandSlots[1] = currentItem as WeaponItem;
+                    player.playerInventoryManager.weaponsInRightHandSlots[1] = currentItem as WeaponItem;
 
                     //then remove the newly equipped weapon from inventory
                     player.playerInventoryManager.RemoveItemFromInventory(currentItem);
@@ -87,14 +87,14 @@ namespace baodeag
                     break;
                 case EquipmentType.RightWeapon03:
                     //if our current weapon in this slot, is not an unarmed item, add it to inventory
-                    equippedItem = player.playerInventoryManager.weaponInRightHandSlots[2];
+                    equippedItem = player.playerInventoryManager.weaponsInRightHandSlots[2];
 
                     if (equippedItem.itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
                     {
                         player.playerInventoryManager.AddItemToInventory(equippedItem);
                     }
                     //then replace the weapon in that slot with our new weapon
-                    player.playerInventoryManager.weaponInRightHandSlots[2] = currentItem as WeaponItem;
+                    player.playerInventoryManager.weaponsInRightHandSlots[2] = currentItem as WeaponItem;
 
                     //then remove the newly equipped weapon from inventory
                     player.playerInventoryManager.RemoveItemFromInventory(currentItem);
@@ -109,14 +109,14 @@ namespace baodeag
                     break;
                 case EquipmentType.LeftWeapon01:
                     //if our current weapon in this slot, is not an unarmed item, add it to inventory
-                    equippedItem = player.playerInventoryManager.weaponInLeftHandSlots[0];
+                    equippedItem = player.playerInventoryManager.weaponsInLeftHandSlots[0];
 
                     if (equippedItem.itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
                     {
                         player.playerInventoryManager.AddItemToInventory(equippedItem);
                     }
                     //then replace the weapon in that slot with our new weapon
-                    player.playerInventoryManager.weaponInLeftHandSlots[0] = currentItem as WeaponItem;
+                    player.playerInventoryManager.weaponsInLeftHandSlots[0] = currentItem as WeaponItem;
 
                     //then remove the newly equipped weapon from inventory
                     player.playerInventoryManager.RemoveItemFromInventory(currentItem);
@@ -131,14 +131,14 @@ namespace baodeag
                     break;
                 case EquipmentType.LeftWeapon02:
                     //if our current weapon in this slot, is not an unarmed item, add it to inventory
-                    equippedItem = player.playerInventoryManager.weaponInLeftHandSlots[1];
+                    equippedItem = player.playerInventoryManager.weaponsInLeftHandSlots[1];
 
                     if (equippedItem.itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
                     {
                         player.playerInventoryManager.AddItemToInventory(equippedItem);
                     }
                     //then replace the weapon in that slot with our new weapon
-                    player.playerInventoryManager.weaponInLeftHandSlots[1] = currentItem as WeaponItem;
+                    player.playerInventoryManager.weaponsInLeftHandSlots[1] = currentItem as WeaponItem;
 
                     //then remove the newly equipped weapon from inventory
                     player.playerInventoryManager.RemoveItemFromInventory(currentItem);
@@ -153,14 +153,14 @@ namespace baodeag
                     break;
                 case EquipmentType.LeftWeapon03:
                     //if our current weapon in this slot, is not an unarmed item, add it to inventory
-                    equippedItem = player.playerInventoryManager.weaponInLeftHandSlots[2];
+                    equippedItem = player.playerInventoryManager.weaponsInLeftHandSlots[2];
 
                     if (equippedItem.itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
                     {
                         player.playerInventoryManager.AddItemToInventory(equippedItem);
                     }
                     //then replace the weapon in that slot with our new weapon
-                    player.playerInventoryManager.weaponInLeftHandSlots[2] = currentItem as WeaponItem;
+                    player.playerInventoryManager.weaponsInLeftHandSlots[2] = currentItem as WeaponItem;
 
                     //then remove the newly equipped weapon from inventory
                     player.playerInventoryManager.RemoveItemFromInventory(currentItem);

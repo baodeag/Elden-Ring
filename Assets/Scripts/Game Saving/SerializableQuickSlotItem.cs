@@ -13,7 +13,7 @@ namespace baodeag
 
         public QuickSlotItem GetQuickSlotItem()
         {
-            QuickSlotItem quickSlotItem = WorldItemDatabase.Instance.GetQuickSlotFromSerializedData(this);
+            QuickSlotItem quickSlotItem = WorldItemDatabase.Instance.GetQuickSlotItemFromSerializedData(this);
             return quickSlotItem;
         }
 

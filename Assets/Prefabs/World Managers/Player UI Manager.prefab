@@ -8294,6 +8294,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   menu: {fileID: 7465236547538500317}
   confirmUpgradePopUp: {fileID: 5663013857424287931}
+  currentMaterialsText: {fileID: 2837285099523680802}
+  currentCostText: {fileID: 4741687867318901538}
   confirmUpgradeButton: {fileID: 5426582767727172959}
   rightHandSlot01: {fileID: 6398744560428564040}
   rightHandSlot02: {fileID: 2337645168266893444}
@@ -8302,6 +8304,7 @@ MonoBehaviour:
   leftHandSlot02: {fileID: 6517867394788385475}
   leftHandSlot03: {fileID: 8959444549384242834}
   currentSelectedEquipmentSlot: 0
+  currentSelectedWeapon: {fileID: 0}
   openMenu: 0
 --- !u!1 &3469057239334890668
 GameObject:

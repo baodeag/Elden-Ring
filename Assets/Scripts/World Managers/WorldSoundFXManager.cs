@@ -25,6 +25,11 @@ namespace baodeag
         public AudioClip[] notchArrowSFX;
         public AudioClip healingFlaskSFX;
 
+        [Header("UI Sounds")]
+        public AudioClip unableToContinueUISFX;
+        public AudioClip hoverUISFX;
+        public AudioClip confirmUISFX;
+
         private void Awake()
         {
             if (instance == null)

@@ -963,14 +963,14 @@ namespace baodeag
                 WeaponItem firstWeapon = null;
                 int firstWeaponPosition = 0;
 
-                for (int i = 0; i < player.playerInventoryManager.weaponInRightHandSlots.Length; i++)
+                for (int i = 0; i < player.playerInventoryManager.weaponsInRightHandSlots.Length; i++)
                 {
-                    if (player.playerInventoryManager.weaponInRightHandSlots[i].itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
+                    if (player.playerInventoryManager.weaponsInRightHandSlots[i].itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
                     {
                         weaponCount += 1;
                         if (firstWeapon == null)
                         {
-                            firstWeapon = player.playerInventoryManager.weaponInRightHandSlots[i];
+                            firstWeapon = player.playerInventoryManager.weaponsInRightHandSlots[i];
                             firstWeaponPosition = i;
                         }
                     }
@@ -994,12 +994,12 @@ namespace baodeag
                 return;
             }
 
-            foreach (WeaponItem weapon in player.playerInventoryManager.weaponInRightHandSlots)
+            foreach (WeaponItem weapon in player.playerInventoryManager.weaponsInRightHandSlots)
             {
                 //if the next weapon does not equal the unarmed weapon
-                if (player.playerInventoryManager.weaponInRightHandSlots[player.playerInventoryManager.rightHandWeaponIndex].itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
+                if (player.playerInventoryManager.weaponsInRightHandSlots[player.playerInventoryManager.rightHandWeaponIndex].itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
                 {
-                    selectedWeapon = player.playerInventoryManager.weaponInRightHandSlots[player.playerInventoryManager.rightHandWeaponIndex];
+                    selectedWeapon = player.playerInventoryManager.weaponsInRightHandSlots[player.playerInventoryManager.rightHandWeaponIndex];
                     //assign the network weapon id so it switches for everyone
                     player.playerInventoryManager.currentRightHandWeapon = selectedWeapon;
                     player.playerNetworkManager.currentRightHandWeaponID.Value = selectedWeapon.itemID;
@@ -1053,14 +1053,14 @@ namespace baodeag
                 WeaponItem firstWeapon = null;
                 int firstWeaponPosition = 0;
 
-                for (int i = 0; i < player.playerInventoryManager.weaponInLeftHandSlots.Length; i++)
+                for (int i = 0; i < player.playerInventoryManager.weaponsInLeftHandSlots.Length; i++)
                 {
-                    if (player.playerInventoryManager.weaponInLeftHandSlots[i].itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
+                    if (player.playerInventoryManager.weaponsInLeftHandSlots[i].itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
                     {
                         weaponCount += 1;
                         if (firstWeapon == null)
                         {
-                            firstWeapon = player.playerInventoryManager.weaponInLeftHandSlots[i];
+                            firstWeapon = player.playerInventoryManager.weaponsInLeftHandSlots[i];
                             firstWeaponPosition = i;
                         }
                     }
@@ -1084,12 +1084,12 @@ namespace baodeag
                 return;
             }
 
-            foreach (WeaponItem weapon in player.playerInventoryManager.weaponInLeftHandSlots)
+            foreach (WeaponItem weapon in player.playerInventoryManager.weaponsInLeftHandSlots)
             {
                 //if the next weapon does not equal the unarmed weapon
-                if (player.playerInventoryManager.weaponInLeftHandSlots[player.playerInventoryManager.leftHandWeaponIndex].itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
+                if (player.playerInventoryManager.weaponsInLeftHandSlots[player.playerInventoryManager.leftHandWeaponIndex].itemID != WorldItemDatabase.Instance.unarmedWeapon.itemID)
                 {
-                    selectedWeapon = player.playerInventoryManager.weaponInLeftHandSlots[player.playerInventoryManager.leftHandWeaponIndex];
+                    selectedWeapon = player.playerInventoryManager.weaponsInLeftHandSlots[player.playerInventoryManager.leftHandWeaponIndex];
                     //assign the network weapon id so it switches for everyone
                     player.playerInventoryManager.currentLeftHandWeapon = selectedWeapon;
                     player.playerNetworkManager.currentLeftHandWeaponID.Value = selectedWeapon.itemID;
