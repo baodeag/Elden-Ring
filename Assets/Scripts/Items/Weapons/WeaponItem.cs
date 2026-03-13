@@ -16,6 +16,9 @@ namespace baodeag
         [Header("Weapon Class")]
         public WeaponClass weaponClass;
 
+        [Header("Upgrade Level")]
+        public UpgradeLevel upgradeLevel;
+
         [Header("Weapon Requirements")]
         public int strengthREQ = 0;
         public int dexREQ = 0;

@@ -400,6 +400,7 @@ namespace baodeag {
 
             //get weapon id
             serializableWeapon.itemID = weapon.itemID;
+            serializableWeapon.upgradeLevel = (int)weapon.upgradeLevel;
 
             //get ash of war id if one is present
             if (weapon.ashOfWarAction != null)

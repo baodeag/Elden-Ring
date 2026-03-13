@@ -86,6 +86,21 @@ public enum WeaponClass
     Bow
 }
 
+public enum UpgradeLevel
+{
+    Zero,
+    One,
+    Two,
+    Three,
+    Four,
+    Five,
+    Six,
+    Seven,
+    Eight,
+    Nine,
+    Ten,
+}
+
 public enum SpellClass
 {
     Incantation,

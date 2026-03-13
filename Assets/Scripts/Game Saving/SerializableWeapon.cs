@@ -6,6 +6,7 @@ namespace baodeag
     public class SerializableWeapon : ISerializationCallbackReceiver
     {
         [SerializeField] public int itemID;
+        [SerializeField] public int upgradeLevel;
         [SerializeField] public int ashOfWarID;
 
         public WeaponItem GetWeapon()
