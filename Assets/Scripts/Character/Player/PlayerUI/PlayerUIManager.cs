@@ -20,6 +20,7 @@ namespace baodeag
         [HideInInspector] public PlayerUITeleportLocationManager playerUITeleportLocationManager;
         [HideInInspector] public PlayerUILoadingScreenManager playerUILoadingScreenManager;
         [HideInInspector] public PlayerUILevelUpManager playerUILevelUpManager;
+        [HideInInspector] public PlayerUIWeaponUpgradeManager playerUIWeaponUpgradeManager;
 
         [Header("UI Flags")]
         public bool menuWindowIsOpen = false;
@@ -46,6 +47,7 @@ namespace baodeag
             playerUITeleportLocationManager = GetComponentInChildren<PlayerUITeleportLocationManager>();
             playerUILoadingScreenManager = GetComponentInChildren<PlayerUILoadingScreenManager>();
             playerUILevelUpManager = GetComponentInChildren<PlayerUILevelUpManager>();
+            playerUIWeaponUpgradeManager = GetComponentInChildren<PlayerUIWeaponUpgradeManager>();
         }
 
         private void Start()
@@ -72,6 +74,7 @@ namespace baodeag
             playerUISiteOfGraceManager.CloseMenuAfterFixedFrame();
             playerUITeleportLocationManager.CloseMenuAfterFixedFrame();
             playerUILevelUpManager.CloseMenuAfterFixedFrame();
+            playerUIWeaponUpgradeManager.CloseMenuAfterFixedFrame();
         }
 
         //ui sfx

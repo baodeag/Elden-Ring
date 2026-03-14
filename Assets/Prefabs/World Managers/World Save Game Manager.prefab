@@ -97,22 +97,28 @@ MonoBehaviour:
     rightWeaponIndex: 0
     rightWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeaponIndex: 0
     leftWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     quickSlotIndex: 0
     quickSlotItem01:
@@ -139,6 +145,8 @@ MonoBehaviour:
     bodyEquipmentInInventory: 
     handEquipmentInInventory: 
     legEquipmentInInventory: 
+    namelessKnightStageID: 0
+    blacksmithStageID: 0
     currentSpell: 0
   characterSlots01:
     sceneIndex: 1
@@ -188,22 +196,28 @@ MonoBehaviour:
     rightWeaponIndex: 0
     rightWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeaponIndex: 0
     leftWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     quickSlotIndex: 0
     quickSlotItem01:
@@ -230,6 +244,8 @@ MonoBehaviour:
     bodyEquipmentInInventory: 
     handEquipmentInInventory: 
     legEquipmentInInventory: 
+    namelessKnightStageID: 0
+    blacksmithStageID: 0
     currentSpell: 0
   characterSlots02:
     sceneIndex: 1
@@ -279,22 +295,28 @@ MonoBehaviour:
     rightWeaponIndex: 0
     rightWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeaponIndex: 0
     leftWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     quickSlotIndex: 0
     quickSlotItem01:
@@ -321,6 +343,8 @@ MonoBehaviour:
     bodyEquipmentInInventory: 
     handEquipmentInInventory: 
     legEquipmentInInventory: 
+    namelessKnightStageID: 0
+    blacksmithStageID: 0
     currentSpell: 0
   characterSlots03:
     sceneIndex: 1
@@ -370,22 +394,28 @@ MonoBehaviour:
     rightWeaponIndex: 0
     rightWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeaponIndex: 0
     leftWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     quickSlotIndex: 0
     quickSlotItem01:
@@ -412,6 +442,8 @@ MonoBehaviour:
     bodyEquipmentInInventory: 
     handEquipmentInInventory: 
     legEquipmentInInventory: 
+    namelessKnightStageID: 0
+    blacksmithStageID: 0
     currentSpell: 0
   characterSlots04:
     sceneIndex: 1
@@ -461,22 +493,28 @@ MonoBehaviour:
     rightWeaponIndex: 0
     rightWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeaponIndex: 0
     leftWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     quickSlotIndex: 0
     quickSlotItem01:
@@ -503,6 +541,8 @@ MonoBehaviour:
     bodyEquipmentInInventory: 
     handEquipmentInInventory: 
     legEquipmentInInventory: 
+    namelessKnightStageID: 0
+    blacksmithStageID: 0
     currentSpell: 0
   characterSlots05:
     sceneIndex: 1
@@ -552,22 +592,28 @@ MonoBehaviour:
     rightWeaponIndex: 0
     rightWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeaponIndex: 0
     leftWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     quickSlotIndex: 0
     quickSlotItem01:
@@ -594,6 +640,8 @@ MonoBehaviour:
     bodyEquipmentInInventory: 
     handEquipmentInInventory: 
     legEquipmentInInventory: 
+    namelessKnightStageID: 0
+    blacksmithStageID: 0
     currentSpell: 0
   characterSlots06:
     sceneIndex: 1
@@ -643,22 +691,28 @@ MonoBehaviour:
     rightWeaponIndex: 0
     rightWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeaponIndex: 0
     leftWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     quickSlotIndex: 0
     quickSlotItem01:
@@ -685,6 +739,8 @@ MonoBehaviour:
     bodyEquipmentInInventory: 
     handEquipmentInInventory: 
     legEquipmentInInventory: 
+    namelessKnightStageID: 0
+    blacksmithStageID: 0
     currentSpell: 0
   characterSlots07:
     sceneIndex: 1
@@ -734,22 +790,28 @@ MonoBehaviour:
     rightWeaponIndex: 0
     rightWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeaponIndex: 0
     leftWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     quickSlotIndex: 0
     quickSlotItem01:
@@ -776,6 +838,8 @@ MonoBehaviour:
     bodyEquipmentInInventory: 
     handEquipmentInInventory: 
     legEquipmentInInventory: 
+    namelessKnightStageID: 0
+    blacksmithStageID: 0
     currentSpell: 0
   characterSlots08:
     sceneIndex: 1
@@ -825,22 +889,28 @@ MonoBehaviour:
     rightWeaponIndex: 0
     rightWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeaponIndex: 0
     leftWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     quickSlotIndex: 0
     quickSlotItem01:
@@ -867,6 +937,8 @@ MonoBehaviour:
     bodyEquipmentInInventory: 
     handEquipmentInInventory: 
     legEquipmentInInventory: 
+    namelessKnightStageID: 0
+    blacksmithStageID: 0
     currentSpell: 0
   characterSlots09:
     sceneIndex: 1
@@ -916,22 +988,28 @@ MonoBehaviour:
     rightWeaponIndex: 0
     rightWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeaponIndex: 0
     leftWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     quickSlotIndex: 0
     quickSlotItem01:
@@ -958,6 +1036,8 @@ MonoBehaviour:
     bodyEquipmentInInventory: 
     handEquipmentInInventory: 
     legEquipmentInInventory: 
+    namelessKnightStageID: 0
+    blacksmithStageID: 0
     currentSpell: 0
   characterSlots10:
     sceneIndex: 1
@@ -1007,22 +1087,28 @@ MonoBehaviour:
     rightWeaponIndex: 0
     rightWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     rightWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeaponIndex: 0
     leftWeapon01:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon02:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     leftWeapon03:
       itemID: 0
+      upgradeLevel: 0
       ashOfWarID: 0
     quickSlotIndex: 0
     quickSlotItem01:
@@ -1049,11 +1135,13 @@ MonoBehaviour:
     bodyEquipmentInInventory: 
     handEquipmentInInventory: 
     legEquipmentInInventory: 
+    namelessKnightStageID: 0
+    blacksmithStageID: 0
     currentSpell: 0
   namelessKnightDialogueStageID: 0
+  blacksmithDialogueStageID: 0
   namelessKnightDialogues:
   - {fileID: 11400000, guid: 1bb15c94a3c85a440965480021b0d5f5, type: 2}
   - {fileID: 11400000, guid: 4a7309b03f6c4f641a972ed2f2352c09, type: 2}
-  namelessKnightFarewellDialogues:
-  - {fileID: 11400000, guid: 0d260f1436d76fe4a93b589d328b236e, type: 2}
-  - {fileID: 11400000, guid: 1d4291f3fd13f264fa79e042129db7c0, type: 2}
+  blacksmithDialogues:
+  - {fileID: 11400000, guid: 723d8fc037d518f428827d6d173cea3d, type: 2}

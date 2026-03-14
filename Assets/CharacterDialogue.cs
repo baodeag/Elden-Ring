@@ -20,14 +20,16 @@ namespace baodeag
         public List<AudioClip> dialogueAudio = new List<AudioClip>();
         public int dialogueIndex = 0;
 
-        [Header("End Triggers")]
-        [SerializeField] bool setStageIndex = false;
-        [SerializeField] int stageID = 0;
-
         [Header("Farewell Dialogue")]
         [TextArea] public List<string> farewellDialogueString = new List<string>();
         public List<AudioClip> farewellDialogueAudio = new List<AudioClip>();
         private bool farewellHasPlayed = false;
+
+        [Header("End Triggers")]
+        [SerializeField] bool setStageIndex = false;
+        [SerializeField] int stageID = 0;
+        [SerializeField] bool playFarewell = true;
+        [SerializeField] DialogueEndEvents endEvent;
 
         public void PlayDialogueEvent(AICharacterManager aiCharacter)
         {
@@ -50,7 +52,7 @@ namespace baodeag
                 int randomGreetingDialogueIndex = Random.Range(0, greetingDialogueAudio.Count);
                 PlayerUIManager.instance.playerUIPopUpManager.SetDialoguePopUpSubtitles(greetingDialogueString[randomGreetingDialogueIndex]);
                 aiCharacter.aiCharacterSoundFXManager.PlaySoundFX(greetingDialogueAudio[randomGreetingDialogueIndex]);
-                yield return new WaitForSeconds(greetingDialogueAudio[randomGreetingDialogueIndex].length);
+                yield return new WaitForSeconds(greetingDialogueAudio[randomGreetingDialogueIndex].length + 1);
             } 
 
             while (dialogueIndex < dialogueString.Count)
@@ -62,7 +64,7 @@ namespace baodeag
             }
 
             //play a random farewell dialogue, then wait the length of that audio clip + a second
-            if (farewellDialogueAudio.Count != 0 && !greetingHasPlayed)
+            if (farewellDialogueAudio.Count != 0 && !farewellHasPlayed)
             {
                 farewellHasPlayed = true;
                 int randomFarewellDialogueIndex = Random.Range(0, farewellDialogueAudio.Count);
@@ -80,17 +82,42 @@ namespace baodeag
         public void OnDialogueEnded(AICharacterManager aiCharacter)
         { 
             greetingHasPlayed = false;
+            farewellHasPlayed = false;
             dialogueIndex = 0;
 
             if (setStageIndex)
                 WorldSaveGameManager.instance.SetStageOfDialogue(aiCharacter.aiCharacterSoundFXManager.characterDialogueID, stageID);
 
             aiCharacter.aiCharacterSoundFXManager.OnCurrentDialogueEnded();
+
+            if (endEvent != DialogueEndEvents.None)
+            {
+                switch (endEvent)
+                {
+                    case DialogueEndEvents.None:
+                        break;
+                    case DialogueEndEvents.Blacksmith:
+                        PlayerUIManager.instance.playerUIWeaponUpgradeManager.OpenMenuAfterFixedFrame();
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
+        //called when we leave the interaction radius
         public void OnDialogueCancelled(AICharacterManager aiCharacter)
         {
-
+            switch (endEvent)
+            {
+                case DialogueEndEvents.None:
+                    break;
+                case DialogueEndEvents.Blacksmith:
+                    PlayerUIManager.instance.playerUIWeaponUpgradeManager.CloseMenu();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

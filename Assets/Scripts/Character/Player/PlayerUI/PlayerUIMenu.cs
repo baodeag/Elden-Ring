@@ -14,6 +14,21 @@ namespace baodeag
             menu.SetActive(true);
         }
 
+        public virtual void OpenMenuAfterFixedFrame()
+        {
+            if (menu.activeInHierarchy)
+                return;
+
+            StartCoroutine(WaitThenOpenMenu());
+        }
+
+        protected virtual IEnumerator WaitThenOpenMenu()
+        {
+            yield return new WaitForFixedUpdate();
+
+            OpenMenu();
+        }
+
         public virtual void CloseMenu()
         {
             PlayerUIManager.instance.menuWindowIsOpen = false;
@@ -33,8 +48,7 @@ namespace baodeag
         {
             yield return new WaitForFixedUpdate();
 
-            PlayerUIManager.instance.menuWindowIsOpen = false;
-            menu.SetActive(false);
+            CloseMenu();
         }
     }
 }

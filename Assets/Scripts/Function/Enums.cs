@@ -40,7 +40,14 @@ public enum CharacterAttribute
 public enum CharacterDialogueID
 {
     NoDialogueID,
-    NamelessKnightDialogueID
+    NamelessKnightDialogueID,
+    BlacksmithDialogueID,
+}
+
+public enum DialogueEndEvents
+{
+    None,
+    Blacksmith
 }
 
 public enum WeaponModelSlot 

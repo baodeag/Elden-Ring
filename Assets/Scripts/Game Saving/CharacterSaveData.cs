@@ -102,6 +102,7 @@ namespace baodeag
 
         [Header("Dialogue")]
         public int namelessKnightStageID = 0;
+        public int blacksmithStageID = 0;
 
         //this will change when we add multiple spells
         public int currentSpell;

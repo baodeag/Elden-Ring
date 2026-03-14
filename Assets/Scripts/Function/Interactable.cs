@@ -22,8 +22,6 @@ namespace baodeag
 
         public virtual void Interact(PlayerManager player)
         {
-            Debug.Log("You have interacted!");
-
             if (!player.IsOwner)
                 return;
 
