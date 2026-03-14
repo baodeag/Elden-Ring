@@ -41,8 +41,32 @@ namespace baodeag
 
         public void RemoveItemFromInventory(Item item)
         {
-            itemsInInventory.Remove(item);
+            bool isStackable = false;
 
+            if (item.maxItemAmount > 1)
+                isStackable = true;
+
+            //if the item is stackable, attempt to remove from the stack first
+            if (isStackable)
+            {
+                for (int i = itemsInInventory.Count - 1; i > -1; i--)
+                {
+                    if (itemsInInventory[i].itemID == item.itemID)
+                    {
+                        itemsInInventory[i].currentItemAmount -= item.currentItemAmount;
+
+                        if (itemsInInventory[i].currentItemAmount <= 0)
+                            itemsInInventory.Remove(item);
+                    }
+                }
+            }
+            //otherwise simply remove it from the inventory
+            else
+            {
+                itemsInInventory.Remove(item);
+            }
+
+            //check for null lists slot and remove them
             for (int i = itemsInInventory.Count - 1; i > -1; i--)
             {
                 if (itemsInInventory[i] == null)

@@ -46,6 +46,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unarmedWeapon: {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   pickUpItemPrefab: {fileID: 800534316194674825, guid: 34f2c1bbf06ba9c479d25a1005f3dabf, type: 3}
+  smallUpgradeStone: {fileID: 11400000, guid: dd0921e3223132746b9bacdb3acca269, type: 2}
+  mediumUpgradeStone: {fileID: 11400000, guid: 6b6b98df85f408e4ea7f35142718f50c, type: 2}
+  largeUpgradeStone: {fileID: 11400000, guid: 0c567da9272c187489ed8342dc53c2e4, type: 2}
   weapons:
   - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
   - {fileID: 11400000, guid: 44cf7f826137bed409bf10c407725a1c, type: 2}
