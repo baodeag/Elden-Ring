@@ -103,6 +103,11 @@ namespace baodeag
             StartCoroutine(WaitThenFadeOutPopUpOverTime(graceRestoredPopUpCanvasGroup, 2, 5));
         }
 
+        public void SendStatusEffectPopUp(BuildUp status)
+        {
+
+        }
+
         public void SendDialoguePopUp(CharacterDialogue dialogue, AICharacterManager aiCharacter)
         {
             PlayerUIManager.instance.playerUIHudManager.ToggleHUDWithOutPopUps(false);

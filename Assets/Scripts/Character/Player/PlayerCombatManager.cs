@@ -60,7 +60,7 @@ namespace baodeag
                 return;
 
             //spawn dead spot vfx
-            GameObject deadSpotFX = Instantiate(WorldCharacterEffectsManager.instance.deadspotVFX);
+            GameObject deadSpotFX = Instantiate(WorldCharacterEffectsManager.instance.deadSpotVFX);
             deadSpotFX.GetComponent<NetworkObject>().Spawn();
 
             //set its world position

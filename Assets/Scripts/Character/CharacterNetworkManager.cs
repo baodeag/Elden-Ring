@@ -5,7 +5,7 @@ namespace baodeag
 {
     public class CharacterNetworkManager : NetworkBehaviour
     {
-        CharacterManager character;
+        protected CharacterManager character;
 
         [Header("Active")]
         public NetworkVariable<bool> isActive = new NetworkVariable<bool>
@@ -99,6 +99,10 @@ namespace baodeag
         public NetworkVariable<bool> isRolling = new NetworkVariable<bool>
             (false, 
             NetworkVariableReadPermission.Everyone, 
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isPoisoned = new NetworkVariable<bool>
+            (false,
+            NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
 
         [Header("Resources")]
@@ -237,9 +241,31 @@ namespace baodeag
             gameObject.SetActive(isActive.Value);
         }
 
-        public virtual void OnIsBlockingChanged(bool oldStatus, bool newStarus)
+        public virtual void OnIsBlockingChanged(bool oldStatus, bool newStatus)
         {
             character.animator.SetBool("isBlocking", isBlocking.Value);
+        }
+
+        public virtual void OnIsPoisonedChanged(bool oldStatus, bool newStatus)
+        {
+            if (isPoisoned.Value)
+            {
+                if (character.characterEffectsManager.poisonedVFX != null)
+                    return;
+
+                GameObject poisonVFX = Instantiate(WorldCharacterEffectsManager.instance.poisonedVFX);
+                poisonVFX.transform.parent = character.characterCombatManager.lockOnTransform;
+                poisonVFX.transform.localPosition = Vector3.zero;
+                poisonVFX.transform.localRotation = Quaternion.identity;
+            }
+            else
+            {
+                if (character.characterEffectsManager.poisonedVFX == null)
+                    return;
+
+                Destroy(character.characterEffectsManager.poisonedVFX);
+
+            }
         }
 
         //used to cancel fx when poise is broken

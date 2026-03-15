@@ -30,6 +30,9 @@ namespace baodeag
 
         private void CheckForPoisonedStatus(CharacterManager character)
         {
+            if (character.characterNetworkManager.isPoisoned.Value)
+                return;
+
             BuildUpEffect poisonBuildUp = character.characterEffectsManager.CheckForTimedEffect(WorldCharacterEffectsManager.instance.degradePoisonBuildUpEffect.effectID) as BuildUpEffect;
 
             if (poisonBuildUp == null)
@@ -39,7 +42,25 @@ namespace baodeag
                 poisonBuildUp.ProcessEffect(character);
             }
 
+            if (character.characterNetworkManager.poisonBuildUp.Value > character.characterNetworkManager.buildUpCapacity.Value)
+            {
+                character.characterNetworkManager.poisonBuildUp.Value = 0;
+                character.characterNetworkManager.isPoisoned.Value = true;
 
+                //create the poisoned effect
+                PoisonedEffect poison = Instantiate(WorldCharacterEffectsManager.instance.poisonedEffect);
+                character.characterEffectsManager.AddTimedEffect(poison);
+
+                PlayerManager player = character as PlayerManager;
+
+                if (player == null)
+                    return;
+
+                if (!player.IsOwner)
+                    return;
+
+
+            }
         }
 
         private void CheckForBloodLossStatus(CharacterManager character)
