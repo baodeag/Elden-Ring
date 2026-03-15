@@ -8,12 +8,14 @@ namespace baodeag
         [SerializeField] bool applyPoisonBuildUp = false;
         [SerializeField] bool applyBleedBuildUp = false;
 
-        private void Update()
+        protected override void Update()
         {
+            base.Update();
+
             if (applyPoisonBuildUp)
             {
                 applyPoisonBuildUp = false;
-                TakeBuildUpEffect buildUp = Instantiate(WorldCharacterEffectsManager.instance.poisonBuildUpEffect);
+                TakeBuildUpEffect buildUp = Instantiate(WorldCharacterEffectsManager.instance.takePoisonBuildUpEffect);
                 buildUp.buildUpAmount = 25;
                 character.characterEffectsManager.ProcessInstantEffect(buildUp);
             }
@@ -21,7 +23,7 @@ namespace baodeag
             if (applyBleedBuildUp)
             {
                 applyBleedBuildUp = false;
-                TakeBuildUpEffect buildUp = Instantiate(WorldCharacterEffectsManager.instance.bleedBuildUpEffect);
+                TakeBuildUpEffect buildUp = Instantiate(WorldCharacterEffectsManager.instance.takeBleedBuildUpEffect);
                 buildUp.buildUpAmount = 25;
                 character.characterEffectsManager.ProcessInstantEffect(buildUp);
             }

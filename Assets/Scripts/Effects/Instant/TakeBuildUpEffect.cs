@@ -30,7 +30,16 @@ namespace baodeag
 
         private void CheckForPoisonedStatus(CharacterManager character)
         {
-            
+            BuildUpEffect poisonBuildUp = character.characterEffectsManager.CheckForTimedEffect(WorldCharacterEffectsManager.instance.degradePoisonBuildUpEffect.effectID) as BuildUpEffect;
+
+            if (poisonBuildUp == null)
+            {
+                poisonBuildUp = Instantiate(WorldCharacterEffectsManager.instance.degradePoisonBuildUpEffect);
+                character.characterEffectsManager.AddTimedEffect(poisonBuildUp);
+                poisonBuildUp.ProcessEffect(character);
+            }
+
+
         }
 
         private void CheckForBloodLossStatus(CharacterManager character)

@@ -51,8 +51,9 @@ MonoBehaviour:
   takeDamageEffect: {fileID: 11400000, guid: c093158693f06ec4eb9de3307a90e2b2, type: 2}
   takeBlockedDamageEffect: {fileID: 11400000, guid: d61167399a8bea9489344bb776bb4a51, type: 2}
   takeCriticalDamageEffect: {fileID: 11400000, guid: 58768edb7af18d14095f6edd8e9feb5a, type: 2}
-  poisonBuildUpEffect: {fileID: 11400000, guid: e284d86abed386c4391392129dee4b83, type: 2}
-  bleedBuildUpEffect: {fileID: 11400000, guid: 9fe59fa44892bdf428253983307d4753, type: 2}
+  takePoisonBuildUpEffect: {fileID: 11400000, guid: e284d86abed386c4391392129dee4b83, type: 2}
+  TakeBleedBuildUpEffect: {fileID: 11400000, guid: 9fe59fa44892bdf428253983307d4753, type: 2}
+  degradePoisonBuildUpEffect: {fileID: 11400000, guid: 5e7f5c17ac68bb242b65ebd62b4e7802, type: 2}
   twoHandingEffect: {fileID: 11400000, guid: 1d4fe454986a205438befaa2b75e7435, type: 2}
   instantEffects:
   - {fileID: 11400000, guid: 52a0a31489f75054896d1e198c2f59e1, type: 2}

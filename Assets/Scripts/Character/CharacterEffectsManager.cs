@@ -28,11 +28,24 @@ namespace baodeag
         public List<StaticCharacterEffect> staticEffects = new List<StaticCharacterEffect>();
 
         [Header("Timed Effects")]
+        [SerializeField] protected float effectTickTimer = 0;
+        [SerializeField] protected float defaultEffectTickTime = 1;
         public List<TimedCharacterEffect> timedEffects = new List<TimedCharacterEffect>();
 
         protected virtual void Awake()
         {
             character = GetComponent<CharacterManager>();
+        }
+
+        protected virtual void Update()
+        {
+            effectTickTimer -= Time.deltaTime;
+
+            if (effectTickTimer <= 0)
+            {
+                effectTickTimer = defaultEffectTickTime;
+                ProcessTimedEffects();
+            }
         }
 
         public virtual void ProcessInstantEffect(InstantCharacterEffect effect)

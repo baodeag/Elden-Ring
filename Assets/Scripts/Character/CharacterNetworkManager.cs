@@ -158,6 +158,10 @@ namespace baodeag
             NetworkVariableWritePermission.Owner);
 
         [Header("Build Up/Status Effects")]
+        public NetworkVariable<float> buildUpCapacity = new NetworkVariable<float>
+            (100,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
         public NetworkVariable<float> poisonBuildUp = new NetworkVariable<float>
             (0,
             NetworkVariableReadPermission.Everyone,

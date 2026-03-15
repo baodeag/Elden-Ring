@@ -218,6 +218,12 @@ namespace baodeag
             currentFocusPoints.Value = maxFocusPoints.Value;
         }
 
+        public void SetNewMaxBuildUpCapacityValue(int oldVitality, int newVitality)
+        {
+            buildUpCapacity.Value = player.playerStatsManager.CalculateBuildUpCapacityBasedOnVitalityLevel(newVitality);
+            PlayerUIManager.instance.playerUIHudManager.SetMaxBuildUpValue(Mathf.RoundToInt(buildUpCapacity.Value));
+        }
+
         public void OnHairStyleIDChanged(int oldValue, int newValue)
         {
             player.playerBodyManager.ToggleHairType(hairStyleID.Value);
