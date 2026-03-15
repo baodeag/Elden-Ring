@@ -50,6 +50,13 @@ public enum DialogueEndEvents
     Blacksmith
 }
 
+//status effect
+public enum BuildUp
+{
+    Poison,
+    Bleed
+}
+
 public enum WeaponModelSlot 
 {
     RightHand,

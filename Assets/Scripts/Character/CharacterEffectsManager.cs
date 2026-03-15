@@ -1,6 +1,7 @@
 using NUnit.Framework;
-using UnityEngine;
+using NUnit.Framework.Internal;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace baodeag
 {
@@ -12,7 +13,7 @@ namespace baodeag
 
         //process static effects (add/remove buffs)
 
-        CharacterManager character;
+        protected CharacterManager character;
 
         [Header("Current Active FX")]
         public GameObject activeQuickSlotItemFX;
@@ -25,6 +26,9 @@ namespace baodeag
 
         [Header("Static Effects")]
         public List<StaticCharacterEffect> staticEffects = new List<StaticCharacterEffect>();
+
+        [Header("Timed Effects")]
+        public List<TimedCharacterEffect> timedEffects = new List<TimedCharacterEffect>();
 
         protected virtual void Awake()
         {
@@ -60,6 +64,25 @@ namespace baodeag
             }
         }
 
+        public virtual void AddBuildUps(BuildUp buildUpType, float amount)
+        {
+            if (!character.IsOwner)
+                return;
+
+            switch (buildUpType)
+            {
+                case BuildUp.Poison:
+                    character.characterNetworkManager.poisonBuildUp.Value += amount;
+                    break;
+                case BuildUp.Bleed:
+                    character.characterNetworkManager.bleedBuildUp.Value += amount;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        //static effects
         public void AddStaticEffect(StaticCharacterEffect effect)
         {
             staticEffects.Add(effect);
@@ -95,6 +118,91 @@ namespace baodeag
                 if (staticEffects[i] == null)
                     staticEffects.RemoveAt(i);
             }
+        }
+
+        //timed effects
+        //process all current timed effects
+        public void ProcessTimedEffects()
+        {
+            for (int i = 0; i < timedEffects.Count; i++)
+            {
+                if (timedEffects[i] == null)
+                    continue;
+
+                timedEffects[i].ProcessEffect(character);
+            }
+        }
+
+        //add a new effect
+        public void AddTimedEffect(TimedCharacterEffect effect)
+        {
+            bool effectIsAlreadyOnCharacter = false;
+
+            //if we already have the effect on us, we just reset the timer
+            for (int i = 0; i < timedEffects.Count; i++)
+            {
+                if (timedEffects[i] == null)
+                    continue;
+
+                if (timedEffects[i].effectID == effect.effectID)
+                {
+                    effectIsAlreadyOnCharacter = true;
+                    timedEffects[i].timeRemainingOnEffect = timedEffects[i].defaultLengthOfEffect;
+                }
+            }
+
+            if (!effectIsAlreadyOnCharacter)
+            {
+                timedEffects.Add(effect);
+                effect.timeRemainingOnEffect = effect.defaultLengthOfEffect;
+
+                //process the first tick instantly
+                effect.ProcessEffect(character);
+            }
+        }
+
+        //remove an effect
+        public void RemoveTimedEffect(int effectID)
+        {
+            TimedCharacterEffect effect;
+
+            //find and remove
+            for (int i = 0; i < timedEffects.Count; i++)
+            {
+                if (timedEffects[i] == null)
+                    continue;
+
+                if (timedEffects[i].effectID == effectID)
+                {
+                    effect = timedEffects[i];
+                    effect.RemoveEffect(character);
+                    timedEffects.Remove(effect);
+                }
+            }
+
+            //remove null entries from list
+            for (int i = 0; i < timedEffects.Count; i++)
+            {
+                if (timedEffects[i] == null)
+                    timedEffects.RemoveAt(i);
+            }
+        }
+
+        //checks if we are aready affected by an effect
+        public TimedCharacterEffect CheckForTimedEffect(int effectID)
+        {
+            TimedCharacterEffect timedEffect = null;
+
+            for (int i = 0; i < timedEffects.Count; i++)
+            {
+                if (timedEffects[i].effectID == effectID)
+                {
+                    timedEffect = timedEffects[i];
+                    break;
+                }
+            }
+
+            return timedEffect;
         }
     }
 }
