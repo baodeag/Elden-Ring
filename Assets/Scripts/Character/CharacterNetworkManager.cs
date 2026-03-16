@@ -104,6 +104,10 @@ namespace baodeag
             (false,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isBleeding = new NetworkVariable<bool>
+            (false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
 
         [Header("Resources")]
         public NetworkVariable<int> currentHealth = new NetworkVariable<int>
@@ -265,6 +269,17 @@ namespace baodeag
 
                 Destroy(character.characterEffectsManager.poisonedVFX);
 
+            }
+        }
+
+        public virtual void OnIsBleedingChanged(bool oldStatus, bool newStatus)
+        {
+            if (isBleeding.Value)
+            {
+                GameObject bloodLossVFX = Instantiate(WorldCharacterEffectsManager.instance.bloodLossVFX);
+                bloodLossVFX.transform.parent = character.characterCombatManager.lockOnTransform;
+                bloodLossVFX.transform.localPosition = Vector3.zero;
+                bloodLossVFX.transform.localRotation = Quaternion.identity;
             }
         }
 

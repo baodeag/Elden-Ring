@@ -99,6 +99,7 @@ namespace baodeag
 
                 //update ui build up bars when build up changes
                 playerNetworkManager.poisonBuildUp.OnValueChanged += PlayerUIManager.instance.playerUIHudManager.SetNewPoisonBuildUpAmount;
+                playerNetworkManager.bleedBuildUp.OnValueChanged += PlayerUIManager.instance.playerUIHudManager.SetNewBleedBuildUpAmount;
 
                 playerNetworkManager.SetNewMaxHealthValue(0, playerNetworkManager.vigor.Value); 
                 playerNetworkManager.SetNewMaxStaminaValue(0, playerNetworkManager.endurance.Value);
@@ -125,6 +126,7 @@ namespace baodeag
 
             //status effects
             playerNetworkManager.isPoisoned.OnValueChanged += playerNetworkManager.OnIsPoisonedChanged;
+            playerNetworkManager.isBleeding.OnValueChanged += playerNetworkManager.OnIsBleedingChanged;
 
             //lock on
             playerNetworkManager.isLockedOn.OnValueChanged += playerNetworkManager.OnIsLockedOnChanged;
@@ -198,6 +200,7 @@ namespace baodeag
 
                 //update ui build up bars when build up changes
                 playerNetworkManager.poisonBuildUp.OnValueChanged -= PlayerUIManager.instance.playerUIHudManager.SetNewPoisonBuildUpAmount;
+                playerNetworkManager.bleedBuildUp.OnValueChanged -= PlayerUIManager.instance.playerUIHudManager.SetNewBleedBuildUpAmount;
 
                 //reset camera rotation to standard when aiming is disabled
                 playerNetworkManager.isAiming.OnValueChanged -= playerNetworkManager.OnIsAimingChanged;
@@ -216,6 +219,7 @@ namespace baodeag
 
             //status effects
             playerNetworkManager.isPoisoned.OnValueChanged -= playerNetworkManager.OnIsPoisonedChanged;
+            playerNetworkManager.isBleeding.OnValueChanged -= playerNetworkManager.OnIsBleedingChanged;
 
             //lock on
             playerNetworkManager.isLockedOn.OnValueChanged -= playerNetworkManager.OnIsLockedOnChanged;

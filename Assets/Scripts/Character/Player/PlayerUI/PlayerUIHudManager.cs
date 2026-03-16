@@ -18,6 +18,7 @@ namespace baodeag
 
         [Header("Build Up Bars")]
         [SerializeField] UI_BuildUpBar poisonBuildUpBar;
+        [SerializeField] UI_BuildUpBar bleedBuildUpBar;
 
         [Header("Runes")]
         [SerializeField] float runeUpdateCountDelayTimer = 2.5f;
@@ -139,30 +140,20 @@ namespace baodeag
             yield return null;
         }
 
-        public void SetBuildUpAmount(BuildUp buildUpType, int amount)
-        {
-            switch (buildUpType)
-            {
-                case BuildUp.Poison:
-                    poisonBuildUpBar.SetStat(amount);
-                    break;
-                case BuildUp.Bleed:
-                    //bleedBuildUpBar.SetStat(amount);
-                    break;
-                default:
-                    break;
-            }
-        }
-
         public void SetNewPoisonBuildUpAmount(float oldValue, float amount)
         {
             poisonBuildUpBar.SetStat(Mathf.RoundToInt(amount));
         }
 
+        public void SetNewBleedBuildUpAmount(float oldValue, float amount)
+        {
+            bleedBuildUpBar.SetStat(Mathf.RoundToInt(amount));
+        }
+
         public void SetMaxBuildUpValue(int buildUpCapacity)
         {
             poisonBuildUpBar.SetMaxStat(buildUpCapacity);
-            //bleed
+            bleedBuildUpBar.SetMaxStat(buildUpCapacity);
         }
 
         public void SetNewHealthValue(int oldValue, int newValue)

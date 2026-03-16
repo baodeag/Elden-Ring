@@ -65,7 +65,35 @@ namespace baodeag
 
         private void CheckForBloodLossStatus(CharacterManager character)
         {
+            BuildUpEffect bleedBuildUp = character.characterEffectsManager.CheckForTimedEffect(WorldCharacterEffectsManager.instance.degradeBleedBuildUpEffect.effectID) as BuildUpEffect;
 
+            if (bleedBuildUp == null)
+            {
+                bleedBuildUp = Instantiate(WorldCharacterEffectsManager.instance.degradeBleedBuildUpEffect);
+                character.characterEffectsManager.AddTimedEffect(bleedBuildUp);
+                bleedBuildUp.ProcessEffect(character);
+            }
+
+            if (character.characterNetworkManager.bleedBuildUp.Value > character.characterNetworkManager.buildUpCapacity.Value)
+            {
+                character.characterNetworkManager.bleedBuildUp.Value = 0;
+                character.characterNetworkManager.isBleeding.Value = true;
+                //character.characterNetworkManager.BleedCharacterServerRpc();
+
+                //create the poisoned effect
+                BloodLossEffect bloodLoss = Instantiate(WorldCharacterEffectsManager.instance.bloodLossEffect);
+                character.characterEffectsManager.ProcessInstantEffect(bloodLoss);
+
+                PlayerManager player = character as PlayerManager;
+
+                if (player == null)
+                    return;
+
+                if (!player.IsOwner)
+                    return;
+
+
+            }
         }
     }
 }

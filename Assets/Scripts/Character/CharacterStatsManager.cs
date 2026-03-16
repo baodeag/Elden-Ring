@@ -192,6 +192,8 @@ namespace baodeag
                     effect.buildUpRemaining = character.characterNetworkManager.poisonBuildUp.Value;
                     break;
                 case BuildUp.Bleed:
+                    character.characterNetworkManager.bleedBuildUp.Value += amount;
+                    effect.buildUpRemaining = character.characterNetworkManager.bleedBuildUp.Value;
                     break;
                 default:
                     break;

@@ -14,6 +14,7 @@ namespace baodeag
         public GameObject healingFlaskVFX;
         public GameObject deadSpotVFX;
         public GameObject poisonedVFX;
+        public GameObject bloodLossVFX;
 
         [Header("Damage")]
         public TakeDamageEffect takeDamageEffect;
@@ -22,6 +23,7 @@ namespace baodeag
 
         [Header("Status Effects")]
         public PoisonedEffect poisonedEffect;
+        public BloodLossEffect bloodLossEffect;
 
         [Header("Take Build Ups")]
         public TakeBuildUpEffect takePoisonBuildUpEffect;
@@ -29,6 +31,7 @@ namespace baodeag
 
         [Header("Degrade Build Ups")]
         public BuildUpEffect degradePoisonBuildUpEffect;
+        public BuildUpEffect degradeBleedBuildUpEffect;
 
         [Header("Two Hand")]
         public TwoHandingEffect twoHandingEffect;

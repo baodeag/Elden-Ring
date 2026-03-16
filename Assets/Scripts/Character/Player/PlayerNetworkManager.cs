@@ -183,6 +183,23 @@ namespace baodeag
             }
         }
 
+        public override void OnIsBleedingChanged(bool oldStatus, bool newStatus)
+        {
+            if (isBleeding.Value)
+            {
+                GameObject bloodLossVFX = Instantiate(WorldCharacterEffectsManager.instance.bloodLossVFX);
+                bloodLossVFX.transform.parent = character.characterCombatManager.lockOnTransform;
+                bloodLossVFX.transform.localPosition = Vector3.zero;
+                bloodLossVFX.transform.localRotation = Quaternion.identity;
+
+                if (player.IsOwner)
+                {
+                    PlayerUIManager.instance.playerUIPopUpManager.SendStatusEffectPopUp(BuildUp.Bleed);
+                    isBleeding.Value = false;
+                }
+            }       
+        }
+
         public override void OnIsPoisonedChanged(bool oldStatus, bool newStatus)
         {
             if (player.IsOwner)

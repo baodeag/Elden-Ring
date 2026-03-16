@@ -68,6 +68,7 @@ namespace baodeag
             aiCharacterNetworkManager.currentHealth.OnValueChanged += aiCharacterNetworkManager.OnHPChanged;
             aiCharacterNetworkManager.isBlocking.OnValueChanged += aiCharacterNetworkManager.OnIsBlockingChanged;
             aiCharacterNetworkManager.isPoisoned.OnValueChanged += aiCharacterNetworkManager.OnIsPoisonedChanged;
+            aiCharacterNetworkManager.isAwake.OnValueChanged += aiCharacterNetworkManager.OnIsBleedingChanged;
 
             if (!aiCharacterNetworkManager.isAwake.Value)
                 animator.Play(aiCharacterNetworkManager.sleepingAnimation.Value.ToString());
@@ -88,6 +89,7 @@ namespace baodeag
             aiCharacterNetworkManager.currentHealth.OnValueChanged -= aiCharacterNetworkManager.OnHPChanged;
             aiCharacterNetworkManager.isBlocking.OnValueChanged -= aiCharacterNetworkManager.OnIsBlockingChanged;
             aiCharacterNetworkManager.isPoisoned.OnValueChanged -= aiCharacterNetworkManager.OnIsPoisonedChanged;
+            aiCharacterNetworkManager.isAwake.OnValueChanged -= aiCharacterNetworkManager.OnIsBleedingChanged;
         }
 
         protected override void OnEnable()
