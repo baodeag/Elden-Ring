@@ -108,6 +108,10 @@ namespace baodeag
             (false,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isFrostBitten = new NetworkVariable<bool>
+            (false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
 
         [Header("Resources")]
         public NetworkVariable<int> currentHealth = new NetworkVariable<int>
@@ -175,6 +179,10 @@ namespace baodeag
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
         public NetworkVariable<float> bleedBuildUp = new NetworkVariable<float>
+            (0,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<float> frostBiteBuildUp = new NetworkVariable<float>
             (0,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
@@ -280,6 +288,28 @@ namespace baodeag
                 bloodLossVFX.transform.parent = character.characterCombatManager.lockOnTransform;
                 bloodLossVFX.transform.localPosition = Vector3.zero;
                 bloodLossVFX.transform.localRotation = Quaternion.identity;
+            }
+        }
+
+        public virtual void OnIsFrostBittenChanged(bool oldStatus, bool newStatus)
+        {
+            if (isFrostBitten.Value)
+            {
+                if (character.characterEffectsManager.frostBiteVFX != null)
+                    return;
+
+                GameObject frostBite = Instantiate(WorldCharacterEffectsManager.instance.frostBiteVFX);
+                frostBite.transform.parent = character.characterCombatManager.lockOnTransform;
+                frostBite.transform.localPosition = Vector3.zero;
+                frostBite.transform.localRotation = Quaternion.identity;
+            }
+            else
+            {
+                if (character.characterEffectsManager.frostBiteVFX == null)
+                    return;
+
+                Destroy(character.characterEffectsManager.frostBiteVFX);
+
             }
         }
 

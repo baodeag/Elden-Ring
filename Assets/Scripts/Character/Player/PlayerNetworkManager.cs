@@ -236,6 +236,31 @@ namespace baodeag
             }          
         }
 
+        public override void OnIsFrostBittenChanged(bool oldStatus, bool newStatus)
+        {
+            if (isFrostBitten.Value)
+            {
+                if (player.IsOwner)
+                    PlayerUIManager.instance.playerUIPopUpManager.SendStatusEffectPopUp(BuildUp.Frost);
+
+                if (character.characterEffectsManager.frostBiteVFX != null)
+                    return;
+
+                GameObject frostBite = Instantiate(WorldCharacterEffectsManager.instance.frostBiteVFX);
+                frostBite.transform.parent = character.characterCombatManager.lockOnTransform;
+                frostBite.transform.localPosition = Vector3.zero;
+                frostBite.transform.localRotation = Quaternion.identity;
+            }
+            else
+            {
+                if (character.characterEffectsManager.frostBiteVFX == null)
+                    return;
+
+                Destroy(character.characterEffectsManager.frostBiteVFX);
+
+            }
+        }
+
         public void SetCharacterActionHand(bool rightHandedAction)
         {
             if (rightHandedAction)

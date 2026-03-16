@@ -23,6 +23,9 @@ namespace baodeag
                 case BuildUp.Bleed:
                     CheckForBloodLossStatus(character);
                     break;
+                case BuildUp.Frost:
+                    CheckForFrostBiteStatus(character);
+                    break;
                 default:
                     break;
             }
@@ -83,6 +86,41 @@ namespace baodeag
                 //create the poisoned effect
                 BloodLossEffect bloodLoss = Instantiate(WorldCharacterEffectsManager.instance.bloodLossEffect);
                 character.characterEffectsManager.ProcessInstantEffect(bloodLoss);
+
+                PlayerManager player = character as PlayerManager;
+
+                if (player == null)
+                    return;
+
+                if (!player.IsOwner)
+                    return;
+
+
+            }
+        }
+
+        private void CheckForFrostBiteStatus(CharacterManager character)
+        {
+            if (character.characterNetworkManager.isFrostBitten.Value)
+                return;
+
+            BuildUpEffect frostBuildUp = character.characterEffectsManager.CheckForTimedEffect(WorldCharacterEffectsManager.instance.degradeFrostBiteBuildUpEffect.effectID) as BuildUpEffect;
+
+            if (frostBuildUp == null)
+            {
+                frostBuildUp = Instantiate(WorldCharacterEffectsManager.instance.degradeFrostBiteBuildUpEffect);
+                character.characterEffectsManager.AddTimedEffect(frostBuildUp);
+                frostBuildUp.ProcessEffect(character);
+            }
+
+            if (character.characterNetworkManager.frostBiteBuildUp.Value > character.characterNetworkManager.buildUpCapacity.Value)
+            {
+                character.characterNetworkManager.frostBiteBuildUp.Value = 0;
+                character.characterNetworkManager.isFrostBitten.Value = true;
+
+                //create the poisoned effect
+                FrostBiteEffect frostBite = Instantiate(WorldCharacterEffectsManager.instance.frostBiteEffect);
+                character.characterEffectsManager.AddTimedEffect(frostBite);
 
                 PlayerManager player = character as PlayerManager;
 

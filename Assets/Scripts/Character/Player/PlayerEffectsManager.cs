@@ -7,6 +7,7 @@ namespace baodeag
         [Header("Debug delete later")]
         [SerializeField] bool applyPoisonBuildUp = false;
         [SerializeField] bool applyBleedBuildUp = false;
+        [SerializeField] bool applyFrostBuildUp = false;
 
         protected override void Update()
         {
@@ -24,6 +25,14 @@ namespace baodeag
             {
                 applyBleedBuildUp = false;
                 TakeBuildUpEffect buildUp = Instantiate(WorldCharacterEffectsManager.instance.takeBleedBuildUpEffect);
+                buildUp.buildUpAmount = 25;
+                character.characterEffectsManager.ProcessInstantEffect(buildUp);
+            }
+
+            if (applyFrostBuildUp)
+            {
+                applyFrostBuildUp = false;
+                TakeBuildUpEffect buildUp = Instantiate(WorldCharacterEffectsManager.instance.takeFrostBuildUpEffect);
                 buildUp.buildUpAmount = 25;
                 character.characterEffectsManager.ProcessInstantEffect(buildUp);
             }

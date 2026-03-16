@@ -54,7 +54,8 @@ public enum DialogueEndEvents
 public enum BuildUp
 {
     Poison,
-    Bleed
+    Bleed,
+    Frost
 }
 
 public enum WeaponModelSlot 

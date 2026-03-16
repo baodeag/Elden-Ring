@@ -230,6 +230,7 @@ MonoBehaviour:
   canvas: {fileID: 6391454244270873336}
   poisonedColor: {r: 0.38039216, g: 0.5019608, b: 0.38431373, a: 1}
   bloodLossColor: {r: 1, g: 0, b: 0, a: 1}
+  frostColor: {r: 0, g: 0.7137255, b: 1, a: 1}
 --- !u!225 &6391454244270873336
 CanvasGroup:
   m_ObjectHideFlags: 0

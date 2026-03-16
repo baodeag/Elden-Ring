@@ -68,7 +68,8 @@ namespace baodeag
             aiCharacterNetworkManager.currentHealth.OnValueChanged += aiCharacterNetworkManager.OnHPChanged;
             aiCharacterNetworkManager.isBlocking.OnValueChanged += aiCharacterNetworkManager.OnIsBlockingChanged;
             aiCharacterNetworkManager.isPoisoned.OnValueChanged += aiCharacterNetworkManager.OnIsPoisonedChanged;
-            aiCharacterNetworkManager.isAwake.OnValueChanged += aiCharacterNetworkManager.OnIsBleedingChanged;
+            aiCharacterNetworkManager.isBleeding.OnValueChanged += aiCharacterNetworkManager.OnIsBleedingChanged;
+            aiCharacterNetworkManager.isFrostBitten.OnValueChanged += aiCharacterNetworkManager.OnIsFrostBittenChanged;
 
             if (!aiCharacterNetworkManager.isAwake.Value)
                 animator.Play(aiCharacterNetworkManager.sleepingAnimation.Value.ToString());
@@ -89,7 +90,8 @@ namespace baodeag
             aiCharacterNetworkManager.currentHealth.OnValueChanged -= aiCharacterNetworkManager.OnHPChanged;
             aiCharacterNetworkManager.isBlocking.OnValueChanged -= aiCharacterNetworkManager.OnIsBlockingChanged;
             aiCharacterNetworkManager.isPoisoned.OnValueChanged -= aiCharacterNetworkManager.OnIsPoisonedChanged;
-            aiCharacterNetworkManager.isAwake.OnValueChanged -= aiCharacterNetworkManager.OnIsBleedingChanged;
+            aiCharacterNetworkManager.isBleeding.OnValueChanged -= aiCharacterNetworkManager.OnIsBleedingChanged;
+            aiCharacterNetworkManager.isFrostBitten.OnValueChanged -= aiCharacterNetworkManager.OnIsFrostBittenChanged;
         }
 
         protected override void OnEnable()

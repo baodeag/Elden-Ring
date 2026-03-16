@@ -195,6 +195,10 @@ namespace baodeag
                     character.characterNetworkManager.bleedBuildUp.Value += amount;
                     effect.buildUpRemaining = character.characterNetworkManager.bleedBuildUp.Value;
                     break;
+                case BuildUp.Frost:
+                    character.characterNetworkManager.frostBiteBuildUp.Value += amount;
+                    effect.buildUpRemaining = character.characterNetworkManager.frostBiteBuildUp.Value;
+                    break;
                 default:
                     break;
             }

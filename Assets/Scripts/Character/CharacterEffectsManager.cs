@@ -26,6 +26,7 @@ namespace baodeag
 
         [Header("Status Effect VFX")]
         [HideInInspector] public GameObject poisonedVFX;
+        [HideInInspector] public GameObject frostBiteVFX;
 
         [Header("Static Effects")]
         public List<StaticCharacterEffect> staticEffects = new List<StaticCharacterEffect>();
@@ -92,6 +93,9 @@ namespace baodeag
                     break;
                 case BuildUp.Bleed:
                     character.characterNetworkManager.bleedBuildUp.Value += amount;
+                    break;
+                case BuildUp.Frost:
+                    character.characterNetworkManager.frostBiteBuildUp.Value += amount;
                     break;
                 default:
                     break;
