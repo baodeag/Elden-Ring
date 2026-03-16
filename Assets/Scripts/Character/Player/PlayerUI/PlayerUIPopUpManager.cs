@@ -7,9 +7,13 @@ namespace baodeag
 {
     public class PlayerUIPopUpManager : MonoBehaviour
     {
+        [Header("Pop Up Parent")]
+        [SerializeField] Transform popUpTransformParent; 
+
         [Header("Message Pop Up")]
         [SerializeField] TextMeshProUGUI popUpMessageText;
         [SerializeField] GameObject popUpMessageGameObject;
+        [SerializeField] private GameObject statusEffectPopUpPrefab;
 
         [Header("Item Pop Up")]
         [SerializeField] GameObject itemPopUpGameObject;
@@ -105,7 +109,11 @@ namespace baodeag
 
         public void SendStatusEffectPopUp(BuildUp status)
         {
+            GameObject popUp = Instantiate(statusEffectPopUpPrefab, popUpTransformParent);
+            UI_StatusEffectWarning popUpWarning = popUp.GetComponent<UI_StatusEffectWarning>();
+            popUpWarning.SetWarningMessage(status);
 
+            StartCoroutine(FadeOutThenDestroy(popUpWarning.canvas, 2, popUp));
         }
 
         public void SendDialoguePopUp(CharacterDialogue dialogue, AICharacterManager aiCharacter)
@@ -224,6 +232,30 @@ namespace baodeag
                 }
             }
             canvas.alpha = 0;
+            yield return null;
+        }
+
+        private IEnumerator FadeOutThenDestroy(CanvasGroup canvas, float duration, GameObject objectToDestroy)
+        {
+            float timer = 0;
+
+            while (timer < duration)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
+
+            float fadeOutTimer = 1;
+
+            while (fadeOutTimer > 0)
+            {
+                fadeOutTimer -= Time.deltaTime;
+                canvas.alpha = fadeOutTimer;
+                yield return null;
+            }
+
+            Destroy(objectToDestroy);
+
             yield return null;
         }
     }

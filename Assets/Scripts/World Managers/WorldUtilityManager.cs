@@ -11,6 +11,9 @@ namespace baodeag
         [SerializeField] LayerMask enviroLayers;
         [SerializeField] LayerMask slipperyEnviroLayers;
 
+        [Header("UI Colors")]
+        [SerializeField] Color poisonedColor;
+
         [Header("Forces")]
         public float slopeSlideForce = -15;
 
@@ -41,6 +44,11 @@ namespace baodeag
         public LayerMask GetSlipperyEnviroLayers()
         {
             return slipperyEnviroLayers;
+        }
+
+        public Color GetPoisonedColor()
+        {
+            return poisonedColor;
         }
 
         public bool CanIDamageThisTarget(CharacterGroup attackingCharacter, CharacterGroup targetCharacter)

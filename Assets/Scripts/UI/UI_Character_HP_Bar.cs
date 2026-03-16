@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 namespace baodeag
 {
@@ -16,6 +17,10 @@ namespace baodeag
         [SerializeField] TextMeshProUGUI characterName;
         [SerializeField] TextMeshProUGUI characterDamage;
         [HideInInspector] public int oldHealthValue = 0;
+
+        [Header("Status Effects")]
+        [SerializeField] Image fillImage;
+        [SerializeField] Color regularColor;
 
         protected override void Awake()
         {
@@ -39,6 +44,15 @@ namespace baodeag
 
         public override void SetStat(int newValue)
         {
+            if (character.characterNetworkManager.isPoisoned.Value)
+            {
+                fillImage.color = WorldUtilityManager.Instance.GetPoisonedColor();
+            }
+            else
+            {
+              fillImage.color = regularColor;
+            }
+
             if (displayCharacterNameOnDamage)
             {
                 characterName.enabled = true;

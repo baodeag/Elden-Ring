@@ -229,7 +229,7 @@ namespace baodeag
             if (character.isDead.Value)
                 return;
 
-            character.characterNetworkManager.currentHealth.Value = poisonDamage;
+            character.characterNetworkManager.currentHealth.Value -= poisonDamage;
 
             if (character.characterNetworkManager.currentHealth.Value >= 1)
                 return;

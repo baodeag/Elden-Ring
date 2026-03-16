@@ -13,6 +13,10 @@ namespace baodeag
         [SerializeField] protected float widthScaleMultiplier = 1;
         //secondary bar behind may bar for polish effect(yellow bar that shows how much an action/damage takes away from current stat)
 
+        [Header("Fill Color")]
+        [SerializeField] Image fillImage;
+        [SerializeField] Color barFillColor;
+
         protected virtual void Awake()
         {
             slider = GetComponent<Slider>();
@@ -39,6 +43,22 @@ namespace baodeag
                 rectTransform.sizeDelta = new Vector2(maxValue * widthScaleMultiplier, rectTransform.sizeDelta.y);
                 //reset the position of the bar to be centered
                 PlayerUIManager.instance.playerUIHudManager.RefreshHUD();
+            }
+        }
+
+        public void ToggleBarFillColor(bool isPoisoned)
+        {
+            if (fillImage == null)
+                return;
+
+            if (isPoisoned)
+            {
+                fillImage.color = WorldUtilityManager.Instance.GetPoisonedColor();
+
+            }
+            else
+            {
+                fillImage.color = barFillColor;
             }
         }
     }

@@ -114,6 +114,9 @@ MonoBehaviour:
   characterName: {fileID: 2208884366988249755}
   characterDamage: {fileID: 7412409694476894966}
   oldHealthValue: 0
+  fillImage: {fileID: 1169406176695763974}
+  regularColor: {r: 0.6509804, g: 0, b: 0, a: 1}
+  poisonedColor: {r: 0.2609356, g: 0.3962264, b: 0.117746525, a: 0}
 --- !u!1 &1705297780355061860
 GameObject:
   m_ObjectHideFlags: 0

@@ -53,3 +53,5 @@ MonoBehaviour:
   slipperyEnviroLayers:
     serializedVersion: 2
     m_Bits: 8
+  poisonedColor: {r: 0.17678142, g: 0.2830189, b: 0.17488432, a: 1}
+  slopeSlideForce: -15

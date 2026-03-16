@@ -3716,6 +3716,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scaleBarLengthWithStats: 1
   widthScaleMultiplier: 1.1
+  fillImage: {fileID: 0}
+  barFillColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &1117094783421447945
 GameObject:
   m_ObjectHideFlags: 0
@@ -8030,6 +8032,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scaleBarLengthWithStats: 1
   widthScaleMultiplier: 1.1
+  fillImage: {fileID: 0}
+  barFillColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &3069354545916658919
 GameObject:
   m_ObjectHideFlags: 0
@@ -8821,6 +8825,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scaleBarLengthWithStats: 1
   widthScaleMultiplier: 2
+  fillImage: {fileID: 8018552121719401756}
+  barFillColor: {r: 1, g: 0.16470589, b: 0, a: 1}
 --- !u!1 &3583723324602685559
 GameObject:
   m_ObjectHideFlags: 0
@@ -21399,8 +21405,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0e6e00f5f243894d874617a0cf47c03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  popUpTransformParent: {fileID: 7541457982138849297}
   popUpMessageText: {fileID: 2721946493487961333}
   popUpMessageGameObject: {fileID: 5514121084108058465}
+  statusEffectPopUpPrefab: {fileID: 4063813144078417944, guid: 54f1c54b634de0a498f5529835088516, type: 3}
   itemPopUpGameObject: {fileID: 1009499883599736834}
   itemIcon: {fileID: 4991769930434410861}
   itemName: {fileID: 368355272435398567}

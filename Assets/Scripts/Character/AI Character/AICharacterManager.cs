@@ -67,6 +67,7 @@ namespace baodeag
 
             aiCharacterNetworkManager.currentHealth.OnValueChanged += aiCharacterNetworkManager.OnHPChanged;
             aiCharacterNetworkManager.isBlocking.OnValueChanged += aiCharacterNetworkManager.OnIsBlockingChanged;
+            aiCharacterNetworkManager.isPoisoned.OnValueChanged += aiCharacterNetworkManager.OnIsPoisonedChanged;
 
             if (!aiCharacterNetworkManager.isAwake.Value)
                 animator.Play(aiCharacterNetworkManager.sleepingAnimation.Value.ToString());
@@ -75,6 +76,9 @@ namespace baodeag
                 animator.Play("Dead_01");
 
             CreateActivationBeacon();
+
+            if (!IsOwner)
+                aiCharacterNetworkManager.OnIsPoisonedChanged(false, aiCharacterNetworkManager.isPoisoned.Value);
         }
 
         public override void OnNetworkDespawn()
@@ -83,6 +87,7 @@ namespace baodeag
 
             aiCharacterNetworkManager.currentHealth.OnValueChanged -= aiCharacterNetworkManager.OnHPChanged;
             aiCharacterNetworkManager.isBlocking.OnValueChanged -= aiCharacterNetworkManager.OnIsBlockingChanged;
+            aiCharacterNetworkManager.isPoisoned.OnValueChanged -= aiCharacterNetworkManager.OnIsPoisonedChanged;
         }
 
         protected override void OnEnable()
