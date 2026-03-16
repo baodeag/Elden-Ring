@@ -14,6 +14,9 @@ namespace baodeag
         [Header("UI Colors")]
         [SerializeField] Color poisonedColor;
 
+        [Header("Materials")]
+        [SerializeField] Material frozenMaterial;
+
         [Header("Forces")]
         public float slopeSlideForce = -15;
 
@@ -49,6 +52,11 @@ namespace baodeag
         public Color GetPoisonedColor()
         {
             return poisonedColor;
+        }
+
+        public Material GetFrozenMaterial()
+        {
+            return frozenMaterial;
         }
 
         public bool CanIDamageThisTarget(CharacterGroup attackingCharacter, CharacterGroup targetCharacter)

@@ -25,6 +25,9 @@ namespace baodeag
         public override void RemoveEffect(CharacterManager character)
         {
             base.RemoveEffect(character);
+
+            if (character.IsOwner)
+                character.characterNetworkManager.isFrozen.Value = false;
         }
 
         private void InflictStaminaRegenerationDebuff(CharacterManager character)
@@ -42,6 +45,7 @@ namespace baodeag
 
             character.characterNetworkManager.currentStamina.Value = 0;
             character.characterEffectsManager.ProcessEffectDamage(Mathf.RoundToInt(damage));
+            character.characterNetworkManager.isFrozen.Value = true;
         }
     }
 }

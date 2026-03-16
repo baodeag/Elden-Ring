@@ -128,6 +128,7 @@ namespace baodeag
             playerNetworkManager.isPoisoned.OnValueChanged += playerNetworkManager.OnIsPoisonedChanged;
             playerNetworkManager.isBleeding.OnValueChanged += playerNetworkManager.OnIsBleedingChanged;
             playerNetworkManager.isFrostBitten.OnValueChanged += playerNetworkManager.OnIsFrostBittenChanged;
+            playerNetworkManager.isFrozen.OnValueChanged += playerNetworkManager.OnIsFrozenChanged;
 
             //lock on
             playerNetworkManager.isLockedOn.OnValueChanged += playerNetworkManager.OnIsLockedOnChanged;
@@ -222,6 +223,7 @@ namespace baodeag
             playerNetworkManager.isPoisoned.OnValueChanged -= playerNetworkManager.OnIsPoisonedChanged;
             playerNetworkManager.isBleeding.OnValueChanged -= playerNetworkManager.OnIsBleedingChanged;
             playerNetworkManager.isFrostBitten.OnValueChanged -= playerNetworkManager.OnIsFrostBittenChanged;
+            playerNetworkManager.isFrozen.OnValueChanged -= playerNetworkManager.OnIsFrozenChanged;
 
             //lock on
             playerNetworkManager.isLockedOn.OnValueChanged -= playerNetworkManager.OnIsLockedOnChanged;

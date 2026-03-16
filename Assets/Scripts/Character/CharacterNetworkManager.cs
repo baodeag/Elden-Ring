@@ -112,6 +112,10 @@ namespace baodeag
             (false,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isFrozen = new NetworkVariable<bool>
+            (false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
 
         [Header("Resources")]
         public NetworkVariable<int> currentHealth = new NetworkVariable<int>
@@ -305,6 +309,7 @@ namespace baodeag
                 frostBite.transform.parent = character.characterCombatManager.lockOnTransform;
                 frostBite.transform.localPosition = Vector3.zero;
                 frostBite.transform.localRotation = Quaternion.identity;
+                character.characterEffectsManager.frostBiteVFX = frostBite;
             }
             else
             {
@@ -313,6 +318,20 @@ namespace baodeag
 
                 Destroy(character.characterEffectsManager.frostBiteVFX);
 
+            }
+        }
+
+        public virtual void OnIsFrozenChanged(bool oldStatus, bool newStatus)
+        {
+            if (isFrozen.Value)
+            {
+                character.animator.speed = 0;
+
+                character.characterEffectsManager.PlayFrozenFX();
+            }
+            else
+            {
+                character.animator.speed = 1;
             }
         }
 

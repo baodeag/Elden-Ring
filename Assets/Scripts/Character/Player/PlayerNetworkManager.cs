@@ -250,6 +250,7 @@ namespace baodeag
                 frostBite.transform.parent = character.characterCombatManager.lockOnTransform;
                 frostBite.transform.localPosition = Vector3.zero;
                 frostBite.transform.localRotation = Quaternion.identity;
+                player.playerEffectsManager.frostBiteVFX = frostBite;
             }
             else
             {
@@ -258,6 +259,16 @@ namespace baodeag
 
                 Destroy(character.characterEffectsManager.frostBiteVFX);
 
+            }
+        }
+
+        public override void OnIsFrozenChanged(bool oldStatus, bool newStatus)
+        {
+            base.OnIsFrozenChanged(oldStatus, newStatus);
+
+            if (!isFrozen.Value && IsOwner)
+            {
+                isFrostBitten.Value = false;
             }
         }
 
