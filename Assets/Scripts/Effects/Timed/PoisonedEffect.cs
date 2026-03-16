@@ -34,7 +34,7 @@ namespace baodeag
 
         private void ProcessPoisonDamage(CharacterManager character)
         {
-            character.characterEffectsManager.ProcessPoisonDamage(poisonDamage);
+            character.characterEffectsManager.ProcessEffectDamage(poisonDamage);
         }
 
         public override void RemoveEffect(CharacterManager character)

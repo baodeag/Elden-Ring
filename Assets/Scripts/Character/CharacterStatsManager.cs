@@ -11,10 +11,9 @@ namespace baodeag
         public int runesDroppedOnDeath = 50;
 
         [Header("Stamina Regeneration")]
-        [SerializeField] float staminaRegenerationAmount = 2;
-        private float staminaRegenerationTimer = 0;
+        [SerializeField] float baseStaminaRegenerationAmount = 2;
+        private float staminaRegenerationAmount = 0;
         private float staminaTickTimer = 0;
-        [SerializeField] float staminaRegenerationDelay = 2;
 
         [Header("Blocking Absorptions")]
         public float blockingPhysicalAbsorption;
@@ -144,30 +143,23 @@ namespace baodeag
             if (character.isPerformingAction)
                 return;
 
-            staminaRegenerationTimer += Time.deltaTime;
+            if (character.characterNetworkManager.currentStamina.Value >= character.characterNetworkManager.maxStamina.Value)
+                return;
 
-            if (staminaRegenerationTimer >= staminaRegenerationDelay)
+            staminaRegenerationAmount = baseStaminaRegenerationAmount + (baseStaminaRegenerationAmount * (character.characterNetworkManager.staminaRegenerationModifier.Value / 100));
+
+            staminaTickTimer += Time.deltaTime;
+
+            Debug.Log("Stamina Regen Amount: " + staminaRegenerationAmount);
+
+            //if player is blocking, recover stamina slower than usual
+            if (character.characterNetworkManager.isBlocking.Value)
+                staminaRegenerationAmount *= 0.2f;
+
+            if (staminaTickTimer >= 0.1)
             {
-                if (character.characterNetworkManager.currentStamina.Value < character.characterNetworkManager.maxStamina.Value)
-                {
-                    staminaTickTimer += Time.deltaTime;
-
-                    if (staminaTickTimer >= 0.1)
-                    {
-                        staminaTickTimer = 0;
-                        character.characterNetworkManager.currentStamina.Value += staminaRegenerationAmount;
-                    }
-                }
-            }
-        }
-
-        public virtual void ResetStaminaRegenTimer(float previousStaminaAmount, float currentStaminaAmount)
-        {
-            //we only want to reset the timer if the action used stamina
-            //we dont want to reset it if stamina is being regenerated
-            if (currentStaminaAmount < previousStaminaAmount)
-            { 
-                staminaRegenerationTimer = 0;  
+                staminaTickTimer = 0;
+                character.characterNetworkManager.currentStamina.Value += baseStaminaRegenerationAmount;
             }
         }
 

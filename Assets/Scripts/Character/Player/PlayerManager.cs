@@ -95,7 +95,6 @@ namespace baodeag
                 playerNetworkManager.currentHealth.OnValueChanged += PlayerUIManager.instance.playerUIHudManager.SetNewHealthValue;
                 playerNetworkManager.currentStamina.OnValueChanged += PlayerUIManager.instance.playerUIHudManager.SetNewStaminaValue;
                 playerNetworkManager.currentFocusPoints.OnValueChanged += PlayerUIManager.instance.playerUIHudManager.SetNewFocusPointValue;
-                playerNetworkManager.currentStamina.OnValueChanged += playerStatsManager.ResetStaminaRegenTimer;
 
                 //update ui build up bars when build up changes
                 playerNetworkManager.poisonBuildUp.OnValueChanged += PlayerUIManager.instance.playerUIHudManager.SetNewPoisonBuildUpAmount;
@@ -198,7 +197,6 @@ namespace baodeag
                 playerNetworkManager.currentHealth.OnValueChanged -= PlayerUIManager.instance.playerUIHudManager.SetNewHealthValue;
                 playerNetworkManager.currentStamina.OnValueChanged -= PlayerUIManager.instance.playerUIHudManager.SetNewStaminaValue;
                 playerNetworkManager.currentFocusPoints.OnValueChanged -= PlayerUIManager.instance.playerUIHudManager.SetNewFocusPointValue;
-                playerNetworkManager.currentStamina.OnValueChanged -= playerStatsManager.ResetStaminaRegenTimer;
 
                 //update ui build up bars when build up changes
                 playerNetworkManager.poisonBuildUp.OnValueChanged -= PlayerUIManager.instance.playerUIHudManager.SetNewPoisonBuildUpAmount;

@@ -22,6 +22,9 @@ namespace baodeag
         public TakeBlockedDamageEffect takeBlockedDamageEffect;
         public TakeCriticalDamageEffect takeCriticalDamageEffect;
 
+        [Header("Frost Bite")]
+        public ModifyStaminaRegenerationForATimeEffect frostBiteStaminaRegenerationEffect;
+
         [Header("Status Effects")]
         public PoisonedEffect poisonedEffect;
         public BloodLossEffect bloodLossEffect;
