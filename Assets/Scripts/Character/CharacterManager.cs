@@ -75,6 +75,15 @@ namespace baodeag
                     (transform.rotation, 
                     characterNetworkManager.networkRotation.Value, 
                     characterNetworkManager.networkRotationSmoothTime);
+
+                //y position is overriden by moving object
+                if (characterLocomotionManager.isRidingLift)
+                {
+                    Vector3 newPosition = new Vector3
+                        (characterNetworkManager.networkPosition.Value.x, transform.position.y, characterNetworkManager.networkPosition.Value.z);
+                    transform.position = Vector3.SmoothDamp
+                        (transform.position, newPosition, ref characterNetworkManager.networkPositionVelocity, characterNetworkManager.networkPositionSmoothTime);
+                }
             }
         }
 

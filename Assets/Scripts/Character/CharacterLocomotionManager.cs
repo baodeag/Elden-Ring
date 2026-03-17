@@ -24,6 +24,7 @@ namespace baodeag
         public bool canRun = true;
         public bool canRoll = true;
         public bool isGrounded = true;
+        public bool isRidingLift = false;
 
         [Header("Slope Sliding")]
         [SerializeField] float slopeSlideStartPositionYOffset = 1;
