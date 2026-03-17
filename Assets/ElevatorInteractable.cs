@@ -17,8 +17,12 @@ namespace baodeag
 
         [Header("Destination")]
         [SerializeField] float moveSpeed = 2;
-        [SerializeField] Vector3 destinationHigh; //where the elevator stop when it rises
-        [SerializeField] Vector3 destinationLow; //where the elevator stop when it descends
+        public Vector3 destinationHigh; //where the elevator stop when it rises
+        public Vector3 destinationLow; //where the elevator stop when it descends
+
+        [Header("Recall Locations")]
+        [SerializeField] CallElevatorInteractable lowDestinationRecall;
+        [SerializeField] CallElevatorInteractable highDestinationRecall;
 
         [Header("Characters On Elevator")]
         [SerializeField] protected List<CharacterManager> charactersOnElevator = new List<CharacterManager>();
@@ -28,27 +32,19 @@ namespace baodeag
         [SerializeField] private AudioClip elevatorMovingSFX;
         [SerializeField] private AudioClip[] elevatorStoppingSFX;
 
+        protected override void Awake()
+        {
+            base.Awake();
+
+            elevatorAudioSource = GetComponent<AudioSource>();
+        }
+
         public override void OnTriggerEnter(Collider other)
         {
-            CharacterManager character = other.GetComponent<CharacterManager>();
-
-            if (character != null)
-                AddCharacterToListOfCharactersOnElevator(character);
-
             if (elevatorIsRising.Value || elevatorIsDescending.Value)
                 return;
 
             base.OnTriggerEnter(other);
-        }
-
-        public override void OnTriggerExit(Collider other)
-        {
-            base.OnTriggerExit(other);
-
-            CharacterManager character = other.GetComponent<CharacterManager>();
-
-            if (character != null)
-                RemoveCharacterFromListOfCharactersOnElevator(character);
         }
 
         public override void Interact(PlayerManager player)
@@ -86,7 +82,7 @@ namespace baodeag
 
         private void ActivateElevator(bool isRising)
         {
-            
+            StartCoroutine(MoveElevatorCoroutine(isRising));
         }
 
         private IEnumerator MoveElevatorCoroutine(bool isRising)
@@ -117,6 +113,9 @@ namespace baodeag
             if (!isRising)
                 destination = destinationLow;
 
+            lowDestinationRecall.RemoveInteractionFromPlayers();
+            highDestinationRecall.RemoveInteractionFromPlayers();
+
             //move the elevator
             while (transform.localPosition != destination)
             {
@@ -131,7 +130,7 @@ namespace baodeag
                     if (charactersOnElevator[i] == null)
                         continue;
 
-                    if (charactersOnElevator[i].gameObject.activeInHierarchy)
+                    if (!charactersOnElevator[i].gameObject.activeInHierarchy)
                         RemoveCharacterFromListOfCharactersOnElevator(charactersOnElevator[i]);
 
                     if (!charactersOnElevator[i].characterNetworkManager.isJumping.Value)
@@ -151,6 +150,9 @@ namespace baodeag
                 elevatorIsDescending.Value = false;
             }
 
+            lowDestinationRecall.ReturnInteractionToPlayers();
+            highDestinationRecall.ReturnInteractionToPlayers();
+
             //stop the movement sfx
             elevatorAudioSource.Stop();
             //play the stopping sfx
@@ -162,7 +164,7 @@ namespace baodeag
             yield return null;
         }
 
-        private void AddCharacterToListOfCharactersOnElevator(CharacterManager character)
+        public void AddCharacterToListOfCharactersOnElevator(CharacterManager character)
         {
             if (charactersOnElevator.Contains(character))
                 return;
@@ -171,7 +173,7 @@ namespace baodeag
             character.characterLocomotionManager.isRidingLift = true;
         }
 
-        private void RemoveCharacterFromListOfCharactersOnElevator(CharacterManager character)
+        public void RemoveCharacterFromListOfCharactersOnElevator(CharacterManager character)
         {
             if (!charactersOnElevator.Contains(character))
                 return;
@@ -182,7 +184,7 @@ namespace baodeag
 
         [ServerRpc(RequireOwnership = false)]
 
-        private void ActivateElevatorServerRpc()
+        public void ActivateElevatorServerRpc()
         {
             if (IsServer)
                 ActivateElevatorClientRpc();
