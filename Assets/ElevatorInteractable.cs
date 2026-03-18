@@ -21,8 +21,8 @@ namespace baodeag
         public Vector3 destinationLow; //where the elevator stop when it descends
 
         [Header("Recall Locations")]
-        [SerializeField] CallElevatorInteractable lowDestinationRecall;
-        [SerializeField] CallElevatorInteractable highDestinationRecall;
+        public CallElevatorInteractable lowDestinationRecall;
+        public CallElevatorInteractable highDestinationRecall;
 
         [Header("Characters On Elevator")]
         [SerializeField] protected List<CharacterManager> charactersOnElevator = new List<CharacterManager>();

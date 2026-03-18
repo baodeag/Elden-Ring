@@ -7,7 +7,7 @@ namespace baodeag
     public class CallElevatorInteractable : Interactable
     {
         [Header("Elevator")]
-        [SerializeField] ElevatorInteractable elevator;
+        [SerializeField] protected ElevatorInteractable elevator;
 
         [Header("Players Within Interaction Radius")]
         public List<PlayerManager> playersWithinInteractionTrigger = new List<PlayerManager>();
