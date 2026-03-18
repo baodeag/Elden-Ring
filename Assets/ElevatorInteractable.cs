@@ -87,7 +87,8 @@ namespace baodeag
 
         private IEnumerator MoveElevatorCoroutine(bool isRising)
         {
-            interactableCollider.enabled = false;
+            if (interactableCollider != null)
+                interactableCollider.enabled = false;
 
             //when the elevator starts, remove it as an interactable whilist its going
             for (int i = 0; i < charactersOnElevator.Count; i++)
@@ -159,7 +160,8 @@ namespace baodeag
             elevatorAudioSource.PlayOneShot(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(elevatorStoppingSFX));
 
             //re-enable interaction with the elevator
-            interactableCollider.enabled = true;
+            if (interactableCollider != null)
+                interactableCollider.enabled = true;
 
             yield return null;
         }
