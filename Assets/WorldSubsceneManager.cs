@@ -30,7 +30,9 @@ namespace baodeag
         {
             List<string> doNotUnloadLocations = new List<string>();
 
-           List<WorldLocationSceneSet> areasWithPlayersActive = new List<WorldLocationSceneSet>();
+            doNotUnloadLocations.Add(WorldSceneManager.instance.world);
+
+            List<WorldLocationSceneSet> areasWithPlayersActive = new List<WorldLocationSceneSet>();
 
             foreach (KeyValuePair<WorldLocationSceneSet, List<PlayerManager>> pair in playersInLocation)
             {
