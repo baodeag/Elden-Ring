@@ -75,12 +75,10 @@ namespace baodeag
 
             switch (sceneEvent.SceneEventType)
             {
-                case SceneEventType.Load:
-                    sceneIsLoading = true;
+                case SceneEventType.Load:               
                     break;
 
-                case SceneEventType.Unload:
-                    sceneIsUnloading = true;
+                case SceneEventType.Unload:                   
                     break;
 
                 case SceneEventType.Synchronize:
@@ -99,10 +97,6 @@ namespace baodeag
                 case SceneEventType.LoadComplete:
                     //called when the scene is finished loading, add it to the list of loaded scenes
                     loadedScenes.Add(sceneEvent.Scene); 
-                    
-                    //clear the list ids of the scenes to load count it 0
-                    if (quedScenesToLoad <= 0)
-                        quedSceneIDs.Clear();
 
                     //double check loaded scenes to make sure they are loaded, if not remove them from the loaded list
                     for (int i = 0; i < loadedScenes.Count; i++)
@@ -115,9 +109,6 @@ namespace baodeag
                     break;
 
                 case SceneEventType.UnloadComplete:
-                    if (quedScenesToUnload <= 0)
-                        quedUnloadSceneIDs.Clear();
-
                     for(int i = 0; i < loadedScenes.Count; i++)
                     {
                         if (!loadedScenes[i].isLoaded)
@@ -172,6 +163,7 @@ namespace baodeag
             }
 
             //load the scene
+            sceneIsLoading = true;
             var loadSceneStatus = NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
         }
 
@@ -197,25 +189,41 @@ namespace baodeag
 
         private IEnumerator LoadAdditiveScenesCoroutine()
         {
+            float waitTime = 0.1f;
+
             //check to see if a scene is currently being loaded/unloaded and if it is, wait
             for (int i = 0; i < quedSceneIDs.Count; i++)
             {
+                if (PlayerUIManager.instance.playerUILoadingScreenManager.LoadingScreenIsActive())
+                    waitTime = 0;
+
                 while (sceneIsLoading || sceneIsUnloading)
                 {
-                    yield return null;
+                    yield return new WaitForSeconds(waitTime);
                 }
 
                 if (quedSceneIDs[i] == null)
+                {
+                    quedScenesToLoad--;
                     continue;
+                }
 
                 //sort through a qued list of scenes, and load them one by one
                 LoadAdditiveScene(quedSceneIDs[i]);
+
+                while (sceneIsLoading || sceneIsUnloading)
+                {
+                    yield return new WaitForSeconds(waitTime);
+                }
+
                 quedScenesToLoad--;
+
+                if (quedScenesToLoad <= 0)
+                    quedSceneIDs.Clear();
 
                 yield return new WaitForFixedUpdate();
             }
 
-            quedScenesToLoad = 0;
             loadingAdditiveScenesCoroutine = null;
 
             yield return null;
@@ -243,6 +251,7 @@ namespace baodeag
 
                 if (loadedScenes[i].name == sceneName && loadedScenes[i].isLoaded)
                 {
+                    sceneIsUnloading = true;
                     var sceneLoad = NetworkManager.SceneManager.UnloadScene(loadedScenes[i]);
                     break;
                 }
@@ -269,20 +278,45 @@ namespace baodeag
 
         private IEnumerator UnloadAdditiveScenesCoroutine()
         {
+            float waitTime = 1.0f;
+
             for (int i = 0; i < quedUnloadSceneIDs.Count; i++)
             {
+                if (PlayerUIManager.instance.playerUILoadingScreenManager.LoadingScreenIsActive())
+                    waitTime = 0;
+
                 while (sceneIsLoading || sceneIsUnloading)
                 {
-                    yield return new WaitForFixedUpdate();
+                    yield return new WaitForSeconds(waitTime);
+                }
+
+                //dont unload scenes while we are loading new areas as new areas may add these scens to do not unload list
+                while (quedScenesToLoad > 0)
+                {
+                    yield return new WaitForSeconds(waitTime);
+                }
+
+                if (quedUnloadSceneIDs[i] == null)
+                {
+                    quedScenesToUnload--;
+                    continue;
                 }
 
                 UnloadAdditiveScene(quedUnloadSceneIDs[i]);
+
+                while (sceneIsLoading || sceneIsUnloading)
+                {
+                    yield return new WaitForSeconds(waitTime);
+                }
+
                 quedScenesToUnload--;
+
+                if (quedScenesToUnload <= 0)
+                    quedUnloadSceneIDs.Clear();
 
                 yield return null;
             }
 
-            quedScenesToUnload = 0;
             unloadAdditiveScenesCoroutine = null;
         }
 

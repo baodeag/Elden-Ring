@@ -19,6 +19,9 @@ namespace baodeag
         [HideInInspector] public PlayerEffectsManager playerEffectsManager;
         [HideInInspector] public PlayerBodyManager playerBodyManager;
 
+        [Header("Area")]
+        public WorldLocationSceneSet areaCurrentlyIn;
+
         protected override void Awake()
         {
             base.Awake();

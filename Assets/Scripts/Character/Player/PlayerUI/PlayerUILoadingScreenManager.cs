@@ -120,5 +120,10 @@ namespace baodeag
             fadeLoadingScreenCoroutine = null;
             yield return null;
         }
+
+        public bool LoadingScreenIsActive()
+        {
+            return loadingScreen.activeSelf;
+        }
     }
 }

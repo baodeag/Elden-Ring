@@ -13,10 +13,9 @@ GameObject:
   - component: {fileID: 1142705989185156446}
   - component: {fileID: 3485064487906511648}
   - component: {fileID: 3953739707554623376}
-  - component: {fileID: 2908558229617770092}
   - component: {fileID: 8534670531464238608}
   - component: {fileID: 8414652269355163085}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Interactable_Call_Elevator_Lever_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -136,31 +135,6 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 43180663621093898, guid: df410ad2ea6da174497fab007a561877, type: 2}
---- !u!114 &2908558229617770092
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6731940863601512252}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 799470763
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 0
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!114 &8534670531464238608
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,12 +149,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   interactableText: Call Elevator
-  interactableCollider: {fileID: 0}
+  interactableCollider: {fileID: 8414652269355163085}
   hostOnlyInteractable: 1
   elevator: {fileID: 0}
   playersWithinInteractionTrigger: []
-  isTopDestination: 1
-  animator: {fileID: 0}
+  isTopDestination: 0
+  animator: {fileID: 1385814787154674688}
+  pullLeverAnimation: Pull_Lever_01
+  releaseLeverAnimation: Release_Lever_01
+  minimumButtonReleaseTime: 2
+  leverHasBeenPulled:
+    m_InternalValue: 0
+  timeToWaitAfterPullingLeverToMoveElevator: 1
 --- !u!135 &8414652269355163085
 SphereCollider:
   m_ObjectHideFlags: 0
