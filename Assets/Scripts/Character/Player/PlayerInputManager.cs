@@ -2,6 +2,7 @@
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.TextCore.Text;
 
 namespace baodeag
 {
@@ -33,6 +34,7 @@ namespace baodeag
         [SerializeField] bool dodge_Input = false;
         [SerializeField] bool sprint_Input = false;
         [SerializeField] bool jump_Input = false;
+        [SerializeField] bool sneak_Input = false;
         [SerializeField] bool switch_Right_Weapon_Input = false;
         [SerializeField] bool switch_Left_Weapon_Input = false;
         [SerializeField] bool switch_Quick_Slot_Item_Input = false;
@@ -132,6 +134,7 @@ namespace baodeag
                 //actions
                 playerControls.PlayerActions.Dodge.performed += i => dodge_Input = true; // Get dodge input
                 playerControls.PlayerActions.Jump.performed += i => jump_Input = true;
+                playerControls.PlayerActions.Sneak.performed += i => sneak_Input = true;
                 playerControls.PlayerActions.SwitchRightWeapon.performed += i => switch_Right_Weapon_Input = true;
                 playerControls.PlayerActions.SwitchLeftWeapon.performed += i => switch_Left_Weapon_Input = true;
                 playerControls.PlayerActions.SwitchQuickSlotItem.performed += i => switch_Quick_Slot_Item_Input = true;
@@ -223,6 +226,7 @@ namespace baodeag
             HandleDodgeInput();
             HandleSprintInput();
             HandleJumpInput();
+            HandleSneakInput();
             HandleRBInput();
             HandleHoldRBInput();
             HandleLBInput();
@@ -573,6 +577,20 @@ namespace baodeag
                     return;
 
                 player.playerLocomotionManager.AttemptToPerformJump();
+            }
+        }
+
+        private void HandleSneakInput()
+        {
+            if (sneak_Input)
+            {
+                sneak_Input = false;
+
+                //switch sneaking to the opposite of what it currently is
+                player.playerNetworkManager.isSneaking.Value = !player.playerNetworkManager.isSneaking.Value;
+                //disable blocking when we sneak
+                player.playerNetworkManager.isBlocking.Value = false;
+                player.playerCombatManager.CheckForHiddenStatus();
             }
         }
 

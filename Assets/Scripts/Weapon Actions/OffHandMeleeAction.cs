@@ -51,7 +51,10 @@ namespace baodeag
                 return;
 
             if (playerPerformingAction.IsOwner)
+            {
                 playerPerformingAction.playerNetworkManager.isBlocking.Value = true;
+                playerPerformingAction.playerNetworkManager.isSneaking.Value = false;
+            }
         }
 
         private void PerformPowerStanceLeftHandAction(PlayerManager playerPerformingAction, WeaponItem weaponPerformingAction)

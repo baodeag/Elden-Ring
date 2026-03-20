@@ -15,8 +15,12 @@ namespace baodeag
         private Vector3 moveDirection;
         private Vector3 targetRotationDirection;
         [SerializeField] float walkingSpeed = 2;
+        [SerializeField] float runningBackwardsSpeed = 4;
         [SerializeField] float runningSpeed = 5;
         [SerializeField] float sprintingSpeed = 6.5f;
+        [SerializeField] float sneakingWalkSpeed = 1.1f;
+        [SerializeField] float sneakingRunSpeed = 3f;
+        [SerializeField] float sneakingRunBackwardsSpeed = 2.8f;
         [SerializeField] float rotationSpeed = 15;
         [SerializeField] int sprintingStaminaCost = 2;
 
@@ -117,23 +121,17 @@ namespace baodeag
 
             if(player.playerNetworkManager.isSprinting.Value)
             {
-                player.characterController.Move(moveDirection * sprintingSpeed * Time.deltaTime);
-            }
-            else
-            {
-                if (PlayerInputManager.instance.moveAmount > 0.5f)
-                {
-                    //move at a running speed
-                    player.characterController.Move(moveDirection * runningSpeed * Time.deltaTime);
-                }
-                else if (PlayerInputManager.instance.moveAmount <= 0.5f)
-                {
-                    //move at a walking speed
-                    player.characterController.Move(moveDirection * walkingSpeed * Time.deltaTime);
-                }
+                MoveAtSprintingSpeed();
+                return;
             }
 
-            
+            if (player.playerNetworkManager.isSneaking.Value)
+            {
+                MoveAtSneakingSpeed();
+                return;
+            }
+
+            MoveAtRegularSpeed();
         }
 
         private void HandleJumpingMovement()
@@ -257,6 +255,7 @@ namespace baodeag
             if (moveAmount >= 0.5)
             {
                 player.playerNetworkManager.isSprinting.Value = true;
+                player.playerNetworkManager.isSneaking.Value = false;
             }
             //if we are not moving, stop sprinting
             else
@@ -363,6 +362,61 @@ namespace baodeag
         {
             //apply an upwards velocity to the player
             yVelocity.y = Mathf.Sqrt(jumpHeight * -2 * gravityForce);
+        }
+
+        //movement speeds
+        private void MoveAtRegularSpeed()
+        {
+            if (!player.characterController.enabled)
+                return;
+
+            if (player.playerNetworkManager.isLockedOn.Value && verticalMovement < -0.5f)
+            {
+                player.characterController.Move(moveDirection * runningBackwardsSpeed * Time.deltaTime);
+                return;
+            }
+
+            if (PlayerInputManager.instance.moveAmount > 0.5f)
+            {
+                //move at a running speed
+                player.characterController.Move(moveDirection * runningSpeed * Time.deltaTime);
+            }
+            else if (PlayerInputManager.instance.moveAmount <= 0.5f)
+            {
+                //move at a walking speed
+                player.characterController.Move(moveDirection * walkingSpeed * Time.deltaTime);
+            }
+        }
+
+        private void MoveAtSprintingSpeed()
+        {
+            if (!player.characterController.enabled)
+                return;
+
+            player.characterController.Move(moveDirection * sprintingSpeed * Time.deltaTime);
+        }
+
+        private void MoveAtSneakingSpeed()
+        {
+            if (!player.characterController.enabled)
+                return;
+
+            if (player.playerNetworkManager.isLockedOn.Value && verticalMovement < -0.5f)
+            {
+                player.characterController.Move(moveDirection * sneakingRunBackwardsSpeed * Time.deltaTime);
+                return;
+            }
+
+            if (PlayerInputManager.instance.moveAmount > 0.5f)
+            {
+                //move at a sneaking running speed
+                player.characterController.Move(moveDirection * sneakingRunSpeed * Time.deltaTime);
+            }
+            else if (PlayerInputManager.instance.moveAmount <= 0.5f)
+            {
+                //move at a sneaking walking speed
+                player.characterController.Move(moveDirection * sneakingWalkSpeed * Time.deltaTime);
+            }
         }
     }
 }

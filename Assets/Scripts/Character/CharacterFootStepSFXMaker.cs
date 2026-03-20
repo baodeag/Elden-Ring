@@ -57,6 +57,8 @@ namespace baodeag
 
         private void PlayFootStepSoundFX()
         {
+            if (character.characterNetworkManager.isSneaking.Value)
+                return;
             //audioSource.PlayOneShot(WorldSoundFXManager.instance.ChooseRandomFootStepSoundBasedOnGround(steppedOnObject, character));
             character.characterSoundFXManager.PlayFootStepSoundFX();
         }

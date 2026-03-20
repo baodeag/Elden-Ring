@@ -84,6 +84,14 @@ namespace baodeag
             (false,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isSneaking = new NetworkVariable<bool>
+            (false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isHidden = new NetworkVariable<bool>
+            (false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
         public NetworkVariable<bool> isChargingAttack = new NetworkVariable<bool>
             (false,
             NetworkVariableReadPermission.Everyone,
@@ -333,6 +341,30 @@ namespace baodeag
             {
                 character.animator.speed = 1;
             }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public virtual void AddCharacterToListOfCharactersTargetingMeServerRpc(ulong characterTargetingMeID)
+        {
+            if (IsServer)
+                AddCharacterToListOfCharactersTargetingMeClientRpc(characterTargetingMeID);
+        }
+
+        [ClientRpc]
+        protected virtual void AddCharacterToListOfCharactersTargetingMeClientRpc(ulong characterTargetingMeID)
+        {
+            if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(characterTargetingMeID))
+                return;
+
+            CharacterManager characterTargetingMe = NetworkManager.Singleton.SpawnManager.SpawnedObjects[characterTargetingMeID].GetComponent<CharacterManager>();
+
+            if (characterTargetingMe == null)
+                return;
+
+            if (!character.characterCombatManager.charactersTargetingMe.Contains(characterTargetingMe))
+                character.characterCombatManager.charactersTargetingMe.Add(characterTargetingMe);
+
+            character.characterCombatManager.CheckForHiddenStatus();
         }
 
         //used to cancel fx when poise is broken

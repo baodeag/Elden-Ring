@@ -71,7 +71,16 @@ namespace baodeag
                 }
 
                 playerPerformingAction.playerCombatManager.currentProjectileBeingUsed = projectileSlot;
-                playerPerformingAction.playerAnimatorManager.PlayTargetActionAnimation("Bow_Draw_01", true);
+
+                if (playerPerformingAction.playerNetworkManager.isSneaking.Value)
+                {
+                    playerPerformingAction.playerAnimatorManager.PlayTargetActionAnimation("Sneak_Bow_Draw_01", true);
+                }
+                else
+                {
+                    playerPerformingAction.playerAnimatorManager.PlayTargetActionAnimation("Bow_Draw_01", true);
+                }
+
                 playerPerformingAction.playerNetworkManager.NotifyServerOfDrawnProjectileServerRpc(projectileItem.itemID);
             }
         }

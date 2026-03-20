@@ -172,6 +172,7 @@ namespace baodeag
 
             //flags
             playerNetworkManager.isChargingAttack.OnValueChanged += playerNetworkManager.OnIsChargingAttackChanged;
+            playerNetworkManager.isSneaking.OnValueChanged += playerNetworkManager.OnIsSneakingChanged;
 
             //upon connecting, if we are the owner of this player, but not the server, reload our character data to this newly instantiated character
             if (IsOwner && !IsServer)
@@ -267,6 +268,7 @@ namespace baodeag
 
             //flags
             playerNetworkManager.isChargingAttack.OnValueChanged -= playerNetworkManager.OnIsChargingAttackChanged;
+            playerNetworkManager.isSneaking.OnValueChanged -= playerNetworkManager.OnIsSneakingChanged;
         }
 
         private void OnClientConnectedCallback(ulong clientID)

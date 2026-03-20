@@ -133,7 +133,10 @@ namespace baodeag
 
             //whilist performing a critical strike, you cannot be damaged
             if (character.IsOwner)
+            {
+                character.characterNetworkManager.isSneaking.Value = false;
                 character.characterNetworkManager.isInvulnerable.Value = true;
+            }
 
             TakeCriticalDamageEffect damageEffect = Instantiate(WorldCharacterEffectsManager.instance.takeCriticalDamageEffect);
 
@@ -200,7 +203,10 @@ namespace baodeag
 
             //whilist performing a critical strike, you cannot be damaged
             if (character.IsOwner)
+            {
                 character.characterNetworkManager.isInvulnerable.Value = true;
+                character.characterNetworkManager.isSneaking.Value = false;
+            }
 
             TakeCriticalDamageEffect damageEffect = Instantiate(WorldCharacterEffectsManager.instance.takeCriticalDamageEffect);
 

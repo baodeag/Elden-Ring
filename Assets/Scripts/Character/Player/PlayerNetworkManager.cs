@@ -272,6 +272,11 @@ namespace baodeag
             }
         }
 
+        public void OnIsSneakingChanged(bool oldStatus, bool newStatus)
+        {
+            player.animator.SetBool("isSneaking", isSneaking.Value);
+        }
+
         public void SetCharacterActionHand(bool rightHandedAction)
         {
             if (rightHandedAction)
