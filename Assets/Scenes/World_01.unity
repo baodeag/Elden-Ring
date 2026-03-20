@@ -4954,17 +4954,40 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8002785786533449198, guid: 1e8bfdd7b55db8043b30475be024a175, type: 3}
       propertyPath: m_Name
-      value: World Subscene Manager
+      value: World Location Manager
       objectReference: {fileID: 0}
     - target: {fileID: 9122272776800112770, guid: 1e8bfdd7b55db8043b30475be024a175, type: 3}
       propertyPath: bakeSet
       value: 
       objectReference: {fileID: 11400000, guid: 7f440ae4296ce704dae1fc63c4c156e0, type: 2}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 9122272776800112770, guid: 1e8bfdd7b55db8043b30475be024a175, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8002785786533449198, guid: 1e8bfdd7b55db8043b30475be024a175, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5736760175679321991}
   m_SourcePrefab: {fileID: 100100000, guid: 1e8bfdd7b55db8043b30475be024a175, type: 3}
+--- !u!1 &5736760175679321990 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8002785786533449198, guid: 1e8bfdd7b55db8043b30475be024a175, type: 3}
+  m_PrefabInstance: {fileID: 5736760175679321989}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5736760175679321991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5736760175679321990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 088df9ec44f6c6a4e9d126d1258faa72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  worldLocationRenderers: []
+  bakeSet: {fileID: 11400000, guid: 7f440ae4296ce704dae1fc63c4c156e0, type: 2}
 --- !u!1001 &6165575836201092824
 PrefabInstance:
   m_ObjectHideFlags: 0

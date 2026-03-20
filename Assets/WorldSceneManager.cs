@@ -109,6 +109,7 @@ namespace baodeag
                     }
 
                     sceneIsLoading = false;
+                    CheckForRequiredRenderers();
                     break;
 
                 case SceneEventType.UnloadComplete:
@@ -410,6 +411,12 @@ namespace baodeag
 
         private IEnumerator CheckForRequiredSceneRenderersCoroutine(WorldLocationSceneSet location)
         {
+            //wait until scenes have finished loading to search for renderers/root objects
+            while (sceneIsLoading)
+            {
+                yield return new WaitForEndOfFrame();
+            }
+
             List<string> scenesRelevantToLocationCurrentlyIn = location.GetRequiredSceneIDsForWorldLocation();
             List<int> sceneBuildIndexes = new List<int>();
 
