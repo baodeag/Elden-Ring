@@ -5,10 +5,14 @@ using System.Collections;
 
 namespace baodeag
 {
-    public class WorldSubsceneManager : MonoBehaviour
+    public class WorldLocationManager : MonoBehaviour
     {
-        public static WorldSubsceneManager instance;
+        public static WorldLocationManager instance;
 
+        [Header("Location Rendering")]
+        public List<WorldLocationRendererManager> worldLocationRenderers = new List<WorldLocationRendererManager>();
+
+        [Header("Players In Locations")]
         private Dictionary<WorldLocationSceneSet, List<PlayerManager>> playersInLocation = new Dictionary<WorldLocationSceneSet, List<PlayerManager>>();
 
         [Header("Probe Volumn Set")]
@@ -72,6 +76,7 @@ namespace baodeag
             LoadAdditiveScenesAroundCurrentArea(areaCurrentlyIn);
 
             WorldSceneManager.instance.CheckForUnrequiredScenes();
+            WorldSceneManager.instance.CheckForRequiredRenderers();
         }
 
         private bool IsPlayerAlreadyInArea(WorldLocationSceneSet area, PlayerManager player)
@@ -163,6 +168,20 @@ namespace baodeag
                 }
             }
             yield return null;
+        }
+
+        //scene rendering
+        public void AddLocationRendererManagerToList(WorldLocationRendererManager worldLocationRendererManager)
+        {
+            //check for nulls as the scenes will always be loaded/unloaded
+            for (int i = 0; i < worldLocationRenderers.Count; i++)
+            {
+                if (worldLocationRenderers[i] == null)
+                    worldLocationRenderers.RemoveAt(i);
+            }
+
+            if (!worldLocationRenderers.Contains(worldLocationRendererManager))
+                worldLocationRenderers.Add(worldLocationRendererManager);
         }
     }
 }

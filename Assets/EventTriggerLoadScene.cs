@@ -23,7 +23,7 @@ namespace baodeag
 
         private void AddPlayerToArea(PlayerManager player)
         {
-            WorldSubsceneManager.instance.LoadAreasBasedOnAreaCurrentIn(area, player);
+            WorldLocationManager.instance.LoadAreasBasedOnAreaCurrentIn(area, player);
         }
     }
 }

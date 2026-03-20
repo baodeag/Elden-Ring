@@ -28,6 +28,9 @@ namespace baodeag
         private bool sceneIsLoading = false;
         private bool sceneIsUnloading = false;
 
+        //scene renderers
+        private Coroutine requiredRenderersCoroutine;
+
         [Header("Scene ID")]
         public string world = "World_01";
         public string area_01_Subarea_00 = "Area_01_Subarea_00";
@@ -75,10 +78,10 @@ namespace baodeag
 
             switch (sceneEvent.SceneEventType)
             {
-                case SceneEventType.Load:               
+                case SceneEventType.Load:
                     break;
 
-                case SceneEventType.Unload:                   
+                case SceneEventType.Unload:
                     break;
 
                 case SceneEventType.Synchronize:
@@ -96,7 +99,7 @@ namespace baodeag
 
                 case SceneEventType.LoadComplete:
                     //called when the scene is finished loading, add it to the list of loaded scenes
-                    loadedScenes.Add(sceneEvent.Scene); 
+                    loadedScenes.Add(sceneEvent.Scene);
 
                     //double check loaded scenes to make sure they are loaded, if not remove them from the loaded list
                     for (int i = 0; i < loadedScenes.Count; i++)
@@ -109,7 +112,7 @@ namespace baodeag
                     break;
 
                 case SceneEventType.UnloadComplete:
-                    for(int i = 0; i < loadedScenes.Count; i++)
+                    for (int i = 0; i < loadedScenes.Count; i++)
                     {
                         if (!loadedScenes[i].isLoaded)
                             loadedScenes.RemoveAt(i);
@@ -343,28 +346,6 @@ namespace baodeag
             yield return null;
         }
 
-        public void CheckForUnrequiredScenes()
-        {
-            List<string> scenesToUnload = new List<string>();
-
-            //get all currently loaded scenes
-            for (int i = 0; i < loadedScenes.Count; i++)
-            {
-                scenesToUnload.Add(loadedScenes[i].name);
-            }
-
-            doNotUnLoadList = WorldSubsceneManager.instance.GenerateDoNotUnloadListBasedOnPlayerLocations();
-
-            //compare all loaded scenes
-            for (int i = 0; i < scenesToUnload.Count; i++)
-            {
-                if (doNotUnLoadList.Contains(scenesToUnload[i]))
-                    scenesToUnload.Remove(scenesToUnload[i]);
-            }
-
-            UnloadAdditiveScenes(scenesToUnload);
-        }
-
         //scene id
         public string GetSceneIDFromWorldSceneLocation(WorldSceneLocation area)
         {
@@ -389,6 +370,93 @@ namespace baodeag
             }
 
             return sceneID;
+        }
+
+        public void CheckForUnrequiredScenes()
+        {
+            List<string> scenesToUnload = new List<string>();
+
+            //get all currently loaded scenes
+            for (int i = 0; i < loadedScenes.Count; i++)
+            {
+                scenesToUnload.Add(loadedScenes[i].name);
+            }
+
+            doNotUnLoadList = WorldLocationManager.instance.GenerateDoNotUnloadListBasedOnPlayerLocations();
+
+            //compare all loaded scenes
+            for (int i = 0; i < scenesToUnload.Count; i++)
+            {
+                if (doNotUnLoadList.Contains(scenesToUnload[i]))
+                    scenesToUnload.Remove(scenesToUnload[i]);
+            }
+
+            UnloadAdditiveScenes(scenesToUnload);
+        }
+
+        public void CheckForRequiredRenderers()
+        {
+            if (WorldLocationManager.instance == null)
+                return;
+
+            if (requiredRenderersCoroutine != null)
+                StopCoroutine(requiredRenderersCoroutine);
+
+            WorldLocationSceneSet location = PlayerUIManager.instance.localPlayer.areaCurrentlyIn;
+
+            if (location != null)
+                requiredRenderersCoroutine = StartCoroutine(CheckForRequiredSceneRenderersCoroutine(location));
+        }
+
+        private IEnumerator CheckForRequiredSceneRenderersCoroutine(WorldLocationSceneSet location)
+        {
+            List<string> scenesRelevantToLocationCurrentlyIn = location.GetRequiredSceneIDsForWorldLocation();
+            List<int> sceneBuildIndexes = new List<int>();
+
+            if (scenesRelevantToLocationCurrentlyIn != null)
+            {
+                for (int i = 0; i < scenesRelevantToLocationCurrentlyIn.Count; i++)
+                {
+                    sceneBuildIndexes.Add(GetBuildIndexFromSceneID(scenesRelevantToLocationCurrentlyIn[i]));
+                }
+            }
+
+            for (int i = 0; i < WorldLocationManager.instance.worldLocationRenderers.Count; i++)
+            {
+                if (WorldLocationManager.instance.worldLocationRenderers[i] == null)
+                    continue;
+
+                if (sceneBuildIndexes.Contains(WorldLocationManager.instance.worldLocationRenderers[i].renderSceneID))
+                {
+                    if (PlayerUIManager.instance.playerUILoadingScreenManager.LoadingScreenIsActive())
+                    {
+                        WorldLocationManager.instance.worldLocationRenderers[i].ToggleMeshRenderers(true);
+                    }
+                    else
+                    {
+                        WorldLocationManager.instance.worldLocationRenderers[i].ToggleAllMeshRenderersOverTime(true);
+                    }
+                }
+                else
+                {
+                    if (PlayerUIManager.instance.playerUILoadingScreenManager.LoadingScreenIsActive())
+                    {
+                        WorldLocationManager.instance.worldLocationRenderers[i].ToggleMeshRenderers(false);
+                    }
+                    else
+                    {
+                        WorldLocationManager.instance.worldLocationRenderers[i].ToggleAllMeshRenderersOverTime(false);
+                    }
+                }
+            }
+
+            yield return null;
+        }
+
+        public int GetBuildIndexFromSceneID(string sceneID)
+        {
+            int buildIndex = SceneUtility.GetBuildIndexByScenePath(sceneID);
+            return buildIndex;
         }
     }
 }
