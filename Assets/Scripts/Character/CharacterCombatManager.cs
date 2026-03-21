@@ -49,6 +49,9 @@ namespace baodeag
         {
             if (character.IsOwner)
             {
+                if (currentTarget != null)
+                    currentTarget.characterNetworkManager.RemoveCharacterFromListOfCharactersTargetingMeServerRpc(character.NetworkObjectId);
+
                 if (newTarget != null)
                 {
                     currentTarget = newTarget;
@@ -58,6 +61,7 @@ namespace baodeag
                 else
                 {
                     currentTarget = null;
+                    character.characterNetworkManager.ClearTargetServerRpc();
                 }
             }
         }

@@ -234,6 +234,9 @@ namespace baodeag
         public virtual void OnIsDeadChanged(bool oldStatus, bool newStatus)
         {
             character.animator.SetBool("isDead", character.isDead.Value);
+
+            if (IsOwner)
+                character.characterCombatManager.SetTarget(null);
         }
 
         public virtual void OnLockOnTargetIDChange(ulong oldID, ulong newID)
@@ -365,6 +368,44 @@ namespace baodeag
                 character.characterCombatManager.charactersTargetingMe.Add(characterTargetingMe);
 
             character.characterCombatManager.CheckForHiddenStatus();
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public virtual void RemoveCharacterFromListOfCharactersTargetingMeServerRpc(ulong characterTargetingMeID)
+        {
+            if (IsServer)
+                RemoveCharacterFromListOfCharactersTargetingMeClientRpc(characterTargetingMeID);
+        }
+
+        [ClientRpc]
+        protected virtual void RemoveCharacterFromListOfCharactersTargetingMeClientRpc(ulong characterTargetingMeID)
+        {
+            if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(characterTargetingMeID))
+                return;
+
+            CharacterManager characterTargetingMe = NetworkManager.Singleton.SpawnManager.SpawnedObjects[characterTargetingMeID].GetComponent<CharacterManager>();
+
+            if (characterTargetingMe == null)
+                return;
+
+            if (character.characterCombatManager.charactersTargetingMe.Contains(characterTargetingMe))
+                character.characterCombatManager.charactersTargetingMe.Remove(characterTargetingMe);
+
+            character.characterCombatManager.CheckForHiddenStatus();
+        }
+
+        [ServerRpc]
+        public virtual void ClearTargetServerRpc()
+        {
+            if (IsServer)
+                ClearTargetClientRpc();
+        }
+
+        [ClientRpc]
+        public virtual void ClearTargetClientRpc()
+        {
+            if (!IsOwner)
+                character.characterCombatManager.currentTarget = null;
         }
 
         //used to cancel fx when poise is broken
