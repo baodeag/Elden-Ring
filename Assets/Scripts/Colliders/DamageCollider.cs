@@ -113,12 +113,14 @@ namespace baodeag
         public virtual void EnableDamageCollider()
         {
             damageCollider.enabled = true;
+            //open a trail
         }
 
         public virtual void DisableDamageCollider()
         {
             damageCollider.enabled = false;
             charactersDamaged.Clear(); //reset the character that have been hit when reset the collider
+            //close a trail
         }
 
     }

@@ -1208,12 +1208,14 @@ namespace baodeag
             //open right weapon damage collider
             if (player.playerNetworkManager.isUsingRightHand.Value)
             {
+                rightWeaponManager.ToggleWeaponTrail(true);
                 rightWeaponManager.meleeDamageCollider.EnableDamageCollider();
                 player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(player.playerInventoryManager.currentRightHandWeapon.whooshes));
             }
-            ////open left weapon damage collider
+            //open left weapon damage collider
             else if (player.playerNetworkManager.isUsingLeftHand.Value)
             {
+                leftWeaponManager.ToggleWeaponTrail(true);
                 leftWeaponManager.meleeDamageCollider.EnableDamageCollider();
                 player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(player.playerInventoryManager.currentLeftHandWeapon.whooshes));
             }
@@ -1225,22 +1227,26 @@ namespace baodeag
             if (player.playerNetworkManager.isUsingRightHand.Value)
             {
                 rightWeaponManager.meleeDamageCollider.DisableDamageCollider();
+                rightWeaponManager.ToggleWeaponTrail(false);
             }
             //close left weapon damage collider
             else if (player.playerNetworkManager.isUsingLeftHand.Value)
             {
                 leftWeaponManager.meleeDamageCollider.DisableDamageCollider();
+                leftWeaponManager.ToggleWeaponTrail(false);
             }
         }
 
         public void OpenMainHandDamageCollider()
         {
+            rightWeaponManager.ToggleWeaponTrail(true);
             rightWeaponManager.meleeDamageCollider.EnableDamageCollider();
             player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(player.playerInventoryManager.currentRightHandWeapon.whooshes));
         }
 
         public void CloseMainHandDamageCollider()
         {
+            rightWeaponManager.ToggleWeaponTrail(false);
             rightWeaponManager.meleeDamageCollider.DisableDamageCollider();
         }
 

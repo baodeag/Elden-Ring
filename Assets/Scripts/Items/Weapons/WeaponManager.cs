@@ -4,6 +4,13 @@ namespace baodeag
 {
     public class WeaponManager : MonoBehaviour
     {
+        //option 1: use trail on effect tab
+        //[Header("Trail Renderer")]
+        //[SerializeField] TrailRenderer trail;
+
+        //option 2
+        [SerializeField] ParticleSystem trail;
+
         public MeleeWeaponDamageCollider meleeDamageCollider;
 
         private void Awake()
@@ -77,6 +84,18 @@ namespace baodeag
             meleeDamageCollider.dw_Run_Attack_01_Modifier = weapon.dw_Run_Attack_01_Modifier;
             meleeDamageCollider.dw_Roll_Attack_01_Modifier = weapon.dw_Roll_Attack_01_Modifier;
             meleeDamageCollider.dw_Backstep_Attack_01_Modifier = weapon.dw_Backstep_Attack_01_Modifier;
+        }
+
+        public void ToggleWeaponTrail(bool status)
+        {
+            if (trail == null)
+                return;
+
+            if (status)
+                trail.Play();
+
+            if (!status)
+                trail.Stop();
         }
     }
 }
