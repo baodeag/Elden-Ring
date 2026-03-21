@@ -16,6 +16,14 @@ namespace baodeag
             return newState;
         }
 
+        //called from outside a state, triggered by other scripts or functions 
+        public virtual AIState ManuallySwitchState(AICharacterManager aiCharacter, AIState newState)
+        {
+            aiCharacter.hasManuallySwitchedState = true;
+            ResetStateFlags(aiCharacter);
+            return newState;
+        }
+
         protected virtual void ResetStateFlags(AICharacterManager aiCharacter)
         {
 

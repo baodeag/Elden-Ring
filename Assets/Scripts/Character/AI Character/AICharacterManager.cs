@@ -20,6 +20,7 @@ namespace baodeag
 
         [Header("Current State")]
         public AIState currentState;
+        [HideInInspector] public bool hasManuallySwitchedState = false;
 
         [Header("States")]
         public IdleState idle;
@@ -145,10 +146,12 @@ namespace baodeag
         {
             AIState nextState = currentState?.Tick(this);
 
-            if (nextState != null)
+            if (nextState != null && !hasManuallySwitchedState)
             {
                 currentState = nextState;
             }
+
+            hasManuallySwitchedState = false;
 
             //the position/rotation should be reset only after the state machine has processed its tick
             navMeshAgent.transform.localPosition = Vector3.zero;

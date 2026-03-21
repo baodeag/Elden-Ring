@@ -40,6 +40,9 @@ namespace baodeag
         [Header("Characters Targeting Me")]
         public List<CharacterManager> charactersTargetingMe = new List<CharacterManager>();
 
+        [Header("Stealth")]
+        public List<StealthObject> stealthObjectsCurrentlyStandingIn = new List<StealthObject>();
+
         protected virtual void Awake()
         {
             character = GetComponent<CharacterManager>();
@@ -281,6 +284,40 @@ namespace baodeag
         public void DestroyAllCurrentActionFX()
         {
             character.characterNetworkManager.DestroyAllCurrentActionFXServerRpc();
+        }
+
+        //stealth objects
+        public void AddStealthObject(StealthObject stealthObject)
+        {
+            for (int i = 0; i < stealthObjectsCurrentlyStandingIn.Count; i++)
+            {
+                if (stealthObjectsCurrentlyStandingIn[i] == null)
+                    stealthObjectsCurrentlyStandingIn.RemoveAt(i);
+            }
+
+            if (stealthObject == null)
+                return;
+
+            if (stealthObjectsCurrentlyStandingIn.Contains(stealthObject))
+                return;
+            stealthObjectsCurrentlyStandingIn.Add(stealthObject);
+        }
+
+        public void RemoveStealthObject(StealthObject stealthObject)
+        {
+            if (stealthObject == null)
+                return;
+
+            if (!stealthObjectsCurrentlyStandingIn.Contains(stealthObject))
+                return;
+
+            stealthObjectsCurrentlyStandingIn.Remove(stealthObject);
+
+            for (int i = 0; i < stealthObjectsCurrentlyStandingIn.Count; i++)
+            {
+                if (stealthObjectsCurrentlyStandingIn[i] == null)
+                    stealthObjectsCurrentlyStandingIn.RemoveAt(i);
+            }
         }
     }
 }

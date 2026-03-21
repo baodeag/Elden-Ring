@@ -20,6 +20,9 @@ namespace baodeag
 
         public override void PlayFootStepSoundFX()
         {
+            if (player.playerNetworkManager.isSneaking.Value)
+                return;
+
             base.PlayFootStepSoundFX();
 
             WorldSoundFXManager.instance.AlertNearbyCharactersToSound(transform.position, 2);

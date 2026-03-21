@@ -20,6 +20,9 @@ namespace baodeag
         [Header("Forces")]
         public float slopeSlideForce = -15;
 
+        [Header("Detection")]
+        public float hiddenTargetDetectionRadiusPenalty = 0.25f; //the modifier of distance an ai can detect their target if they are sneaking & hidden
+
         private void Awake()
         {
             if (Instance == null)

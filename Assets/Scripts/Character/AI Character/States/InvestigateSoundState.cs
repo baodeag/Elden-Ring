@@ -82,7 +82,7 @@ namespace baodeag
             destinationReached = false;
             destinationSet = false;
             investigationTimer = 0;
-            positionOfSound = Vector3.zero;
+            //positionOfSound = Vector3.zero;
         }
     }
 }

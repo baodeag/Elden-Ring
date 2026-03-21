@@ -193,7 +193,7 @@ namespace baodeag
             }
 
             aiCharacter.investigateSound.positionOfSound = positionOfSound;
-            aiCharacter.currentState = aiCharacter.currentState.SwitchState(aiCharacter, aiCharacter.investigateSound);
+            aiCharacter.currentState = aiCharacter.currentState.ManuallySwitchState(aiCharacter, aiCharacter.investigateSound);
         }
 
         public virtual void FindATargetViaLineOfSight(AICharacterManager aiCharacter)
@@ -215,6 +215,20 @@ namespace baodeag
 
                 if (targetCharacter.isDead.Value)
                     continue;
+
+                if (targetCharacter.characterNetworkManager.isSneaking.Value && targetCharacter.characterNetworkManager.isHidden.Value)
+                {
+                    if (targetCharacter.characterCombatManager.stealthObjectsCurrentlyStandingIn.Count > 0)
+                        continue;
+
+                    float distanceFromPotentialTarget = Vector3.Distance(aiCharacter.transform.position, targetCharacter.transform.position);
+                    float maxDistance = detectionRadius * WorldUtilityManager.Instance.hiddenTargetDetectionRadiusPenalty;
+
+                    AlertCharacterToSound(targetCharacter.transform.position);
+
+                    if (distanceFromPotentialTarget > maxDistance)
+                        continue;
+                }
 
                 if (WorldUtilityManager.Instance.CanIDamageThisTarget(aiCharacter.characterGroup, targetCharacter.characterGroup))
                 {
