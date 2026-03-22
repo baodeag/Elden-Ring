@@ -1,12 +1,11 @@
-using NUnit.Framework;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Collections;
-using Netcode.Transports.Facepunch;
-using Steamworks;
-using Steamworks.Data;
+using Unity.Netcode.Transports.UTP;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace baodeag
 {
@@ -19,10 +18,9 @@ namespace baodeag
 
         private Coroutine revivalCoroutine;
 
-        [Header("Active Lobby")]
-        public Lobby? currentLobby;
-        private FacepunchTransport transport;
-        private Coroutine joinningAsClientCoroutine;
+        private UnityTransport unityTransport;
+        private const ushort DefaultUnityTransportPort = 7777;
+        private Coroutine joinAsClientCoroutine;
 
         private void Awake()
         {
@@ -35,28 +33,16 @@ namespace baodeag
                 Destroy(gameObject);
             }
 
-            transport = GetComponent<FacepunchTransport>();
+            unityTransport = NetworkManager.Singleton != null
+                ? NetworkManager.Singleton.NetworkConfig.NetworkTransport as UnityTransport
+                : null;
+
+            ConfigureUnityTransportPortForCurrentProject();
         }
 
         private void Start()
         {
             DontDestroyOnLoad(gameObject);
-
-            SteamMatchmaking.OnLobbyEntered += OnLobbyEntered;
-            SteamMatchmaking.OnLobbyCreated += OnLobbyCreated;
-            SteamFriends.OnGameLobbyJoinRequested += OnGameLobbyJoinRequested;
-        }
-
-        private void OnDestroy()
-        {
-            SteamMatchmaking.OnLobbyEntered -= OnLobbyEntered;
-            SteamMatchmaking.OnLobbyCreated -= OnLobbyCreated;
-            SteamFriends.OnGameLobbyJoinRequested -= OnGameLobbyJoinRequested;
-        }
-
-        private void OnApplicationQuit()
-        {
-            DisconnectFromLobby();
         }
 
         private void OnEnable()
@@ -71,138 +57,192 @@ namespace baodeag
 
         private void OnSceneLoaded(Scene newScene, LoadSceneMode loadMode)
         {
-            //if we arent on the menu scene, allow others to join our lobby
-            if (SceneManager.GetActiveScene().buildIndex != 0)
-            {
-                ToggleLobbyIsJoinable(true);
-            }
-            else
-            {
-                ToggleLobbyIsJoinable(false);
-            }
+            // Keep hook in place in case later world transitions need session-dependent logic.
         }
 
-        //face punch
-        public void ToggleLobbyIsJoinable(bool status)
-        {
-            currentLobby?.SetJoinable(status);
-        }
-
-        //called when a lobby is created
-        private void OnLobbyCreated(Result result, Lobby lobby)
-        {
-            if (result != Result.OK)
-            {
-                Debug.LogError($"Lobby could no be created, {result}", this);
-                return;
-            }
-
-            lobby.SetPublic();
-            lobby.SetJoinable(false); //we only want to set to joinable once we are in the world
-            lobby.SetGameServer(lobby.Owner.Id);
-        }
-
-        //called when entering a lobby
-        private void OnGameLobbyJoinRequested(Lobby joinedLobby, SteamId steamID)
-        {
-            //if we are on the main menu when trying to join, do not allow the player to join until they load into the world
-            if (SceneManager.GetActiveScene().buildIndex == 0)
-            {
-                if (!NetworkManager.Singleton.IsHost && !NetworkManager.Singleton.IsClient)
-                {
-                    Debug.Log("We are not allowed to join another game, we aren't a client or a host. Start the game first");
-                    return;
-                }
-
-                //optionally send a pop up letting the player know through a ui element
-            }
-
-            //save before joining
-            WorldSaveGameManager.instance.SaveGame();
-            NetworkManager.Singleton.Shutdown();
-
-            Debug.Log($"Attempting to join game, {joinedLobby.Id}, from {steamID}");
-            currentLobby = joinedLobby;
-
-            //if we have a current lobby, join it
-            currentLobby?.Join();
-        }
-
-        private void OnLobbyEntered(Lobby lobby)
+        public bool StartGameAsHost()
         {
             if (NetworkManager.Singleton.IsHost)
+                return true;
+
+            if (NetworkManager.Singleton.IsClient)
             {
+                Debug.LogWarning("Client session is active. Shut it down before starting a host.");
+                return false;
+            }
+
+            ConfigureUnityTransportPortForCurrentProject();
+
+            if (!NetworkManager.Singleton.StartHost())
+            {
+                Debug.LogError("Failed to start host session.");
+                return false;
+            }
+
+            Debug.Log($"Host started with UnityTransport on {GetCurrentConnectionAddress()}.");
+            return true;
+        }
+
+        private void ConfigureUnityTransportPortForCurrentProject()
+        {
+            if (unityTransport == null)
                 return;
-            }
-            else
-            {
-                StartGameAsClient(lobby.Owner.Id);
-            }
+
+            ushort port = GetUnityTransportPortForCurrentProject();
+            unityTransport.SetConnectionData("127.0.0.1", port, "0.0.0.0");
         }
 
-        public async void StartGameAsHost()
+        private ushort GetUnityTransportPortForCurrentProject()
         {
-            NetworkManager.Singleton.StartHost();
+            DirectoryInfo projectDirectory = Directory.GetParent(Application.dataPath);
 
-            //currentLobby = await SteamMatchmaking.CreateLobbyAsync(4);
+            if (projectDirectory == null)
+                return DefaultUnityTransportPort;
+
+            string projectFolderName = projectDirectory.Name;
+            Match cloneSuffixMatch = Regex.Match(projectFolderName, @"_clone_(\d+)$", RegexOptions.IgnoreCase);
+
+            if (!cloneSuffixMatch.Success)
+                return DefaultUnityTransportPort;
+
+            if (!int.TryParse(cloneSuffixMatch.Groups[1].Value, out int cloneIndex))
+                return DefaultUnityTransportPort;
+
+            int candidatePort = DefaultUnityTransportPort + cloneIndex + 1;
+
+            if (candidatePort > ushort.MaxValue)
+                return DefaultUnityTransportPort;
+
+            Debug.Log($"ParrelSync clone detected. Using UnityTransport port {candidatePort} for project '{projectFolderName}'.");
+            return (ushort)candidatePort;
         }
 
-        public void StartGameAsClient(SteamId id)
+        public bool StartGameAsClient(string addressInput)
         {
-            if (PlayerUIManager.instance.localPlayer.isDead.Value)
+            if (joinAsClientCoroutine != null)
+                StopCoroutine(joinAsClientCoroutine);
+
+            if (!TryParseAddressInput(addressInput, out string hostAddress, out ushort port))
             {
-                return;
+                Debug.LogError($"Invalid address '{addressInput}'. Use an IP or host name, optionally with ':port', for example '127.0.0.1:7777'.");
+                return false;
             }
 
-            if (joinningAsClientCoroutine != null)
-                StopCoroutine(joinningAsClientCoroutine);
-
-            joinningAsClientCoroutine = StartCoroutine(AttemptToJoinAsClient(id));
+            joinAsClientCoroutine = StartCoroutine(JoinAsClientCoroutine(hostAddress, port));
+            return true;
         }
 
-        private IEnumerator AttemptToJoinAsClient(SteamId id)
+        private IEnumerator JoinAsClientCoroutine(string hostAddress, ushort port)
         {
-            //optionally activate loading screen until joined
-
-            while (transport.targetSteamId != id)
+            if (SceneManager.GetActiveScene().buildIndex != 0)
             {
-                transport.targetSteamId = id;
-                yield return null;
+                WorldSaveGameManager.instance.SaveGame();
+            }
+
+            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsClient)
+            {
+                NetworkManager.Singleton.Shutdown();
             }
 
             yield return null;
 
-            NetworkManager.Singleton.StartClient();
+            if (unityTransport == null)
+            {
+                Debug.LogError("UnityTransport is missing from NetworkManager. Cannot join by address.");
+                yield break;
+            }
+
+            unityTransport.SetConnectionData(hostAddress, port);
+
+            if (!NetworkManager.Singleton.StartClient())
+            {
+                Debug.LogError($"Failed to start client for {hostAddress}:{port}.");
+                yield break;
+            }
+
+            Debug.Log($"Client connecting to {hostAddress}:{port}.");
         }
 
-        public void DisconnectFromLobby()
+        public string GetSuggestedHostAddress()
         {
-            currentLobby?.Leave();
+            return $"127.0.0.1:{GetUnityTransportPortForCurrentProject()}";
         }
 
-        public void WaitThenReviveHost()
+        public string GetCurrentConnectionAddress()
         {
+            ushort port = GetUnityTransportPortForCurrentProject();
+            return $"127.0.0.1:{port}";
+        }
+
+        private bool TryParseAddressInput(string addressInput, out string hostAddress, out ushort port)
+        {
+            hostAddress = "127.0.0.1";
+            port = DefaultUnityTransportPort;
+
+            if (string.IsNullOrWhiteSpace(addressInput))
+                return true;
+
+            string trimmedInput = addressInput
+                .Replace("\u200B", string.Empty)
+                .Replace("\uFEFF", string.Empty)
+                .Trim();
+
+            if (string.IsNullOrWhiteSpace(trimmedInput) || trimmedInput == "..." || trimmedInput.StartsWith("...:"))
+                return true;
+
+            string[] parts = trimmedInput.Split(':');
+
+            if (parts.Length == 1)
+            {
+                hostAddress = parts[0];
+                return !string.IsNullOrWhiteSpace(hostAddress);
+            }
+
+            if (parts.Length == 2)
+            {
+                hostAddress = parts[0];
+
+                if (string.IsNullOrWhiteSpace(hostAddress))
+                    return false;
+
+                return ushort.TryParse(parts[1], out port);
+            }
+
+            return false;
+        }
+
+        public void WaitThenRevivePlayer(PlayerManager player)
+        {
+            if (player == null || !player.IsOwner)
+                return;
+
             if (revivalCoroutine != null)
                 StopCoroutine(revivalCoroutine);
 
-            revivalCoroutine = StartCoroutine(ReviveHostCoroutine(5));
+            revivalCoroutine = StartCoroutine(RevivePlayerCoroutine(player, 5));
         }
 
-        private IEnumerator ReviveHostCoroutine(float delay)
+        private IEnumerator RevivePlayerCoroutine(PlayerManager player, float delay)
         {
             yield return new WaitForSeconds(delay);
 
+            if (player == null || !player.IsOwner)
+                yield break;
+
             PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
 
-            PlayerUIManager.instance.localPlayer.ReviveCharacter();
+            player.ReviveCharacter();
 
-            WorldAIManager.instance.ResetAllCharacters();
+            if (NetworkManager.Singleton.IsServer && players.Count <= 1)
+            {
+                WorldAIManager.instance.ResetAllCharacters();
+            }
 
             for (int i = 0; i < WorldObjectManager.instance.sitesOfGrace.Count; i++)
             {
-                if (WorldObjectManager.instance.sitesOfGrace[i].siteOfGraceID == WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt)
+                if (WorldObjectManager.instance.sitesOfGrace[i].siteOfGraceID == player.playerNetworkManager.lastSiteOfGraceUsed.Value)
                 {
-                    WorldObjectManager.instance.sitesOfGrace[i].TeleportToSiteOfGrace();
+                    WorldObjectManager.instance.sitesOfGrace[i].TeleportPlayerToSiteOfGrace(player);
                     break;
                 }
             }

@@ -313,9 +313,10 @@ namespace baodeag
         public override IEnumerator ProcessDeathEvent(bool manuallySelectDeathAnimation = false)
         {
             if (IsOwner)
+            {
                 PlayerUIManager.instance.playerUIPopUpManager.SendYouDiedPopUp();
-
-            WorldGameSessionManager.instance.WaitThenReviveHost();
+                WorldGameSessionManager.instance.WaitThenRevivePlayer(this);
+            }
 
             return base.ProcessDeathEvent(manuallySelectDeathAnimation);
         }

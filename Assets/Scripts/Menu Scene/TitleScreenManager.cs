@@ -3,11 +3,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.InputManagerEntry;
 using TMPro;
+using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 namespace baodeag { 
     public class TitleScreenManager : MonoBehaviour
     {
         public static TitleScreenManager Instance;
+        private const string DefaultNetworkAddress = "127.0.0.1:7777";
 
         //main menu
         [Header("Main Menu Menus")]
@@ -20,6 +23,9 @@ namespace baodeag {
         [SerializeField] Button mainMenuLoadGameButton;
         [SerializeField] Button mainMenuNewGameButton;
         [SerializeField] Button deleteCharacterPopUpConfirmButton;
+        [SerializeField] Button hostWorldButton;
+        [SerializeField] Button joinWorldButton;
+        [SerializeField] TMP_InputField networkAddressInputField;
 
         [Header("Main Menu Pop Ups")]
         [SerializeField] GameObject noCharacterSlotsPopUp;
@@ -61,6 +67,7 @@ namespace baodeag {
 
         [Header("Classes")]
         public CharacterClass[] startingClasses;
+        private bool networkMenuInitialized;
 
 
         private void Awake()
@@ -75,13 +82,68 @@ namespace baodeag {
             }
         }
 
+        private void Start()
+        {
+            BuildNetworkMenuControls();
+        }
+
         public void StartNetworkAsHost()
         {
-            WorldGameSessionManager.instance.StartGameAsHost();
+            HostWorld();
+        }
+
+        public void PressStart()
+        {
+            OpenTitleScreenMainMenu();
+            PopulateDefaultNetworkAddressField();
+
+            if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null)
+            {
+                EventSystem.current.currentSelectedGameObject.SetActive(false);
+            }
+
+            if (hostWorldButton != null)
+            {
+                hostWorldButton.Select();
+            }
+            else
+            {
+                mainMenuNewGameButton.Select();
+            }
+        }
+
+        public void JoinOnlineGame()
+        {
+            JoinWorld();
+        }
+
+        public void HostWorld()
+        {
+            if (!WorldGameSessionManager.instance.StartGameAsHost())
+                return;
+
+            if (networkAddressInputField != null)
+            {
+                networkAddressInputField.text = WorldGameSessionManager.instance.GetCurrentConnectionAddress();
+            }
+
+            mainMenuNewGameButton.Select();
+        }
+
+        public void JoinWorld()
+        {
+            string addressInput = networkAddressInputField != null && !string.IsNullOrWhiteSpace(networkAddressInputField.text)
+                ? networkAddressInputField.text
+                : DefaultNetworkAddress;
+
+            WorldGameSessionManager.instance.StartGameAsClient(addressInput);
         }
 
         public void AttemptToCreateNewCharacter()
         {
+            if (!EnsureHostSessionForSaveMenus())
+                return;
+
             if (WorldSaveGameManager.instance.HasFreeCharacterSlot())
             {
                 OpenCharacterCreationMenu();
@@ -100,6 +162,9 @@ namespace baodeag {
 
         public void OpenLoadGameMenu()
         {
+            if (!EnsureHostSessionForSaveMenus())
+                return;
+
             //close main menu
             titleScreenMainMenu.SetActive(false);
 
@@ -158,6 +223,154 @@ namespace baodeag {
 
             //set default body type
             player.playerBodyManager.ToggleBodyType(true);
+        }
+
+        private bool EnsureHostSessionForSaveMenus()
+        {
+            if (NetworkManager.Singleton.IsHost)
+                return true;
+
+            if (NetworkManager.Singleton.IsClient)
+            {
+                Debug.LogWarning("New Game and Load Game are only available for the host session.");
+                return false;
+            }
+
+            return WorldGameSessionManager.instance.StartGameAsHost();
+        }
+
+        private void BuildNetworkMenuControls()
+        {
+            if (networkMenuInitialized || titleScreenMainMenu == null || mainMenuNewGameButton == null)
+                return;
+
+            RectTransform menuParent = mainMenuNewGameButton.transform.parent as RectTransform;
+
+            if (menuParent == null)
+                return;
+
+            SetupJoinButton(menuParent);
+            SetupHostButton(menuParent);
+            SetupNetworkAddressInput(menuParent);
+            PopulateDefaultNetworkAddressField();
+
+            networkMenuInitialized = true;
+        }
+
+        private void SetupHostButton(RectTransform menuParent)
+        {
+            if (hostWorldButton != null)
+            {
+                ConfigureButton(hostWorldButton, "Host World Button", "HOST", HostWorld);
+                return;
+            }
+
+            GameObject hostButtonObject = Instantiate(mainMenuNewGameButton.gameObject, menuParent);
+            hostButtonObject.name = "Host World Button";
+            hostButtonObject.SetActive(true);
+            hostWorldButton = hostButtonObject.GetComponent<Button>();
+
+            RectTransform hostRect = hostButtonObject.GetComponent<RectTransform>();
+            RectTransform newGameRect = mainMenuNewGameButton.GetComponent<RectTransform>();
+
+            hostRect.anchoredPosition = new Vector2(newGameRect.anchoredPosition.x, newGameRect.anchoredPosition.y + 90f);
+
+            ConfigureButton(hostWorldButton, "Host World Button", "HOST", HostWorld);
+        }
+
+        private void SetupJoinButton(RectTransform menuParent)
+        {
+            if (joinWorldButton == null)
+            {
+                foreach (Button button in menuParent.GetComponentsInChildren<Button>(true))
+                {
+                    if (button != null && button.name == "Join World Button")
+                    {
+                        joinWorldButton = button;
+                        break;
+                    }
+                }
+            }
+
+            if (joinWorldButton == null)
+            {
+                GameObject joinButtonObject = Instantiate(mainMenuLoadGameButton.gameObject, menuParent);
+                joinButtonObject.name = "Join World Button";
+                joinButtonObject.SetActive(true);
+                joinWorldButton = joinButtonObject.GetComponent<Button>();
+            }
+
+            RectTransform joinRect = joinWorldButton.GetComponent<RectTransform>();
+            RectTransform loadRect = mainMenuLoadGameButton.GetComponent<RectTransform>();
+            joinRect.anchoredPosition = new Vector2(loadRect.anchoredPosition.x, loadRect.anchoredPosition.y + 90f);
+
+            ConfigureButton(joinWorldButton, "Join World Button", "JOIN", JoinWorld);
+        }
+
+        private void SetupNetworkAddressInput(RectTransform menuParent)
+        {
+            if (networkAddressInputField == null && characterNameInputField != null)
+            {
+                GameObject addressInputObject = Instantiate(characterNameInputField.gameObject, menuParent);
+                addressInputObject.name = "Network Address Input";
+                addressInputObject.SetActive(true);
+                networkAddressInputField = addressInputObject.GetComponent<TMP_InputField>();
+            }
+
+            if (networkAddressInputField == null)
+                return;
+
+            RectTransform addressRect = networkAddressInputField.GetComponent<RectTransform>();
+            RectTransform hostRect = hostWorldButton != null
+                ? hostWorldButton.GetComponent<RectTransform>()
+                : mainMenuNewGameButton.GetComponent<RectTransform>();
+
+            addressRect.anchoredPosition = new Vector2(hostRect.anchoredPosition.x, hostRect.anchoredPosition.y + 90f);
+            addressRect.sizeDelta = new Vector2(420f, addressRect.sizeDelta.y);
+
+            networkAddressInputField.contentType = TMP_InputField.ContentType.Standard;
+            networkAddressInputField.lineType = TMP_InputField.LineType.SingleLine;
+            networkAddressInputField.SetTextWithoutNotify(DefaultNetworkAddress);
+
+            if (networkAddressInputField.textComponent != null)
+            {
+                networkAddressInputField.textComponent.text = DefaultNetworkAddress;
+            }
+
+            if (networkAddressInputField.placeholder is TMP_Text placeholderText)
+            {
+                placeholderText.text = DefaultNetworkAddress;
+            }
+        }
+
+        private void ConfigureButton(Button button, string objectName, string label, UnityAction callback)
+        {
+            if (button == null)
+                return;
+
+            button.name = objectName;
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(callback);
+
+            TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>(true);
+
+            if (buttonText != null)
+            {
+                buttonText.text = label;
+            }
+        }
+
+        private void PopulateDefaultNetworkAddressField()
+        {
+            if (networkAddressInputField == null || WorldGameSessionManager.instance == null)
+                return;
+
+            networkAddressInputField.SetTextWithoutNotify(DefaultNetworkAddress);
+
+            if (networkAddressInputField.textComponent != null)
+            {
+                networkAddressInputField.textComponent.text = DefaultNetworkAddress;
+            }
         }
 
         public void CloseCharacterCreationMenu()

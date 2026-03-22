@@ -130,8 +130,7 @@ namespace baodeag
 
             WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = siteOfGraceID;
 
-            if (player.IsHost)
-                player.playerNetworkManager.lastSiteOfGraceUsed.Value = siteOfGraceID;
+            player.playerNetworkManager.lastSiteOfGraceUsed.Value = siteOfGraceID;
 
             if (!isActivated.Value)
             {
@@ -147,15 +146,28 @@ namespace baodeag
         {
             //the player is only able to teleport when not in a co-op game, so we can grab the local player from the network manager
             PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+            TeleportPlayerToSiteOfGrace(player);
+        }
+
+        public void TeleportPlayerToSiteOfGrace(PlayerManager player)
+        {
+            if (player == null)
+                return;
 
             //enable loading screen
-            PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
+            if (player.IsOwner)
+            {
+                PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
+            }
 
             //teleport player
             player.transform.position = teleportTransform.position;
 
             //disable loading screen
-            PlayerUIManager.instance.playerUILoadingScreenManager.DeactivateLoadingScreen(1);
+            if (player.IsOwner)
+            {
+                PlayerUIManager.instance.playerUILoadingScreenManager.DeactivateLoadingScreen(1);
+            }
         }
     }
 }
