@@ -56,28 +56,32 @@ namespace baodeag
 
         public void CreateDeadSpot(Vector3 position, int runesCount, bool removePlayerRunes = true)
         {
-            if (!player.IsHost)
+            if (!NetworkManager.Singleton.IsServer)
                 return;
 
             //spawn dead spot vfx
             GameObject deadSpotFX = Instantiate(WorldCharacterEffectsManager.instance.deadSpotVFX);
-            deadSpotFX.GetComponent<NetworkObject>().Spawn();
-
-            //set its world position
-            deadSpotFX.transform.position = position;
 
             //set the rune count
             PickUpRunesInteractable pickUpRunes = deadSpotFX.GetComponent<PickUpRunesInteractable>();
-            pickUpRunes.runeCount = runesCount;
+            pickUpRunes.runeCount.Value = runesCount;
+            pickUpRunes.runeOwnerClientId.Value = player.OwnerClientId;
 
-            if (removePlayerRunes)
+            //set its world position
+            deadSpotFX.transform.position = position;
+            deadSpotFX.GetComponent<NetworkObject>().Spawn();
+
+            if (removePlayerRunes && player.IsOwner)
                 player.playerStatsManager.AddRunes(-player.playerStatsManager.runes);
 
-            WorldSaveGameManager.instance.currentCharacterData.hasDeadSpot = true;
-            WorldSaveGameManager.instance.currentCharacterData.deadSpotRuneCount = pickUpRunes.runeCount;
-            WorldSaveGameManager.instance.currentCharacterData.deadSpotPositionX = position.x;
-            WorldSaveGameManager.instance.currentCharacterData.deadSpotPositionY = position.y;
-            WorldSaveGameManager.instance.currentCharacterData.deadSpotPositionZ = position.z;
+            if (player.IsOwner)
+            {
+                WorldSaveGameManager.instance.currentCharacterData.hasDeadSpot = true;
+                WorldSaveGameManager.instance.currentCharacterData.deadSpotRuneCount = pickUpRunes.runeCount.Value;
+                WorldSaveGameManager.instance.currentCharacterData.deadSpotPositionX = position.x;
+                WorldSaveGameManager.instance.currentCharacterData.deadSpotPositionY = position.y;
+                WorldSaveGameManager.instance.currentCharacterData.deadSpotPositionZ = position.z;
+            }
         }
 
         public void PerformWeaponBasedAction(WeaponItemAction weaponAction, WeaponItem weaponPerformingAction)

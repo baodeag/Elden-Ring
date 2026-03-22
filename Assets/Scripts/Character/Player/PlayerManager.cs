@@ -8,6 +8,10 @@ namespace baodeag
 {
     public class PlayerManager : CharacterManager
     {
+        private const int DefaultStartingVigor = 15;
+        private const int DefaultStartingMind = 10;
+        private const int DefaultStartingEndurance = 10;
+
         [HideInInspector] public PlayerAnimatorManager playerAnimatorManager;
         [HideInInspector] public PlayerLocomotionManager playerLocomotionManager;
         [HideInInspector] public PlayerNetworkManager playerNetworkManager;
@@ -307,13 +311,18 @@ namespace baodeag
                 yield return null;
             }
 
-            WorldObjectManager.instance.sitesOfGrace[hostPlayer.playerNetworkManager.lastSiteOfGraceUsed.Value].TeleportToSiteOfGrace();
+            int hostGraceId = hostPlayer.playerNetworkManager.lastSiteOfGraceUsed.Value;
+            playerNetworkManager.lastSiteOfGraceUsed.Value = hostGraceId;
+            WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = hostGraceId;
+
+            WorldObjectManager.instance.sitesOfGrace[hostGraceId].TeleportToSiteOfGrace();
         }
 
         public override IEnumerator ProcessDeathEvent(bool manuallySelectDeathAnimation = false)
         {
             if (IsOwner)
             {
+                playerInteractionManager.ClearInteractionList();
                 PlayerUIManager.instance.playerUIPopUpManager.SendYouDiedPopUp();
                 WorldGameSessionManager.instance.WaitThenRevivePlayer(this);
             }
@@ -456,9 +465,13 @@ namespace baodeag
             transform.position = myPosition;
 
             //stats
-            playerNetworkManager.vigor.Value = currentCharacterData.vitality;
-            playerNetworkManager.mind.Value = currentCharacterData.mind;
-            playerNetworkManager.endurance.Value= currentCharacterData.endurance;
+            int loadedVigor = currentCharacterData.vitality > 0 ? currentCharacterData.vitality : DefaultStartingVigor;
+            int loadedMind = currentCharacterData.mind > 0 ? currentCharacterData.mind : DefaultStartingMind;
+            int loadedEndurance = currentCharacterData.endurance > 0 ? currentCharacterData.endurance : DefaultStartingEndurance;
+
+            playerNetworkManager.vigor.Value = loadedVigor;
+            playerNetworkManager.mind.Value = loadedMind;
+            playerNetworkManager.endurance.Value= loadedEndurance;
             playerNetworkManager.strength.Value = currentCharacterData.strength;
             playerNetworkManager.dexterity.Value = currentCharacterData.dexterity;
             playerNetworkManager.intelligence.Value = currentCharacterData.intelligence;
@@ -468,10 +481,18 @@ namespace baodeag
             playerNetworkManager.maxHealth.Value = playerStatsManager.CalculateHealthBasedOnVitalityLevel(playerNetworkManager.vigor.Value);
             playerNetworkManager.maxStamina.Value = playerStatsManager.CalculateStaminaBasedOnEnduranceLevel(playerNetworkManager.endurance.Value);
             playerNetworkManager.maxFocusPoints.Value = playerStatsManager.CalculateFocusPointsBasedOnMindLevel(playerNetworkManager.mind.Value);
-            playerNetworkManager.currentHealth.Value = currentCharacterData.currentHealth;
-            playerNetworkManager.currentStamina.Value = currentCharacterData.currentStamina;
-            playerNetworkManager.currentFocusPoints.Value = currentCharacterData.currentFocusPoints;
+            playerNetworkManager.currentHealth.Value = currentCharacterData.currentHealth > 0
+                ? Mathf.Min(currentCharacterData.currentHealth, playerNetworkManager.maxHealth.Value)
+                : playerNetworkManager.maxHealth.Value;
+            playerNetworkManager.currentStamina.Value = currentCharacterData.currentStamina > 0
+                ? Mathf.Min(currentCharacterData.currentStamina, playerNetworkManager.maxStamina.Value)
+                : playerNetworkManager.maxStamina.Value;
+            playerNetworkManager.currentFocusPoints.Value = currentCharacterData.currentFocusPoints > 0
+                ? Mathf.Min(currentCharacterData.currentFocusPoints, playerNetworkManager.maxFocusPoints.Value)
+                : playerNetworkManager.maxFocusPoints.Value;
             playerNetworkManager.buildUpCapacity.Value = playerStatsManager.CalculateBuildUpCapacityBasedOnVitalityLevel(playerNetworkManager.vigor.Value);
+            playerNetworkManager.lastSiteOfGraceUsed.Value = currentCharacterData.lastSiteOfGraceRestedAt;
+            isDead.Value = false;
 
             playerStatsManager.AddRunes(currentCharacterData.runes);
 

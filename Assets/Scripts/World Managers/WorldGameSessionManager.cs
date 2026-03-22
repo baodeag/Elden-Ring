@@ -238,13 +238,37 @@ namespace baodeag
                 WorldAIManager.instance.ResetAllCharacters();
             }
 
+            int targetSiteOfGraceId = player.playerNetworkManager.lastSiteOfGraceUsed.Value;
+
+            if (targetSiteOfGraceId < 0)
+            {
+                targetSiteOfGraceId = WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt;
+            }
+
+            SiteOfGraceInteractable targetSiteOfGrace = null;
+
             for (int i = 0; i < WorldObjectManager.instance.sitesOfGrace.Count; i++)
             {
-                if (WorldObjectManager.instance.sitesOfGrace[i].siteOfGraceID == player.playerNetworkManager.lastSiteOfGraceUsed.Value)
+                if (WorldObjectManager.instance.sitesOfGrace[i].siteOfGraceID == targetSiteOfGraceId)
                 {
-                    WorldObjectManager.instance.sitesOfGrace[i].TeleportPlayerToSiteOfGrace(player);
+                    targetSiteOfGrace = WorldObjectManager.instance.sitesOfGrace[i];
                     break;
                 }
+            }
+
+            if (targetSiteOfGrace == null && WorldObjectManager.instance.sitesOfGrace.Count > 0)
+            {
+                targetSiteOfGrace = WorldObjectManager.instance.sitesOfGrace[0];
+                player.playerNetworkManager.lastSiteOfGraceUsed.Value = targetSiteOfGrace.siteOfGraceID;
+            }
+
+            if (targetSiteOfGrace != null)
+            {
+                targetSiteOfGrace.TeleportPlayerToSiteOfGrace(player);
+            }
+            else
+            {
+                PlayerUIManager.instance.playerUILoadingScreenManager.DeactivateLoadingScreen(0.5f);
             }
         }
 

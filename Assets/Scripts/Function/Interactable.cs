@@ -40,9 +40,6 @@ namespace baodeag
 
             if (player != null)
             {
-                if (!player.playerNetworkManager.IsHost && hostOnlyInteractable)
-                    return;
-
                 if (!player.IsOwner)
                     return;
 
@@ -57,9 +54,6 @@ namespace baodeag
 
             if (player != null)
             {
-                if (!player.playerNetworkManager.IsHost && hostOnlyInteractable)
-                    return;
-
                 if (!player.IsOwner)
                     return;
 

@@ -157,11 +157,27 @@ namespace baodeag
             //enable loading screen
             if (player.IsOwner)
             {
+                player.playerInteractionManager.ClearInteractionList();
                 PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
             }
 
             //teleport player
+            if (player.characterController != null)
+            {
+                player.characterController.enabled = false;
+            }
+
             player.transform.position = teleportTransform.position;
+
+            if (player.IsOwner)
+            {
+                player.characterNetworkManager.networkPosition.Value = teleportTransform.position;
+            }
+
+            if (player.characterController != null)
+            {
+                player.characterController.enabled = true;
+            }
 
             //disable loading screen
             if (player.IsOwner)

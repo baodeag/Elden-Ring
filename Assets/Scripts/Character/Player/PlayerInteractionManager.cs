@@ -1,12 +1,14 @@
 using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 namespace baodeag
 {
     public class PlayerInteractionManager : MonoBehaviour
     {
         PlayerManager player;
+        private const float MaxInteractableDistance = 3f;
 
         [HideInInspector] public List<Interactable> currentInteractableActions;
 
@@ -25,6 +27,12 @@ namespace baodeag
             if (!player.IsOwner)
                 return;
 
+            if (player.isDead.Value || PlayerUIManager.instance.playerUILoadingScreenManager.LoadingScreenIsActive())
+            {
+                ClearInteractionList();
+                return;
+            }
+
             //if our ui menu not open, and we dont have a pop up, check for interactables
             if (!PlayerUIManager.instance.menuWindowIsOpen && !PlayerUIManager.instance.popUpWindowIsOpen)
                 CheckForInteractable();
@@ -32,6 +40,8 @@ namespace baodeag
 
         private void CheckForInteractable()
         {
+            RefreshInteractableList();
+
             if (currentInteractableActions.Count == 0)
                 return;
 
@@ -49,7 +59,7 @@ namespace baodeag
         {
             for (int i = currentInteractableActions.Count - 1; i > -1; i--)
             {
-                if (currentInteractableActions[i] == null)
+                if (!IsValidInteractable(currentInteractableActions[i]))
                     currentInteractableActions.RemoveAt(i);
             }
         }
@@ -75,6 +85,14 @@ namespace baodeag
             //if we press the interact button with or without an interactable, it will clear the pop up windows (item, message, etc)
             PlayerUIManager.instance.playerUIPopUpManager.CloseAllPopUpWindows();
 
+            if (player.isDead.Value || PlayerUIManager.instance.playerUILoadingScreenManager.LoadingScreenIsActive())
+            {
+                ClearInteractionList();
+                return;
+            }
+
+            RefreshInteractableList();
+
             if (currentInteractableActions.Count == 0)
                 return;
 
@@ -83,6 +101,31 @@ namespace baodeag
                 currentInteractableActions[0].Interact(player);
                 RefreshInteractableList();
             }
+        }
+
+        public void ClearInteractionList()
+        {
+            currentInteractableActions.Clear();
+            PlayerUIManager.instance.playerUIPopUpManager.CloseAllPopUpWindows();
+        }
+
+        private bool IsValidInteractable(Interactable interactableObject)
+        {
+            if (interactableObject == null)
+                return false;
+
+            if (!interactableObject.gameObject.activeInHierarchy)
+                return false;
+
+            Collider interactableCollider = interactableObject.GetComponent<Collider>();
+
+            if (interactableCollider == null || !interactableCollider.enabled)
+                return false;
+
+            Vector3 closestPoint = interactableCollider.ClosestPoint(player.transform.position);
+            float distanceToInteractable = Vector3.Distance(player.transform.position, closestPoint);
+
+            return distanceToInteractable <= MaxInteractableDistance;
         }
     }
 }
