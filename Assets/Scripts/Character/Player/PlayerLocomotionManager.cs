@@ -332,6 +332,7 @@ namespace baodeag
             player.playerAnimatorManager.PlayTargetActionAnimation("Main_Jump_01", false);
 
             player.playerNetworkManager.isJumping.Value = true;
+            ApplyJumpingVelocity();
 
             player.playerNetworkManager.currentStamina.Value -= jumpStaminaCost;
 
