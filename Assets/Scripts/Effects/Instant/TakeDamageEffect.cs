@@ -56,15 +56,21 @@ namespace baodeag
             CalculateStanceDamage(character);
         }
 
+        protected void RegisterDamageDealer(CharacterManager character)
+        {
+            AICharacterManager aiCharacter = character as AICharacterManager;
+            PlayerManager playerCausingDamage = characterCausingDamage as PlayerManager;
+
+            if (aiCharacter != null && playerCausingDamage != null)
+                aiCharacter.RegisterLastPlayerWhoDealtDamage(playerCausingDamage);
+        }
+
         protected virtual void CalculateDamage(CharacterManager character)
         {
             if (!character.IsOwner)
                 return;
 
-            if(characterCausingDamage != null)
-            {
-                
-            }
+            RegisterDamageDealer(character);
             
             finalDamageDealt = Mathf.RoundToInt(physicalDamage + magicDamage + fireDamage + lightningDamage + holyDamage);
 

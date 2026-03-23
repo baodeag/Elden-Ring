@@ -15,6 +15,8 @@ namespace baodeag
         public NetworkVariable<int> itemID = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public NetworkVariable<Vector3> networkPosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public NetworkVariable<ulong> droppingCreatureID = new NetworkVariable<ulong>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        public NetworkVariable<ulong> allowedLooterClientId = new NetworkVariable<ulong>(ulong.MaxValue, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isSharedLoot = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public bool trackDroppingCreaturesPosition = true;
 
         [Header("World Spawn Pick Up")]
@@ -91,6 +93,9 @@ namespace baodeag
 
         public override void Interact(PlayerManager player)
         {
+            if (!CanBeLootedBy(player))
+                return;
+
             if (player.isPerformingAction)
                 return;
 
@@ -120,6 +125,30 @@ namespace baodeag
             }
 
             DestroyThisNetworkObjectServerRpc();
+        }
+
+        public override void OnTriggerEnter(Collider other)
+        {
+            PlayerManager player = other.GetComponent<PlayerManager>();
+
+            if (player == null || !player.IsOwner)
+                return;
+
+            if (!CanBeLootedBy(player))
+                return;
+
+            player.playerInteractionManager.AddInteractionToList(this);
+        }
+
+        public override void OnTriggerExit(Collider other)
+        {
+            PlayerManager player = other.GetComponent<PlayerManager>();
+
+            if (player == null || !player.IsOwner)
+                return;
+
+            player.playerInteractionManager.RemoveInteractionFromList(this);
+            PlayerUIManager.instance.playerUIPopUpManager.CloseAllPopUpWindows();
         }
 
         protected void OnItemIDChanged(int oldValue, int newValue)
@@ -165,6 +194,20 @@ namespace baodeag
             }
 
             yield return null;
+        }
+
+        private bool CanBeLootedBy(PlayerManager player)
+        {
+            if (player == null)
+                return false;
+
+            if (pickUpType != ItemPickUpType.CharacterDrop)
+                return true;
+
+            if (isSharedLoot.Value)
+                return true;
+
+            return player.OwnerClientId == allowedLooterClientId.Value;
         }
 
         [ServerRpc(RequireOwnership = false)]

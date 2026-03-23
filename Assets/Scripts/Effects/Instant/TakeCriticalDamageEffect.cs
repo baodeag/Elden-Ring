@@ -24,10 +24,7 @@ namespace baodeag
             if (!character.IsOwner)
                 return;
 
-            if (characterCausingDamage != null)
-            {
-
-            }
+            RegisterDamageDealer(character);
 
             finalDamageDealt = Mathf.RoundToInt(physicalDamage + magicDamage + fireDamage + lightningDamage + holyDamage);
 

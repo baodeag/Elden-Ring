@@ -36,6 +36,7 @@ namespace baodeag
         private DamageCollider[] damageColliders;
         private Coroutine deadPoseRoutine;
         private Coroutine coopDeathDespawnRoutine;
+        private ulong lastPlayerWhoDealtDamageClientId = ulong.MaxValue;
 
         protected override void Awake()
         {
@@ -260,6 +261,24 @@ namespace baodeag
 
             WorldAIManager.instance?.RemoveCharacterFromSpawnedCharacterList(this);
             NetworkObject.Despawn();
+        }
+
+        public void RegisterLastPlayerWhoDealtDamage(PlayerManager player)
+        {
+            if (player == null)
+                return;
+
+            lastPlayerWhoDealtDamageClientId = player.OwnerClientId;
+        }
+
+        public ulong GetLastPlayerWhoDealtDamageClientId()
+        {
+            return lastPlayerWhoDealtDamageClientId;
+        }
+
+        public void ClearLastPlayerWhoDealtDamage()
+        {
+            lastPlayerWhoDealtDamageClientId = ulong.MaxValue;
         }
 
         private void ProcessStateMachine()

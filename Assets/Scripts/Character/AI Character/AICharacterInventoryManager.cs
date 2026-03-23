@@ -42,11 +42,16 @@ namespace baodeag
 
             GameObject itemPickUpInteractableGameObject = Instantiate(WorldItemDatabase.Instance.pickUpItemPrefab);
             PickUpItemInteractable pickUpItemInteractable = itemPickUpInteractableGameObject.GetComponent<PickUpItemInteractable>();
+            bool isBossLoot = aiCharacter is AIBossCharacterManager;
+            ulong allowedLooterClientId = aiCharacter.GetLastPlayerWhoDealtDamageClientId();
+            bool shouldShareLoot = isBossLoot || allowedLooterClientId == ulong.MaxValue;
 
             itemPickUpInteractableGameObject.GetComponent<NetworkObject>().Spawn();
             pickUpItemInteractable.itemID.Value = generatedItem.itemID;
             pickUpItemInteractable.networkPosition.Value = transform.position;
             pickUpItemInteractable.droppingCreatureID.Value = aiCharacter.NetworkObjectId;
+            pickUpItemInteractable.allowedLooterClientId.Value = allowedLooterClientId;
+            pickUpItemInteractable.isSharedLoot.Value = shouldShareLoot;
         }
     }
 }
