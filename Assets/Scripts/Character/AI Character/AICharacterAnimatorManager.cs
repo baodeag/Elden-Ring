@@ -14,6 +14,9 @@ namespace baodeag
 
         private void OnAnimatorMove()
         {
+            if (aiCharacter.isDead.Value)
+                return;
+
             //host
             if (aiCharacter.IsOwner)
             {

@@ -303,5 +303,21 @@ namespace baodeag
                 }
             }
         }
+
+        public int GetActivePlayerCount()
+        {
+            for (int i = players.Count - 1; i > -1; i--)
+            {
+                if (players[i] == null)
+                    players.RemoveAt(i);
+            }
+
+            return players.Count;
+        }
+
+        public bool IsMultiplayerSessionActive()
+        {
+            return GetActivePlayerCount() > 1;
+        }
     }
 }

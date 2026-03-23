@@ -279,9 +279,17 @@ namespace baodeag
         {
             WorldGameSessionManager.instance.AddPlayerToActivePlayersList(this);
 
+            if (IsServer && clientID != NetworkManager.Singleton.LocalClientId)
+            {
+                WorldAIManager.instance.DespawnAllDeadCharacters();
+            }
+
             //keep a list of active players in the game
             if (!IsServer && IsOwner)
             {
+                if (PlayerUIManager.instance != null)
+                    PlayerUIManager.instance.playerUILoadingScreenManager.ForceHideLoadingScreen();
+
                 foreach (var player in WorldGameSessionManager.instance.players)
                 {
                     if (player != this)
@@ -296,6 +304,8 @@ namespace baodeag
 
         private IEnumerator EmergeAtMostRecentSiteOfGrace()
         {
+            yield return new WaitForSeconds(1.5f);
+
             PlayerManager hostPlayer = null;
 
             while (hostPlayer == null)
@@ -315,7 +325,16 @@ namespace baodeag
             playerNetworkManager.lastSiteOfGraceUsed.Value = hostGraceId;
             WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = hostGraceId;
 
-            WorldObjectManager.instance.sitesOfGrace[hostGraceId].TeleportToSiteOfGrace();
+            if (WorldObjectManager.instance.sitesOfGrace.Count > hostGraceId
+                && WorldObjectManager.instance.sitesOfGrace[hostGraceId] != null)
+            {
+                WorldObjectManager.instance.sitesOfGrace[hostGraceId].TeleportPlayerToSiteOfGrace(this, false);
+            }
+
+            if (IsOwner && PlayerUIManager.instance != null)
+            {
+                PlayerUIManager.instance.playerUILoadingScreenManager.ForceHideLoadingScreen();
+            }
         }
 
         public override IEnumerator ProcessDeathEvent(bool manuallySelectDeathAnimation = false)

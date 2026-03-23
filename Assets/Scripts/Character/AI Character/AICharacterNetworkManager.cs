@@ -34,8 +34,16 @@ namespace baodeag
 
             if (aiCharacter.isDead.Value)
             {
+                aiCharacter.ApplyDeadState();
                 aiCharacter.aiCharacterInventoryManager.DropItem();
                 aiCharacter.aiCharacterCombatManager.AwardRunesOnDeath(PlayerUIManager.instance.localPlayer);
+
+                if (NetworkManager.Singleton.IsServer
+                    && WorldGameSessionManager.instance != null
+                    && WorldGameSessionManager.instance.IsMultiplayerSessionActive())
+                {
+                    aiCharacter.BeginCoopDeathDespawn();
+                }
             }
         }
 

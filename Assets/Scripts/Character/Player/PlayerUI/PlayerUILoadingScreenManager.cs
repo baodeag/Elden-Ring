@@ -24,9 +24,11 @@ namespace baodeag
 
         public void ActivateLoadingScreen()
         {
-            //if the loading screen is already active, return
-            if (loadingScreen.activeSelf)
-                return;
+            if (fadeLoadingScreenCoroutine != null)
+            {
+                StopCoroutine(fadeLoadingScreenCoroutine);
+                fadeLoadingScreenCoroutine = null;
+            }
 
             canvasGroup.alpha = 1;
             loadingScreen.SetActive(true);
@@ -38,9 +40,11 @@ namespace baodeag
             if (!loadingScreen.activeSelf)
                 return;
 
-            //if we are already fading away the loading screen, return
             if (fadeLoadingScreenCoroutine != null)
-                return;
+            {
+                StopCoroutine(fadeLoadingScreenCoroutine);
+                fadeLoadingScreenCoroutine = null;
+            }
 
             //the duration is how long the fade will take, the delay is how long to wait before starting the fade
             fadeLoadingScreenCoroutine = StartCoroutine(FadeLoadingScreen(1, delay));
@@ -124,6 +128,18 @@ namespace baodeag
         public bool LoadingScreenIsActive()
         {
             return loadingScreen.activeSelf;
+        }
+
+        public void ForceHideLoadingScreen()
+        {
+            if (fadeLoadingScreenCoroutine != null)
+            {
+                StopCoroutine(fadeLoadingScreenCoroutine);
+                fadeLoadingScreenCoroutine = null;
+            }
+
+            canvasGroup.alpha = 0;
+            loadingScreen.SetActive(false);
         }
     }
 }

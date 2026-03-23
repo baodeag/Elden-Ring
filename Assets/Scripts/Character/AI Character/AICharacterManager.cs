@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using Unity.Netcode;
+using System.Collections;
 
 namespace baodeag
 {
@@ -31,6 +32,10 @@ namespace baodeag
 
         [Header("Activation Beacon")]
         protected AIActivationBeacon beacon;
+        private bool deadStateApplied;
+        private DamageCollider[] damageColliders;
+        private Coroutine deadPoseRoutine;
+        private Coroutine coopDeathDespawnRoutine;
 
         protected override void Awake()
         {
@@ -43,6 +48,7 @@ namespace baodeag
             aiCharacterSoundFXManager = GetComponent<AICharacterSoundFXManager>();
 
             navMeshAgent = GetComponentInChildren<NavMeshAgent>();
+            damageColliders = GetComponentsInChildren<DamageCollider>(true);
         }
 
         protected override void Start()
@@ -77,7 +83,7 @@ namespace baodeag
                 animator.Play(aiCharacterNetworkManager.sleepingAnimation.Value.ToString());
 
             if (isDead.Value)
-                animator.Play("Dead_01");
+                QueueLateJoinDeadPose();
 
             CreateActivationBeacon();
 
@@ -117,6 +123,9 @@ namespace baodeag
         {
             base.OnDestroy();
 
+            if (WorldAIManager.instance != null)
+                WorldAIManager.instance.RemoveCharacterFromSpawnedCharacterList(this);
+
             if (beacon != null)
                 Destroy(beacon);
         }
@@ -124,6 +133,22 @@ namespace baodeag
         protected override void Update()
         {
             base.Update();
+
+            if (isDead.Value)
+            {
+                ApplyDeadState();
+                return;
+            }
+
+            if (deadPoseRoutine != null)
+            {
+                StopCoroutine(deadPoseRoutine);
+                deadPoseRoutine = null;
+            }
+
+            deadStateApplied = false;
+            animator.SetBool("isDead", false);
+            animator.speed = 1;
 
             aiCharacterCombatManager.HandleActionRecovery(this);
 
@@ -140,6 +165,101 @@ namespace baodeag
 
             if (positionDifference.magnitude > 0.2f)
                 navMeshAgent.transform.localPosition = Vector3.zero;
+        }
+
+        public void ApplyDeadState(bool snapToFinalPose = false)
+        {
+            if (deadStateApplied && !snapToFinalPose)
+                return;
+
+            deadStateApplied = true;
+            isPerformingAction = false;
+            animator.SetBool("isDead", true);
+            characterNetworkManager.isMoving.Value = false;
+            characterCombatManager.SetTarget(null);
+            characterLocomotionManager.canMove = false;
+            characterLocomotionManager.canRotate = false;
+            characterLocomotionManager.canRun = false;
+            characterLocomotionManager.canRoll = false;
+
+            if (damageColliders != null)
+            {
+                foreach (DamageCollider damageCollider in damageColliders)
+                {
+                    if (damageCollider != null)
+                        damageCollider.DisableDamageCollider();
+                }
+            }
+
+            aiCharacterCombatManager?.CloseAllDamageColliders();
+
+            if (navMeshAgent != null && navMeshAgent.enabled)
+            {
+                navMeshAgent.isStopped = true;
+                navMeshAgent.ResetPath();
+                navMeshAgent.enabled = false;
+            }
+
+            animator.SetBool("isMoving", false);
+
+            if (snapToFinalPose)
+            {
+                animator.speed = 1;
+                animator.Play("Dead_01", 0, 1f);
+                animator.Update(1f / 30f);
+                animator.speed = 0;
+            }
+            else
+            {
+                animator.speed = 1;
+                animator.Play("Dead_01", 0, 0f);
+            }
+        }
+
+        private void QueueLateJoinDeadPose()
+        {
+            if (deadPoseRoutine != null)
+                StopCoroutine(deadPoseRoutine);
+
+            deadPoseRoutine = StartCoroutine(ApplyLateJoinDeadPoseRoutine());
+        }
+
+        private IEnumerator ApplyLateJoinDeadPoseRoutine()
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                ApplyDeadState(true);
+                yield return null;
+            }
+
+            deadPoseRoutine = null;
+        }
+
+        public void BeginCoopDeathDespawn(float delay = 1.5f)
+        {
+            if (!IsServer)
+                return;
+
+            if (this is AIBossCharacterManager)
+                return;
+
+            if (coopDeathDespawnRoutine != null)
+                StopCoroutine(coopDeathDespawnRoutine);
+
+            coopDeathDespawnRoutine = StartCoroutine(CoopDeathDespawnRoutine(delay));
+        }
+
+        private IEnumerator CoopDeathDespawnRoutine(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+
+            coopDeathDespawnRoutine = null;
+
+            if (this == null || NetworkObject == null || !NetworkObject.IsSpawned)
+                yield break;
+
+            WorldAIManager.instance?.RemoveCharacterFromSpawnedCharacterList(this);
+            NetworkObject.Despawn();
         }
 
         private void ProcessStateMachine()

@@ -22,6 +22,7 @@ namespace baodeag
         private Coroutine spawnAllCharactersCoroutine;
         private Coroutine despawnAllCharactersCoroutine;
         private Coroutine resetAllCharactersCoroutine;
+        private Coroutine despawnDeadCharactersCoroutine;
 
         [Header("Beacon Prefab")]
         public GameObject beaconGameObject;
@@ -165,6 +166,51 @@ namespace baodeag
 
         }
 
+        public void DespawnAllDeadCharacters()
+        {
+            if (!NetworkManager.Singleton.IsServer)
+                return;
+
+            if (despawnDeadCharactersCoroutine != null)
+                StopCoroutine(despawnDeadCharactersCoroutine);
+
+            despawnDeadCharactersCoroutine = StartCoroutine(DespawnAllDeadCharactersCoroutine());
+        }
+
+        private IEnumerator DespawnAllDeadCharactersCoroutine()
+        {
+            isPerformingLoadingOperation = true;
+
+            for (int i = spawnedInCharacters.Count - 1; i > -1; i--)
+            {
+                AICharacterManager character = spawnedInCharacters[i];
+
+                if (character == null)
+                {
+                    spawnedInCharacters.RemoveAt(i);
+                    continue;
+                }
+
+                if (!character.isDead.Value)
+                    continue;
+
+                if (character is AIBossCharacterManager)
+                    continue;
+
+                NetworkObject networkObject = character.GetComponent<NetworkObject>();
+
+                if (networkObject != null && networkObject.IsSpawned)
+                    networkObject.Despawn();
+
+                spawnedInCharacters.RemoveAt(i);
+
+                yield return new WaitForFixedUpdate();
+            }
+
+            isPerformingLoadingOperation = false;
+            despawnDeadCharactersCoroutine = null;
+        }
+
         public void DisableAllBossFights()
         {
             for (int i = 0; i < spawnedInBosses.Count; i++)
@@ -196,6 +242,19 @@ namespace baodeag
             }
 
             return patrolPath;
+        }
+
+        public void RemoveCharacterFromSpawnedCharacterList(AICharacterManager character)
+        {
+            if (character == null)
+                return;
+
+            spawnedInCharacters.Remove(character);
+
+            AIBossCharacterManager bossCharacter = character as AIBossCharacterManager;
+
+            if (bossCharacter != null)
+                spawnedInBosses.Remove(bossCharacter);
         }
     }
 }

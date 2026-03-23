@@ -4,7 +4,6 @@ using UnityEngine.UI;
 using static UnityEngine.InputManagerEntry;
 using TMPro;
 using UnityEngine.EventSystems;
-using UnityEngine.Events;
 
 namespace baodeag { 
     public class TitleScreenManager : MonoBehaviour
@@ -84,7 +83,7 @@ namespace baodeag {
 
         private void Start()
         {
-            BuildNetworkMenuControls();
+            HideLegacyNetworkControls();
         }
 
         public void StartNetworkAsHost()
@@ -95,26 +94,18 @@ namespace baodeag {
         public void PressStart()
         {
             OpenTitleScreenMainMenu();
-            PopulateDefaultNetworkAddressField();
 
             if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null)
             {
                 EventSystem.current.currentSelectedGameObject.SetActive(false);
             }
 
-            if (hostWorldButton != null)
-            {
-                hostWorldButton.Select();
-            }
-            else
-            {
-                mainMenuNewGameButton.Select();
-            }
+            mainMenuNewGameButton.Select();
         }
 
         public void JoinOnlineGame()
         {
-            JoinWorld();
+            Debug.Log("Join World has moved to the in-game character menu.");
         }
 
         public void HostWorld()
@@ -137,6 +128,35 @@ namespace baodeag {
                 : DefaultNetworkAddress;
 
             WorldGameSessionManager.instance.StartGameAsClient(addressInput);
+        }
+
+        private void HideLegacyNetworkControls()
+        {
+            if (hostWorldButton != null)
+                hostWorldButton.gameObject.SetActive(false);
+
+            if (joinWorldButton != null)
+                joinWorldButton.gameObject.SetActive(false);
+
+            if (networkAddressInputField != null)
+                networkAddressInputField.gameObject.SetActive(false);
+
+            if (titleScreenMainMenu != null)
+            {
+                Transform[] legacyControls = titleScreenMainMenu.GetComponentsInChildren<Transform>(true);
+
+                for (int i = 0; i < legacyControls.Length; i++)
+                {
+                    string objectName = legacyControls[i].name;
+
+                    if (objectName == "Join World Button" ||
+                        objectName == "Host World Button" ||
+                        objectName == "Network Address Input")
+                    {
+                        legacyControls[i].gameObject.SetActive(false);
+                    }
+                }
+            }
         }
 
         public void AttemptToCreateNewCharacter()
@@ -343,7 +363,7 @@ namespace baodeag {
             }
         }
 
-        private void ConfigureButton(Button button, string objectName, string label, UnityAction callback)
+        private void ConfigureButton(Button button, string objectName, string label, UnityEngine.Events.UnityAction callback)
         {
             if (button == null)
                 return;

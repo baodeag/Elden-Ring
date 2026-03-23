@@ -149,13 +149,13 @@ namespace baodeag
             TeleportPlayerToSiteOfGrace(player);
         }
 
-        public void TeleportPlayerToSiteOfGrace(PlayerManager player)
+        public void TeleportPlayerToSiteOfGrace(PlayerManager player, bool handleLoadingScreen = true)
         {
             if (player == null)
                 return;
 
             //enable loading screen
-            if (player.IsOwner)
+            if (handleLoadingScreen && player.IsOwner)
             {
                 player.playerInteractionManager.ClearInteractionList();
                 PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
@@ -180,7 +180,7 @@ namespace baodeag
             }
 
             //disable loading screen
-            if (player.IsOwner)
+            if (handleLoadingScreen && player.IsOwner)
             {
                 PlayerUIManager.instance.playerUILoadingScreenManager.DeactivateLoadingScreen(1);
             }

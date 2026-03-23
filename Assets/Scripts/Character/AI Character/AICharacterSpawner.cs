@@ -68,11 +68,11 @@ namespace baodeag
 
         public void ResetCharacter()
         {
-            if (instantiateGameObject == null)
+            if (instantiateGameObject == null || aiCharacter == null)
+            {
+                AttemptToSpawnCharacter();
                 return;
-
-            if (aiCharacter == null)
-                return;
+            }
 
             instantiateGameObject.transform.position = transform.position;
             instantiateGameObject.transform.rotation = transform.rotation;
@@ -82,8 +82,18 @@ namespace baodeag
             if (aiCharacter.isDead.Value)
             {
                 aiCharacter.isDead.Value = false;
+                aiCharacter.animator.speed = 1;
+
+                if (aiCharacter.navMeshAgent != null && !aiCharacter.navMeshAgent.enabled)
+                    aiCharacter.navMeshAgent.enabled = true;
+
                 aiCharacter.characterAnimatorManager.PlayTargetActionAnimation("Empty", false, false, true, true, true, true);
                 aiCharacter.currentState.SwitchState(aiCharacter, aiCharacter.idle);
+            }
+            else if (aiCharacter.navMeshAgent != null && !aiCharacter.navMeshAgent.enabled)
+            {
+                aiCharacter.animator.speed = 1;
+                aiCharacter.navMeshAgent.enabled = true;
             }
 
             aiCharacter.characterUIManager.ResetCharacterHPBar();

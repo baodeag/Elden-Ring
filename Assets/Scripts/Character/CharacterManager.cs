@@ -115,6 +115,7 @@ namespace baodeag
         {
             base.OnNetworkSpawn();
 
+            animator.SetBool("isDead", isDead.Value);
             animator.SetBool("isMoving", characterNetworkManager.isMoving.Value);
             characterNetworkManager.OnIsActiveChanged(false, characterNetworkManager.isActive.Value);
 
