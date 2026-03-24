@@ -5127,7 +5127,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   interactableText: Pass Through
   interactableCollider: {fileID: 3985854846778309229}
-  hostOnlyInteractable: 1
+  hostOnlyInteractable: 0
   fogGameObjects:
   - {fileID: 557031872175201811}
   - {fileID: 662788567748490582}

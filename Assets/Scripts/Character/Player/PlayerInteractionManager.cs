@@ -117,7 +117,7 @@ namespace baodeag
             if (!interactableObject.gameObject.activeInHierarchy)
                 return false;
 
-            Collider interactableCollider = interactableObject.GetComponent<Collider>();
+            Collider interactableCollider = interactableObject.GetInteractableCollider();
 
             if (interactableCollider == null || !interactableCollider.enabled)
                 return false;

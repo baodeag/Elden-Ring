@@ -41,6 +41,7 @@ namespace baodeag
 
             AllowPlayerThroughFogWallCollidersServerRpc(player.NetworkObjectId);
             player.playerAnimatorManager.PlayTargetActionAnimation("Pass_Through_Fog_01", true);
+            StartCoroutine(ReEnableInteractionAfterPassThrough());
         }
 
         public override void OnNetworkSpawn()
@@ -107,6 +108,16 @@ namespace baodeag
             yield return new WaitForSeconds(3);
 
             Physics.IgnoreCollision(player.characterController, fogWallCollider, false);
+        }
+
+        private IEnumerator ReEnableInteractionAfterPassThrough()
+        {
+            yield return new WaitForSeconds(3);
+
+            if (interactableCollider != null)
+            {
+                interactableCollider.enabled = true;
+            }
         }
     }
 }

@@ -62,5 +62,10 @@ namespace baodeag
                 PlayerUIManager.instance.playerUIPopUpManager.CloseAllPopUpWindows();
             }
         }
+
+        public Collider GetInteractableCollider()
+        {
+            return interactableCollider;
+        }
     }
 }
