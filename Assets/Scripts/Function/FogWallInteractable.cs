@@ -36,8 +36,13 @@ namespace baodeag
         {
             base.Interact(player);
 
-            Quaternion targetRotation = Quaternion.LookRotation(Vector3.forward);
+            Quaternion targetRotation = GetPassThroughRotation(player);
             player.transform.rotation = targetRotation;
+
+            if (player.IsOwner)
+            {
+                player.characterNetworkManager.networkRotation.Value = targetRotation;
+            }
 
             AllowPlayerThroughFogWallCollidersServerRpc(player.NetworkObjectId);
             player.playerAnimatorManager.PlayTargetActionAnimation("Pass_Through_Fog_01", true);
@@ -98,7 +103,11 @@ namespace baodeag
             fogWallAudioSource.PlayOneShot(fogWallSFX);
 
             if (player != null)
+            {
+                Vector3 passDirection = GetPassDirection(player);
                 StartCoroutine(DisableCollisionForTime(player));
+                StartCoroutine(MovePlayerThroughFogWall(player, passDirection));
+            }
         }
 
         private IEnumerator DisableCollisionForTime(PlayerManager player)
@@ -118,6 +127,64 @@ namespace baodeag
             {
                 interactableCollider.enabled = true;
             }
+        }
+
+        private IEnumerator MovePlayerThroughFogWall(PlayerManager player, Vector3 passDirection)
+        {
+            const float passDuration = 0.4f;
+            const float passDistance = 2.25f;
+
+            if (player.characterController == null)
+                yield break;
+
+            float elapsed = 0f;
+            float moveSpeed = passDistance / passDuration;
+
+            while (elapsed < passDuration)
+            {
+                float delta = moveSpeed * Time.deltaTime;
+                player.characterController.Move(passDirection * delta);
+
+                if (player.IsOwner)
+                {
+                    player.characterNetworkManager.networkPosition.Value = player.transform.position;
+                    player.characterNetworkManager.networkRotation.Value = player.transform.rotation;
+                }
+
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+        }
+
+        private Quaternion GetPassThroughRotation(PlayerManager player)
+        {
+            Vector3 passDirection = GetPassDirection(player);
+            return Quaternion.LookRotation(passDirection);
+        }
+
+        private Vector3 GetPassDirection(PlayerManager player)
+        {
+            Vector3 wallForward = transform.forward;
+            wallForward.y = 0;
+
+            if (wallForward.sqrMagnitude <= Mathf.Epsilon)
+            {
+                wallForward = Vector3.forward;
+            }
+
+            wallForward.Normalize();
+
+            Vector3 directionFromWallToPlayer = player.transform.position - transform.position;
+            directionFromWallToPlayer.y = 0;
+
+            if (directionFromWallToPlayer.sqrMagnitude <= Mathf.Epsilon)
+            {
+                directionFromWallToPlayer = wallForward;
+            }
+
+            directionFromWallToPlayer.Normalize();
+
+            return Vector3.Dot(directionFromWallToPlayer, wallForward) >= 0 ? -wallForward : wallForward;
         }
     }
 }
