@@ -143,6 +143,9 @@ namespace baodeag
 
                 hasBeenDefeated.Value = true;
 
+                // Award runes to the player who defeated the boss
+                aiCharacterCombatManager.AwardRunesOnDeath(PlayerUIManager.instance.localPlayer);
+
                 if (!WorldSaveGameManager.instance.currentCharacterData.bossesAwakened.ContainsKey(bossID))
                 {
                     WorldSaveGameManager.instance.currentCharacterData.bossesAwakened.Add(bossID, true);

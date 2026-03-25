@@ -1550,11 +1550,25 @@ MonoBehaviour:
     m_InternalValue: 0
   isJumping:
     m_InternalValue: 0
+  isSneaking:
+    m_InternalValue: 0
+  isHidden:
+    m_InternalValue: 0
   isChargingAttack:
     m_InternalValue: 0
   isRipostable:
     m_InternalValue: 0
   isBeingCriticallyDamaged:
+    m_InternalValue: 0
+  isRolling:
+    m_InternalValue: 0
+  isPoisoned:
+    m_InternalValue: 0
+  isBleeding:
+    m_InternalValue: 0
+  isFrostBitten:
+    m_InternalValue: 0
+  isFrozen:
     m_InternalValue: 0
   currentHealth:
     m_InternalValue: 0
@@ -1582,8 +1596,18 @@ MonoBehaviour:
     m_InternalValue: 1
   faith:
     m_InternalValue: 1
+  buildUpCapacity:
+    m_InternalValue: 100
+  poisonBuildUp:
+    m_InternalValue: 0
+  bleedBuildUp:
+    m_InternalValue: 0
+  frostBiteBuildUp:
+    m_InternalValue: 0
   strengthModifier:
     m_InternalValue: 1
+  staminaRegenerationModifier:
+    m_InternalValue: 0
   isAwake:
     m_InternalValue: 1
   sleepingAnimation:
@@ -1751,6 +1775,14 @@ MonoBehaviour:
   canRun: 1
   canRoll: 1
   isGrounded: 1
+  isRidingLift: 0
+  slopeSlideStartPositionYOffset: 1
+  slopeSlideSphereCastMaxDistance: 2
+  slopeSlideSpeed: -11
+  slopeSlideSpeedMultiplier: 3
+  slipperySurfaceMaxAngle: 15
+  characterSlideOffHeadCollisionMaxDistanceCheck: 5
+  characterCollisionCheckSphereMultiplier: 1.5
 --- !u!114 &7349376700630468976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1775,6 +1807,8 @@ MonoBehaviour:
   canBeBackstabbed: 1
   criticalAttackDistanceCheck: 0.7
   pendingCriticalDamage: 0
+  charactersTargetingMe: []
+  stealthObjectsCurrentlyStandingIn: []
   baseDamage: 25
   basePoiseDamage: 25
   actionRecoveryTimer: 0
@@ -1835,8 +1869,10 @@ MonoBehaviour:
   aiCharacterNetworkManager: {fileID: 0}
   aiCharacterLocomotionManager: {fileID: 0}
   aiCharacterInventoryManager: {fileID: 0}
+  aiCharacterSoundFXManager: {fileID: 0}
   navMeshAgent: {fileID: 0}
   currentState: {fileID: 0}
+  hasManuallySwitchedState: 0
   idle: {fileID: 11400000, guid: 62ce5add070b6ed4a84766ff321a8f28, type: 2}
   pursueTarget: {fileID: 11400000, guid: 0c91953c511e93c47bee712f3d99710f, type: 2}
   combatStance: {fileID: 11400000, guid: 4e842838076879547a9601a56597dba2, type: 2}
@@ -1924,6 +1960,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c542d72714b784789f2ece84b287b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioSource: {fileID: 0}
   damageGrunts:
   - {fileID: 8300000, guid: 2944bcd928ce52d43a0f2f11e6131fd0, type: 3}
   - {fileID: 8300000, guid: 9511b08dce7e1b141b504b7ddbf2d134, type: 3}
@@ -1980,9 +2017,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77eddea6ec0f1344b8b5ae20ffd6d1a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runesDroppedOnDeath: 50
-  staminaRegenerationAmount: 2
-  staminaRegenerationDelay: 2
+  runesDroppedOnDeath: 500
+  baseStaminaRegenerationAmount: 2
   blockingPhysicalAbsorption: 0
   blockingFireAbsorption: 0
   blockingLightningAbsorption: 0
@@ -2020,7 +2056,12 @@ MonoBehaviour:
   activeDrawnProjectileFX: {fileID: 0}
   bloodSplatterVFX: {fileID: 0}
   criticalBloodSplatterVFX: {fileID: 0}
+  poisonedVFX: {fileID: 0}
+  frostBiteVFX: {fileID: 0}
   staticEffects: []
+  effectTickTimer: 0
+  defaultEffectTickTime: 1
+  timedEffects: []
 --- !u!114 &5064179221103898442
 MonoBehaviour:
   m_ObjectHideFlags: 0
