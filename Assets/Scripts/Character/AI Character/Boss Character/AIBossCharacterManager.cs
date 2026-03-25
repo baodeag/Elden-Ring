@@ -70,27 +70,7 @@ namespace baodeag
                     sleepState.hasBeenAwakened = hasBeenAwakened.Value;
                 }
 
-                StartCoroutine(GetFogWallsFromWorldObjectManager());
-
-                //if the boss has been awakened, enable the fog walls
-                if (hasBeenAwakened.Value)
-                {
-                    for (int i = 0; i < fogWalls.Count; i++)
-                    {
-                        fogWalls[i].isActive.Value = true;
-                    }
-                }
-
-                //if the boss has been defeated, disable the fog walls
-                if (hasBeenDefeated.Value)
-                {
-                    for (int i = 0; i < fogWalls.Count; i++)
-                    {
-                        fogWalls[i].isActive.Value = false;
-                    }
-
-                    aiCharacterNetworkManager.isActive.Value = false;
-                }
+                StartCoroutine(InitializeBossWorldState());
             }
 
             if (!hasBeenAwakened.Value)
@@ -117,6 +97,30 @@ namespace baodeag
             {
                 if (fogWall.fogWallID == bossID)
                     fogWalls.Add(fogWall);
+            }
+        }
+
+        private IEnumerator InitializeBossWorldState()
+        {
+            yield return StartCoroutine(GetFogWallsFromWorldObjectManager());
+            ApplyBossWorldState();
+        }
+
+        private void ApplyBossWorldState()
+        {
+            if (fogWalls == null)
+                return;
+
+            bool shouldEnableFogWalls = hasBeenAwakened.Value && !hasBeenDefeated.Value;
+
+            for (int i = 0; i < fogWalls.Count; i++)
+            {
+                fogWalls[i].isActive.Value = shouldEnableFogWalls;
+            }
+
+            if (hasBeenDefeated.Value)
+            {
+                aiCharacterNetworkManager.isActive.Value = false;
             }
         }
 
@@ -160,6 +164,7 @@ namespace baodeag
                 }
 
                 WorldSaveGameManager.instance.SaveGame();
+                ApplyBossWorldState();
             }
 
             yield return new WaitForSeconds(5);
@@ -193,6 +198,8 @@ namespace baodeag
                 {
                     fogWalls[i].isActive.Value = true;
                 }
+
+                ApplyBossWorldState();
             }
         }
 
