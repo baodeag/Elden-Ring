@@ -6,14 +6,12 @@ namespace baodeag
     {
         public void OpenTeleportLocationMenu()
         {
-            CloseMenu();
-            PlayerUIManager.instance.playerUITeleportLocationManager.OpenMenu();
+            PlayerUIManager.instance.TransitionToMenu(this, PlayerUIManager.instance.playerUITeleportLocationManager);
         }
 
         public void OpenLevelUpMenu()
         {
-            CloseMenu();
-            PlayerUIManager.instance.playerUILevelUpManager.OpenMenu();
+            PlayerUIManager.instance.TransitionToMenu(this, PlayerUIManager.instance.playerUILevelUpManager);
         }
     }
 }

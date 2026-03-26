@@ -14,5 +14,11 @@ namespace baodeag
 
         [TextArea] public string itemDescription;
         public int itemID;
+
+        [Header("Shop")]
+        public bool canBePurchased = true;
+        public bool canBeSold = true;
+        public int purchasePrice = 100;
+        public int sellPrice = 50;
     }
 }

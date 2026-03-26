@@ -68,6 +68,8 @@ namespace baodeag
         [SerializeField] bool openCharacterMenuInput = false;
         [SerializeField] bool closeMenuInput = false;
 
+        private bool gameplayInputsSuppressed = false;
+
         private void Awake()
         {
             if (instance == null)
@@ -106,7 +108,7 @@ namespace baodeag
 
                 if (playerControls != null)
                 {
-                    playerControls.Enable();
+                    EnableInputMaps();
                 }
             }
             //otherwise disable them
@@ -185,7 +187,7 @@ namespace baodeag
                 playerControls.PlayerActions.OpenCharacterMenu.performed += i => openCharacterMenuInput = true;
             }
 
-            playerControls.Enable();
+            EnableInputMaps();
         }
 
         private void OnDestroy()
@@ -201,7 +203,7 @@ namespace baodeag
             {
                 if (focus)
                 {
-                    playerControls.Enable();
+                    EnableInputMaps();
                 }
                 else
                 {
@@ -217,6 +219,13 @@ namespace baodeag
 
         private void HandleAllInputs()
         {
+            if (IsGameplayInputLocked())
+            {
+                HandleCloseUIInputs();
+                ClearGameplayInputsWhileMenuOpen();
+                return;
+            }
+
             HandleUseItemInput();
             HandleTwoHandInput();
             HandleLockOnInput();
@@ -241,6 +250,101 @@ namespace baodeag
             HandleQuedInput();
             HandleCloseUIInputs();
             HandleOpenCharacterMenuInput();
+        }
+
+        private bool IsGameplayInputLocked()
+        {
+            return PlayerUIManager.instance != null && PlayerUIManager.instance.menuWindowIsOpen;
+        }
+
+        public void SuppressGameplayInputs(bool suppress)
+        {
+            gameplayInputsSuppressed = suppress;
+
+            if (playerControls == null)
+                return;
+
+            if (suppress)
+            {
+                playerControls.PlayerMovement.Disable();
+                playerControls.PlayerCamera.Disable();
+                playerControls.PlayerActions.Enable();
+                ClearGameplayInputsWhileMenuOpen();
+                return;
+            }
+
+            EnableInputMaps();
+        }
+
+        private void EnableInputMaps()
+        {
+            if (playerControls == null)
+                return;
+
+            if (gameplayInputsSuppressed)
+            {
+                playerControls.UI.Enable();
+                return;
+            }
+
+            playerControls.PlayerMovement.Enable();
+            playerControls.PlayerCamera.Enable();
+            playerControls.PlayerActions.Enable();
+            playerControls.UI.Enable();
+        }
+
+        private void ClearGameplayInputsWhileMenuOpen()
+        {
+            movement_Input = Vector2.zero;
+            camera_Input = Vector2.zero;
+            horizontal_Input = 0f;
+            vertical_Input = 0f;
+            moveAmount = 0f;
+            cameraHorizontal_Input = 0f;
+            cameraVertical_Input = 0f;
+
+            dodge_Input = false;
+            sprint_Input = false;
+            jump_Input = false;
+            sneak_Input = false;
+            switch_Right_Weapon_Input = false;
+            switch_Left_Weapon_Input = false;
+            switch_Quick_Slot_Item_Input = false;
+            interaction_Input = false;
+            use_Item_Input = false;
+            RB_Input = false;
+            hold_RB_Input = false;
+            LB_Input = false;
+            hold_LB_Input = false;
+            RT_Input = false;
+            Hold_RT_Input = false;
+            LT_Input = false;
+            two_Hand_Input = false;
+            two_Hand_Right_Weapon_Input = false;
+            two_Hand_Left_Weapon_Input = false;
+            lockOn_Input = false;
+            lockOn_Left_Input = false;
+            lockOn_Right_Input = false;
+            que_RB_Input = false;
+            que_RT_Input = false;
+            input_Que_Is_Active = false;
+            que_Input_Timer = 0f;
+            openCharacterMenuInput = false;
+
+            if (player != null && player.playerNetworkManager != null)
+            {
+                player.playerNetworkManager.isMoving.Value = false;
+                player.playerNetworkManager.isSprinting.Value = false;
+                player.playerNetworkManager.isBlocking.Value = false;
+                player.playerNetworkManager.isAiming.Value = false;
+                player.playerNetworkManager.isChargingLeftSpell.Value = false;
+                player.playerNetworkManager.isChargingRightSpell.Value = false;
+                player.playerNetworkManager.isHoldingArrow.Value = false;
+                player.playerNetworkManager.isChargingAttack.Value = false;
+            }
+
+            if (player != null && player.playerAnimatorManager != null)
+                player.playerAnimatorManager.UpdateAnimatorMovementParameters(0f, 0f, false);
         }
 
         //use item
@@ -816,8 +920,7 @@ namespace baodeag
                 openCharacterMenuInput = false;
 
                 PlayerUIManager.instance.playerUIPopUpManager.CloseAllPopUpWindows();
-                PlayerUIManager.instance.CloseAllMenuWindows();
-                PlayerUIManager.instance.playerUICharacterMenuManager.OpenMenu();
+                PlayerUIManager.instance.OpenMenuAsRoot(PlayerUIManager.instance.playerUICharacterMenuManager);
             }
         }
 
@@ -829,7 +932,7 @@ namespace baodeag
 
                 if (PlayerUIManager.instance.menuWindowIsOpen)
                 {
-                    PlayerUIManager.instance.CloseAllMenuWindows();
+                    PlayerUIManager.instance.CloseCurrentMenuStep();
                 }
             }
         }

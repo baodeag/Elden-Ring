@@ -22,6 +22,7 @@ namespace baodeag
         [HideInInspector] public PlayerInteractionManager playerInteractionManager;
         [HideInInspector] public PlayerEffectsManager playerEffectsManager;
         [HideInInspector] public PlayerBodyManager playerBodyManager;
+        [HideInInspector] public PlayerShopManager playerShopManager;
 
         [Header("Area")]
         public WorldLocationSceneSet areaCurrentlyIn;
@@ -40,6 +41,10 @@ namespace baodeag
             playerInteractionManager = GetComponent<PlayerInteractionManager>();
             playerEffectsManager = GetComponent<PlayerEffectsManager>();
             playerBodyManager = GetComponent<PlayerBodyManager>();
+            playerShopManager = GetComponent<PlayerShopManager>();
+
+            if (playerShopManager == null)
+                playerShopManager = gameObject.AddComponent<PlayerShopManager>();
         }
 
         protected override void Update()

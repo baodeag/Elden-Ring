@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Netcode;
+using System.Collections.Generic;
 
 namespace baodeag
 {
@@ -21,10 +22,13 @@ namespace baodeag
         [HideInInspector] public PlayerUILoadingScreenManager playerUILoadingScreenManager;
         [HideInInspector] public PlayerUILevelUpManager playerUILevelUpManager;
         [HideInInspector] public PlayerUIWeaponUpgradeManager playerUIWeaponUpgradeManager;
+        [HideInInspector] public PlayerUIShopManager playerUIShopManager;
 
         [Header("UI Flags")]
         public bool menuWindowIsOpen = false;
         public bool popUpWindowIsOpen = false;
+
+        private readonly List<PlayerUIMenu> menuNavigationStack = new List<PlayerUIMenu>();
 
         private void Awake()
         {
@@ -48,6 +52,10 @@ namespace baodeag
             playerUILoadingScreenManager = GetComponentInChildren<PlayerUILoadingScreenManager>();
             playerUILevelUpManager = GetComponentInChildren<PlayerUILevelUpManager>();
             playerUIWeaponUpgradeManager = GetComponentInChildren<PlayerUIWeaponUpgradeManager>();
+            playerUIShopManager = GetComponentInChildren<PlayerUIShopManager>(true);
+
+            if (playerUIShopManager == null)
+                playerUIShopManager = gameObject.AddComponent<PlayerUIShopManager>();
         }
 
         private void Start()
@@ -75,6 +83,160 @@ namespace baodeag
             playerUITeleportLocationManager.CloseMenuAfterFixedFrame();
             playerUILevelUpManager.CloseMenuAfterFixedFrame();
             playerUIWeaponUpgradeManager.CloseMenuAfterFixedFrame();
+
+            if (playerUIShopManager != null)
+                playerUIShopManager.CloseMenuAfterFixedFrame();
+
+            menuNavigationStack.Clear();
+        }
+
+        public void OpenMenuAsRoot(PlayerUIMenu menu)
+        {
+            if (menu == null)
+                return;
+
+            CloseAllMenuWindowsImmediate();
+            menuNavigationStack.Clear();
+            menu.OpenMenu();
+            menuNavigationStack.Add(menu);
+        }
+
+        public void TransitionToMenu(PlayerUIMenu fromMenu, PlayerUIMenu toMenu)
+        {
+            if (toMenu == null)
+                return;
+
+            if (fromMenu != null)
+            {
+                EnsureMenuTracked(fromMenu);
+
+                if (fromMenu.IsMenuOpen())
+                    fromMenu.CloseMenu();
+            }
+
+            RemoveTrackedMenu(toMenu);
+            toMenu.OpenMenu();
+            menuNavigationStack.Add(toMenu);
+        }
+
+        public bool CloseCurrentMenuStep()
+        {
+            PlayerUIMenu currentMenu = GetTopOpenMenu();
+
+            if (currentMenu == null)
+                return false;
+
+            currentMenu.CloseMenu();
+            RemoveTrackedMenu(currentMenu);
+
+            PlayerUIMenu previousMenu = GetTrackedPreviousMenu();
+
+            if (previousMenu != null && !previousMenu.IsMenuOpen())
+                previousMenu.OpenMenu();
+
+            return true;
+        }
+
+        public void RefreshMenuWindowState()
+        {
+            menuWindowIsOpen =
+                IsMenuOpen(playerUICharacterMenuManager) ||
+                IsMenuOpen(playerUIEquipmentManager) ||
+                IsMenuOpen(playerUISiteOfGraceManager) ||
+                IsMenuOpen(playerUITeleportLocationManager) ||
+                IsMenuOpen(playerUILevelUpManager) ||
+                IsMenuOpen(playerUIWeaponUpgradeManager) ||
+                IsMenuOpen(playerUIShopManager);
+
+            if (PlayerInputManager.instance != null)
+                PlayerInputManager.instance.SuppressGameplayInputs(menuWindowIsOpen);
+        }
+
+        private bool IsMenuOpen(PlayerUIMenu menu)
+        {
+            return menu != null && menu.IsMenuOpen();
+        }
+
+        private void CloseAllMenuWindowsImmediate()
+        {
+            if (playerUICharacterMenuManager != null && playerUICharacterMenuManager.IsMenuOpen())
+                playerUICharacterMenuManager.CloseMenu();
+
+            if (playerUIEquipmentManager != null && playerUIEquipmentManager.IsMenuOpen())
+                playerUIEquipmentManager.CloseMenu();
+
+            if (playerUISiteOfGraceManager != null && playerUISiteOfGraceManager.IsMenuOpen())
+                playerUISiteOfGraceManager.CloseMenu();
+
+            if (playerUITeleportLocationManager != null && playerUITeleportLocationManager.IsMenuOpen())
+                playerUITeleportLocationManager.CloseMenu();
+
+            if (playerUILevelUpManager != null && playerUILevelUpManager.IsMenuOpen())
+                playerUILevelUpManager.CloseMenu();
+
+            if (playerUIWeaponUpgradeManager != null && playerUIWeaponUpgradeManager.IsMenuOpen())
+                playerUIWeaponUpgradeManager.CloseMenu();
+
+            if (playerUIShopManager != null && playerUIShopManager.IsMenuOpen())
+                playerUIShopManager.CloseMenu();
+        }
+
+        private PlayerUIMenu GetTopOpenMenu()
+        {
+            if (IsMenuOpen(playerUIShopManager))
+                return playerUIShopManager;
+
+            if (IsMenuOpen(playerUIWeaponUpgradeManager))
+                return playerUIWeaponUpgradeManager;
+
+            if (IsMenuOpen(playerUITeleportLocationManager))
+                return playerUITeleportLocationManager;
+
+            if (IsMenuOpen(playerUILevelUpManager))
+                return playerUILevelUpManager;
+
+            if (IsMenuOpen(playerUIEquipmentManager))
+                return playerUIEquipmentManager;
+
+            if (IsMenuOpen(playerUISiteOfGraceManager))
+                return playerUISiteOfGraceManager;
+
+            if (IsMenuOpen(playerUICharacterMenuManager))
+                return playerUICharacterMenuManager;
+
+            return null;
+        }
+
+        private PlayerUIMenu GetTrackedPreviousMenu()
+        {
+            for (int i = menuNavigationStack.Count - 1; i >= 0; i--)
+            {
+                if (menuNavigationStack[i] != null)
+                    return menuNavigationStack[i];
+            }
+
+            return null;
+        }
+
+        private void EnsureMenuTracked(PlayerUIMenu menu)
+        {
+            if (menu == null)
+                return;
+
+            if (!menuNavigationStack.Contains(menu))
+                menuNavigationStack.Add(menu);
+        }
+
+        private void RemoveTrackedMenu(PlayerUIMenu menu)
+        {
+            if (menu == null)
+                return;
+
+            for (int i = menuNavigationStack.Count - 1; i >= 0; i--)
+            {
+                if (menuNavigationStack[i] == menu)
+                    menuNavigationStack.RemoveAt(i);
+            }
         }
 
         //ui sfx

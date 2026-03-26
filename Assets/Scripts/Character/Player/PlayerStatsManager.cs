@@ -128,7 +128,9 @@ namespace baodeag
         public void AddRunes(int runesToAdd)
         {
             runes += runesToAdd;
-            PlayerUIManager.instance.playerUIHudManager.SetRunesCount(runesToAdd);
+
+            if (player != null && player.IsOwner && PlayerUIManager.instance != null)
+                PlayerUIManager.instance.playerUIHudManager.SetRunesCount(runesToAdd);
         }
     }
 }

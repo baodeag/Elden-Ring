@@ -6,12 +6,17 @@ namespace baodeag
     public class PlayerUIMenu : MonoBehaviour
     {
         [Header("Menu")]
-        [SerializeField] GameObject menu;
+        [SerializeField] protected GameObject menu;
+
+        public bool IsMenuOpen()
+        {
+            return menu != null && menu.activeInHierarchy;
+        }
 
         public virtual void OpenMenu()
         {
-            PlayerUIManager.instance.menuWindowIsOpen = true;
             menu.SetActive(true);
+            PlayerUIManager.instance.RefreshMenuWindowState();
         }
 
         public virtual void OpenMenuAfterFixedFrame()
@@ -31,9 +36,8 @@ namespace baodeag
 
         public virtual void CloseMenu()
         {
-            PlayerUIManager.instance.menuWindowIsOpen = false;
             menu.SetActive(false);
-
+            PlayerUIManager.instance.RefreshMenuWindowState();
         }
 
         public virtual void CloseMenuAfterFixedFrame()

@@ -129,6 +129,21 @@ namespace baodeag
             return items.FirstOrDefault(item => item.itemID == ID);
         }
 
+        public Item CreateItemInstance(int itemID)
+        {
+            Item item = GetItemByID(itemID);
+
+            if (item == null)
+                return null;
+
+            return Instantiate(item);
+        }
+
+        public List<Item> GetPurchasableItems()
+        {
+            return items.Where(item => item != null && item.canBePurchased).ToList();
+        }
+
         public WeaponItem GetWeaponByID(int ID)
         {
             return weapons.FirstOrDefault(weapon => weapon.itemID == ID);

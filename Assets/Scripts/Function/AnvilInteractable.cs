@@ -17,7 +17,7 @@ namespace baodeag
             WorldSaveGameManager.instance.SaveGame();
 
             if (player.IsOwner)
-                PlayerUIManager.instance.playerUIWeaponUpgradeManager.OpenMenu();
+                PlayerUIManager.instance.OpenMenuAsRoot(PlayerUIManager.instance.playerUIWeaponUpgradeManager);
         }
 
         public override void OnTriggerExit(Collider other)

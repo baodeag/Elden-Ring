@@ -89,7 +89,7 @@ namespace baodeag
 
         private void RestAtSiteOfGrace(PlayerManager player)
         {
-            PlayerUIManager.instance.playerUISiteOfGraceManager.OpenMenu();
+            PlayerUIManager.instance.OpenMenuAsRoot(PlayerUIManager.instance.playerUISiteOfGraceManager);
 
             interactableCollider.enabled = true; //temporarily re-enabling the collider here until we add the menu so you can respawn monsters indefinitely
             player.playerNetworkManager.currentHealth.Value = player.playerNetworkManager.maxHealth.Value;

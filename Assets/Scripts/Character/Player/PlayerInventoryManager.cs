@@ -34,13 +34,30 @@ namespace baodeag
         [Header("Inventory")]
         public List<Item> itemsInInventory;
 
+        protected override void Awake()
+        {
+            base.Awake();
+
+            if (itemsInInventory == null)
+                itemsInInventory = new List<Item>();
+        }
+
         public void AddItemToInventory(Item item)
         {
+            if (item == null)
+                return;
+
+            if (itemsInInventory == null)
+                itemsInInventory = new List<Item>();
+
             itemsInInventory.Add(item);
         }
 
         public void RemoveItemFromInventory(Item item)
         {
+            if (item == null || itemsInInventory == null)
+                return;
+
             bool isStackable = false;
 
             if (item.maxItemAmount > 1)
@@ -74,6 +91,71 @@ namespace baodeag
                     itemsInInventory.RemoveAt(i);
                 }
             }
+        }
+
+        public bool TryRemoveItemFromInventory(Item item)
+        {
+            if (item == null || itemsInInventory == null)
+                return false;
+
+            int inventoryCountBeforeRemoval = GetInventoryCountByItemID(item.itemID);
+
+            if (inventoryCountBeforeRemoval <= 0)
+                return false;
+
+            RemoveItemFromInventory(item);
+
+            int inventoryCountAfterRemoval = GetInventoryCountByItemID(item.itemID);
+            return inventoryCountAfterRemoval < inventoryCountBeforeRemoval;
+        }
+
+        public bool RemoveFirstItemByID(int itemID)
+        {
+            if (itemsInInventory == null)
+                return false;
+
+            for (int i = 0; i < itemsInInventory.Count; i++)
+            {
+                if (itemsInInventory[i] == null)
+                    continue;
+
+                if (itemsInInventory[i].itemID == itemID)
+                {
+                    itemsInInventory.RemoveAt(i);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public int GetInventoryCountByItemID(int itemID)
+        {
+            if (itemsInInventory == null)
+                return 0;
+
+            int count = 0;
+
+            for (int i = 0; i < itemsInInventory.Count; i++)
+            {
+                if (itemsInInventory[i] == null || itemsInInventory[i].itemID != itemID)
+                    continue;
+
+                if (itemsInInventory[i] is RangedProjectileItem projectile)
+                {
+                    count += Mathf.Max(1, projectile.currentAmmoAmount);
+                }
+                else if (itemsInInventory[i] is QuickSlotItem quickSlotItem)
+                {
+                    count += Mathf.Max(1, quickSlotItem.itemAmount);
+                }
+                else
+                {
+                    count += Mathf.Max(1, itemsInInventory[i].currentItemAmount);
+                }
+            }
+
+            return count;
         }
     }
 }

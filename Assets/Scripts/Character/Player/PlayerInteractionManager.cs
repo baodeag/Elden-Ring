@@ -33,8 +33,14 @@ namespace baodeag
                 return;
             }
 
+            if (PlayerUIManager.instance.menuWindowIsOpen)
+            {
+                ClearInteractionList();
+                return;
+            }
+
             //if our ui menu not open, and we dont have a pop up, check for interactables
-            if (!PlayerUIManager.instance.menuWindowIsOpen && !PlayerUIManager.instance.popUpWindowIsOpen)
+            if (!PlayerUIManager.instance.popUpWindowIsOpen)
                 CheckForInteractable();
         }
 
@@ -86,6 +92,12 @@ namespace baodeag
             PlayerUIManager.instance.playerUIPopUpManager.CloseAllPopUpWindows();
 
             if (player.isDead.Value || PlayerUIManager.instance.playerUILoadingScreenManager.LoadingScreenIsActive())
+            {
+                ClearInteractionList();
+                return;
+            }
+
+            if (PlayerUIManager.instance.menuWindowIsOpen)
             {
                 ClearInteractionList();
                 return;
