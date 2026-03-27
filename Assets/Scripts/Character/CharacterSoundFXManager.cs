@@ -18,15 +18,17 @@ namespace baodeag
         protected virtual void Awake()
         {
             audioSource = GetComponent<AudioSource>();
+            RefreshAudioSettings();
         }
 
         protected virtual void Start()
         {
-            
+            RefreshAudioSettings();
         }
 
         public void PlaySoundFX(AudioClip soundFX, float volume = 1, bool randomizePitch = true, float pitchRandom = 0.1f)
         {
+            RefreshAudioSettings();
             audioSource.PlayOneShot(soundFX, volume);
             audioSource.pitch = 1;
 
@@ -72,6 +74,14 @@ namespace baodeag
         public virtual void PlayBlockSoundFX()
         {
 
+        }
+
+        public void RefreshAudioSettings()
+        {
+            if (audioSource == null || !GameSettingsManager.HasInstance)
+                return;
+
+            audioSource.volume = GameSettingsManager.Instance.GetEffectiveSFXVolume();
         }
     }
 }

@@ -38,23 +38,25 @@ Muc tieu gameplay chinh:
 
 ### 2. Settings Menu
 - Audio settings:
-  - Master volume.
-  - Music volume.
-  - SFX volume.
+  - [x] Master volume.
+  - [x] Music volume.
+  - [x] SFX volume.
   - UI volume.
 - Graphics settings:
-  - Resolution.
-  - Fullscreen/windowed.
-  - Quality preset.
+  - [x] Resolution.
+  - [x] Fullscreen/windowed.
+  - [x] Quality preset.
   - VSync.
 - Control settings:
-  - Mouse/controller sensitivity.
+  - [x] Mouse/controller sensitivity.
   - Key binding neu can.
 - Gameplay settings:
   - Camera invert.
   - Lock-on behavior.
   - UI/HUD toggle options.
-- Save/load settings data giua cac lan mo game.
+- [x] Save/load settings data giua cac lan mo game.
+- [x] Settings menu trong title menu.
+- [ ] Settings menu trong in-game menu/pause.
 
 ### 3. Starting Character Selection
 - Tao 5 nhan vat khoi dau.
@@ -158,8 +160,9 @@ Muc tieu gameplay chinh:
 - Save/load dung starting character data.
 
 ### Phase 3. Settings
-- Tao settings menu trong title menu va in-game pause/menu.
-- Luu settings persistent.
+- [x] Tao settings menu trong title menu.
+- [x] Luu settings persistent.
+- [ ] Mo rong settings menu vao in-game pause/menu.
 
 ### Phase 4. In-Game Shop
 - [x] Tao merchant/shop data co ban.
@@ -187,7 +190,8 @@ Muc tieu gameplay chinh:
 - [ ] Tao he thong progression 5 map.
 - [ ] Thiet ke 5 starting characters.
 - [ ] Them man hinh chon nhan vat dau game.
-- [ ] Them menu settings.
+- [x] Them menu settings trong title menu.
+- [ ] Them menu settings trong in-game.
 - [x] Them shop trong game.
 - [x] Khoa movement/attack/interaction khi mo shop.
 - [x] Ho tro ESC de back tung lop menu.
@@ -230,7 +234,7 @@ Muc tieu gameplay chinh:
 Thu tu toi uu de tranh phai lam lai:
 1. Starting character system
 2. Save data mo rong
-3. Settings menu
+3. In-game settings menu
 4. Progression 5 map
 5. Hoan thien merchant stock va shop balance
 6. Can nhac lai out-of-game shop sau

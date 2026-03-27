@@ -45,6 +45,7 @@ namespace baodeag
         private void Start()
         {
             DontDestroyOnLoad(gameObject);
+            ApplyAudioSettings();
         }
 
         public AudioClip ChooseRandomSFXFromArray(AudioClip[] array)
@@ -55,12 +56,11 @@ namespace baodeag
 
         public void PlayBossTrack(AudioClip introTrack, AudioClip loopTrack)
         {
-            bossIntroPlayer.volume = 1;
+            ApplyAudioSettings();
             bossIntroPlayer.clip = introTrack;
             bossIntroPlayer.loop = false;
             bossIntroPlayer.Play();
 
-            bossLoopPlayer.volume = 1;
             bossLoopPlayer.clip = loopTrack;
             bossLoopPlayer.loop = true;
             bossLoopPlayer.PlayDelayed(bossIntroPlayer.clip.length);
@@ -110,6 +110,20 @@ namespace baodeag
             {
                 charactersToAlert[i].aiCharacterCombatManager.AlertCharacterToSound(positionOfSound);
             }
+        }
+
+        public void ApplyAudioSettings()
+        {
+            if (!GameSettingsManager.HasInstance)
+                return;
+
+            float musicLevel = GameSettingsManager.Instance.GetEffectiveMusicVolume();
+
+            if (bossIntroPlayer != null)
+                bossIntroPlayer.volume = musicLevel;
+
+            if (bossLoopPlayer != null)
+                bossLoopPlayer.volume = musicLevel;
         }
     }
 }

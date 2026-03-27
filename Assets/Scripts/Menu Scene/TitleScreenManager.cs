@@ -16,11 +16,14 @@ namespace baodeag {
         [SerializeField] GameObject titleScreenMainMenu;
         [SerializeField] GameObject titleScreenLoadMenu;
         [SerializeField] GameObject titleScreenCharacterCreationMenu;
+        [SerializeField] GameObject titleScreenSettingsMenu;
+        [SerializeField] GameObject titleScreenBanner;
 
         [Header("Main Menu Buttons")]
         [SerializeField] Button loadMenuReturnButton;
         [SerializeField] Button mainMenuLoadGameButton;
         [SerializeField] Button mainMenuNewGameButton;
+        [SerializeField] Button mainMenuSettingsButton;
         [SerializeField] Button deleteCharacterPopUpConfirmButton;
         [SerializeField] Button hostWorldButton;
         [SerializeField] Button joinWorldButton;
@@ -67,6 +70,7 @@ namespace baodeag {
         [Header("Classes")]
         public CharacterClass[] startingClasses;
         private bool networkMenuInitialized;
+        private TitleScreenSettingsMenuView settingsMenuView;
 
 
         private void Awake()
@@ -84,6 +88,13 @@ namespace baodeag {
         private void Start()
         {
             HideLegacyNetworkControls();
+            EnsureSettingsMenu();
+        }
+
+        private void Update()
+        {
+            if (titleScreenSettingsMenu != null && titleScreenSettingsMenu.activeSelf && Input.GetKeyDown(KeyCode.Escape))
+                CloseSettingsMenu();
         }
 
         public void StartNetworkAsHost()
@@ -159,6 +170,55 @@ namespace baodeag {
             }
         }
 
+        private void EnsureSettingsMenu()
+        {
+            if (titleScreenSettingsMenu == null)
+                return;
+
+            if (titleScreenBanner == null && titleScreenMainMenu != null)
+            {
+                Transform bannerTransform = titleScreenMainMenu.transform.Find("Title Screen Banner");
+
+                if (bannerTransform != null)
+                    titleScreenBanner = bannerTransform.gameObject;
+            }
+
+            settingsMenuView = titleScreenSettingsMenu.GetComponent<TitleScreenSettingsMenuView>();
+
+            if (settingsMenuView != null)
+                settingsMenuView.Initialize(this);
+        }
+
+        public void OpenSettingsMenu()
+        {
+            if (titleScreenSettingsMenu == null)
+                return;
+
+            CloseTitleScreenMainMenu();
+            titleScreenLoadMenu.SetActive(false);
+            titleScreenCharacterCreationMenu.SetActive(false);
+            SetBannerActive(false);
+            titleScreenSettingsMenu.SetActive(true);
+
+            if (settingsMenuView == null)
+                EnsureSettingsMenu();
+
+            if (settingsMenuView != null)
+                settingsMenuView.Refresh();
+        }
+
+        public void CloseSettingsMenu()
+        {
+            if (titleScreenSettingsMenu != null)
+                titleScreenSettingsMenu.SetActive(false);
+
+            SetBannerActive(true);
+            OpenTitleScreenMainMenu();
+
+            if (mainMenuSettingsButton != null)
+                mainMenuSettingsButton.Select();
+        }
+
         public void AttemptToCreateNewCharacter()
         {
             if (!EnsureHostSessionForSaveMenus())
@@ -231,6 +291,12 @@ namespace baodeag {
         public void CloseTitleScreenMainMenu()
         {
             titleScreenMainMenu.SetActive(false);
+        }
+
+        private void SetBannerActive(bool isActive)
+        {
+            if (titleScreenBanner != null)
+                titleScreenBanner.SetActive(isActive);
         }
 
         public void OpenCharacterCreationMenu()

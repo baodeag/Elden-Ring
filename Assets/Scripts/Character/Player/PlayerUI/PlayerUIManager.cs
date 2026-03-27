@@ -61,6 +61,7 @@ namespace baodeag
         private void Start()
         {
             DontDestroyOnLoad(gameObject);
+            ApplyAudioSettings();
         }
 
         private void Update()
@@ -262,6 +263,14 @@ namespace baodeag
                 return;
 
             audioSource.PlayOneShot(WorldSoundFXManager.instance.hoverUISFX);
+        }
+
+        public void ApplyAudioSettings()
+        {
+            if (audioSource == null || !GameSettingsManager.HasInstance)
+                return;
+
+            audioSource.volume = GameSettingsManager.Instance.GetEffectiveSFXVolume();
         }
     }
 }

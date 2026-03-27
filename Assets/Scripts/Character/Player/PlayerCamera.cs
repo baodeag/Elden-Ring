@@ -19,6 +19,7 @@ namespace baodeag
         [SerializeField] private float cameraSmoothSpeed = 1; //the bigger the value, the faster the camera will follow
         [SerializeField] float leftAndRightRotationSpeed = 220;
         [SerializeField] float upAndDownRotationSpeed = 220;
+        private float sensitivityMultiplier = 1f;
         [SerializeField] float minimumPivot = -30; //the lowest point you can look
         [SerializeField] float maximumPivot = 60; //the highest point you can look
         [SerializeField] float cameraCollisionRadius = 0.2f;
@@ -66,6 +67,9 @@ namespace baodeag
         {
             DontDestroyOnLoad(gameObject);
             cameraZPosition = cameraObject.transform.localPosition.z;
+
+            if (GameSettingsManager.HasInstance)
+                SetCameraSensitivityMultiplier(GameSettingsManager.Instance.cameraSensitivity);
         }
 
         public void HandleAllCameraActions()
@@ -120,8 +124,8 @@ namespace baodeag
             //up and down look
             Vector3 cameraRotationX = Vector3.zero;
 
-            leftAndRightLookAngle += (PlayerInputManager.instance.cameraHorizontal_Input * leftAndRightRotationSpeed) * Time.deltaTime;
-            upAndDownLookAngle -= (PlayerInputManager.instance.cameraVertical_Input * upAndDownRotationSpeed) * Time.deltaTime;
+            leftAndRightLookAngle += (PlayerInputManager.instance.cameraHorizontal_Input * leftAndRightRotationSpeed * sensitivityMultiplier) * Time.deltaTime;
+            upAndDownLookAngle -= (PlayerInputManager.instance.cameraVertical_Input * upAndDownRotationSpeed * sensitivityMultiplier) * Time.deltaTime;
             upAndDownLookAngle = Mathf.Clamp(upAndDownLookAngle, minimumPivot, maximumPivot);
 
             cameraRotationY.y = leftAndRightLookAngle;
@@ -153,10 +157,10 @@ namespace baodeag
             else
             {
                 //rotate the player based on horizontal, vertical mouse movement
-                leftAndRightLookAngle += (PlayerInputManager.instance.cameraHorizontal_Input * leftAndRightRotationSpeed) * Time.deltaTime;
+                leftAndRightLookAngle += (PlayerInputManager.instance.cameraHorizontal_Input * leftAndRightRotationSpeed * sensitivityMultiplier) * Time.deltaTime;
 
                 //apply the rotation to the player
-                upAndDownLookAngle -= (PlayerInputManager.instance.cameraVertical_Input * upAndDownRotationSpeed) * Time.deltaTime;
+                upAndDownLookAngle -= (PlayerInputManager.instance.cameraVertical_Input * upAndDownRotationSpeed * sensitivityMultiplier) * Time.deltaTime;
 
                 //apply the rotation to the camera
                 upAndDownLookAngle = Mathf.Clamp(upAndDownLookAngle, minimumPivot, maximumPivot);
@@ -390,6 +394,11 @@ namespace baodeag
             }
 
             yield return null;
+        }
+
+        public void SetCameraSensitivityMultiplier(float value)
+        {
+            sensitivityMultiplier = Mathf.Clamp(value, 0.3f, 2f);
         }
     }
 }
