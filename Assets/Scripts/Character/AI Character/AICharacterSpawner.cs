@@ -25,12 +25,30 @@ namespace baodeag
 
         private void Awake()
         {
-            
+            HideSpawnerVisuals();
         }
         private void Start()
         {
             WorldAIManager.instance.SpawnCharacter(this);
+            HideSpawnerVisuals();
             gameObject.SetActive(false);
+        }
+
+        private void HideSpawnerVisuals()
+        {
+            Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                renderers[i].enabled = false;
+            }
+
+            Canvas[] canvases = GetComponentsInChildren<Canvas>(true);
+
+            for (int i = 0; i < canvases.Length; i++)
+            {
+                canvases[i].enabled = false;
+            }
         }
 
         public void AttemptToSpawnCharacter()
