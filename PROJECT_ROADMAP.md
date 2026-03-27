@@ -17,20 +17,24 @@ Muc tieu gameplay chinh:
 
 ### 1. Shop System
 - In-game shop:
-  - NPC merchant UI.
-  - Mua item bang rune.
-  - Ban item tu inventory.
-  - Hien gia, so luong, dieu kien mua.
-  - Save trang thai mua/ban neu can.
+  - [x] NPC merchant UI co nen tang.
+  - [x] Mua item bang rune.
+  - [x] Ban item tu inventory.
+  - [x] Hien gia, so luong so huu, va mo ta item.
+  - [x] Khoa input gameplay khi dang mo shop.
+  - [x] Ho tro quay lui menu bang ESC.
+  - [x] Save trang thai stock mua/ban cho merchant neu shop dung limited stock.
+  - [x] Co support custom stock rieng cho tung merchant.
+  - [x] Co nen tang balance gia mua/ban theo progression tier cua shop.
 - Out-of-game shop:
-  - Shop trong main menu.
-  - Cho phep mua unlock/cosmetic/starting bonus neu dung voi dinh huong game.
-  - Dong bo voi save slot hoac profile tong.
+  - [ ] Tam hoan.
+  - [x] Da bo khoi start game/title menu de giu flow gon hon.
+  - [ ] Se xem xet lai sau khi xong progression 5 map va settings.
 - Data:
-  - Shop item list.
-  - Price table.
-  - Merchant/shop category.
-  - Rules mo khoa item theo progress.
+  - [x] Shop item list co ban.
+  - [ ] Price table balance day du.
+  - [ ] Merchant/shop category.
+  - [ ] Rules mo khoa item theo progress.
 
 ### 2. Settings Menu
 - Audio settings:
@@ -118,7 +122,11 @@ Muc tieu gameplay chinh:
   - Trang thai chien thang game.
 
 ### UI/UX
-- Menu shop.
+- Menu shop:
+  - [x] Shop UI nam trong `Player UI Manager.prefab`.
+  - [x] Co scroll list, item details, buy/sell, close.
+  - [x] Khong con mo tu title menu.
+  - [ ] Tiep tuc polish layout bang prefab thay vi runtime code o mot so phan con lai.
 - Menu settings.
 - Menu character select.
 - Progress UI:
@@ -154,9 +162,13 @@ Muc tieu gameplay chinh:
 - Luu settings persistent.
 
 ### Phase 4. In-Game Shop
-- Tao merchant/shop data.
-- Tao UI mua/ban.
-- Noi inventory + rune vao giao dich.
+- [x] Tao merchant/shop data co ban.
+- [x] Tao UI mua/ban.
+- [x] Noi inventory + rune vao giao dich.
+- [x] Sua loi spam sell khi item da het van nhan rune.
+- [ ] Gan merchant NPC/scene vao world that va dat merchantID/progressionTier cho tung shop.
+- [ ] Dien du lieu custom stock that cho tung merchant trong inspector.
+- [ ] Chot bang gia item economy thuc te sau khi playtest.
 
 ### Phase 5. Main Loop Progression
 - Boss clear -> unlock map sau.
@@ -165,9 +177,9 @@ Muc tieu gameplay chinh:
 - Win condition map 5.
 
 ### Phase 6. Out-of-Game Shop
-- Xac dinh pham vi shop ngoai game.
-- Noi voi profile/save hop ly.
-- Hoan thien UI va rules unlock.
+- Tam hoan.
+- Da bo khoi title screen.
+- Chi can quay lai phase nay neu sau nay ban muon cosmetic/unlock shop ngoai game.
 
 ## Concrete Task Backlog
 
@@ -177,19 +189,22 @@ Muc tieu gameplay chinh:
 - [ ] Them man hinh chon nhan vat dau game.
 - [ ] Them menu settings.
 - [x] Them shop trong game.
+- [x] Khoa movement/attack/interaction khi mo shop.
+- [x] Ho tro ESC de back tung lop menu.
+- [x] Sua loi spam sell duplicate rune.
 - [ ] Dinh nghia dieu kien thang boss -> sang map moi.
 - [ ] Tao man chien thang khi hoan thanh map 5.
 
 ### Next
 - [ ] Mo rong save data cho map progression va starting character.
-- [ ] Them data balance cho rune, level up, shop price.
+- [ ] Them data balance day du cho rune, level up, shop price sau khi playtest progression.
 - [ ] Them UI progression va thong bao unlock map.
 - [ ] Tang do kho quai/boss theo tung map.
 - [ ] Gan merchant NPC/scene vao ShopInteractable va custom stock cho tung shop.
-- [ ] Hoan thien shop o title menu theo profile/save flow cu the.
+- [ ] Refactor them phan layout shop con tao runtime sang prefab neu can.
 
 ### Later
-- [ ] Them shop ngoai main menu.
+- [ ] Can nhac co lam lai shop ngoai main menu hay khong.
 - [ ] Them reward/doc quyen theo tung map.
 - [ ] Them endgame/New Game+ neu can.
 
@@ -217,5 +232,19 @@ Thu tu toi uu de tranh phai lam lai:
 2. Save data mo rong
 3. Settings menu
 4. Progression 5 map
-5. In-game shop
-6. Out-of-game shop
+5. Hoan thien merchant stock va shop balance
+6. Can nhac lai out-of-game shop sau
+
+## Current State Snapshot
+
+- In-game shop: da hoat dong.
+- Character menu shop: da giu lai.
+- Start game/title menu shop: da bo.
+- Shop UI: da dua vao `Player UI Manager.prefab`, nhung van con mot vai phan layout tao bang code can polish sau.
+- Shop transaction:
+  - Buy hoat dong.
+  - Sell hoat dong.
+  - Da sua bug spam ban item de nhan rune lap lai.
+- Menu navigation:
+  - Dang mo menu con co the bam ESC de quay lui tung lop ve character menu va gameplay.
+

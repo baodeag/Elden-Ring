@@ -13,7 +13,7 @@ namespace baodeag
             player = GetComponent<PlayerManager>();
         }
 
-        public bool TryBuyItem(ShopStockEntry entry)
+        public bool TryBuyItem(ShopStockEntry entry, ShopInventory shopInventory = null)
         {
             if (player == null || entry == null || entry.item == null)
                 return false;
@@ -21,9 +21,12 @@ namespace baodeag
             if (!entry.item.canBePurchased)
                 return false;
 
-            int price = entry.GetBuyPrice();
+            int price = shopInventory != null ? shopInventory.GetBuyPrice(entry.item) : entry.GetBuyPrice();
 
             if (price < 0 || player.playerStatsManager.runes < price)
+                return false;
+
+            if (shopInventory != null && !shopInventory.TryPurchaseItem(entry.item))
                 return false;
 
             Item purchasedItem = WorldItemDatabase.Instance.CreateItemInstance(entry.item.itemID);
@@ -42,7 +45,7 @@ namespace baodeag
             return true;
         }
 
-        public bool TrySellItem(Item item)
+        public bool TrySellItem(Item item, ShopInventory shopInventory = null)
         {
             if (player == null || item == null)
                 return false;
@@ -50,7 +53,7 @@ namespace baodeag
             if (!item.canBeSold)
                 return false;
 
-            int sellPrice = Mathf.Max(0, item.sellPrice);
+            int sellPrice = shopInventory != null ? shopInventory.GetSellPrice(item) : Mathf.Max(0, item.sellPrice);
 
             if (!player.playerInventoryManager.TryRemoveItemFromInventory(item))
                 return false;

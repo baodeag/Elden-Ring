@@ -323,6 +323,10 @@ namespace baodeag {
             saveFileDataWriter.saveDataDirectoryPath = Application.persistentDataPath;
             saveFileDataWriter.saveFilename = saveFileName;
             currentCharacterData = saveFileDataWriter.LoadSaveFile();
+
+            if (currentCharacterData != null)
+                currentCharacterData.EnsureCollectionsInitialized();
+
             GetStageIDsOnLoad();
 
             WorldSceneManager.instance.LoadWorldScene(worldSceneIndex);
@@ -337,6 +341,9 @@ namespace baodeag {
             //generally works on multiple machines types
             saveFileDataWriter.saveDataDirectoryPath = Application.persistentDataPath;
             saveFileDataWriter.saveFilename = saveFileName;
+
+            if (currentCharacterData != null)
+                currentCharacterData.EnsureCollectionsInitialized();
 
             //pass the player info, from game, to their save file
             player.SaveGameDataToCurrentCharacterData(ref currentCharacterData);
@@ -540,3 +547,4 @@ namespace baodeag {
         }
     }
 }
+

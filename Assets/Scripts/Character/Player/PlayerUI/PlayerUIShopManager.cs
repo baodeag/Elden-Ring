@@ -161,26 +161,21 @@ namespace baodeag
             {
                 int price = GetBuyPrice(item);
                 int owned = PlayerUIManager.instance.localPlayer.playerShopManager.GetOwnedAmount(item);
-                return $"{item.itemName} | {price} runes | owned {owned}";
+                int remainingStock = currentShopInventory != null ? currentShopInventory.GetRemainingQuantity(item) : -1;
+                string stockText = remainingStock >= 0 ? $" | stock {remainingStock}" : string.Empty;
+                return $"{item.itemName} | {price} runes | owned {owned}{stockText}";
             }
 
-            return $"{item.itemName} | {Mathf.Max(0, item.sellPrice)} runes";
+            int sellPrice = currentShopInventory != null ? currentShopInventory.GetSellPrice(item) : Mathf.Max(0, item.sellPrice);
+            return $"{item.itemName} | {sellPrice} runes";
         }
 
         private int GetBuyPrice(Item item)
         {
-            List<ShopStockEntry> stockEntries = currentShopInventory.GetStockEntries();
+            if (currentShopInventory != null)
+                return currentShopInventory.GetBuyPrice(item);
 
-            for (int i = 0; i < stockEntries.Count; i++)
-            {
-                if (stockEntries[i] == null || stockEntries[i].item == null)
-                    continue;
-
-                if (stockEntries[i].item.itemID == item.itemID)
-                    return stockEntries[i].GetBuyPrice();
-            }
-
-            return item.purchasePrice;
+            return item != null ? item.purchasePrice : 0;
         }
 
         private void RefreshSelectionDetails()
@@ -193,12 +188,19 @@ namespace baodeag
             }
 
             int owned = PlayerUIManager.instance.localPlayer.playerShopManager.GetOwnedAmount(currentSelectedItem);
-            int price = currentViewMode == ShopViewMode.Buy ? GetBuyPrice(currentSelectedItem) : Mathf.Max(0, currentSelectedItem.sellPrice);
+            int price = currentViewMode == ShopViewMode.Buy
+                ? GetBuyPrice(currentSelectedItem)
+                : currentShopInventory != null ? currentShopInventory.GetSellPrice(currentSelectedItem) : Mathf.Max(0, currentSelectedItem.sellPrice);
+            int remainingStock = currentViewMode == ShopViewMode.Buy && currentShopInventory != null
+                ? currentShopInventory.GetRemainingQuantity(currentSelectedItem)
+                : -1;
 
             itemDescriptionText.text = string.IsNullOrWhiteSpace(currentSelectedItem.itemDescription)
                 ? currentSelectedItem.itemName
                 : currentSelectedItem.itemDescription;
-            itemMetaText.text = $"Item: {currentSelectedItem.itemName}\nPrice: {price}\nOwned: {owned}";
+
+            string stockLine = remainingStock >= 0 ? $"\nStock: {remainingStock}" : string.Empty;
+            itemMetaText.text = $"Item: {currentSelectedItem.itemName}\nPrice: {price}\nOwned: {owned}{stockLine}";
         }
 
         private void ToggleViewMode()
@@ -220,11 +222,11 @@ namespace baodeag
                 ShopStockEntry selectedEntry = new ShopStockEntry();
                 selectedEntry.item = currentSelectedItem;
                 selectedEntry.buyPriceOverride = GetBuyPrice(currentSelectedItem);
-                success = PlayerUIManager.instance.localPlayer.playerShopManager.TryBuyItem(selectedEntry);
+                success = PlayerUIManager.instance.localPlayer.playerShopManager.TryBuyItem(selectedEntry, currentShopInventory);
             }
             else
             {
-                success = PlayerUIManager.instance.localPlayer.playerShopManager.TrySellItem(currentSelectedItem);
+                success = PlayerUIManager.instance.localPlayer.playerShopManager.TrySellItem(currentSelectedItem, currentShopInventory);
             }
 
             if (success)
@@ -237,7 +239,6 @@ namespace baodeag
                 PlayerUIManager.instance.PlayUnableToContinueSFX();
             }
         }
-
         private void ConfigureStaticUI()
         {
             EnsureInfoTexts();
@@ -568,3 +569,7 @@ namespace baodeag
         }
     }
 }
+
+
+
+

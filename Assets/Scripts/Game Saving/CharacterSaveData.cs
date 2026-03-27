@@ -55,14 +55,17 @@ namespace baodeag
 
         [Header("Sites of Grace")]
         public int lastSiteOfGraceRestedAt = 0;
-        public SerializableDictionary<int, bool> sitesOfGrace; //the int is the site of grace ID, the bool is the activated state
+        public SerializableDictionary<int, bool> sitesOfGrace;
 
         [Header("Boss")]
-        public SerializableDictionary<int, bool> bossesAwakened; //the int is the boss ID, the bool is the awakened state
-        public SerializableDictionary<int, bool> bossesDefeated; //the int is the boss ID, the bool is the defeated state
+        public SerializableDictionary<int, bool> bossesAwakened;
+        public SerializableDictionary<int, bool> bossesDefeated;
 
         [Header("World Items")]
-        public SerializableDictionary<int, bool> worldItemsLooted; //the int is the world item ID, the bool is the looted state
+        public SerializableDictionary<int, bool> worldItemsLooted;
+
+        [Header("Shop")]
+        public SerializableDictionary<string, int> merchantStockRemaining;
 
         [Header("Equipment")]
         public int headEquipment;
@@ -104,23 +107,28 @@ namespace baodeag
         public int namelessKnightStageID = 0;
         public int blacksmithStageID = 0;
 
-        //this will change when we add multiple spells
         public int currentSpell;
 
         public CharacterSaveData()
         {
-            sitesOfGrace = new SerializableDictionary<int, bool>();
-            bossesAwakened = new SerializableDictionary<int, bool>();
-            bossesDefeated = new SerializableDictionary<int, bool>();
-            worldItemsLooted = new SerializableDictionary<int, bool>();
+            EnsureCollectionsInitialized();
+        }
 
-            weaponsInInventory = new List<SerializableWeapon>();
-            projectilesInInventory = new List<SerializableRangedProjectile>();
-            quickSlotItemsInInventory = new List<SerializableQuickSlotItem>();
-            headEquipmentInInventory = new List<int>();
-            bodyEquipmentInInventory = new List<int>();
-            handEquipmentInInventory = new List<int>();
-            legEquipmentInInventory = new List<int>();
+        public void EnsureCollectionsInitialized()
+        {
+            sitesOfGrace ??= new SerializableDictionary<int, bool>();
+            bossesAwakened ??= new SerializableDictionary<int, bool>();
+            bossesDefeated ??= new SerializableDictionary<int, bool>();
+            worldItemsLooted ??= new SerializableDictionary<int, bool>();
+            merchantStockRemaining ??= new SerializableDictionary<string, int>();
+
+            weaponsInInventory ??= new List<SerializableWeapon>();
+            projectilesInInventory ??= new List<SerializableRangedProjectile>();
+            quickSlotItemsInInventory ??= new List<SerializableQuickSlotItem>();
+            headEquipmentInInventory ??= new List<int>();
+            bodyEquipmentInInventory ??= new List<int>();
+            handEquipmentInInventory ??= new List<int>();
+            legEquipmentInInventory ??= new List<int>();
         }
     }
 }
