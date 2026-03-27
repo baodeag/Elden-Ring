@@ -11747,7 +11747,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3174509281145567001
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13015,7 +13015,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   menu: {fileID: 3672010022649869185}
-  shopButton: {fileID: 6174509281145567001}
 --- !u!1 &5663013857424287931
 GameObject:
   m_ObjectHideFlags: 0

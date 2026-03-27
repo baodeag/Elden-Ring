@@ -8,10 +8,8 @@ namespace baodeag
     public class PlayerUICharacterMenuManager : PlayerUIMenu
     {
         private const string DefaultJoinAddress = "127.0.0.1:7777";
-        [SerializeField] private Button shopButton;
 
         private bool joinWorldUIInitialized;
-        private bool shopButtonInitialized;
         private RectTransform joinWorldControlsRoot;
         private TextMeshProUGUI worldAddressLabel;
         private TMP_InputField joinWorldAddressInputField;
@@ -22,7 +20,6 @@ namespace baodeag
             base.OpenMenu();
 
             EnsureJoinWorldUI();
-            EnsureShopButtonBinding();
             RefreshJoinWorldUI();
         }
 
@@ -211,22 +208,6 @@ namespace baodeag
 
             PlayerUIManager.instance.CloseAllMenuWindows();
             WorldGameSessionManager.instance.StartGameAsClient(addressInput);
-        }
-
-        private void EnsureShopButtonBinding()
-        {
-            if (shopButtonInitialized || shopButton == null)
-                return;
-
-            shopButton.onClick.RemoveAllListeners();
-            shopButton.onClick.AddListener(OpenGlobalShopFromCharacterMenu);
-            shopButtonInitialized = true;
-        }
-
-        private void OpenGlobalShopFromCharacterMenu()
-        {
-            PlayerUIManager.instance.TransitionToMenu(this, PlayerUIManager.instance.playerUIShopManager);
-            PlayerUIManager.instance.playerUIShopManager.OpenGlobalShop("ROUNDTABLE SHOP");
         }
 
         private void CopyTextStyle(TextMeshProUGUI source, TextMeshProUGUI destination)
