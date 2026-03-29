@@ -23,6 +23,7 @@ namespace baodeag
         [HideInInspector] public PlayerUILevelUpManager playerUILevelUpManager;
         [HideInInspector] public PlayerUIWeaponUpgradeManager playerUIWeaponUpgradeManager;
         [HideInInspector] public PlayerUIShopManager playerUIShopManager;
+        [HideInInspector] public PlayerUISettingsManager playerUISettingsManager;
 
         [Header("UI Flags")]
         public bool menuWindowIsOpen = false;
@@ -53,6 +54,7 @@ namespace baodeag
             playerUILevelUpManager = GetComponentInChildren<PlayerUILevelUpManager>();
             playerUIWeaponUpgradeManager = GetComponentInChildren<PlayerUIWeaponUpgradeManager>();
             playerUIShopManager = GetComponentInChildren<PlayerUIShopManager>(true);
+            playerUISettingsManager = GetComponentInChildren<PlayerUISettingsManager>(true);
 
             if (playerUIShopManager == null)
                 playerUIShopManager = gameObject.AddComponent<PlayerUIShopManager>();
@@ -87,6 +89,9 @@ namespace baodeag
 
             if (playerUIShopManager != null)
                 playerUIShopManager.CloseMenuAfterFixedFrame();
+
+            if (playerUISettingsManager != null)
+                playerUISettingsManager.CloseMenuAfterFixedFrame();
 
             menuNavigationStack.Clear();
         }
@@ -147,7 +152,8 @@ namespace baodeag
                 IsMenuOpen(playerUITeleportLocationManager) ||
                 IsMenuOpen(playerUILevelUpManager) ||
                 IsMenuOpen(playerUIWeaponUpgradeManager) ||
-                IsMenuOpen(playerUIShopManager);
+                IsMenuOpen(playerUIShopManager) ||
+                IsMenuOpen(playerUISettingsManager);
 
             if (PlayerInputManager.instance != null)
                 PlayerInputManager.instance.SuppressGameplayInputs(menuWindowIsOpen);
@@ -180,10 +186,16 @@ namespace baodeag
 
             if (playerUIShopManager != null && playerUIShopManager.IsMenuOpen())
                 playerUIShopManager.CloseMenu();
+
+            if (playerUISettingsManager != null && playerUISettingsManager.IsMenuOpen())
+                playerUISettingsManager.CloseMenu();
         }
 
         private PlayerUIMenu GetTopOpenMenu()
         {
+            if (IsMenuOpen(playerUISettingsManager))
+                return playerUISettingsManager;
+
             if (IsMenuOpen(playerUIShopManager))
                 return playerUIShopManager;
 

@@ -8,19 +8,77 @@ namespace baodeag
     public class PlayerUICharacterMenuManager : PlayerUIMenu
     {
         private const string DefaultJoinAddress = "127.0.0.1:7777";
+        private const string CharacterMenuShopTitle = "Roundtable Shop";
 
         private bool joinWorldUIInitialized;
+        private bool menuButtonsInitialized;
         private RectTransform joinWorldControlsRoot;
         private TextMeshProUGUI worldAddressLabel;
         private TMP_InputField joinWorldAddressInputField;
         private Button joinWorldButton;
+        private Button shopButton;
+        private Button settingsButton;
 
         public override void OpenMenu()
         {
             base.OpenMenu();
 
             EnsureJoinWorldUI();
+            EnsureMenuButtons();
             RefreshJoinWorldUI();
+        }
+
+        private void EnsureMenuButtons()
+        {
+            if (menuButtonsInitialized)
+                return;
+
+            Button[] buttons = GetComponentsInChildren<Button>(true);
+
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                if (buttons[i] == null)
+                    continue;
+
+                if (buttons[i].name == "Shop")
+                    shopButton = buttons[i];
+
+                if (buttons[i].name == "Settings")
+                {
+                    settingsButton = buttons[i];
+                }
+            }
+
+            if (shopButton != null)
+            {
+                shopButton.onClick.RemoveAllListeners();
+                shopButton.onClick.AddListener(OpenShopMenu);
+            }
+
+            if (settingsButton != null)
+            {
+                settingsButton.onClick.RemoveAllListeners();
+                settingsButton.onClick.AddListener(OpenSettingsMenu);
+            }
+
+            menuButtonsInitialized = shopButton != null || settingsButton != null;
+        }
+
+        private void OpenShopMenu()
+        {
+            if (PlayerUIManager.instance == null || PlayerUIManager.instance.playerUIShopManager == null)
+                return;
+
+            PlayerUIManager.instance.TransitionToMenu(this, PlayerUIManager.instance.playerUIShopManager);
+            PlayerUIManager.instance.playerUIShopManager.OpenGlobalShop(CharacterMenuShopTitle);
+        }
+
+        private void OpenSettingsMenu()
+        {
+            if (PlayerUIManager.instance == null || PlayerUIManager.instance.playerUISettingsManager == null)
+                return;
+
+            PlayerUIManager.instance.playerUISettingsManager.OpenFromCharacterMenu();
         }
 
         private void EnsureJoinWorldUI()
