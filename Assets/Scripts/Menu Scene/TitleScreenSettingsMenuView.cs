@@ -145,7 +145,7 @@ namespace baodeag
             panelRect.anchorMax = new Vector2(0.5f, 0.5f);
             panelRect.pivot = new Vector2(0.5f, 0.5f);
             panelRect.anchoredPosition = new Vector2(0f, -20f);
-            panelRect.sizeDelta = new Vector2(1180f, 820f);
+            panelRect.sizeDelta = new Vector2(1120f, 820f);
 
             panelImage.color = new Color(0f, 0f, 0f, 0.82f);
             panelImage.raycastTarget = false;
@@ -162,18 +162,18 @@ namespace baodeag
         {
             RectTransform rowRect = CreateRowRoot($"{label} Row", anchoredY);
 
-            TextMeshProUGUI labelText = CreateText($"{label} Label", label, rowRect, new Vector2(340f, 42f), new Vector2(-470f, -12f), TextAlignmentOptions.Left, 24f);
+            TextMeshProUGUI labelText = CreateText($"{label} Label", label, rowRect, new Vector2(260f, 42f), new Vector2(-360f, -12f), TextAlignmentOptions.Left, 24f);
             labelText.rectTransform.anchorMin = new Vector2(0f, 1f);
             labelText.rectTransform.anchorMax = new Vector2(0f, 1f);
             labelText.rectTransform.pivot = new Vector2(0f, 1f);
 
-            slider = CreateSlider($"{label} Slider", rowRect, new Vector2(450f, 30f), new Vector2(-60f, -8f));
+            slider = CreateSlider($"{label} Slider", rowRect, new Vector2(420f, 30f), new Vector2(-80f, -8f));
             slider.minValue = minValue;
             slider.maxValue = maxValue;
             slider.wholeNumbers = false;
             slider.onValueChanged.AddListener(callback);
 
-            valueText = CreateText($"{label} Value", string.Empty, rowRect, new Vector2(140f, 42f), new Vector2(415f, -12f), TextAlignmentOptions.Right, 22f);
+            valueText = CreateText($"{label} Value", string.Empty, rowRect, new Vector2(120f, 42f), new Vector2(370f, -12f), TextAlignmentOptions.Center, 22f);
             valueText.rectTransform.anchorMin = new Vector2(0f, 1f);
             valueText.rectTransform.anchorMax = new Vector2(0f, 1f);
             valueText.rectTransform.pivot = new Vector2(0f, 1f);
@@ -188,29 +188,29 @@ namespace baodeag
         {
             RectTransform rowRect = CreateRowRoot($"{label} Row", anchoredY);
 
-            TextMeshProUGUI labelText = CreateText($"{label} Label", label, rowRect, new Vector2(340f, 42f), new Vector2(-470f, -12f), TextAlignmentOptions.Left, 24f);
+            TextMeshProUGUI labelText = CreateText($"{label} Label", label, rowRect, new Vector2(260f, 42f), new Vector2(-360f, -12f), TextAlignmentOptions.Left, 24f);
             labelText.rectTransform.anchorMin = new Vector2(0f, 1f);
             labelText.rectTransform.anchorMax = new Vector2(0f, 1f);
             labelText.rectTransform.pivot = new Vector2(0f, 1f);
 
             if (secondaryAction == null)
             {
-                valueText = CreateText($"{label} Value", string.Empty, rowRect, new Vector2(160f, 42f), new Vector2(-40f, -12f), TextAlignmentOptions.Center, 22f);
+                valueText = CreateText($"{label} Value", string.Empty, rowRect, new Vector2(120f, 42f), new Vector2(-150f, -12f), TextAlignmentOptions.Center, 22f);
                 valueText.rectTransform.anchorMin = new Vector2(0f, 1f);
                 valueText.rectTransform.anchorMax = new Vector2(0f, 1f);
                 valueText.rectTransform.pivot = new Vector2(0f, 1f);
 
-                CreateButton("Toggle Button", "TOGGLE", rowRect, new Vector2(220f, 52f), new Vector2(210f, -4f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), primaryAction);
+                CreateButton("Toggle Button", "TOGGLE", rowRect, new Vector2(180f, 52f), new Vector2(40f, -4f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), primaryAction);
                 return;
             }
 
-            valueText = CreateText($"{label} Value", string.Empty, rowRect, new Vector2(200f, 42f), new Vector2(170f, -12f), TextAlignmentOptions.Center, 22f);
+            valueText = CreateText($"{label} Value", string.Empty, rowRect, new Vector2(170f, 42f), new Vector2(30f, -12f), TextAlignmentOptions.Center, 22f);
             valueText.rectTransform.anchorMin = new Vector2(0f, 1f);
             valueText.rectTransform.anchorMax = new Vector2(0f, 1f);
             valueText.rectTransform.pivot = new Vector2(0f, 1f);
 
-            CreateButton("Previous Button", "<", rowRect, new Vector2(82f, 52f), new Vector2(55f, -4f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), primaryAction);
-            CreateButton("Next Button", ">", rowRect, new Vector2(82f, 52f), new Vector2(345f, -4f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), secondaryAction);
+            CreateButton("Previous Button", "<", rowRect, new Vector2(82f, 52f), new Vector2(-70f, -4f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), primaryAction);
+            CreateButton("Next Button", ">", rowRect, new Vector2(82f, 52f), new Vector2(210f, -4f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), secondaryAction);
         }
 
         private void CreateActionButton(string label, Vector2 anchoredPosition, UnityAction action)
@@ -227,7 +227,7 @@ namespace baodeag
             rowRect.anchorMax = new Vector2(0.5f, 1f);
             rowRect.pivot = new Vector2(0.5f, 1f);
             rowRect.anchoredPosition = new Vector2(0f, anchoredY);
-            rowRect.sizeDelta = new Vector2(1060f, 78f);
+            rowRect.sizeDelta = new Vector2(920f, 78f);
             return rowRect;
         }
 

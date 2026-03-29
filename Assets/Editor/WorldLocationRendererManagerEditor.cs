@@ -4,7 +4,7 @@ using UnityEngine;
 namespace baodeag
 {
     [CustomEditor(typeof(WorldLocationRendererManager))]
-    public class WorldLocationRendererManagerEditor : Editor
+    public class WorldLocationRendererManagerEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
