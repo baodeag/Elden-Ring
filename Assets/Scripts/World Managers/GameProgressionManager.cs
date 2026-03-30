@@ -152,6 +152,8 @@ namespace baodeag
 
             int defeatedMapIndex = GetMapIndexForBossID(bossID);
 
+            Debug.Log($"GameProgressionManager.RegisterBossDefeat: bossID={bossID}, currentMapIndex(before)={currentMapIndex}, defeatedMapIndex={defeatedMapIndex}");
+
             if (defeatedMapIndex < 0)
                 defeatedMapIndex = currentMapIndex;
 
@@ -162,6 +164,7 @@ namespace baodeag
                 currentMapIndex = defeatedMapIndex;
                 gameWon = true;
                 hasWonGame = true;
+                Debug.Log($"GameProgressionManager.RegisterBossDefeat: final map cleared. gameWon={gameWon}, currentMapIndex={currentMapIndex}");
                 return false;
             }
 
@@ -172,6 +175,8 @@ namespace baodeag
             nextSceneBuildIndex = GetSceneBuildIndexForMap(currentMapIndex);
 
             string nextScenePath = UnityEngine.SceneManagement.SceneUtility.GetScenePathByBuildIndex(nextSceneBuildIndex);
+
+            Debug.Log($"GameProgressionManager.RegisterBossDefeat: unlockedMapIndex={unlockedMapIndex}, nextSceneBuildIndex={nextSceneBuildIndex}, nextScenePath='{nextScenePath}', pendingEntrySiteOfGraceID={pendingTransitionSiteOfGraceID}");
 
             if (string.IsNullOrEmpty(nextScenePath))
                 return false;

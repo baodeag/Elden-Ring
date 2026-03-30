@@ -132,6 +132,7 @@ namespace baodeag
             int nextSceneBuildIndex = -1;
             int unlockedMapIndex = -1;
             bool gameWon = false;
+            string queuedMapUnlockedMessage = string.Empty;
 
             if (IsOwner)
             {
@@ -170,6 +171,7 @@ namespace baodeag
                 }
 
                 shouldLoadNextScene = GameProgressionManager.Instance.RegisterBossDefeat(bossID, out nextSceneBuildIndex, out unlockedMapIndex, out gameWon);
+                Debug.Log($"AIBossCharacterManager.ProcessDeathEvent: bossID={bossID}, shouldLoadNextScene={shouldLoadNextScene}, unlockedMapIndex={unlockedMapIndex}, gameWon={gameWon}, nextSceneBuildIndex={nextSceneBuildIndex}");
 
                 int entrySiteOfGraceID = GameProgressionManager.Instance.GetEntrySiteOfGraceIDForCurrentMap();
 
@@ -177,6 +179,19 @@ namespace baodeag
                 {
                     WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = entrySiteOfGraceID;
                     PlayerUIManager.instance.localPlayer.playerNetworkManager.lastSiteOfGraceUsed.Value = entrySiteOfGraceID;
+                }
+
+                if (gameWon)
+                {
+                    Debug.Log("AIBossCharacterManager.ProcessDeathEvent: queueing victory popup.");
+                    PlayerUIManager.instance.playerUIPopUpManager.SendVictoryPopUpDelayed("Victory Achieved", 5f);
+                }
+                else if (unlockedMapIndex >= 0)
+                {
+                    string mapName = GameProgressionManager.Instance.GetMapName(unlockedMapIndex);
+                    queuedMapUnlockedMessage = $"{mapName} Unlocked";
+                    Debug.Log($"AIBossCharacterManager.ProcessDeathEvent: queueing map unlocked popup '{queuedMapUnlockedMessage}'.");
+                    PlayerUIManager.instance.playerUIPopUpManager.SendMapUnlockedPopUpDelayed(queuedMapUnlockedMessage, 5f);
                 }
 
                 WorldSaveGameManager.instance.SaveGame();
@@ -189,15 +204,12 @@ namespace baodeag
             {
                 if (gameWon)
                 {
-                    PlayerUIManager.instance.playerUIPopUpManager.SendVictoryPopUp("Victory Achieved");
                     WorldGameSessionManager.instance.ReturnToTitleAfterVictory();
                 }
-                else if (unlockedMapIndex >= 0)
-                {
-                    string mapName = GameProgressionManager.Instance.GetMapName(unlockedMapIndex);
-                    PlayerUIManager.instance.playerUIPopUpManager.SendMapUnlockedPopUp($"{mapName} Unlocked");
-                }
             }
+
+            if (!string.IsNullOrEmpty(queuedMapUnlockedMessage))
+                yield return new WaitForSeconds(3f);
 
             if (IsOwner && shouldLoadNextScene && nextSceneBuildIndex >= 0 && nextSceneBuildIndex != SceneManager.GetActiveScene().buildIndex)
             {

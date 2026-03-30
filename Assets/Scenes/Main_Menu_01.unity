@@ -13278,6 +13278,79 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1725526950}
   m_CullTransparentMesh: 1
+--- !u!1 &1745741882
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1745741884}
+  - component: {fileID: 1745741883}
+  m_Layer: 0
+  m_Name: Game Progression Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1745741883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1745741882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1327ec6c0095c844b9a3148ea18c203, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  progressionConfig: {fileID: 11400000, guid: b211faded14b0e549902b74e75470d2e, type: 2}
+  mapDefinitions:
+  - mapName: Map 1
+    sceneBuildIndex: 1
+    bossID: 0
+    entrySiteOfGraceID: -1
+  - mapName: Map 2
+    sceneBuildIndex: 1
+    bossID: 1
+    entrySiteOfGraceID: -1
+  - mapName: Map 3
+    sceneBuildIndex: 1
+    bossID: 2
+    entrySiteOfGraceID: -1
+  - mapName: Map 4
+    sceneBuildIndex: 1
+    bossID: 3
+    entrySiteOfGraceID: -1
+  - mapName: Map 5
+    sceneBuildIndex: 1
+    bossID: 4
+    entrySiteOfGraceID: -1
+  startingClassID: -1
+  currentMapIndex: 0
+  gameWon: 0
+  mapsUnlocked:
+    keys: 
+    values: 
+  pendingTransitionSiteOfGraceID: -1
+--- !u!4 &1745741884
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1745741882}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 859.3386, y: 578.83655, z: 153.7754}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1764719227
 GameObject:
   m_ObjectHideFlags: 0
@@ -15631,6 +15704,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: ad210e1b4fbe374419f5a11f90f84409, type: 2}
     - {fileID: 11400000, guid: f467c0bb713b36a4eaaf247d209f23c7, type: 2}
     - {fileID: 0}
+  selectedStartingClassID: -1
 --- !u!114 &1997032989
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24644,3 +24718,4 @@ SceneRoots:
   - {fileID: 8976946105469891497}
   - {fileID: 3953281253246162221}
   - {fileID: 2064688139}
+  - {fileID: 1745741884}

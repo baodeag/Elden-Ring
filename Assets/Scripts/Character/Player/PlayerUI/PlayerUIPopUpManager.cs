@@ -26,18 +26,21 @@ namespace baodeag
         [SerializeField] TextMeshProUGUI youDiedPopUpBackgroundText;
         [SerializeField] TextMeshProUGUI youDiedPopUpText;
         [SerializeField] CanvasGroup youDiedPopUpCanvasGroup;
+        private Coroutine youDiedStylePopUpCoroutine;
 
         [Header("Boss Defeated Popup")]
         [SerializeField] GameObject bossDefeatedPopUpGameObject;
         [SerializeField] TextMeshProUGUI bossDefeatedPopUpBackgroundText;
         [SerializeField] TextMeshProUGUI bossDefeatedPopUpText;
         [SerializeField] CanvasGroup bossDefeatedPopUpCanvasGroup;
+        private Coroutine bossDefeatedPopUpCoroutine;
 
         [Header("Grace Restored Popup")]
         [SerializeField] GameObject graceRestoredPopUpGameObject;
         [SerializeField] TextMeshProUGUI graceRestoredPopUpBackgroundText;
         [SerializeField] TextMeshProUGUI graceRestoredPopUpText;
         [SerializeField] CanvasGroup graceRestoredPopUpCanvasGroup;
+        private Coroutine graceRestoredStylePopUpCoroutine;
 
         [Header("Dialogue Pop Up")]
         [SerializeField] GameObject dialoguePopUpGameObject;
@@ -78,43 +81,159 @@ namespace baodeag
 
         public void SendYouDiedPopUp()
         {
-            youDiedPopUpGameObject.SetActive(true);
-            youDiedPopUpBackgroundText.characterSpacing = 0;
-            StartCoroutine(StretchPopUpTextOverTime(youDiedPopUpBackgroundText, 8, 19));
-            StartCoroutine(FadeInPopUpOverTime(youDiedPopUpCanvasGroup, 5));
-            StartCoroutine(WaitThenFadeOutPopUpOverTime(youDiedPopUpCanvasGroup, 2, 5));
+            PlayYouDiedStylePopUp("YOU DIED");
         }
 
         public void SendBossDefeatedPopUp(string bossDefeatedMessage)
-        {
-            bossDefeatedPopUpText.text = bossDefeatedMessage;
-            bossDefeatedPopUpBackgroundText.text = bossDefeatedMessage;
-            bossDefeatedPopUpGameObject.SetActive(true);
-            bossDefeatedPopUpBackgroundText.characterSpacing = 0;
-            StartCoroutine(StretchPopUpTextOverTime(bossDefeatedPopUpBackgroundText, 8, 19));
-            StartCoroutine(FadeInPopUpOverTime(bossDefeatedPopUpCanvasGroup, 5));
-            StartCoroutine(WaitThenFadeOutPopUpOverTime(bossDefeatedPopUpCanvasGroup, 2, 5));
-        }
+            => PlayBossStylePopUp(bossDefeatedMessage);
 
         public void SendMapUnlockedPopUp(string mapUnlockedMessage)
-        {
-            SendBossDefeatedPopUp(mapUnlockedMessage);
-        }
+            => PlayBossStylePopUp(mapUnlockedMessage);
 
         public void SendVictoryPopUp(string victoryMessage)
+            => PlayYouDiedStylePopUp(victoryMessage);
+
+        public void SendMapUnlockedPopUpDelayed(string mapUnlockedMessage, float delay)
         {
-            SendBossDefeatedPopUp(victoryMessage);
+            StartCoroutine(SendMapUnlockedPopUpDelayedCoroutine(mapUnlockedMessage, delay));
+        }
+
+        public void SendVictoryPopUpDelayed(string victoryMessage, float delay)
+        {
+            StartCoroutine(SendVictoryPopUpDelayedCoroutine(victoryMessage, delay));
+        }
+
+        private IEnumerator SendMapUnlockedPopUpDelayedCoroutine(string message, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            Debug.Log($"PlayerUIPopUpManager: showing delayed map unlocked popup '{message}'.");
+            PlayBossStylePopUp(message);
+        }
+
+        private IEnumerator SendVictoryPopUpDelayedCoroutine(string message, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            Debug.Log($"PlayerUIPopUpManager: showing delayed victory popup '{message}'.");
+            PlayYouDiedStylePopUp(message);
+        }
+
+        private void PlayBossStylePopUp(string message)
+        {
+            if (bossDefeatedPopUpCoroutine != null)
+            {
+                StopCoroutine(bossDefeatedPopUpCoroutine);
+                bossDefeatedPopUpCoroutine = null;
+            }
+
+            bossDefeatedPopUpText.text = message;
+            bossDefeatedPopUpBackgroundText.text = message;
+            bossDefeatedPopUpBackgroundText.characterSpacing = 0;
+            bossDefeatedPopUpCanvasGroup.alpha = 0;
+            bossDefeatedPopUpGameObject.SetActive(true);
+
+            bossDefeatedPopUpCoroutine = StartCoroutine(PlayBossStylePopUpCoroutine());
+        }
+
+        private IEnumerator PlayBossStylePopUpCoroutine()
+        {
+            float stretchDuration = 5f;
+            float stretchTarget = 19f;
+            float fadeInDuration = 0.9f;
+            float visibleDelay = 1.25f;
+            float fadeOutDuration = 1f;
+
+            float timer = 0f;
+
+            while (timer < fadeInDuration)
+            {
+                timer += Time.deltaTime;
+                float normalizedFade = Mathf.Clamp01(timer / fadeInDuration);
+                bossDefeatedPopUpCanvasGroup.alpha = normalizedFade;
+
+                float normalizedStretch = Mathf.Clamp01(timer / stretchDuration);
+                bossDefeatedPopUpBackgroundText.characterSpacing = Mathf.Lerp(0f, stretchTarget, normalizedStretch);
+
+                yield return null;
+            }
+
+            bossDefeatedPopUpCanvasGroup.alpha = 1f;
+
+            while (timer < stretchDuration)
+            {
+                timer += Time.deltaTime;
+                float normalizedStretch = Mathf.Clamp01(timer / stretchDuration);
+                bossDefeatedPopUpBackgroundText.characterSpacing = Mathf.Lerp(0f, stretchTarget, normalizedStretch);
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(visibleDelay);
+
+            float fadeOutTimer = 0f;
+
+            while (fadeOutTimer < fadeOutDuration)
+            {
+                fadeOutTimer += Time.deltaTime;
+                bossDefeatedPopUpCanvasGroup.alpha = Mathf.Lerp(1f, 0f, fadeOutTimer / fadeOutDuration);
+                yield return null;
+            }
+
+            bossDefeatedPopUpCanvasGroup.alpha = 0f;
+            bossDefeatedPopUpCoroutine = null;
         }
 
         public void SendGraceRestoredPopUp(string graceRestoredMessage)
         {
-            graceRestoredPopUpText.text = graceRestoredMessage;
-            graceRestoredPopUpBackgroundText.text = graceRestoredMessage;
+            PlayGraceRestoredStylePopUp(graceRestoredMessage);
+        }
+
+        private void PlayYouDiedStylePopUp(string message)
+        {
+            if (youDiedStylePopUpCoroutine != null)
+            {
+                StopCoroutine(youDiedStylePopUpCoroutine);
+                youDiedStylePopUpCoroutine = null;
+            }
+
+            youDiedPopUpText.text = message;
+            youDiedPopUpBackgroundText.text = message;
+            youDiedPopUpBackgroundText.characterSpacing = 0;
+            youDiedPopUpCanvasGroup.alpha = 0;
+            youDiedPopUpGameObject.SetActive(true);
+
+            youDiedStylePopUpCoroutine = StartCoroutine(PlayYouDiedStylePopUpCoroutine());
+        }
+
+        private IEnumerator PlayYouDiedStylePopUpCoroutine()
+        {
+            StartCoroutine(StretchPopUpTextOverTime(youDiedPopUpBackgroundText, 8, 19));
+            yield return StartCoroutine(FadeInPopUpOverTime(youDiedPopUpCanvasGroup, 1.5f));
+            yield return StartCoroutine(WaitThenFadeOutPopUpOverTime(youDiedPopUpCanvasGroup, 2, 2.5f));
+            youDiedStylePopUpCoroutine = null;
+        }
+
+        private void PlayGraceRestoredStylePopUp(string message)
+        {
+            if (graceRestoredStylePopUpCoroutine != null)
+            {
+                StopCoroutine(graceRestoredStylePopUpCoroutine);
+                graceRestoredStylePopUpCoroutine = null;
+            }
+
+            graceRestoredPopUpText.text = message;
+            graceRestoredPopUpBackgroundText.text = message;
             graceRestoredPopUpGameObject.SetActive(true);
             graceRestoredPopUpBackgroundText.characterSpacing = 0;
+            graceRestoredPopUpCanvasGroup.alpha = 0;
+
+            graceRestoredStylePopUpCoroutine = StartCoroutine(PlayGraceRestoredStylePopUpCoroutine());
+        }
+
+        private IEnumerator PlayGraceRestoredStylePopUpCoroutine()
+        {
             StartCoroutine(StretchPopUpTextOverTime(graceRestoredPopUpBackgroundText, 8, 19));
-            StartCoroutine(FadeInPopUpOverTime(graceRestoredPopUpCanvasGroup, 5));
-            StartCoroutine(WaitThenFadeOutPopUpOverTime(graceRestoredPopUpCanvasGroup, 2, 5));
+            yield return StartCoroutine(FadeInPopUpOverTime(graceRestoredPopUpCanvasGroup, 1.5f));
+            yield return StartCoroutine(WaitThenFadeOutPopUpOverTime(graceRestoredPopUpCanvasGroup, 2, 2.5f));
+            graceRestoredStylePopUpCoroutine = null;
         }
 
         public void SendStatusEffectPopUp(BuildUp status)
