@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Netcode;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 namespace baodeag
 {
@@ -127,6 +128,11 @@ namespace baodeag
         public override IEnumerator ProcessDeathEvent(bool manuallySelectDeathAnimation = false)
         {
             PlayerUIManager.instance.playerUIPopUpManager.SendBossDefeatedPopUp("Great Foe Felled");
+            bool shouldLoadNextScene = false;
+            int nextSceneBuildIndex = -1;
+            int unlockedMapIndex = -1;
+            bool gameWon = false;
+
             if (IsOwner)
             {
                 characterNetworkManager.currentHealth.Value = 0;
@@ -163,11 +169,39 @@ namespace baodeag
                     WorldSaveGameManager.instance.currentCharacterData.bossesDefeated.Add(bossID, true);
                 }
 
+                shouldLoadNextScene = GameProgressionManager.Instance.RegisterBossDefeat(bossID, out nextSceneBuildIndex, out unlockedMapIndex, out gameWon);
+
+                int entrySiteOfGraceID = GameProgressionManager.Instance.GetEntrySiteOfGraceIDForCurrentMap();
+
+                if (entrySiteOfGraceID >= 0)
+                {
+                    WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = entrySiteOfGraceID;
+                    PlayerUIManager.instance.localPlayer.playerNetworkManager.lastSiteOfGraceUsed.Value = entrySiteOfGraceID;
+                }
+
                 WorldSaveGameManager.instance.SaveGame();
                 ApplyBossWorldState();
             }
 
             yield return new WaitForSeconds(5);
+
+            if (IsOwner)
+            {
+                if (gameWon)
+                {
+                    PlayerUIManager.instance.playerUIPopUpManager.SendVictoryPopUp("Victory Achieved");
+                }
+                else if (unlockedMapIndex >= 0)
+                {
+                    string mapName = GameProgressionManager.Instance.GetMapName(unlockedMapIndex);
+                    PlayerUIManager.instance.playerUIPopUpManager.SendMapUnlockedPopUp($"{mapName} Unlocked");
+                }
+            }
+
+            if (IsOwner && shouldLoadNextScene && nextSceneBuildIndex >= 0 && nextSceneBuildIndex != SceneManager.GetActiveScene().buildIndex)
+            {
+                WorldSceneManager.instance.LoadWorldScene(nextSceneBuildIndex);
+            }
         }
 
         public void WakeBoss()

@@ -96,6 +96,16 @@ namespace baodeag
             StartCoroutine(WaitThenFadeOutPopUpOverTime(bossDefeatedPopUpCanvasGroup, 2, 5));
         }
 
+        public void SendMapUnlockedPopUp(string mapUnlockedMessage)
+        {
+            SendBossDefeatedPopUp(mapUnlockedMessage);
+        }
+
+        public void SendVictoryPopUp(string victoryMessage)
+        {
+            SendBossDefeatedPopUp(victoryMessage);
+        }
+
         public void SendGraceRestoredPopUp(string graceRestoredMessage)
         {
             graceRestoredPopUpText.text = graceRestoredMessage;

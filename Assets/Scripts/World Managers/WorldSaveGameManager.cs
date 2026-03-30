@@ -48,6 +48,8 @@ namespace baodeag {
 
         private void Awake()
         {
+            GameProgressionManager.EnsureInstance();
+
             // There can only be one instance of this object
             if (instance == null)
             {
@@ -303,14 +305,17 @@ namespace baodeag {
 
         private void NewGame()
         {
-            //saves the newly created character  stats, and items (when creation screen is added)
-            player.playerNetworkManager.vigor.Value = 15;
-            player.playerNetworkManager.endurance.Value = 10;
-            player.playerNetworkManager.mind.Value = 10;
+            int selectedStartingClassID = -1;
+
+            if (TitleScreenManager.Instance != null)
+                selectedStartingClassID = TitleScreenManager.Instance.GetSelectedStartingClassID();
+
+            GameProgressionManager.Instance.ResetForNewGame(selectedStartingClassID);
+            GameProgressionManager.Instance.SaveToCharacterData(currentCharacterData);
 
             SaveGame();
 
-            WorldSceneManager.instance.LoadWorldScene(worldSceneIndex);
+            WorldSceneManager.instance.LoadWorldScene(GameProgressionManager.Instance.GetSceneBuildIndexForCurrentMap(worldSceneIndex));
         }
 
         public void LoadGame()
@@ -327,9 +332,18 @@ namespace baodeag {
             if (currentCharacterData != null)
                 currentCharacterData.EnsureCollectionsInitialized();
 
+            GameProgressionManager.Instance.LoadFromCharacterData(currentCharacterData);
+
+            int mapIndexFromScene = currentCharacterData != null
+                ? GameProgressionManager.Instance.GetMapIndexForSceneBuildIndex(currentCharacterData.sceneIndex)
+                : -1;
+
+            if (mapIndexFromScene >= 0)
+                GameProgressionManager.Instance.SetCurrentMapIndex(mapIndexFromScene);
+
             GetStageIDsOnLoad();
 
-            WorldSceneManager.instance.LoadWorldScene(worldSceneIndex);
+            WorldSceneManager.instance.LoadWorldScene(GameProgressionManager.Instance.GetSceneBuildIndexForCurrentMap(currentCharacterData != null ? currentCharacterData.sceneIndex : worldSceneIndex));
         }
 
         public void SaveGame()
@@ -347,6 +361,7 @@ namespace baodeag {
 
             //pass the player info, from game, to their save file
             player.SaveGameDataToCurrentCharacterData(ref currentCharacterData);
+            GameProgressionManager.Instance.SaveToCharacterData(currentCharacterData);
 
             //write that info onto a json file, saved to this machine
             saveFileDataWriter.CreateNewCharacterSaveFile(currentCharacterData);
@@ -400,7 +415,7 @@ namespace baodeag {
 
         public int GetWorldSceneIndex()
         {
-            return worldSceneIndex;
+            return GameProgressionManager.Instance.GetSceneBuildIndexForCurrentMap(worldSceneIndex);
         }
 
         public SerializableWeapon GetSerializableWeaponFromWeaponItem(WeaponItem weapon)

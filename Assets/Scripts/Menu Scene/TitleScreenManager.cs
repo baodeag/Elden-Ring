@@ -69,6 +69,7 @@ namespace baodeag {
 
         [Header("Classes")]
         public CharacterClass[] startingClasses;
+        [SerializeField] private int selectedStartingClassID = -1;
         private bool networkMenuInitialized;
         private TitleScreenSettingsMenuView settingsMenuView;
 
@@ -237,6 +238,7 @@ namespace baodeag {
 
         public void StartNewGame()
         {
+            selectedStartingClassID = GetSelectedStartingClassID();
             WorldSaveGameManager.instance.AttemptToCreateNewGame();
         }
 
@@ -309,6 +311,12 @@ namespace baodeag {
 
             //set default body type
             player.playerBodyManager.ToggleBodyType(true);
+
+            if (startingClasses != null && startingClasses.Length > 0)
+            {
+                selectedStartingClassID = GetSelectedStartingClassID();
+                PreviewClass(selectedStartingClassID);
+            }
         }
 
         private bool EnsureHostSessionForSaveMenus()
@@ -657,6 +665,7 @@ namespace baodeag {
             if (startingClasses.Length <= 0)
                 return;
 
+            selectedStartingClassID = Mathf.Clamp(classID, 0, startingClasses.Length - 1);
             startingClasses[classID].SetClass(player);
             CloseChooseCharacterClassSubMenu();
         }
@@ -669,6 +678,17 @@ namespace baodeag {
                 return;
 
             startingClasses[classID].SetClass(player);
+        }
+
+        public int GetSelectedStartingClassID()
+        {
+            if (startingClasses == null || startingClasses.Length <= 0)
+                return -1;
+
+            if (selectedStartingClassID < 0 || selectedStartingClassID >= startingClasses.Length)
+                selectedStartingClassID = 0;
+
+            return selectedStartingClassID;
         }
 
         public void SetCharacterClass(PlayerManager player, int vitality, int endurance, int mind, int strength, int dexterity, int intelligence, int faith,

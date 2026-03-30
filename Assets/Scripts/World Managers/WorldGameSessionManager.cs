@@ -17,6 +17,7 @@ namespace baodeag
         public List<PlayerManager> players = new List<PlayerManager>();
 
         private Coroutine revivalCoroutine;
+        private Coroutine pendingMapEntryCoroutine;
 
         private UnityTransport unityTransport;
         private const ushort DefaultUnityTransportPort = 7777;
@@ -57,7 +58,80 @@ namespace baodeag
 
         private void OnSceneLoaded(Scene newScene, LoadSceneMode loadMode)
         {
-            // Keep hook in place in case later world transitions need session-dependent logic.
+            if (loadMode != LoadSceneMode.Single)
+                return;
+
+            if (newScene.buildIndex <= 0)
+                return;
+
+            if (!GameProgressionManager.Instance.HasPendingTransitionSiteOfGrace())
+                return;
+
+            if (pendingMapEntryCoroutine != null)
+                StopCoroutine(pendingMapEntryCoroutine);
+
+            pendingMapEntryCoroutine = StartCoroutine(HandlePendingMapEntryCoroutine());
+        }
+
+        private IEnumerator HandlePendingMapEntryCoroutine()
+        {
+            int targetSiteOfGraceID = GameProgressionManager.Instance.ConsumePendingTransitionSiteOfGraceID();
+
+            if (targetSiteOfGraceID < 0)
+            {
+                pendingMapEntryCoroutine = null;
+                yield break;
+            }
+
+            float timeout = 10f;
+            float elapsedTime = 0f;
+
+            while ((PlayerUIManager.instance == null ||
+                    PlayerUIManager.instance.localPlayer == null ||
+                    WorldObjectManager.instance == null ||
+                    WorldObjectManager.instance.sitesOfGrace == null ||
+                    WorldObjectManager.instance.sitesOfGrace.Count == 0) &&
+                   elapsedTime < timeout)
+            {
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            if (PlayerUIManager.instance == null || PlayerUIManager.instance.localPlayer == null)
+            {
+                pendingMapEntryCoroutine = null;
+                yield break;
+            }
+
+            SiteOfGraceInteractable targetSiteOfGrace = null;
+
+            if (WorldObjectManager.instance != null && WorldObjectManager.instance.sitesOfGrace != null)
+            {
+                for (int i = 0; i < WorldObjectManager.instance.sitesOfGrace.Count; i++)
+                {
+                    SiteOfGraceInteractable siteOfGrace = WorldObjectManager.instance.sitesOfGrace[i];
+
+                    if (siteOfGrace != null && siteOfGrace.siteOfGraceID == targetSiteOfGraceID)
+                    {
+                        targetSiteOfGrace = siteOfGrace;
+                        break;
+                    }
+                }
+
+                if (targetSiteOfGrace == null && WorldObjectManager.instance.sitesOfGrace.Count > 0)
+                    targetSiteOfGrace = WorldObjectManager.instance.sitesOfGrace[0];
+            }
+
+            if (targetSiteOfGrace != null)
+            {
+                PlayerManager localPlayer = PlayerUIManager.instance.localPlayer;
+                targetSiteOfGrace.TeleportPlayerToSiteOfGrace(localPlayer, false);
+                localPlayer.playerNetworkManager.lastSiteOfGraceUsed.Value = targetSiteOfGrace.siteOfGraceID;
+                WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = targetSiteOfGrace.siteOfGraceID;
+                WorldSaveGameManager.instance.SaveGame();
+            }
+
+            pendingMapEntryCoroutine = null;
         }
 
         public bool StartGameAsHost()

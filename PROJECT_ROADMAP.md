@@ -3,6 +3,10 @@
 Tai lieu nay luu cac hang muc can lam de hoan thien he thong game.
 Cap nhat file nay moi khi chot them tinh nang, doi uu tien, hoac hoan thanh dau viec.
 
+> **Cap nhat lan cuoi: 2026-03-30**
+
+---
+
 ## North Star
 
 Muc tieu gameplay chinh:
@@ -12,6 +16,44 @@ Muc tieu gameplay chinh:
 - Vuot qua boss cua tung map de mo khoa map tiep theo.
 - Moi map sau kho hon map truoc, quai manh hon, thu thach hon.
 - Vuot qua du 5 map thi chien thang game.
+
+---
+
+## Trang Thai Hien Tai (2026-03-30)
+
+### Da Hoan Thanh
+- [x] Core character system (Player + AI): stats, combat, locomotion, animation, network
+- [x] AI enemy system: states, patrol, attack actions, spawner
+- [x] Boss character (Durk): `AIBossCharacterManager`, `AIDurkCharacterManager`, combat + sound
+- [x] Rune reward on boss death (da fix trong conversation truoc)
+- [x] Shop system: `ShopInteractable`, `ShopInventory`, `ShopStockEntry`
+- [x] Shop UI: `PlayerUIShopManager` trong `Player UI Manager.prefab`
+- [x] Mua/ban item bang rune, save merchant stock
+- [x] Lock input gameplay khi mo shop, ESC de back
+- [x] Fix bug spam sell duplicate rune
+- [x] Settings menu (title screen + in-game character menu): `GameSettingsManager`, `TitleScreenSettingsMenuManager`, `PlayerUISettingsManager`
+- [x] Save/load settings persistent
+- [x] Character save data day du: stats, equipment, inventory, runes, boss, sites of grace, merchant stock, dialogue
+- [x] Level up UI: `PlayerUILevelUpManager`
+- [x] Weapon upgrade UI: `PlayerUIWeaponUpgradeManager`
+- [x] Equipment inventory UI: `PlayerUIEquipmentManager`
+- [x] HUD (HP/Stamina/FP bars, boss HP bar, status effects): `PlayerUIHudManager`
+- [x] Site of Grace system: `WorldLocationManager`, rest mechanic
+- [x] World scene: 1 map dang hoat dong (World_01 / Area_01)
+- [x] Main Menu scene: Title screen + load menu + settings
+
+### Chua Co / Chua Hoan Thanh
+- [ ] Starting character selection screen (5 class)
+- [ ] World progression system (5 map, boss gate, unlock next map)
+- [ ] Multiple world scenes (chi co World_01, can World_02 -> 05)
+- [ ] Boss clear -> teleport sang map tiep theo
+- [ ] Difficulty ramp theo tung map
+- [ ] Win screen / victory condition
+- [ ] Custom merchant stock da dien du lieu trong inspector
+- [ ] Economy balance (rune drop, level up cost, shop price)
+- [ ] UI thong bao map unlock / progression
+
+---
 
 ## Core Features To Build
 
@@ -41,22 +83,23 @@ Muc tieu gameplay chinh:
   - [x] Master volume.
   - [x] Music volume.
   - [x] SFX volume.
-  - UI volume.
+  - [ ] UI volume.
 - Graphics settings:
   - [x] Resolution.
   - [x] Fullscreen/windowed.
   - [x] Quality preset.
-  - VSync.
+  - [ ] VSync.
 - Control settings:
   - [x] Mouse/controller sensitivity.
-  - Key binding neu can.
+  - [ ] Key binding neu can.
 - Gameplay settings:
-  - Camera invert.
-  - Lock-on behavior.
-  - UI/HUD toggle options.
+  - [ ] Camera invert.
+  - [ ] Lock-on behavior.
+  - [ ] UI/HUD toggle options.
 - [x] Save/load settings data giua cac lan mo game.
 - [x] Settings menu trong title menu.
-- [ ] Settings menu trong in-game menu/pause.
+- [x] Settings menu trong in-game character menu.
+- [ ] Settings menu trong pause menu rieng neu can.
 
 ### 3. Starting Character Selection
 - Tao 5 nhan vat khoi dau.
@@ -100,6 +143,8 @@ Muc tieu gameplay chinh:
   - Thang boss map 5 -> hien man chien thang game.
   - Co credits / win screen / option New Game+ neu muon.
 
+---
+
 ## Supporting Systems Needed
 
 ### Economy And Progression
@@ -129,7 +174,10 @@ Muc tieu gameplay chinh:
   - [x] Co scroll list, item details, buy/sell, close.
   - [x] Khong con mo tu title menu.
   - [ ] Tiep tuc polish layout bang prefab thay vi runtime code o mot so phan con lai.
-- Menu settings.
+- Menu settings:
+  - [x] Title menu settings da hoat dong.
+  - [x] Character menu settings da hoat dong.
+  - [ ] Co the can them 1 pass polish UI/prefab trong world.
 - Menu character select.
 - Progress UI:
   - Map current.
@@ -139,32 +187,38 @@ Muc tieu gameplay chinh:
 
 ### Save Data Expansion
 - Them vao save:
-  - Starting character da chon.
-  - Maps unlocked.
-  - Bosses defeated by map.
-  - Current progression tier.
-  - Shop state neu can.
-  - Settings data neu save theo profile.
+  - Starting character da chon. *(chua co)*
+  - Maps unlocked. *(chua co, `bossesDefeated` da co lam nen tang)*
+  - Current progression tier. *(chua co)*
+  - Shop state neu can. *(da co `merchantStockRemaining`)*
+  - Settings data neu save theo profile. *(da co)*
+
+---
 
 ## Suggested Build Order
 
-### Phase 1. Foundation
-- Tao `GameProgressionManager`.
-- Mo rong `CharacterSaveData` cho progression 5 map.
-- Dinh nghia data cho 5 map.
-- Dinh nghia data cho 5 starting characters.
+### Phase 1. Foundation (DONE phan lon)
+- [x] Core character, AI, combat, inventory systems.
+- [x] Shop system.
+- [x] Settings menu.
+- [x] Save/load data co ban.
+- [x] Site of Grace, world locations.
+- [ ] **Con lai:** Tao `GameProgressionManager` theo doi 5 map + starting class.
+- [ ] **Con lai:** Mo rong `CharacterSaveData` them `startingClassID`, `mapsUnlocked[]`, `currentProgressionTier`.
 
-### Phase 2. Starting Character Flow
-- Hoan thien UI chon 5 nhan vat.
-- Noi class selection vao new game flow.
-- Save/load dung starting character data.
+### Phase 2. Starting Character Flow *(CHUA BAT DAU)*
+- [ ] Dinh nghia 5 class (SO va ScriptableObject hoac struct).
+- [ ] Man hinh chon nhan vat: UI preview stat/model/equipment.
+- [ ] Noi class selection vao new game flow trong `WorldSaveGameManager` hoac `TitleScreenManager`.
+- [ ] Apply stat khoi dau khi New Game.
 
-### Phase 3. Settings
+### Phase 3. Settings *(DONE co ban)*
 - [x] Tao settings menu trong title menu.
 - [x] Luu settings persistent.
-- [ ] Mo rong settings menu vao in-game pause/menu.
+- [x] Mo rong settings menu vao in-game character menu.
+- [ ] Neu can, tach them settings menu cho pause flow rieng.
 
-### Phase 4. In-Game Shop
+### Phase 4. In-Game Shop *(DONE co ban, can data)*
 - [x] Tao merchant/shop data co ban.
 - [x] Tao UI mua/ban.
 - [x] Noi inventory + rune vao giao dich.
@@ -173,33 +227,44 @@ Muc tieu gameplay chinh:
 - [ ] Dien du lieu custom stock that cho tung merchant trong inspector.
 - [ ] Chot bang gia item economy thuc te sau khi playtest.
 
-### Phase 5. Main Loop Progression
-- Boss clear -> unlock map sau.
-- Teleport sang map moi.
-- Difficulty ramp theo map.
-- Win condition map 5.
+### Phase 5. Main Loop Progression *(CHUA BAT DAU)*
+- [ ] Tao `GameProgressionManager` singleton.
+- [ ] Them data 5 map (MapProgressionData ScriptableObject hoac struct).
+- [ ] Boss clear event -> ghi `bossesDefeated` -> unlock next map -> trigger scene transition.
+- [ ] `WorldSceneManager` ho tro load dung map theo progression.
+- [ ] Difficulty multiplier: scale HP/damage quai theo map index.
+- [ ] Tao/dung World_02 -> 05 scenes (co the dung bo map don gian truoc, polish sau).
+- [ ] Win condition khi boss map 5 bi diet.
+- [ ] Win screen UI.
 
-### Phase 6. Out-of-Game Shop
+### Phase 6. Out-of-Game Shop *(TAM HOAN)*
 - Tam hoan.
 - Da bo khoi title screen.
 - Chi can quay lai phase nay neu sau nay ban muon cosmetic/unlock shop ngoai game.
 
+---
+
 ## Concrete Task Backlog
 
-### Immediate
-- [ ] Tao he thong progression 5 map.
-- [ ] Thiet ke 5 starting characters.
-- [ ] Them man hinh chon nhan vat dau game.
+### Immediate (Lam Ngay)
+- [ ] **[P1]** Tao `GameProgressionManager` (singleton, theo doi mapIndex, mapsUnlocked, gameWon).
+- [ ] **[P1]** Mo rong `CharacterSaveData`: them `startingClassID`, `mapsUnlocked`, `currentMapIndex`, `gameWon`.
+- [ ] **[P1]** Dinh nghia 5 starting class (ScriptableObject: name, stats, startWeapon, startArmor, startItem).
+- [ ] **[P2]** Tao man hinh chon nhan vat trong new game flow.
+- [ ] **[P2]** Boss clear event hook vao unlock map tiep theo + scene transition.
+- [ ] **[P3]** Dien merchant custom stock cho cac NPC trong World_01 inspector.
+- [ ] **[P3]** Balance rune drop + shop price sau playtest co ban.
+
+### Completed Recently
 - [x] Them menu settings trong title menu.
-- [ ] Them menu settings trong in-game.
+- [x] Them menu settings trong in-game character menu.
 - [x] Them shop trong game.
 - [x] Khoa movement/attack/interaction khi mo shop.
 - [x] Ho tro ESC de back tung lop menu.
 - [x] Sua loi spam sell duplicate rune.
-- [ ] Dinh nghia dieu kien thang boss -> sang map moi.
-- [ ] Tao man chien thang khi hoan thanh map 5.
+- [x] Fix rune reward on boss (Durk) death.
 
-### Next
+### Next (Lam Sau Immediate)
 - [ ] Mo rong save data cho map progression va starting character.
 - [ ] Them data balance day du cho rune, level up, shop price sau khi playtest progression.
 - [ ] Them UI progression va thong bao unlock map.
@@ -207,10 +272,13 @@ Muc tieu gameplay chinh:
 - [ ] Gan merchant NPC/scene vao ShopInteractable va custom stock cho tung shop.
 - [ ] Refactor them phan layout shop con tao runtime sang prefab neu can.
 
-### Later
+### Later (Lam Sau Cung)
 - [ ] Can nhac co lam lai shop ngoai main menu hay khong.
 - [ ] Them reward/doc quyen theo tung map.
 - [ ] Them endgame/New Game+ neu can.
+- [ ] World_02 -> 05 map design va scene build.
+
+---
 
 ## Design Decisions To Confirm Later
 
@@ -229,26 +297,38 @@ Muc tieu gameplay chinh:
   - Mo New Game+
   - Mo endless/challenge mode
 
+---
+
 ## Current Priority Recommendation
 
 Thu tu toi uu de tranh phai lam lai:
-1. Starting character system
-2. Save data mo rong
-3. In-game settings menu
-4. Progression 5 map
-5. Hoan thien merchant stock va shop balance
-6. Can nhac lai out-of-game shop sau
+1. **[P1] GameProgressionManager + mo rong SaveData** (nen tang cho moi thu sau)
+2. **[P1] 5 Starting class data + man hinh chon nhan vat**
+3. **[P2] Boss clear -> unlock map -> scene transition**
+4. **[P3] Hoan thien merchant stock va shop balance**
+5. **[P4] Difficulty ramp + tao scene World_02 -> 05**
+6. **[P5] Win screen + polish UI/settings neu can**
+
+---
 
 ## Current State Snapshot
 
-- In-game shop: da hoat dong.
-- Character menu shop: da giu lai.
-- Start game/title menu shop: da bo.
-- Shop UI: da dua vao `Player UI Manager.prefab`, nhung van con mot vai phan layout tao bang code can polish sau.
-- Shop transaction:
-  - Buy hoat dong.
-  - Sell hoat dong.
-  - Da sua bug spam ban item de nhan rune lap lai.
-- Menu navigation:
-  - Dang mo menu con co the bam ESC de quay lui tung lop ve character menu va gameplay.
-
+| He Thong | Trang Thai |
+|---|---|
+| Core player / character | Hoan chinh |
+| AI enemy (undead, patrol, attack) | Hoan chinh |
+| Boss (Durk) + rune reward | Hoan chinh |
+| Shop (buy/sell/save stock) | Hoan chinh |
+| Settings (title + in-game) | Hoan chinh |
+| Level up UI | Hoan chinh |
+| Weapon upgrade UI | Hoan chinh |
+| Site of Grace | Hoan chinh |
+| Save/load (equipment/rune/boss/stock) | Hoan chinh |
+| Starting character selection | **Chua co** |
+| GameProgressionManager (5 map) | **Chua co** |
+| Boss gate -> unlock -> teleport | **Chua co** |
+| Map 2-5 scenes | **Chua co** |
+| Difficulty ramp | **Chua co** |
+| Win screen | **Chua co** |
+| Economy balance | **Chua co** |
+| Merchant NPC trong world | **Can data** |

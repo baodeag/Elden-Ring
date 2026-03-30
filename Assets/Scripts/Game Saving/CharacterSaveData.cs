@@ -11,6 +11,12 @@ namespace baodeag
         [Header("Scene Index")]
         public int sceneIndex = 1;
 
+        [Header("Progression")]
+        public int startingClassID = -1;
+        public int currentMapIndex = 0;
+        public bool gameWon = false;
+        public SerializableDictionary<int, bool> mapsUnlocked;
+
         [Header("Character Name")]
         public string characterName = "Character";
 
@@ -117,6 +123,7 @@ namespace baodeag
         public void EnsureCollectionsInitialized()
         {
             sitesOfGrace ??= new SerializableDictionary<int, bool>();
+            mapsUnlocked ??= new SerializableDictionary<int, bool>();
             bossesAwakened ??= new SerializableDictionary<int, bool>();
             bossesDefeated ??= new SerializableDictionary<int, bool>();
             worldItemsLooted ??= new SerializableDictionary<int, bool>();
