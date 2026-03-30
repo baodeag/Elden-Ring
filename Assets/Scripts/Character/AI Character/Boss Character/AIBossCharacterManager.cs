@@ -190,6 +190,7 @@ namespace baodeag
                 if (gameWon)
                 {
                     PlayerUIManager.instance.playerUIPopUpManager.SendVictoryPopUp("Victory Achieved");
+                    WorldGameSessionManager.instance.ReturnToTitleAfterVictory();
                 }
                 else if (unlockedMapIndex >= 0)
                 {
@@ -201,6 +202,10 @@ namespace baodeag
             if (IsOwner && shouldLoadNextScene && nextSceneBuildIndex >= 0 && nextSceneBuildIndex != SceneManager.GetActiveScene().buildIndex)
             {
                 WorldSceneManager.instance.LoadWorldScene(nextSceneBuildIndex);
+            }
+            else if (IsOwner && !gameWon && unlockedMapIndex >= 0)
+            {
+                WorldGameSessionManager.instance.ProcessPendingMapEntryWithoutSceneReload();
             }
         }
 

@@ -18,6 +18,7 @@ namespace baodeag
 
         private Coroutine revivalCoroutine;
         private Coroutine pendingMapEntryCoroutine;
+        private Coroutine returnToTitleCoroutine;
 
         private UnityTransport unityTransport;
         private const ushort DefaultUnityTransportPort = 7777;
@@ -71,6 +72,25 @@ namespace baodeag
                 StopCoroutine(pendingMapEntryCoroutine);
 
             pendingMapEntryCoroutine = StartCoroutine(HandlePendingMapEntryCoroutine());
+        }
+
+        public void ProcessPendingMapEntryWithoutSceneReload()
+        {
+            if (!GameProgressionManager.Instance.HasPendingTransitionSiteOfGrace())
+                return;
+
+            if (pendingMapEntryCoroutine != null)
+                StopCoroutine(pendingMapEntryCoroutine);
+
+            pendingMapEntryCoroutine = StartCoroutine(HandlePendingMapEntryCoroutine());
+        }
+
+        public void ReturnToTitleAfterVictory(float delay = 6f)
+        {
+            if (returnToTitleCoroutine != null)
+                StopCoroutine(returnToTitleCoroutine);
+
+            returnToTitleCoroutine = StartCoroutine(ReturnToTitleAfterVictoryCoroutine(delay));
         }
 
         private IEnumerator HandlePendingMapEntryCoroutine()
@@ -132,6 +152,32 @@ namespace baodeag
             }
 
             pendingMapEntryCoroutine = null;
+        }
+
+        private IEnumerator ReturnToTitleAfterVictoryCoroutine(float delay)
+        {
+            while (delay > 0f)
+            {
+                delay -= Time.deltaTime;
+                yield return null;
+            }
+
+            if (WorldSaveGameManager.instance != null &&
+                WorldSaveGameManager.instance.currentCharacterData != null &&
+                SceneManager.GetActiveScene().buildIndex != 0)
+            {
+                WorldSaveGameManager.instance.SaveGame();
+            }
+
+            if (NetworkManager.Singleton != null &&
+                (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsClient))
+            {
+                NetworkManager.Singleton.Shutdown();
+                yield return null;
+            }
+
+            SceneManager.LoadScene(0);
+            returnToTitleCoroutine = null;
         }
 
         public bool StartGameAsHost()

@@ -3,7 +3,7 @@
 Tai lieu nay luu cac hang muc can lam de hoan thien he thong game.
 Cap nhat file nay moi khi chot them tinh nang, doi uu tien, hoac hoan thanh dau viec.
 
-> **Cap nhat lan cuoi: 2026-03-30**
+> **Cap nhat lan cuoi: 2026-03-30 (sau progression foundation pass)**
 
 ---
 
@@ -43,15 +43,24 @@ Muc tieu gameplay chinh:
 - [x] Main Menu scene: Title screen + load menu + settings
 
 ### Chua Co / Chua Hoan Thanh
-- [ ] Starting character selection screen (5 class)
-- [ ] World progression system (5 map, boss gate, unlock next map)
+- [ ] Starting character selection screen polish/UI data day du (nen tang da co)
 - [ ] Multiple world scenes (chi co World_01, can World_02 -> 05)
-- [ ] Boss clear -> teleport sang map tiep theo
+- [ ] Boss clear -> teleport sang map tiep theo bang scene/data that cho tung map
 - [ ] Difficulty ramp theo tung map
-- [ ] Win screen / victory condition
+- [ ] Win screen / victory scene rieng
 - [ ] Custom merchant stock da dien du lieu trong inspector
 - [ ] Economy balance (rune drop, level up cost, shop price)
-- [ ] UI thong bao map unlock / progression
+- [ ] UI progression day du (map current, map unlocked, victory screen)
+
+### Moi Hoan Thanh Trong Code
+- [x] `GameProgressionManager` singleton theo doi `startingClassID`, `currentMapIndex`, `mapsUnlocked`, `gameWon`
+- [x] Mo rong `CharacterSaveData` voi progression data
+- [x] `TitleScreenManager` luu starting class da chon khi New Game
+- [x] Boss clear -> unlock next map -> save progression -> thong bao `Map Unlocked`
+- [x] Co support same-scene progression bang `entrySiteOfGraceID`
+- [x] Co support scene transition neu map sau dung scene build index khac
+- [x] Co popup `Victory Achieved` + flow quay ve title sau khi thang boss map cuoi
+- [x] Co runtime warning neu map progression data chua duoc setup trong Inspector
 
 ---
 
@@ -187,9 +196,9 @@ Muc tieu gameplay chinh:
 
 ### Save Data Expansion
 - Them vao save:
-  - Starting character da chon. *(chua co)*
-  - Maps unlocked. *(chua co, `bossesDefeated` da co lam nen tang)*
-  - Current progression tier. *(chua co)*
+  - Starting character da chon. *(da co: `startingClassID`)*
+  - Maps unlocked. *(da co: `mapsUnlocked`)*
+  - Current progression tier/map hien tai. *(da co: `currentMapIndex`)*
   - Shop state neu can. *(da co `merchantStockRemaining`)*
   - Settings data neu save theo profile. *(da co)*
 
@@ -203,14 +212,14 @@ Muc tieu gameplay chinh:
 - [x] Settings menu.
 - [x] Save/load data co ban.
 - [x] Site of Grace, world locations.
-- [ ] **Con lai:** Tao `GameProgressionManager` theo doi 5 map + starting class.
-- [ ] **Con lai:** Mo rong `CharacterSaveData` them `startingClassID`, `mapsUnlocked[]`, `currentProgressionTier`.
+- [x] Tao `GameProgressionManager` theo doi 5 map + starting class.
+- [x] Mo rong `CharacterSaveData` them `startingClassID`, `mapsUnlocked[]`, `currentMapIndex`, `gameWon`.
 
-### Phase 2. Starting Character Flow *(CHUA BAT DAU)*
-- [ ] Dinh nghia 5 class (SO va ScriptableObject hoac struct).
-- [ ] Man hinh chon nhan vat: UI preview stat/model/equipment.
-- [ ] Noi class selection vao new game flow trong `WorldSaveGameManager` hoac `TitleScreenManager`.
-- [ ] Apply stat khoi dau khi New Game.
+### Phase 2. Starting Character Flow *(DA CO NEN TANG, CAN POLISH)*
+- [x] Dinh nghia class data bang `CharacterClass`.
+- [x] Preview/apply stat-model-equipment trong character creation flow.
+- [x] Noi class selection vao new game flow.
+- [ ] Polish UI data hien thi cho du 5 class.
 
 ### Phase 3. Settings *(DONE co ban)*
 - [x] Tao settings menu trong title menu.
@@ -227,15 +236,15 @@ Muc tieu gameplay chinh:
 - [ ] Dien du lieu custom stock that cho tung merchant trong inspector.
 - [ ] Chot bang gia item economy thuc te sau khi playtest.
 
-### Phase 5. Main Loop Progression *(CHUA BAT DAU)*
-- [ ] Tao `GameProgressionManager` singleton.
-- [ ] Them data 5 map (MapProgressionData ScriptableObject hoac struct).
-- [ ] Boss clear event -> ghi `bossesDefeated` -> unlock next map -> trigger scene transition.
-- [ ] `WorldSceneManager` ho tro load dung map theo progression.
+### Phase 5. Main Loop Progression *(DA CO FOUNDATION)*
+- [x] Tao `GameProgressionManager` singleton.
+- [x] Them data 5 map (`MapProgressionDefinition` trong manager).
+- [x] Boss clear event -> ghi `bossesDefeated` -> unlock next map -> trigger transition/pending entry.
+- [x] `WorldSceneManager` load map theo progression state.
 - [ ] Difficulty multiplier: scale HP/damage quai theo map index.
 - [ ] Tao/dung World_02 -> 05 scenes (co the dung bo map don gian truoc, polish sau).
-- [ ] Win condition khi boss map 5 bi diet.
-- [ ] Win screen UI.
+- [x] Win condition khi boss map 5 bi diet.
+- [ ] Win screen UI / scene rieng.
 
 ### Phase 6. Out-of-Game Shop *(TAM HOAN)*
 - Tam hoan.
@@ -247,11 +256,11 @@ Muc tieu gameplay chinh:
 ## Concrete Task Backlog
 
 ### Immediate (Lam Ngay)
-- [ ] **[P1]** Tao `GameProgressionManager` (singleton, theo doi mapIndex, mapsUnlocked, gameWon).
-- [ ] **[P1]** Mo rong `CharacterSaveData`: them `startingClassID`, `mapsUnlocked`, `currentMapIndex`, `gameWon`.
-- [ ] **[P1]** Dinh nghia 5 starting class (ScriptableObject: name, stats, startWeapon, startArmor, startItem).
-- [ ] **[P2]** Tao man hinh chon nhan vat trong new game flow.
-- [ ] **[P2]** Boss clear event hook vao unlock map tiep theo + scene transition.
+- [x] **[P1]** Tao `GameProgressionManager` (singleton, theo doi mapIndex, mapsUnlocked, gameWon).
+- [x] **[P1]** Mo rong `CharacterSaveData`: them `startingClassID`, `mapsUnlocked`, `currentMapIndex`, `gameWon`.
+- [ ] **[P1]** Dien data that cho 5 map trong Inspector: `mapName`, `sceneBuildIndex`, `bossID`, `entrySiteOfGraceID`.
+- [ ] **[P2]** Polish/hoan thien UI hien thi 5 class trong new game flow.
+- [x] **[P2]** Boss clear event hook vao unlock map tiep theo + scene transition.
 - [ ] **[P3]** Dien merchant custom stock cho cac NPC trong World_01 inspector.
 - [ ] **[P3]** Balance rune drop + shop price sau playtest co ban.
 

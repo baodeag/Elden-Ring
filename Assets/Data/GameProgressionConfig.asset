@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: GameProgressionConfig
+  m_EditorClassIdentifier: Assembly-CSharp:baodeag:GameProgressionConfig
+  mapDefinitions:
+  - mapName: Map 1
+    sceneBuildIndex: 1
+    bossID: 0
+    entrySiteOfGraceID: -1
+  - mapName: Map 2
+    sceneBuildIndex: 1
+    bossID: 1
+    entrySiteOfGraceID: -1
+  - mapName: Map 3
+    sceneBuildIndex: 1
+    bossID: 2
+    entrySiteOfGraceID: -1
+  - mapName: Map 4
+    sceneBuildIndex: 1
+    bossID: 3
+    entrySiteOfGraceID: -1
+  - mapName: Map 5
+    sceneBuildIndex: 1
+    bossID: 4
+    entrySiteOfGraceID: -1
