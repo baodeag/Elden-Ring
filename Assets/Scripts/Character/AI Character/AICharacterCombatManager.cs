@@ -13,6 +13,8 @@ namespace baodeag
         [Header("Damage")]
         [SerializeField] protected int baseDamage = 25;
         [SerializeField] protected int basePoiseDamage = 25;
+        protected int progressionScaledBaseDamage;
+        protected bool hasAppliedProgressionDamageScaling;
 
         [Header("Action Recovery")]
         public float actionRecoveryTimer = 0;
@@ -59,6 +61,18 @@ namespace baodeag
 
             aiCharacter = GetComponent<AICharacterManager>();
             lockOnTransform = GetComponentInChildren<LockOnTransform>().transform;
+            progressionScaledBaseDamage = baseDamage;
+        }
+
+        public virtual void ApplyProgressionDifficultyScaling(float damageMultiplier)
+        {
+            if (hasAppliedProgressionDamageScaling)
+                return;
+
+            damageMultiplier = Mathf.Max(0.1f, damageMultiplier);
+            progressionScaledBaseDamage = Mathf.Max(1, Mathf.RoundToInt(baseDamage * damageMultiplier));
+            baseDamage = progressionScaledBaseDamage;
+            hasAppliedProgressionDamageScaling = true;
         }
 
         private void Update()

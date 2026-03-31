@@ -3,7 +3,7 @@
 Tai lieu nay luu cac hang muc can lam de hoan thien he thong game.
 Cap nhat file nay moi khi chot them tinh nang, doi uu tien, hoac hoan thanh dau viec.
 
-> **Cap nhat lan cuoi: 2026-03-31 (sau progression config + popup unlock hoat dong)**
+> **Cap nhat lan cuoi: 2026-03-31 (sau progression difficulty ramp data-driven)**
 
 ---
 
@@ -65,6 +65,7 @@ Muc tieu gameplay chinh:
 - [x] Da sua popup `Map Unlocked` hien thi on dinh sau boss death
 - [x] `GameProgressionManager` dong bo `Map Definitions` tu `GameProgressionConfig` ngay trong editor
 - [x] `Game Progression Config.asset` da duoc tao va co the dung de test progression ngay
+- [x] Difficulty ramp nen tang: moi map co `enemyHealthMultiplier` + `enemyDamageMultiplier`
 
 ---
 
@@ -147,8 +148,8 @@ Muc tieu gameplay chinh:
   - Luu trang thai da pha dao boss nao, da mo khoa map nao.
 - Difficulty ramp:
   - Map 1 -> 5 tang dan:
-    - HP quai.
-    - Damage quai.
+    - HP quai. *(da co nen tang multiplier theo map)*
+    - Damage quai. *(da co nen tang multiplier theo map)*
     - So luong quai.
     - AI complexity.
     - Boss complexity.
@@ -174,7 +175,7 @@ Muc tieu gameplay chinh:
   - Boss cua map.
   - Dieu kien mo khoa.
   - Diem spawn/teleport.
-  - Difficulty multiplier.
+  - Difficulty multiplier. *(da co `enemyHealthMultiplier` + `enemyDamageMultiplier`)*
 - He thong world progression manager de theo doi:
   - Map hien tai.
   - Map da mo.
@@ -248,7 +249,7 @@ Muc tieu gameplay chinh:
 - [x] Boss clear event -> ghi `bossesDefeated` -> unlock next map -> trigger transition/pending entry.
 - [x] `WorldSceneManager` load map theo progression state.
 - [x] Popup `Map Unlocked` da hien thi duoc trong flow boss clear.
-- [ ] Difficulty multiplier: scale HP/damage quai theo map index.
+- [x] Difficulty multiplier: scale HP/damage quai theo map index.
 - [ ] Tao/dung World_02 -> 05 scenes (co the dung bo map don gian truoc, polish sau).
 - [x] Win condition khi boss map 5 bi diet.
 - [ ] Win screen UI / scene rieng.
@@ -267,6 +268,7 @@ Muc tieu gameplay chinh:
 - [x] **[P1]** Mo rong `CharacterSaveData`: them `startingClassID`, `mapsUnlocked`, `currentMapIndex`, `gameWon`.
 - [x] **[P1]** Tao `GameProgressionConfig` asset va noi vao `GameProgressionManager`.
 - [ ] **[P1]** Dien data that cuoi cung cho 5 map trong `GameProgressionConfig`: `mapName`, `sceneBuildIndex`, `bossID`, `entrySiteOfGraceID`.
+- [x] **[P2]** Them `enemyHealthMultiplier` + `enemyDamageMultiplier` vao `GameProgressionConfig` va noi AI scale theo `currentMapIndex`.
 - [ ] **[P2]** Polish/hoan thien UI hien thi 5 class trong new game flow.
 - [x] **[P2]** Boss clear event hook vao unlock map tiep theo + scene transition.
 - [ ] **[P3]** Dien merchant custom stock cho cac NPC trong World_01 inspector.
@@ -289,7 +291,7 @@ Muc tieu gameplay chinh:
 ### Next (Lam Sau Immediate)
 - [ ] Them data balance day du cho rune, level up, shop price sau khi playtest progression.
 - [ ] Them UI progression day du ngoai popup (`map current`, `maps unlocked`, `boss defeated`).
-- [ ] Tang do kho quai/boss theo tung map.
+- [x] Tang do kho co ban cua quai/boss theo tung map bang multiplier HP/damage.
 - [ ] Dat `entrySiteOfGraceID` that cho tung map thay vi tam thoi dung chung entry.
 - [ ] Gan merchant NPC/scene vao ShopInteractable va custom stock cho tung shop.
 - [ ] Refactor them phan layout shop con tao runtime sang prefab neu can.
@@ -326,10 +328,9 @@ Muc tieu gameplay chinh:
 Thu tu toi uu de tranh phai lam lai:
 1. **[P1] Chot `GameProgressionConfig` that cho du 5 map** (`sceneBuildIndex`, `bossID`, `entrySiteOfGraceID`)
 2. **[P1] 5 Starting class data + polish man hinh chon nhan vat**
-3. **[P2] Difficulty ramp theo `currentMapIndex`**
-4. **[P3] Hoan thien merchant stock va shop balance**
-5. **[P4] Tao scene World_02 -> 05 + gan entry Site Of Grace that**
-6. **[P5] Win screen + progression UI day du neu can**
+3. **[P2] Hoan thien merchant stock va shop balance**
+4. **[P3] Tao scene World_02 -> 05 + gan entry Site Of Grace that**
+5. **[P4] Win screen + progression UI day du neu can**
 
 ---
 

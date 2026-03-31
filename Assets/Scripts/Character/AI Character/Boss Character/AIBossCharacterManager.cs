@@ -171,7 +171,6 @@ namespace baodeag
                 }
 
                 shouldLoadNextScene = GameProgressionManager.Instance.RegisterBossDefeat(bossID, out nextSceneBuildIndex, out unlockedMapIndex, out gameWon);
-                Debug.Log($"AIBossCharacterManager.ProcessDeathEvent: bossID={bossID}, shouldLoadNextScene={shouldLoadNextScene}, unlockedMapIndex={unlockedMapIndex}, gameWon={gameWon}, nextSceneBuildIndex={nextSceneBuildIndex}");
 
                 int entrySiteOfGraceID = GameProgressionManager.Instance.GetEntrySiteOfGraceIDForCurrentMap();
 
@@ -183,14 +182,12 @@ namespace baodeag
 
                 if (gameWon)
                 {
-                    Debug.Log("AIBossCharacterManager.ProcessDeathEvent: queueing victory popup.");
                     PlayerUIManager.instance.playerUIPopUpManager.SendVictoryPopUpDelayed("Victory Achieved", 5f);
                 }
                 else if (unlockedMapIndex >= 0)
                 {
                     string mapName = GameProgressionManager.Instance.GetMapName(unlockedMapIndex);
                     queuedMapUnlockedMessage = $"{mapName} Unlocked";
-                    Debug.Log($"AIBossCharacterManager.ProcessDeathEvent: queueing map unlocked popup '{queuedMapUnlockedMessage}'.");
                     PlayerUIManager.instance.playerUIPopUpManager.SendMapUnlockedPopUpDelayed(queuedMapUnlockedMessage, 5f);
                 }
 

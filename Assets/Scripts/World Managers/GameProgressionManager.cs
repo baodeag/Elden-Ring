@@ -18,11 +18,11 @@ namespace baodeag
         [Header("Map Definitions")]
         [SerializeField] private MapProgressionDefinition[] mapDefinitions = new MapProgressionDefinition[TotalMapCount]
         {
-            new MapProgressionDefinition { mapName = "Map 1", sceneBuildIndex = DefaultWorldSceneBuildIndex, bossID = 0 },
-            new MapProgressionDefinition { mapName = "Map 2", sceneBuildIndex = DefaultWorldSceneBuildIndex, bossID = 1 },
-            new MapProgressionDefinition { mapName = "Map 3", sceneBuildIndex = DefaultWorldSceneBuildIndex, bossID = 2 },
-            new MapProgressionDefinition { mapName = "Map 4", sceneBuildIndex = DefaultWorldSceneBuildIndex, bossID = 3 },
-            new MapProgressionDefinition { mapName = "Map 5", sceneBuildIndex = DefaultWorldSceneBuildIndex, bossID = 4 }
+            new MapProgressionDefinition { mapName = "Map 1", sceneBuildIndex = DefaultWorldSceneBuildIndex, bossID = 0, enemyHealthMultiplier = 1f, enemyDamageMultiplier = 1f },
+            new MapProgressionDefinition { mapName = "Map 2", sceneBuildIndex = DefaultWorldSceneBuildIndex, bossID = 1, enemyHealthMultiplier = 1.15f, enemyDamageMultiplier = 1.1f },
+            new MapProgressionDefinition { mapName = "Map 3", sceneBuildIndex = DefaultWorldSceneBuildIndex, bossID = 2, enemyHealthMultiplier = 1.35f, enemyDamageMultiplier = 1.2f },
+            new MapProgressionDefinition { mapName = "Map 4", sceneBuildIndex = DefaultWorldSceneBuildIndex, bossID = 3, enemyHealthMultiplier = 1.6f, enemyDamageMultiplier = 1.35f },
+            new MapProgressionDefinition { mapName = "Map 5", sceneBuildIndex = DefaultWorldSceneBuildIndex, bossID = 4, enemyHealthMultiplier = 1.9f, enemyDamageMultiplier = 1.5f }
         };
 
         [Header("Current Progression")]
@@ -166,8 +166,6 @@ namespace baodeag
 
             int defeatedMapIndex = GetMapIndexForBossID(bossID);
 
-            Debug.Log($"GameProgressionManager.RegisterBossDefeat: bossID={bossID}, currentMapIndex(before)={currentMapIndex}, defeatedMapIndex={defeatedMapIndex}");
-
             if (defeatedMapIndex < 0)
                 defeatedMapIndex = currentMapIndex;
 
@@ -178,7 +176,6 @@ namespace baodeag
                 currentMapIndex = defeatedMapIndex;
                 gameWon = true;
                 hasWonGame = true;
-                Debug.Log($"GameProgressionManager.RegisterBossDefeat: final map cleared. gameWon={gameWon}, currentMapIndex={currentMapIndex}");
                 return false;
             }
 
@@ -189,8 +186,6 @@ namespace baodeag
             nextSceneBuildIndex = GetSceneBuildIndexForMap(currentMapIndex);
 
             string nextScenePath = UnityEngine.SceneManagement.SceneUtility.GetScenePathByBuildIndex(nextSceneBuildIndex);
-
-            Debug.Log($"GameProgressionManager.RegisterBossDefeat: unlockedMapIndex={unlockedMapIndex}, nextSceneBuildIndex={nextSceneBuildIndex}, nextScenePath='{nextScenePath}', pendingEntrySiteOfGraceID={pendingTransitionSiteOfGraceID}");
 
             if (string.IsNullOrEmpty(nextScenePath))
                 return false;
@@ -245,6 +240,16 @@ namespace baodeag
         public int GetEntrySiteOfGraceIDForCurrentMap()
         {
             return GetEntrySiteOfGraceIDForMap(currentMapIndex);
+        }
+
+        public float GetEnemyHealthMultiplierForCurrentMap()
+        {
+            return GetEnemyHealthMultiplierForMap(currentMapIndex);
+        }
+
+        public float GetEnemyDamageMultiplierForCurrentMap()
+        {
+            return GetEnemyDamageMultiplierForMap(currentMapIndex);
         }
 
         public int ConsumePendingTransitionSiteOfGraceID()
@@ -333,7 +338,9 @@ namespace baodeag
                         {
                             mapName = $"Map {i + 1}",
                             sceneBuildIndex = DefaultWorldSceneBuildIndex,
-                            bossID = i
+                            bossID = i,
+                            enemyHealthMultiplier = 1f,
+                            enemyDamageMultiplier = 1f
                         };
                     }
                 }
@@ -349,7 +356,9 @@ namespace baodeag
                     {
                         mapName = $"Map {i + 1}",
                         sceneBuildIndex = DefaultWorldSceneBuildIndex,
-                        bossID = i
+                        bossID = i,
+                        enemyHealthMultiplier = 1f,
+                        enemyDamageMultiplier = 1f
                     };
                 }
 
@@ -358,6 +367,12 @@ namespace baodeag
 
                 if (mapDefinitions[i].sceneBuildIndex <= 0)
                     mapDefinitions[i].sceneBuildIndex = DefaultWorldSceneBuildIndex;
+
+                if (mapDefinitions[i].enemyHealthMultiplier <= 0f)
+                    mapDefinitions[i].enemyHealthMultiplier = 1f;
+
+                if (mapDefinitions[i].enemyDamageMultiplier <= 0f)
+                    mapDefinitions[i].enemyDamageMultiplier = 1f;
             }
 
             mapsUnlocked ??= new SerializableDictionary<int, bool>();
@@ -391,9 +406,39 @@ namespace baodeag
                     mapName = source.mapName,
                     sceneBuildIndex = source.sceneBuildIndex,
                     bossID = source.bossID,
-                    entrySiteOfGraceID = source.entrySiteOfGraceID
+                    entrySiteOfGraceID = source.entrySiteOfGraceID,
+                    enemyHealthMultiplier = source.enemyHealthMultiplier,
+                    enemyDamageMultiplier = source.enemyDamageMultiplier
                 };
             }
+        }
+
+        private float GetEnemyHealthMultiplierForMap(int mapIndex)
+        {
+            if (mapDefinitions == null || mapDefinitions.Length <= 0)
+                return 1f;
+
+            int clampedMapIndex = Mathf.Clamp(mapIndex, 0, mapDefinitions.Length - 1);
+            MapProgressionDefinition definition = mapDefinitions[clampedMapIndex];
+
+            if (definition == null || definition.enemyHealthMultiplier <= 0f)
+                return 1f;
+
+            return definition.enemyHealthMultiplier;
+        }
+
+        private float GetEnemyDamageMultiplierForMap(int mapIndex)
+        {
+            if (mapDefinitions == null || mapDefinitions.Length <= 0)
+                return 1f;
+
+            int clampedMapIndex = Mathf.Clamp(mapIndex, 0, mapDefinitions.Length - 1);
+            MapProgressionDefinition definition = mapDefinitions[clampedMapIndex];
+
+            if (definition == null || definition.enemyDamageMultiplier <= 0f)
+                return 1f;
+
+            return definition.enemyDamageMultiplier;
         }
 
         private void ValidateConfigurationAndLogWarnings()

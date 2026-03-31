@@ -37,6 +37,7 @@ namespace baodeag
         private Coroutine deadPoseRoutine;
         private Coroutine coopDeathDespawnRoutine;
         private ulong lastPlayerWhoDealtDamageClientId = ulong.MaxValue;
+        private bool hasAppliedProgressionDifficultyScaling;
 
         protected override void Awake()
         {
@@ -71,6 +72,7 @@ namespace baodeag
                 attack = Instantiate(attack);
                 investigateSound = Instantiate(investigateSound);
                 currentState = idle;
+                ApplyProgressionDifficultyScaling();
             }
 
             aiCharacterNetworkManager.currentHealth.OnValueChanged += aiCharacterNetworkManager.OnHPChanged;
@@ -390,6 +392,23 @@ namespace baodeag
                 beacon.transform.position = transform.position;
                 beacon.gameObject.SetActive(true);
             }
+        }
+
+        protected virtual void ApplyProgressionDifficultyScaling()
+        {
+            if (hasAppliedProgressionDifficultyScaling || GameProgressionManager.instance == null)
+                return;
+
+            float healthMultiplier = GameProgressionManager.Instance.GetEnemyHealthMultiplierForCurrentMap();
+            float damageMultiplier = GameProgressionManager.Instance.GetEnemyDamageMultiplierForCurrentMap();
+
+            aiCharacterCombatManager?.ApplyProgressionDifficultyScaling(damageMultiplier);
+
+            int scaledMaxHealth = Mathf.Max(1, Mathf.RoundToInt(aiCharacterNetworkManager.maxHealth.Value * healthMultiplier));
+            aiCharacterNetworkManager.maxHealth.Value = scaledMaxHealth;
+            aiCharacterNetworkManager.currentHealth.Value = scaledMaxHealth;
+
+            hasAppliedProgressionDifficultyScaling = true;
         }
     }
 }

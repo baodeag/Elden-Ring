@@ -106,14 +106,12 @@ namespace baodeag
         private IEnumerator SendMapUnlockedPopUpDelayedCoroutine(string message, float delay)
         {
             yield return new WaitForSeconds(delay);
-            Debug.Log($"PlayerUIPopUpManager: showing delayed map unlocked popup '{message}'.");
             PlayBossStylePopUp(message);
         }
 
         private IEnumerator SendVictoryPopUpDelayedCoroutine(string message, float delay)
         {
             yield return new WaitForSeconds(delay);
-            Debug.Log($"PlayerUIPopUpManager: showing delayed victory popup '{message}'.");
             PlayYouDiedStylePopUp(message);
         }
 
