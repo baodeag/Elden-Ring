@@ -9,27 +9,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: GameProgressionConfig
+  m_Script: {fileID: 11500000, guid: 0253088fbce917b459f1d39128e88db9, type: 3}
+  m_Name: Game Progression Config
   m_EditorClassIdentifier: Assembly-CSharp:baodeag:GameProgressionConfig
   mapDefinitions:
-  - mapName: Map 1
+  - mapName: Limgrave Gate
     sceneBuildIndex: 1
     bossID: 0
-    entrySiteOfGraceID: -1
-  - mapName: Map 2
+    entrySiteOfGraceID: 0
+  - mapName: Storm Path
     sceneBuildIndex: 1
     bossID: 1
-    entrySiteOfGraceID: -1
-  - mapName: Map 3
+    entrySiteOfGraceID: 0
+  - mapName: Ashen Keep
     sceneBuildIndex: 1
     bossID: 2
-    entrySiteOfGraceID: -1
-  - mapName: Map 4
+    entrySiteOfGraceID: 0
+  - mapName: Black Vault
     sceneBuildIndex: 1
     bossID: 3
-    entrySiteOfGraceID: -1
-  - mapName: Map 5
+    entrySiteOfGraceID: 0
+  - mapName: Erdtree Ascent
     sceneBuildIndex: 1
     bossID: 4
-    entrySiteOfGraceID: -1
+    entrySiteOfGraceID: 0

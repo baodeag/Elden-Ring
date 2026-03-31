@@ -1,4 +1,7 @@
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace baodeag
 {
@@ -71,6 +74,17 @@ namespace baodeag
             DontDestroyOnLoad(gameObject);
             EnsureConfigurationIsValid();
             ValidateConfigurationAndLogWarnings();
+        }
+
+        private void OnValidate()
+        {
+            SyncDefinitionsFromConfigIfPresent();
+            EnsureConfigurationIsValid();
+
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                EditorUtility.SetDirty(this);
+#endif
         }
 
         public void ResetForNewGame(int selectedStartingClassID)
@@ -359,10 +373,27 @@ namespace baodeag
             if (progressionConfig == null || progressionConfig.mapDefinitions == null || progressionConfig.mapDefinitions.Length <= 0)
                 return;
 
-            if (mapDefinitions == progressionConfig.mapDefinitions)
-                return;
+            if (mapDefinitions == null || mapDefinitions.Length != progressionConfig.mapDefinitions.Length)
+                mapDefinitions = new MapProgressionDefinition[progressionConfig.mapDefinitions.Length];
 
-            mapDefinitions = progressionConfig.mapDefinitions;
+            for (int i = 0; i < progressionConfig.mapDefinitions.Length; i++)
+            {
+                MapProgressionDefinition source = progressionConfig.mapDefinitions[i];
+
+                if (source == null)
+                {
+                    mapDefinitions[i] = null;
+                    continue;
+                }
+
+                mapDefinitions[i] = new MapProgressionDefinition
+                {
+                    mapName = source.mapName,
+                    sceneBuildIndex = source.sceneBuildIndex,
+                    bossID = source.bossID,
+                    entrySiteOfGraceID = source.entrySiteOfGraceID
+                };
+            }
         }
 
         private void ValidateConfigurationAndLogWarnings()

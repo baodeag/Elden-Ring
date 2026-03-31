@@ -3,7 +3,7 @@
 Tai lieu nay luu cac hang muc can lam de hoan thien he thong game.
 Cap nhat file nay moi khi chot them tinh nang, doi uu tien, hoac hoan thanh dau viec.
 
-> **Cap nhat lan cuoi: 2026-03-30 (sau progression foundation pass)**
+> **Cap nhat lan cuoi: 2026-03-31 (sau progression config + popup unlock hoat dong)**
 
 ---
 
@@ -45,7 +45,7 @@ Muc tieu gameplay chinh:
 ### Chua Co / Chua Hoan Thanh
 - [ ] Starting character selection screen polish/UI data day du (nen tang da co)
 - [ ] Multiple world scenes (chi co World_01, can World_02 -> 05)
-- [ ] Boss clear -> teleport sang map tiep theo bang scene/data that cho tung map
+- [ ] Boss clear -> teleport sang map tiep theo bang scene/data that cho tung map day du
 - [ ] Difficulty ramp theo tung map
 - [ ] Win screen / victory scene rieng
 - [ ] Custom merchant stock da dien du lieu trong inspector
@@ -54,6 +54,7 @@ Muc tieu gameplay chinh:
 
 ### Moi Hoan Thanh Trong Code
 - [x] `GameProgressionManager` singleton theo doi `startingClassID`, `currentMapIndex`, `mapsUnlocked`, `gameWon`
+- [x] `GameProgressionConfig` ScriptableObject de cau hinh map progression bang asset
 - [x] Mo rong `CharacterSaveData` voi progression data
 - [x] `TitleScreenManager` luu starting class da chon khi New Game
 - [x] Boss clear -> unlock next map -> save progression -> thong bao `Map Unlocked`
@@ -61,6 +62,9 @@ Muc tieu gameplay chinh:
 - [x] Co support scene transition neu map sau dung scene build index khac
 - [x] Co popup `Victory Achieved` + flow quay ve title sau khi thang boss map cuoi
 - [x] Co runtime warning neu map progression data chua duoc setup trong Inspector
+- [x] Da sua popup `Map Unlocked` hien thi on dinh sau boss death
+- [x] `GameProgressionManager` dong bo `Map Definitions` tu `GameProgressionConfig` ngay trong editor
+- [x] `Game Progression Config.asset` da duoc tao va co the dung de test progression ngay
 
 ---
 
@@ -189,9 +193,11 @@ Muc tieu gameplay chinh:
   - [ ] Co the can them 1 pass polish UI/prefab trong world.
 - Menu character select.
 - Progress UI:
-  - Map current.
-  - Boss defeated.
-  - Maps unlocked.
+  - [x] Popup `Map Unlocked`.
+  - [x] Popup `Victory Achieved`.
+  - [ ] Map current.
+  - [ ] Boss defeated.
+  - [ ] Maps unlocked.
 - Win screen / lose flow / transition screen.
 
 ### Save Data Expansion
@@ -238,9 +244,10 @@ Muc tieu gameplay chinh:
 
 ### Phase 5. Main Loop Progression *(DA CO FOUNDATION)*
 - [x] Tao `GameProgressionManager` singleton.
-- [x] Them data 5 map (`MapProgressionDefinition` trong manager).
+- [x] Them data 5 map (`MapProgressionDefinition`) + `GameProgressionConfig` asset.
 - [x] Boss clear event -> ghi `bossesDefeated` -> unlock next map -> trigger transition/pending entry.
 - [x] `WorldSceneManager` load map theo progression state.
+- [x] Popup `Map Unlocked` da hien thi duoc trong flow boss clear.
 - [ ] Difficulty multiplier: scale HP/damage quai theo map index.
 - [ ] Tao/dung World_02 -> 05 scenes (co the dung bo map don gian truoc, polish sau).
 - [x] Win condition khi boss map 5 bi diet.
@@ -258,7 +265,8 @@ Muc tieu gameplay chinh:
 ### Immediate (Lam Ngay)
 - [x] **[P1]** Tao `GameProgressionManager` (singleton, theo doi mapIndex, mapsUnlocked, gameWon).
 - [x] **[P1]** Mo rong `CharacterSaveData`: them `startingClassID`, `mapsUnlocked`, `currentMapIndex`, `gameWon`.
-- [ ] **[P1]** Dien data that cho 5 map trong Inspector: `mapName`, `sceneBuildIndex`, `bossID`, `entrySiteOfGraceID`.
+- [x] **[P1]** Tao `GameProgressionConfig` asset va noi vao `GameProgressionManager`.
+- [ ] **[P1]** Dien data that cuoi cung cho 5 map trong `GameProgressionConfig`: `mapName`, `sceneBuildIndex`, `bossID`, `entrySiteOfGraceID`.
 - [ ] **[P2]** Polish/hoan thien UI hien thi 5 class trong new game flow.
 - [x] **[P2]** Boss clear event hook vao unlock map tiep theo + scene transition.
 - [ ] **[P3]** Dien merchant custom stock cho cac NPC trong World_01 inspector.
@@ -272,12 +280,17 @@ Muc tieu gameplay chinh:
 - [x] Ho tro ESC de back tung lop menu.
 - [x] Sua loi spam sell duplicate rune.
 - [x] Fix rune reward on boss (Durk) death.
+- [x] Them progression save data + `GameProgressionManager`.
+- [x] Them `GameProgressionConfig` asset de setup map progression.
+- [x] Them popup `Map Unlocked`.
+- [x] Sua popup unlock hien thi on dinh sau boss death.
+- [x] Sua `GameProgressionManager` de editor sync theo `GameProgressionConfig`.
 
 ### Next (Lam Sau Immediate)
-- [ ] Mo rong save data cho map progression va starting character.
 - [ ] Them data balance day du cho rune, level up, shop price sau khi playtest progression.
-- [ ] Them UI progression va thong bao unlock map.
+- [ ] Them UI progression day du ngoai popup (`map current`, `maps unlocked`, `boss defeated`).
 - [ ] Tang do kho quai/boss theo tung map.
+- [ ] Dat `entrySiteOfGraceID` that cho tung map thay vi tam thoi dung chung entry.
 - [ ] Gan merchant NPC/scene vao ShopInteractable va custom stock cho tung shop.
 - [ ] Refactor them phan layout shop con tao runtime sang prefab neu can.
 
@@ -311,12 +324,12 @@ Muc tieu gameplay chinh:
 ## Current Priority Recommendation
 
 Thu tu toi uu de tranh phai lam lai:
-1. **[P1] GameProgressionManager + mo rong SaveData** (nen tang cho moi thu sau)
-2. **[P1] 5 Starting class data + man hinh chon nhan vat**
-3. **[P2] Boss clear -> unlock map -> scene transition**
+1. **[P1] Chot `GameProgressionConfig` that cho du 5 map** (`sceneBuildIndex`, `bossID`, `entrySiteOfGraceID`)
+2. **[P1] 5 Starting class data + polish man hinh chon nhan vat**
+3. **[P2] Difficulty ramp theo `currentMapIndex`**
 4. **[P3] Hoan thien merchant stock va shop balance**
-5. **[P4] Difficulty ramp + tao scene World_02 -> 05**
-6. **[P5] Win screen + polish UI/settings neu can**
+5. **[P4] Tao scene World_02 -> 05 + gan entry Site Of Grace that**
+6. **[P5] Win screen + progression UI day du neu can**
 
 ---
 
@@ -333,11 +346,13 @@ Thu tu toi uu de tranh phai lam lai:
 | Weapon upgrade UI | Hoan chinh |
 | Site of Grace | Hoan chinh |
 | Save/load (equipment/rune/boss/stock) | Hoan chinh |
-| Starting character selection | **Chua co** |
-| GameProgressionManager (5 map) | **Chua co** |
-| Boss gate -> unlock -> teleport | **Chua co** |
+| Starting character selection | **Co nen tang, can polish** |
+| GameProgressionManager (5 map) | **Da co** |
+| GameProgressionConfig asset | **Da co** |
+| Boss gate -> unlock -> teleport | **Da co foundation, popup unlock da hoat dong** |
 | Map 2-5 scenes | **Chua co** |
 | Difficulty ramp | **Chua co** |
+| Popup Map Unlocked / Victory | **Da co** |
 | Win screen | **Chua co** |
 | Economy balance | **Chua co** |
 | Merchant NPC trong world | **Can data** |

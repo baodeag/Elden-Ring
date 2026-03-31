@@ -13312,23 +13312,23 @@ MonoBehaviour:
   - mapName: Map 1
     sceneBuildIndex: 1
     bossID: 0
-    entrySiteOfGraceID: -1
+    entrySiteOfGraceID: 0
   - mapName: Map 2
     sceneBuildIndex: 1
     bossID: 1
-    entrySiteOfGraceID: -1
+    entrySiteOfGraceID: 1
   - mapName: Map 3
     sceneBuildIndex: 1
     bossID: 2
-    entrySiteOfGraceID: -1
+    entrySiteOfGraceID: 2
   - mapName: Map 4
     sceneBuildIndex: 1
     bossID: 3
-    entrySiteOfGraceID: -1
+    entrySiteOfGraceID: 3
   - mapName: Map 5
     sceneBuildIndex: 1
     bossID: 4
-    entrySiteOfGraceID: -1
+    entrySiteOfGraceID: 4
   startingClassID: -1
   currentMapIndex: 0
   gameWon: 0
