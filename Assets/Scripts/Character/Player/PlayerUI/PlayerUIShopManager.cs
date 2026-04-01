@@ -81,7 +81,8 @@ namespace baodeag
                 return;
 
             titleText.text = currentShopInventory.shopName.ToUpper();
-            runeText.text = "RUNES: " + PlayerUIManager.instance.localPlayer.playerShopManager.GetCurrentRunes();
+            runeText.text = "RUNES: " + PlayerUIManager.instance.localPlayer.playerShopManager.GetCurrentRunes()
+                + " | TIER: " + currentShopInventory.GetEffectiveShopProgressionTier();
             SetButtonLabel(modeButton, currentViewMode == ShopViewMode.Buy ? "VIEW: BUY" : "VIEW: SELL");
             SetButtonLabel(actionButton, currentViewMode == ShopViewMode.Buy ? "BUY" : "SELL");
 
@@ -569,7 +570,3 @@ namespace baodeag
         }
     }
 }
-
-
-
-

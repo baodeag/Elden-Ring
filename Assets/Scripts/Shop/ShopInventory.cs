@@ -9,6 +9,8 @@ namespace baodeag
         public string shopName = "Merchant Shop";
         [SerializeField] private string merchantID = "merchant_default";
         [SerializeField] private int shopProgressionTier = 1;
+        [SerializeField] private bool autoScaleShopTierFromProgression = true;
+        [SerializeField] private int shopTierOffset = 0;
         [SerializeField] private bool useGlobalPurchasableItems = true;
         [SerializeField] private List<ShopStockEntry> customStock = new List<ShopStockEntry>();
 
@@ -49,7 +51,7 @@ namespace baodeag
                 return 0;
 
             int basePrice = entry.GetBuyPrice();
-            float progressionMultiplier = 1f + Mathf.Max(0, shopProgressionTier - 1) * buyPriceIncreasePerTier;
+            float progressionMultiplier = 1f + Mathf.Max(0, GetEffectiveShopProgressionTier() - 1) * buyPriceIncreasePerTier;
             return Mathf.Max(0, Mathf.RoundToInt(basePrice * progressionMultiplier));
         }
 
@@ -58,8 +60,16 @@ namespace baodeag
             ShopStockEntry entry = GetEntryForItem(item);
 
             int basePrice = entry != null ? entry.GetSellPrice() : item != null ? item.sellPrice : 0;
-            float progressionMultiplier = 1f + Mathf.Max(0, shopProgressionTier - 1) * sellPriceIncreasePerTier;
+            float progressionMultiplier = 1f + Mathf.Max(0, GetEffectiveShopProgressionTier() - 1) * sellPriceIncreasePerTier;
             return Mathf.Max(0, Mathf.RoundToInt(basePrice * progressionMultiplier));
+        }
+
+        public int GetEffectiveShopProgressionTier()
+        {
+            if (!autoScaleShopTierFromProgression)
+                return Mathf.Max(1, shopProgressionTier);
+
+            return Mathf.Max(1, GetCurrentPlayerProgressionTier() + shopTierOffset);
         }
 
         public int GetRemainingQuantity(Item item)
@@ -183,6 +193,9 @@ namespace baodeag
 
         private int GetCurrentPlayerProgressionTier()
         {
+            if (GameProgressionManager.instance != null)
+                return Mathf.Max(1, GameProgressionManager.Instance.CurrentMapIndex + 1);
+
             CharacterSaveData currentCharacterData = GetCurrentCharacterData();
 
             if (currentCharacterData == null)

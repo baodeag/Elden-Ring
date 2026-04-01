@@ -13307,34 +13307,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1327ec6c0095c844b9a3148ea18c203, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  progressionConfig: {fileID: 11400000, guid: b211faded14b0e549902b74e75470d2e, type: 2}
+  progressionConfig: {fileID: 11400000, guid: ffd25cc1b51813f448442f64d9de68cd, type: 2}
   mapDefinitions:
-  - mapName: Map 1
+  - mapName: Limgrave Gate
     sceneBuildIndex: 1
     bossID: 0
     entrySiteOfGraceID: 0
-  - mapName: Map 2
+    enemyHealthMultiplier: 1
+    enemyDamageMultiplier: 1
+  - mapName: Storm Path
     sceneBuildIndex: 1
     bossID: 1
-    entrySiteOfGraceID: 1
-  - mapName: Map 3
+    entrySiteOfGraceID: 0
+    enemyHealthMultiplier: 1.15
+    enemyDamageMultiplier: 1.1
+  - mapName: Ashen Keep
     sceneBuildIndex: 1
     bossID: 2
-    entrySiteOfGraceID: 2
-  - mapName: Map 4
+    entrySiteOfGraceID: 0
+    enemyHealthMultiplier: 1.35
+    enemyDamageMultiplier: 1.2
+  - mapName: Black Vault
     sceneBuildIndex: 1
     bossID: 3
-    entrySiteOfGraceID: 3
-  - mapName: Map 5
+    entrySiteOfGraceID: 0
+    enemyHealthMultiplier: 1.6
+    enemyDamageMultiplier: 1.35
+  - mapName: Erdtree Ascent
     sceneBuildIndex: 1
     bossID: 4
-    entrySiteOfGraceID: 4
+    entrySiteOfGraceID: 0
+    enemyHealthMultiplier: 1.9
+    enemyDamageMultiplier: 1.5
   startingClassID: -1
   currentMapIndex: 0
   gameWon: 0
   mapsUnlocked:
-    keys: 
-    values: 
+    keys: 00000000
+    values: 01
   pendingTransitionSiteOfGraceID: -1
 --- !u!4 &1745741884
 Transform:

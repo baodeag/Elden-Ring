@@ -11,6 +11,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/World_01.unity
     guid: ad6da0d535067d443aa973a7c1eadb31
+  - enabled: 1
+    path: Assets/Scenes/World_02.unity
+    guid: 1319693964c947379c151e7799c39bd2
+  - enabled: 1
+    path: Assets/Scenes/World_03.unity
+    guid: b51f3a22a8bc4aa0a0f5f968ca6dfd5c
+  - enabled: 1
+    path: Assets/Scenes/World_04.unity
+    guid: 2effc558c2d64b14a0a2af29da2f0b80
+  - enabled: 1
+    path: Assets/Scenes/World_05.unity
+    guid: 92b35031514a4adba243fd80999e0ddd
   - enabled: 0
     path: Assets/Scenes/Area_01_Subarea_00.unity
     guid: 230dd8e52fca5c849811f9a378778a64
@@ -90,3 +102,5 @@ EditorBuildSettings:
     com.unity.input.settings: {fileID: 11400000, guid: 498298ef54fde2340ba98f9f301fa87c, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
+
+

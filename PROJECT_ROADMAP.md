@@ -3,7 +3,7 @@
 Tai lieu nay luu cac hang muc can lam de hoan thien he thong game.
 Cap nhat file nay moi khi chot them tinh nang, doi uu tien, hoac hoan thanh dau viec.
 
-> **Cap nhat lan cuoi: 2026-03-31 (sau progression difficulty ramp data-driven)**
+> **Cap nhat lan cuoi: 2026-03-31 (sau merchant checklist generator + shop inspector helper)**
 
 ---
 
@@ -46,11 +46,12 @@ Muc tieu gameplay chinh:
 - [ ] Starting character selection screen polish/UI data day du (nen tang da co)
 - [ ] Multiple world scenes (chi co World_01, can World_02 -> 05)
 - [ ] Boss clear -> teleport sang map tiep theo bang scene/data that cho tung map day du
-- [ ] Difficulty ramp theo tung map
+- [x] Difficulty ramp theo tung map (nen tang da co)
 - [ ] Win screen / victory scene rieng
 - [ ] Custom merchant stock da dien du lieu trong inspector
 - [ ] Economy balance (rune drop, level up cost, shop price)
 - [ ] UI progression day du (map current, map unlocked, victory screen)
+- [ ] Merchant data pass that trong world/prefab (merchantID, stock, required tier)
 
 ### Moi Hoan Thanh Trong Code
 - [x] `GameProgressionManager` singleton theo doi `startingClassID`, `currentMapIndex`, `mapsUnlocked`, `gameWon`
@@ -66,6 +67,9 @@ Muc tieu gameplay chinh:
 - [x] `GameProgressionManager` dong bo `Map Definitions` tu `GameProgressionConfig` ngay trong editor
 - [x] `Game Progression Config.asset` da duoc tao va co the dung de test progression ngay
 - [x] Difficulty ramp nen tang: moi map co `enemyHealthMultiplier` + `enemyDamageMultiplier`
+- [x] Shop progression tier co the auto-scale theo `currentMapIndex`
+- [x] Co `ShopInventoryEditor` helper de setup merchant nhanh hon trong Inspector
+- [x] Co tool generate checklist merchant tu prefab/scene
 
 ---
 
@@ -82,6 +86,7 @@ Muc tieu gameplay chinh:
   - [x] Save trang thai stock mua/ban cho merchant neu shop dung limited stock.
   - [x] Co support custom stock rieng cho tung merchant.
   - [x] Co nen tang balance gia mua/ban theo progression tier cua shop.
+  - [x] Co support auto-scale `shopProgressionTier` theo progression map, van co the them offset cho merchant.
 - Out-of-game shop:
   - [ ] Tam hoan.
   - [x] Da bo khoi start game/title menu de giu flow gon hon.
@@ -91,6 +96,7 @@ Muc tieu gameplay chinh:
   - [ ] Price table balance day du.
   - [ ] Merchant/shop category.
   - [ ] Rules mo khoa item theo progress.
+  - [x] Co tool editor/checklist ho tro setup merchant data.
 
 ### 2. Settings Menu
 - Audio settings:
@@ -188,6 +194,7 @@ Muc tieu gameplay chinh:
   - [x] Co scroll list, item details, buy/sell, close.
   - [x] Khong con mo tu title menu.
   - [ ] Tiep tuc polish layout bang prefab thay vi runtime code o mot so phan con lai.
+  - [x] Co checklist generator de ra merchant nao can setup.
 - Menu settings:
   - [x] Title menu settings da hoat dong.
   - [x] Character menu settings da hoat dong.
@@ -239,7 +246,7 @@ Muc tieu gameplay chinh:
 - [x] Tao UI mua/ban.
 - [x] Noi inventory + rune vao giao dich.
 - [x] Sua loi spam sell khi item da het van nhan rune.
-- [ ] Gan merchant NPC/scene vao world that va dat merchantID/progressionTier cho tung shop.
+- [ ] Gan merchant NPC/scene vao world that va dat `merchantID`/`shopTierOffset` cho tung shop.
 - [ ] Dien du lieu custom stock that cho tung merchant trong inspector.
 - [ ] Chot bang gia item economy thuc te sau khi playtest.
 
@@ -272,6 +279,8 @@ Muc tieu gameplay chinh:
 - [ ] **[P2]** Polish/hoan thien UI hien thi 5 class trong new game flow.
 - [x] **[P2]** Boss clear event hook vao unlock map tiep theo + scene transition.
 - [ ] **[P3]** Dien merchant custom stock cho cac NPC trong World_01 inspector.
+- [ ] **[P3]** Gan `merchantID`, bat/tat auto tier, va dat `shopTierOffset` hop ly cho tung merchant.
+- [ ] **[P3]** Chay merchant checklist generator, ra soat merchantID trung/lac, va chot stock cho tung merchant.
 - [ ] **[P3]** Balance rune drop + shop price sau playtest co ban.
 
 ### Completed Recently
@@ -352,8 +361,11 @@ Thu tu toi uu de tranh phai lam lai:
 | GameProgressionConfig asset | **Da co** |
 | Boss gate -> unlock -> teleport | **Da co foundation, popup unlock da hoat dong** |
 | Map 2-5 scenes | **Chua co** |
-| Difficulty ramp | **Chua co** |
+| Difficulty ramp | **Da co foundation data-driven** |
 | Popup Map Unlocked / Victory | **Da co** |
 | Win screen | **Chua co** |
 | Economy balance | **Chua co** |
-| Merchant NPC trong world | **Can data** |
+| Merchant NPC trong world | **Co tool setup, can data pass** |
+
+
+

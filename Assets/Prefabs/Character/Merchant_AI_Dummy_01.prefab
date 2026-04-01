@@ -3536,6 +3536,8 @@ MonoBehaviour:
   shopName: Roundtable Merchant
   merchantID: merchant_ai_dummy_01
   shopProgressionTier: 1
+  autoScaleShopTierFromProgression: 1
+  shopTierOffset: 0
   useGlobalPurchasableItems: 1
   customStock: []
   buyPriceIncreasePerTier: 0.2
@@ -4793,3 +4795,4 @@ Transform:
   - {fileID: 5549701948356405754}
   m_Father: {fileID: 2295842717010745845}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+
