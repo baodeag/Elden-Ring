@@ -47,6 +47,17 @@ namespace baodeag
 
         protected virtual void Update()
         {
+            if (character.characterController == null)
+                return;
+
+            if (PlayerUIManager.instance != null &&
+                PlayerUIManager.instance.playerUILoadingScreenManager != null &&
+                PlayerUIManager.instance.playerUILoadingScreenManager.LoadingScreenIsActive())
+            {
+                yVelocity = Vector3.zero;
+                return;
+            }
+
             HandleGroundCheck();
             SetGroundedVelocity();
             HandleSlopeSlideCheck();

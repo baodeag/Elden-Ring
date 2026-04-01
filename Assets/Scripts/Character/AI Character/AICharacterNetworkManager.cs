@@ -36,7 +36,9 @@ namespace baodeag
             {
                 aiCharacter.ApplyDeadState();
                 aiCharacter.aiCharacterInventoryManager.DropItem();
-                aiCharacter.aiCharacterCombatManager.AwardRunesOnDeath(PlayerUIManager.instance.localPlayer);
+
+                if (aiCharacter is not AIBossCharacterManager)
+                    aiCharacter.aiCharacterCombatManager.AwardRunesOnDeath(PlayerUIManager.instance.localPlayer);
 
                 if (NetworkManager.Singleton.IsServer
                     && WorldGameSessionManager.instance != null

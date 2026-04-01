@@ -518,7 +518,10 @@ namespace baodeag
             playerNetworkManager.lastSiteOfGraceUsed.Value = currentCharacterData.lastSiteOfGraceRestedAt;
             isDead.Value = false;
 
-            playerStatsManager.AddRunes(currentCharacterData.runes);
+            playerStatsManager.runes = currentCharacterData.runes;
+
+            if (IsOwner && PlayerUIManager.instance != null)
+                PlayerUIManager.instance.playerUIHudManager.RefreshRuneCountImmediate();
 
             playerNetworkManager.remainingHealthFlasks.Value = currentCharacterData.currentHealthFlasksRemaining;
             playerNetworkManager.remainingFocusPointsFlasks.Value = currentCharacterData.currentFocusPointsFlaskRemaining;

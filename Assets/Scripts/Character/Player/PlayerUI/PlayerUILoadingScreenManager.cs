@@ -19,7 +19,9 @@ namespace baodeag
 
         private void OnSceneChanged(Scene arg0, Scene arg1)
         {
-            DeactivateLoadingScreen();
+            // Scene transitions can require extra time for world scenes, additive areas,
+            // and teleport targets to become ready. The loading screen is now closed
+            // explicitly by the systems that know when the world is actually ready.
         }
 
         public void ActivateLoadingScreen()

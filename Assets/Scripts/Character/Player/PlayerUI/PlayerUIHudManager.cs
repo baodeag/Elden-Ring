@@ -141,6 +141,19 @@ namespace baodeag
             yield return null;
         }
 
+        public void RefreshRuneCountImmediate()
+        {
+            if (waitThenAddRunesCoroutine != null)
+            {
+                StopCoroutine(waitThenAddRunesCoroutine);
+                waitThenAddRunesCoroutine = null;
+            }
+
+            pendingRunesToAdd = 0;
+            runesToAddText.enabled = false;
+            runesCountText.text = PlayerUIManager.instance.localPlayer.playerStatsManager.runes.ToString();
+        }
+
         public void SetNewPoisonBuildUpAmount(float oldValue, float amount)
         {
             poisonBuildUpBar.SetStat(Mathf.RoundToInt(amount));

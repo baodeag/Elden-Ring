@@ -145,6 +145,9 @@ namespace baodeag
 
             if (targetSiteOfGraceID < 0)
             {
+                if (PlayerUIManager.instance != null)
+                    PlayerUIManager.instance.playerUILoadingScreenManager.DeactivateLoadingScreen(1.5f);
+
                 pendingMapEntryCoroutine = null;
                 yield break;
             }
@@ -196,6 +199,13 @@ namespace baodeag
                 WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = targetSiteOfGrace.siteOfGraceID;
                 WorldSaveGameManager.instance.SaveGame();
             }
+
+            // Give the new world scene and additive areas extra time to finish creating
+            // objects before revealing gameplay.
+            yield return new WaitForSeconds(4f);
+
+            if (PlayerUIManager.instance != null)
+                PlayerUIManager.instance.playerUILoadingScreenManager.DeactivateLoadingScreen(2.5f);
 
             pendingMapEntryCoroutine = null;
         }
