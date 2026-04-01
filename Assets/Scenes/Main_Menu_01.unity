@@ -13316,27 +13316,27 @@ MonoBehaviour:
     enemyHealthMultiplier: 1
     enemyDamageMultiplier: 1
   - mapName: Storm Path
-    sceneBuildIndex: 1
+    sceneBuildIndex: 2
     bossID: 1
-    entrySiteOfGraceID: 0
+    entrySiteOfGraceID: 100
     enemyHealthMultiplier: 1.15
     enemyDamageMultiplier: 1.1
   - mapName: Ashen Keep
-    sceneBuildIndex: 1
+    sceneBuildIndex: 3
     bossID: 2
-    entrySiteOfGraceID: 0
+    entrySiteOfGraceID: 200
     enemyHealthMultiplier: 1.35
     enemyDamageMultiplier: 1.2
   - mapName: Black Vault
-    sceneBuildIndex: 1
+    sceneBuildIndex: 4
     bossID: 3
-    entrySiteOfGraceID: 0
+    entrySiteOfGraceID: 300
     enemyHealthMultiplier: 1.6
     enemyDamageMultiplier: 1.35
   - mapName: Erdtree Ascent
-    sceneBuildIndex: 1
+    sceneBuildIndex: 5
     bossID: 4
-    entrySiteOfGraceID: 0
+    entrySiteOfGraceID: 400
     enemyHealthMultiplier: 1.9
     enemyDamageMultiplier: 1.5
   startingClassID: -1

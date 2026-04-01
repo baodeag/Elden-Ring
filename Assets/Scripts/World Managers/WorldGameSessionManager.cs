@@ -130,6 +130,11 @@ namespace baodeag
 
         private void LoadSceneForProgression(int nextSceneBuildIndex)
         {
+            if (WorldAIManager.instance != null)
+            {
+                WorldAIManager.instance.PrepareForWorldSceneTransition();
+            }
+
             if (WorldSceneManager.instance != null)
             {
                 WorldSceneManager.instance.LoadWorldScene(nextSceneBuildIndex);

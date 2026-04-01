@@ -166,6 +166,36 @@ namespace baodeag
 
         }
 
+        public void PrepareForWorldSceneTransition()
+        {
+            DisableAllBossFights();
+
+            if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsServer)
+                return;
+
+            AICharacterManager[] activeCharacters = FindObjectsByType<AICharacterManager>(FindObjectsSortMode.None);
+
+            for (int i = 0; i < activeCharacters.Length; i++)
+            {
+                AICharacterManager character = activeCharacters[i];
+
+                if (character == null)
+                    continue;
+
+                NetworkObject networkObject = character.GetComponent<NetworkObject>();
+
+                if (networkObject == null || !networkObject.IsSpawned)
+                    continue;
+
+                character.aiCharacterCombatManager?.SetTarget(null);
+                RemoveCharacterFromSpawnedCharacterList(character);
+                networkObject.Despawn();
+            }
+
+            spawnedInCharacters.Clear();
+            spawnedInBosses.Clear();
+        }
+
         public void DespawnAllDeadCharacters()
         {
             if (!NetworkManager.Singleton.IsServer)
