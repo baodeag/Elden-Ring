@@ -30,5 +30,24 @@ namespace baodeag
                 }
             }
         }
+
+        public override void OnIsActiveChanged(bool oldStatus, bool newStatus)
+        {
+            if (aiBossCharacter == null)
+            {
+                base.OnIsActiveChanged(oldStatus, newStatus);
+                return;
+            }
+
+            // Regular AI can be fully deactivated outside activation range, but bosses
+            // should remain visible in the arena unless they have actually been defeated.
+            if (!aiBossCharacter.hasBeenDefeated.Value)
+            {
+                gameObject.SetActive(true);
+                return;
+            }
+
+            base.OnIsActiveChanged(oldStatus, newStatus);
+        }
     }
 }

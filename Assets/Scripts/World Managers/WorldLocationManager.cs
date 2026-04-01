@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 namespace baodeag
 {
@@ -34,7 +35,17 @@ namespace baodeag
         {
             List<string> doNotUnloadLocations = new List<string>();
 
-            doNotUnloadLocations.Add(WorldSceneManager.instance.world);
+            if (WorldSceneManager.instance != null)
+            {
+                doNotUnloadLocations.Add(WorldSceneManager.instance.GetCurrentWorldSceneID());
+            }
+            else
+            {
+                Scene activeScene = SceneManager.GetActiveScene();
+
+                if (activeScene.IsValid())
+                    doNotUnloadLocations.Add(activeScene.name);
+            }
 
             List<WorldLocationSceneSet> areasWithPlayersActive = new List<WorldLocationSceneSet>();
 
@@ -157,7 +168,7 @@ namespace baodeag
                 //wait for the scene
                 for (int i = 0; i < WorldSceneManager.instance.loadedScenes.Count; i++)
                 {
-                    if (WorldSceneManager.instance.loadedScenes[i].name == WorldSceneManager.instance.world)
+                    if (WorldSceneManager.instance.loadedScenes[i].name == WorldSceneManager.instance.GetCurrentWorldSceneID())
                     {
                         hasScene = true;
                         ProbeReferenceVolume.instance.SetActiveScene(WorldSceneManager.instance.loadedScenes[i]);

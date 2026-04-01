@@ -3,6 +3,7 @@ using Unity.Netcode;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Collections;
+using System.IO;
 
 namespace baodeag
 {
@@ -52,6 +53,17 @@ namespace baodeag
             }
 
             DontDestroyOnLoad(gameObject);
+            RefreshCurrentWorldSceneID(SceneManager.GetActiveScene());
+        }
+
+        private void OnEnable()
+        {
+            SceneManager.sceneLoaded += OnUnitySceneLoaded;
+        }
+
+        private void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnUnitySceneLoaded;
         }
 
         public override void OnNetworkSpawn()
@@ -101,6 +113,8 @@ namespace baodeag
                     //called when the scene is finished loading, add it to the list of loaded scenes
                     loadedScenes.Add(sceneEvent.Scene);
 
+                    RefreshCurrentWorldSceneID(sceneEvent.Scene);
+
                     //double check loaded scenes to make sure they are loaded, if not remove them from the loaded list
                     for (int i = 0; i < loadedScenes.Count; i++)
                     {
@@ -144,12 +158,66 @@ namespace baodeag
             //activate loading screen
             PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
 
-            //get world scene, and load it
-            string worldScene = SceneUtility.GetScenePathByBuildIndex(buildIndex);
-            NetworkManager.Singleton.SceneManager.LoadScene(worldScene, LoadSceneMode.Single);
+            string worldScenePath = SceneUtility.GetScenePathByBuildIndex(buildIndex);
+
+            if (string.IsNullOrEmpty(worldScenePath))
+            {
+                Debug.LogWarning($"WorldSceneManager: Could not resolve scene path for build index {buildIndex}.");
+                return;
+            }
+
+            bool startedNetworkSceneLoad = false;
+
+            if (NetworkManager.Singleton != null &&
+                NetworkManager.Singleton.SceneManager != null &&
+                (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient))
+            {
+                string worldSceneName = Path.GetFileNameWithoutExtension(worldScenePath);
+                var loadSceneStatus = NetworkManager.Singleton.SceneManager.LoadScene(worldSceneName, LoadSceneMode.Single);
+                startedNetworkSceneLoad = loadSceneStatus == SceneEventProgressStatus.Started;
+
+                if (!startedNetworkSceneLoad)
+                {
+                    Debug.LogWarning($"WorldSceneManager: Netcode scene load did not start for '{worldSceneName}' (build index {buildIndex}). Falling back to SceneManager.LoadScene.");
+                }
+            }
+
+            if (!startedNetworkSceneLoad)
+            {
+                SceneManager.LoadScene(buildIndex, LoadSceneMode.Single);
+            }
 
             //load player save data
             PlayerUIManager.instance.localPlayer.LoadGameDataFromCurrentCharacterData(ref WorldSaveGameManager.instance.currentCharacterData);
+        }
+
+        private void OnUnitySceneLoaded(Scene scene, LoadSceneMode loadMode)
+        {
+            if (loadMode != LoadSceneMode.Single)
+                return;
+
+            RefreshCurrentWorldSceneID(scene);
+        }
+
+        private void RefreshCurrentWorldSceneID(Scene scene)
+        {
+            if (!scene.IsValid())
+                return;
+
+            if (scene.buildIndex >= 1 && scene.buildIndex <= 5)
+            {
+                world = scene.name;
+            }
+        }
+
+        public string GetCurrentWorldSceneID()
+        {
+            Scene activeScene = SceneManager.GetActiveScene();
+
+            if (activeScene.IsValid() && activeScene.buildIndex >= 1 && activeScene.buildIndex <= 5)
+                return activeScene.name;
+
+            return world;
         }
 
         //used to load additive scenes in main world scene

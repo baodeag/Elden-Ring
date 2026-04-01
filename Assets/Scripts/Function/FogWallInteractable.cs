@@ -28,8 +28,24 @@ namespace baodeag
         protected override void Awake()
         {
             base.Awake();
+            AutoAssignFogWallIDFromWorldScene();
 
             fogWallAudioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        private void OnValidate()
+        {
+            AutoAssignFogWallIDFromWorldScene();
+        }
+
+        private void AutoAssignFogWallIDFromWorldScene()
+        {
+            int sceneBuildIndex = gameObject.scene.buildIndex;
+
+            if (sceneBuildIndex < 1 || sceneBuildIndex > 5)
+                return;
+
+            fogWallID = sceneBuildIndex - 1;
         }
 
         public override void Interact(PlayerManager player)

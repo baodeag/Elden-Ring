@@ -10,8 +10,25 @@ namespace baodeag
 
         private void Awake()
         {
+            AutoAssignBossIDFromWorldScene();
+
             if (triggerCollider == null)
                 triggerCollider = GetComponent<Collider>();
+        }
+
+        private void OnValidate()
+        {
+            AutoAssignBossIDFromWorldScene();
+        }
+
+        private void AutoAssignBossIDFromWorldScene()
+        {
+            int sceneBuildIndex = gameObject.scene.buildIndex;
+
+            if (sceneBuildIndex < 1 || sceneBuildIndex > 5)
+                return;
+
+            bossID = sceneBuildIndex - 1;
         }
 
         private void Start()

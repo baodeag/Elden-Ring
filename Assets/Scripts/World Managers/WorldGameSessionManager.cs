@@ -19,6 +19,7 @@ namespace baodeag
         private Coroutine revivalCoroutine;
         private Coroutine pendingMapEntryCoroutine;
         private Coroutine returnToTitleCoroutine;
+        private Coroutine mapTransitionCoroutine;
 
         private UnityTransport unityTransport;
         private const ushort DefaultUnityTransportPort = 7777;
@@ -91,6 +92,51 @@ namespace baodeag
                 StopCoroutine(returnToTitleCoroutine);
 
             returnToTitleCoroutine = StartCoroutine(ReturnToTitleAfterVictoryCoroutine(delay));
+        }
+
+        public void ScheduleMapTransition(bool shouldLoadNextScene, int nextSceneBuildIndex, bool gameWon, int unlockedMapIndex, string queuedMapUnlockedMessage)
+        {
+            if (mapTransitionCoroutine != null)
+                StopCoroutine(mapTransitionCoroutine);
+
+            mapTransitionCoroutine = StartCoroutine(ScheduleMapTransitionCoroutine(shouldLoadNextScene, nextSceneBuildIndex, gameWon, unlockedMapIndex, queuedMapUnlockedMessage));
+        }
+
+        private IEnumerator ScheduleMapTransitionCoroutine(bool shouldLoadNextScene, int nextSceneBuildIndex, bool gameWon, int unlockedMapIndex, string queuedMapUnlockedMessage)
+        {
+            yield return new WaitForSeconds(5f);
+
+            if (gameWon)
+            {
+                ReturnToTitleAfterVictory();
+                mapTransitionCoroutine = null;
+                yield break;
+            }
+
+            if (!string.IsNullOrEmpty(queuedMapUnlockedMessage))
+                yield return new WaitForSeconds(3f);
+
+            if (shouldLoadNextScene && nextSceneBuildIndex >= 0 && nextSceneBuildIndex != SceneManager.GetActiveScene().buildIndex)
+            {
+                LoadSceneForProgression(nextSceneBuildIndex);
+            }
+            else if (unlockedMapIndex >= 0)
+            {
+                ProcessPendingMapEntryWithoutSceneReload();
+            }
+
+            mapTransitionCoroutine = null;
+        }
+
+        private void LoadSceneForProgression(int nextSceneBuildIndex)
+        {
+            if (WorldSceneManager.instance != null)
+            {
+                WorldSceneManager.instance.LoadWorldScene(nextSceneBuildIndex);
+                return;
+            }
+
+            SceneManager.LoadScene(nextSceneBuildIndex, LoadSceneMode.Single);
         }
 
         private IEnumerator HandlePendingMapEntryCoroutine()

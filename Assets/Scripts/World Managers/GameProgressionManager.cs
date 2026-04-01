@@ -18,11 +18,11 @@ namespace baodeag
         [Header("Map Definitions")]
         [SerializeField] private MapProgressionDefinition[] mapDefinitions = new MapProgressionDefinition[TotalMapCount]
         {
-            new MapProgressionDefinition { mapName = "Map 1", sceneBuildIndex = DefaultWorldSceneBuildIndex, bossID = 0, enemyHealthMultiplier = 1f, enemyDamageMultiplier = 1f },
-            new MapProgressionDefinition { mapName = "Map 2", sceneBuildIndex = DefaultWorldSceneBuildIndex, bossID = 1, enemyHealthMultiplier = 1.15f, enemyDamageMultiplier = 1.1f },
-            new MapProgressionDefinition { mapName = "Map 3", sceneBuildIndex = DefaultWorldSceneBuildIndex, bossID = 2, enemyHealthMultiplier = 1.35f, enemyDamageMultiplier = 1.2f },
-            new MapProgressionDefinition { mapName = "Map 4", sceneBuildIndex = DefaultWorldSceneBuildIndex, bossID = 3, enemyHealthMultiplier = 1.6f, enemyDamageMultiplier = 1.35f },
-            new MapProgressionDefinition { mapName = "Map 5", sceneBuildIndex = DefaultWorldSceneBuildIndex, bossID = 4, enemyHealthMultiplier = 1.9f, enemyDamageMultiplier = 1.5f }
+            new MapProgressionDefinition { mapName = "Map 1", sceneBuildIndex = 1, bossID = 0, entrySiteOfGraceID = 0, enemyHealthMultiplier = 1f, enemyDamageMultiplier = 1f },
+            new MapProgressionDefinition { mapName = "Map 2", sceneBuildIndex = 2, bossID = 1, entrySiteOfGraceID = 100, enemyHealthMultiplier = 1.15f, enemyDamageMultiplier = 1.1f },
+            new MapProgressionDefinition { mapName = "Map 3", sceneBuildIndex = 3, bossID = 2, entrySiteOfGraceID = 200, enemyHealthMultiplier = 1.35f, enemyDamageMultiplier = 1.2f },
+            new MapProgressionDefinition { mapName = "Map 4", sceneBuildIndex = 4, bossID = 3, entrySiteOfGraceID = 300, enemyHealthMultiplier = 1.6f, enemyDamageMultiplier = 1.35f },
+            new MapProgressionDefinition { mapName = "Map 5", sceneBuildIndex = 5, bossID = 4, entrySiteOfGraceID = 400, enemyHealthMultiplier = 1.9f, enemyDamageMultiplier = 1.5f }
         };
 
         [Header("Current Progression")]
@@ -47,6 +47,11 @@ namespace baodeag
 
         public static void EnsureInstance()
         {
+            if (instance != null)
+                return;
+
+            instance = FindFirstObjectByType<GameProgressionManager>();
+
             if (instance != null)
                 return;
 
@@ -337,8 +342,9 @@ namespace baodeag
                         definitions[i] = new MapProgressionDefinition
                         {
                             mapName = $"Map {i + 1}",
-                            sceneBuildIndex = DefaultWorldSceneBuildIndex,
+                            sceneBuildIndex = i + 1,
                             bossID = i,
+                            entrySiteOfGraceID = i == 0 ? 0 : i * 100,
                             enemyHealthMultiplier = 1f,
                             enemyDamageMultiplier = 1f
                         };
@@ -355,8 +361,9 @@ namespace baodeag
                     mapDefinitions[i] = new MapProgressionDefinition
                     {
                         mapName = $"Map {i + 1}",
-                        sceneBuildIndex = DefaultWorldSceneBuildIndex,
+                        sceneBuildIndex = i + 1,
                         bossID = i,
+                        entrySiteOfGraceID = i == 0 ? 0 : i * 100,
                         enemyHealthMultiplier = 1f,
                         enemyDamageMultiplier = 1f
                     };

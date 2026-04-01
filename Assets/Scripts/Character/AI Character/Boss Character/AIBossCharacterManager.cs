@@ -41,7 +41,23 @@ namespace baodeag
 
         protected override void Awake()
         {
-            base.Awake(); 
+            base.Awake();
+            AutoAssignBossIDFromWorldScene();
+        }
+
+        private void OnValidate()
+        {
+            AutoAssignBossIDFromWorldScene();
+        }
+
+        private void AutoAssignBossIDFromWorldScene()
+        {
+            int sceneBuildIndex = gameObject.scene.buildIndex;
+
+            if (sceneBuildIndex < 1 || sceneBuildIndex > 5)
+                return;
+
+            bossID = sceneBuildIndex - 1;
         }
 
         public override void OnNetworkSpawn()
@@ -195,27 +211,17 @@ namespace baodeag
                 ApplyBossWorldState();
             }
 
-            yield return new WaitForSeconds(5);
-
-            if (IsOwner)
+            if (IsOwner && WorldGameSessionManager.instance != null)
             {
-                if (gameWon)
-                {
-                    WorldGameSessionManager.instance.ReturnToTitleAfterVictory();
-                }
+                WorldGameSessionManager.instance.ScheduleMapTransition(
+                    shouldLoadNextScene,
+                    nextSceneBuildIndex,
+                    gameWon,
+                    unlockedMapIndex,
+                    queuedMapUnlockedMessage);
             }
 
-            if (!string.IsNullOrEmpty(queuedMapUnlockedMessage))
-                yield return new WaitForSeconds(3f);
-
-            if (IsOwner && shouldLoadNextScene && nextSceneBuildIndex >= 0 && nextSceneBuildIndex != SceneManager.GetActiveScene().buildIndex)
-            {
-                WorldSceneManager.instance.LoadWorldScene(nextSceneBuildIndex);
-            }
-            else if (IsOwner && !gameWon && unlockedMapIndex >= 0)
-            {
-                WorldGameSessionManager.instance.ProcessPendingMapEntryWithoutSceneReload();
-            }
+            yield break;
         }
 
         public void WakeBoss()
