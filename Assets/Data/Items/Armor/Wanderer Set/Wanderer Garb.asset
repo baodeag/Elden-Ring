@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 264bcc99cbfd10941b38e98b17f23827, type: 3}
+  m_Name: Wanderer Garb
+  m_EditorClassIdentifier: 
+  itemName: Wanderer Garb
+  itemIcon: {fileID: 21300000, guid: b2e3770e6c09eff4080afa88acb94b17, type: 3}
+  itemDescription: Light armor suited to ranged play, travel, and quick map progression.
+  itemID: 0
+  itemWeight: 5.6
+  physicalDamageAbsorption: 6.4
+  magicDamageAbsorption: 6.9
+  fireDamageAbsorption: 7.2
+  lightningDamageAbsorption: 6.1
+  holyDamageAbsorption: 6.5
+  immunity: 16
+  robustness: 18
+  focus: 22
+  vitality: 18
+  poise: 11
+  equipmentModels:
+  - {fileID: 11400000, guid: f5067a48931d4b77aee7e3e3e8ff15d2, type: 2}
+  - {fileID: 11400000, guid: 20efa4d8c31045158ac75d5d56cc72ee, type: 2}
+  - {fileID: 11400000, guid: 5498f1db3e2241628bc3479f3065dca6, type: 2}

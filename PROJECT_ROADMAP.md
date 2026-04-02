@@ -3,7 +3,7 @@
 Tai lieu nay luu cac hang muc can lam de hoan thien he thong game.
 Cap nhat file nay moi khi chot them tinh nang, doi uu tien, hoac hoan thanh dau viec.
 
-> **Cap nhat lan cuoi: 2026-03-31 (sau merchant checklist generator + shop inspector helper)**
+> **Cap nhat lan cuoi: 2026-04-02 (sau map progression pass, scene transition fix, va cleanup AI state khi doi map)**
 
 ---
 
@@ -19,7 +19,7 @@ Muc tieu gameplay chinh:
 
 ---
 
-## Trang Thai Hien Tai (2026-03-30)
+## Trang Thai Hien Tai (2026-04-02)
 
 ### Da Hoan Thanh
 - [x] Core character system (Player + AI): stats, combat, locomotion, animation, network
@@ -39,13 +39,13 @@ Muc tieu gameplay chinh:
 - [x] Equipment inventory UI: `PlayerUIEquipmentManager`
 - [x] HUD (HP/Stamina/FP bars, boss HP bar, status effects): `PlayerUIHudManager`
 - [x] Site of Grace system: `WorldLocationManager`, rest mechanic
-- [x] World scene: 1 map dang hoat dong (World_01 / Area_01)
+- [x] World scene progression foundation: `World_01` -> `World_05` da co trong build settings va co the transition duoc
 - [x] Main Menu scene: Title screen + load menu + settings
 
 ### Chua Co / Chua Hoan Thanh
 - [ ] Starting character selection screen polish/UI data day du (nen tang da co)
-- [ ] Multiple world scenes (chi co World_01, can World_02 -> 05)
-- [ ] Boss clear -> teleport sang map tiep theo bang scene/data that cho tung map day du
+- [x] Multiple world scenes foundation (`World_01` -> `World_05`) da scaffold va add vao build settings
+- [x] Boss clear -> unlock map -> load scene/teleport sang map tiep theo da hoat dong
 - [x] Difficulty ramp theo tung map (nen tang da co)
 - [ ] Win screen / victory scene rieng
 - [ ] Custom merchant stock da dien du lieu trong inspector
@@ -66,10 +66,14 @@ Muc tieu gameplay chinh:
 - [x] Da sua popup `Map Unlocked` hien thi on dinh sau boss death
 - [x] `GameProgressionManager` dong bo `Map Definitions` tu `GameProgressionConfig` ngay trong editor
 - [x] `Game Progression Config.asset` da duoc tao va co the dung de test progression ngay
+- [x] `Game Progression Config.asset` da duoc chot entry grace cho 5 map: `0 / 100 / 200 / 300 / 400`
 - [x] Difficulty ramp nen tang: moi map co `enemyHealthMultiplier` + `enemyDamageMultiplier`
 - [x] Shop progression tier co the auto-scale theo `currentMapIndex`
 - [x] Co `ShopInventoryEditor` helper de setup merchant nhanh hon trong Inspector
 - [x] Co tool generate checklist merchant tu prefab/scene
+- [x] `WorldSceneManager` load map moi on dinh hon (resolve scene name + fallback single scene load)
+- [x] Loading/teleport handoff sang map moi da duoc giu den khi world/grace san sang
+- [x] Khi doi map, AI/NPC/boss cua map cu duoc cleanup truoc khi load map moi
 
 ---
 
@@ -150,8 +154,8 @@ Muc tieu gameplay chinh:
 - Progression:
   - Boss gate cho tung map.
   - Dieu kien unlock map tiep theo.
-  - Teleport/chuyen scene sang map moi sau khi thang boss.
-  - Luu trang thai da pha dao boss nao, da mo khoa map nao.
+  - [x] Teleport/chuyen scene sang map moi sau khi thang boss.
+  - [x] Luu trang thai da pha dao boss nao, da mo khoa map nao.
 - Difficulty ramp:
   - Map 1 -> 5 tang dan:
     - HP quai. *(da co nen tang multiplier theo map)*
@@ -207,6 +211,7 @@ Muc tieu gameplay chinh:
   - [ ] Boss defeated.
   - [ ] Maps unlocked.
 - Win screen / lose flow / transition screen.
+  - [x] Transition loading flow co nen tang on dinh cho map progression.
 
 ### Save Data Expansion
 - Them vao save:
@@ -257,7 +262,8 @@ Muc tieu gameplay chinh:
 - [x] `WorldSceneManager` load map theo progression state.
 - [x] Popup `Map Unlocked` da hien thi duoc trong flow boss clear.
 - [x] Difficulty multiplier: scale HP/damage quai theo map index.
-- [ ] Tao/dung World_02 -> 05 scenes (co the dung bo map don gian truoc, polish sau).
+- [x] Tao/dung World_02 -> 05 scene scaffold trong build settings de test progression.
+- [ ] Pass content/layout/boss/spawner that cho tung scene `World_02` -> `World_05`.
 - [x] Win condition khi boss map 5 bi diet.
 - [ ] Win screen UI / scene rieng.
 
@@ -274,7 +280,7 @@ Muc tieu gameplay chinh:
 - [x] **[P1]** Tao `GameProgressionManager` (singleton, theo doi mapIndex, mapsUnlocked, gameWon).
 - [x] **[P1]** Mo rong `CharacterSaveData`: them `startingClassID`, `mapsUnlocked`, `currentMapIndex`, `gameWon`.
 - [x] **[P1]** Tao `GameProgressionConfig` asset va noi vao `GameProgressionManager`.
-- [ ] **[P1]** Dien data that cuoi cung cho 5 map trong `GameProgressionConfig`: `mapName`, `sceneBuildIndex`, `bossID`, `entrySiteOfGraceID`.
+- [x] **[P1]** Dien data progression co the test duoc cho 5 map trong `GameProgressionConfig`: `sceneBuildIndex`, `bossID`, `entrySiteOfGraceID`.
 - [x] **[P2]** Them `enemyHealthMultiplier` + `enemyDamageMultiplier` vao `GameProgressionConfig` va noi AI scale theo `currentMapIndex`.
 - [ ] **[P2]** Polish/hoan thien UI hien thi 5 class trong new game flow.
 - [x] **[P2]** Boss clear event hook vao unlock map tiep theo + scene transition.
@@ -296,12 +302,15 @@ Muc tieu gameplay chinh:
 - [x] Them popup `Map Unlocked`.
 - [x] Sua popup unlock hien thi on dinh sau boss death.
 - [x] Sua `GameProgressionManager` de editor sync theo `GameProgressionConfig`.
+- [x] Sua scene transition/load handoff de boss clear co the sang `World_02` -> `World_05`.
+- [x] Chot `entrySiteOfGraceID` cho 5 map trong `Game Progression Config.asset`.
+- [x] Cleanup AI/NPC/boss state cua map cu truoc khi load map moi.
 
 ### Next (Lam Sau Immediate)
 - [ ] Them data balance day du cho rune, level up, shop price sau khi playtest progression.
 - [ ] Them UI progression day du ngoai popup (`map current`, `maps unlocked`, `boss defeated`).
 - [x] Tang do kho co ban cua quai/boss theo tung map bang multiplier HP/damage.
-- [ ] Dat `entrySiteOfGraceID` that cho tung map thay vi tam thoi dung chung entry.
+- [x] Dat `entrySiteOfGraceID` cho 5 map de progression co the teleport dung entry.
 - [ ] Gan merchant NPC/scene vao ShopInteractable va custom stock cho tung shop.
 - [ ] Refactor them phan layout shop con tao runtime sang prefab neu can.
 
@@ -309,7 +318,7 @@ Muc tieu gameplay chinh:
 - [ ] Can nhac co lam lai shop ngoai main menu hay khong.
 - [ ] Them reward/doc quyen theo tung map.
 - [ ] Them endgame/New Game+ neu can.
-- [ ] World_02 -> 05 map design va scene build.
+- [ ] World_02 -> 05 map design/content pass that (layout, enemy placement, boss arena, grace placement).
 
 ---
 
@@ -335,11 +344,11 @@ Muc tieu gameplay chinh:
 ## Current Priority Recommendation
 
 Thu tu toi uu de tranh phai lam lai:
-1. **[P1] Chot `GameProgressionConfig` that cho du 5 map** (`sceneBuildIndex`, `bossID`, `entrySiteOfGraceID`)
+1. **[P1] Pass content that cho `World_02` -> `World_05`** (layout, spawner, boss arena, grace placement)
 2. **[P1] 5 Starting class data + polish man hinh chon nhan vat**
 3. **[P2] Hoan thien merchant stock va shop balance**
-4. **[P3] Tao scene World_02 -> 05 + gan entry Site Of Grace that**
-5. **[P4] Win screen + progression UI day du neu can**
+4. **[P3] Progression UI day du** (`map current`, `maps unlocked`, `boss defeated`)
+5. **[P4] Win screen + transition polish neu can**
 
 ---
 
@@ -359,8 +368,8 @@ Thu tu toi uu de tranh phai lam lai:
 | Starting character selection | **Co nen tang, can polish** |
 | GameProgressionManager (5 map) | **Da co** |
 | GameProgressionConfig asset | **Da co** |
-| Boss gate -> unlock -> teleport | **Da co foundation, popup unlock da hoat dong** |
-| Map 2-5 scenes | **Chua co** |
+| Boss gate -> unlock -> teleport | **Da hoat dong qua scene progression** |
+| Map 2-5 scenes | **Da co scaffold, can content pass** |
 | Difficulty ramp | **Da co foundation data-driven** |
 | Popup Map Unlocked / Victory | **Da co** |
 | Win screen | **Chua co** |

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4da55954ce4ff3d4987b4d8d1a6643c4, type: 3}
+  m_Name: Wanderer Boots
+  m_EditorClassIdentifier: 
+  itemName: Wanderer Boots
+  itemIcon: {fileID: 21300000, guid: 628145fbd18e4db45b7f1760276bba23, type: 3}
+  itemDescription: Travel gear built for kiting, pathing, and fast repositioning.
+  itemID: 0
+  itemWeight: 3.8
+  physicalDamageAbsorption: 4.1
+  magicDamageAbsorption: 4.8
+  fireDamageAbsorption: 5
+  lightningDamageAbsorption: 4.4
+  holyDamageAbsorption: 4.7
+  immunity: 10
+  robustness: 14
+  focus: 15
+  vitality: 13
+  poise: 6
+  equipmentModels:
+  - {fileID: 11400000, guid: 08cf97ec60f049c8a46ad213b3b85a07, type: 2}
+  - {fileID: 11400000, guid: c3f80a59eb884c6ca70f5947c9112166, type: 2}
+  - {fileID: 11400000, guid: 3a20bb77773547b3a7f7687e9755b111, type: 2}

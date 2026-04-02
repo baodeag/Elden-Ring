@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a29f1419b0784834a84bdcb6648a279e, type: 3}
+  m_Name: Ironclad Gauntlets
+  m_EditorClassIdentifier: 
+  itemName: Ironclad Gauntlets
+  itemIcon: {fileID: 21300000, guid: a8104549ab8218a4fb97ad07c9217609, type: 3}
+  itemDescription: Heavy gauntlets that trade speed for stability and guard strength.
+  itemID: 0
+  itemWeight: 4.2
+  physicalDamageAbsorption: 3.8
+  magicDamageAbsorption: 3
+  fireDamageAbsorption: 3
+  lightningDamageAbsorption: 2.6
+  holyDamageAbsorption: 2.4
+  immunity: 11
+  robustness: 19
+  focus: 7
+  vitality: 7
+  poise: 6
+  equipmentModels:
+  - {fileID: 11400000, guid: f80f4d48f86d4a09bd974aef5e77a994, type: 2}
+  - {fileID: 11400000, guid: ae579ab232d648df867232f852417900, type: 2}
+  - {fileID: 11400000, guid: 7eb07bf3e4294a5ab9ea6fbfdcf8f32a, type: 2}
+  - {fileID: 11400000, guid: d9019610133446fe8e74c1d161aaa02f, type: 2}

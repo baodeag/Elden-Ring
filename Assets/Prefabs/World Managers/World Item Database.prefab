@@ -60,12 +60,24 @@ MonoBehaviour:
   headEquipment:
   - {fileID: 11400000, guid: 0367518efc15af643bab9ad92d39bba7, type: 2}
   - {fileID: 11400000, guid: f4b69d6394f36734b8ccb06f610049fe, type: 2}
+  - {fileID: 11400000, guid: a9b85394bb934d908a8a1a64ca78b437, type: 2}
+  - {fileID: 11400000, guid: 87da904bd7804f9a92ab40742805c93a, type: 2}
+  - {fileID: 11400000, guid: b5e3f874a87849dd8cc519f229539264, type: 2}
   bodyEquipment:
   - {fileID: 11400000, guid: 7a9a409d5732a69469b7d433784133b2, type: 2}
+  - {fileID: 11400000, guid: 840aa2728d3b4ba4b12a7b307f824b94, type: 2}
+  - {fileID: 11400000, guid: 44406cc871da43afa58a3812a49be1ed, type: 2}
+  - {fileID: 11400000, guid: 25027cf1470e4ff3bebe5a74894d36da, type: 2}
   legEquipment:
   - {fileID: 11400000, guid: 78ca0d8554b1d09499208d5e2aadb59f, type: 2}
+  - {fileID: 11400000, guid: e18d0eaedc034ee38a9d9429970b5df3, type: 2}
+  - {fileID: 11400000, guid: 8e3a1e9cf1d84385a1f95c56c3f6e0d4, type: 2}
+  - {fileID: 11400000, guid: 8deec9e219c645289bf53ac2b1b7ab30, type: 2}
   handEquipment:
   - {fileID: 11400000, guid: 8fca7fb39e972c64dadbfac6422a88fa, type: 2}
+  - {fileID: 11400000, guid: 0f0cf68f8bb34cef8235d9df9af3c629, type: 2}
+  - {fileID: 11400000, guid: a173fb3b19b245df924a7de01659f7b1, type: 2}
+  - {fileID: 11400000, guid: f22fbf1330b04bb9804a1482c671148d, type: 2}
   ashesOfWar:
   - {fileID: 11400000, guid: dd017550295004e4d896c27346b9892d, type: 2}
   spells:

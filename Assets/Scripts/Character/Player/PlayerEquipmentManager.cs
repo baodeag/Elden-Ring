@@ -1020,11 +1020,28 @@ namespace baodeag
                 //remove old weapon model
                 rightHandWeaponSlot.UnloadWeapon();
 
+                GameObject weaponModelPrefab = player.playerInventoryManager.currentRightHandWeapon.weaponModel;
+
+                if (weaponModelPrefab == null && WorldItemDatabase.Instance != null && WorldItemDatabase.Instance.unarmedWeapon != null)
+                {
+                    Debug.LogWarning($"Weapon '{player.playerInventoryManager.currentRightHandWeapon.itemName}' is missing a weaponModel. Falling back to Unarmed model.");
+                    weaponModelPrefab = WorldItemDatabase.Instance.unarmedWeapon.weaponModel;
+                }
+
+                if (weaponModelPrefab == null)
+                {
+                    Debug.LogWarning($"Weapon '{player.playerInventoryManager.currentRightHandWeapon.itemName}' could not be loaded because no fallback weaponModel was found.");
+                    return;
+                }
+
                 //bring new weapon model
-                rightHandWeaponModel = Instantiate(player.playerInventoryManager.currentRightHandWeapon.weaponModel);
+                rightHandWeaponModel = Instantiate(weaponModelPrefab);
                 rightHandWeaponSlot.PlaceWeaponModelIntoSlot(rightHandWeaponModel);
                 rightWeaponManager = rightHandWeaponModel.GetComponent<WeaponManager>();
-                rightWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentRightHandWeapon);
+
+                if (rightWeaponManager != null)
+                    rightWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentRightHandWeapon);
+
                 player.playerAnimatorManager.UpdateAnimatorController(player.playerInventoryManager.currentRightHandWeapon.weaponAnimator);
             }
 
@@ -1114,8 +1131,22 @@ namespace baodeag
                 if (leftHandShieldSlot.currentWeaponModel != null)
                     leftHandShieldSlot.UnloadWeapon();
 
+                GameObject weaponModelPrefab = player.playerInventoryManager.currentLeftHandWeapon.weaponModel;
+
+                if (weaponModelPrefab == null && WorldItemDatabase.Instance != null && WorldItemDatabase.Instance.unarmedWeapon != null)
+                {
+                    Debug.LogWarning($"Weapon '{player.playerInventoryManager.currentLeftHandWeapon.itemName}' is missing a weaponModel. Falling back to Unarmed model.");
+                    weaponModelPrefab = WorldItemDatabase.Instance.unarmedWeapon.weaponModel;
+                }
+
+                if (weaponModelPrefab == null)
+                {
+                    Debug.LogWarning($"Weapon '{player.playerInventoryManager.currentLeftHandWeapon.itemName}' could not be loaded because no fallback weaponModel was found.");
+                    return;
+                }
+
                 //bring new weapon model
-                leftHandWeaponModel = Instantiate(player.playerInventoryManager.currentLeftHandWeapon.weaponModel);
+                leftHandWeaponModel = Instantiate(weaponModelPrefab);
 
                 switch (player.playerInventoryManager.currentLeftHandWeapon.weaponModelType)
                 {
@@ -1130,7 +1161,9 @@ namespace baodeag
                 }
 
                 leftWeaponManager = leftHandWeaponModel.GetComponent<WeaponManager>();
-                leftWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentLeftHandWeapon);
+
+                if (leftWeaponManager != null)
+                    leftWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentLeftHandWeapon);
             }
         }
 

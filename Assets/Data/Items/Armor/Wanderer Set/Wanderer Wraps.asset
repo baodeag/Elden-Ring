@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a29f1419b0784834a84bdcb6648a279e, type: 3}
+  m_Name: Wanderer Wraps
+  m_EditorClassIdentifier: 
+  itemName: Wanderer Wraps
+  itemIcon: {fileID: 21300000, guid: a8104549ab8218a4fb97ad07c9217609, type: 3}
+  itemDescription: Simple wraps that keep weight low without leaving the arms fully exposed.
+  itemID: 0
+  itemWeight: 2
+  physicalDamageAbsorption: 1.9
+  magicDamageAbsorption: 2.3
+  fireDamageAbsorption: 2.4
+  lightningDamageAbsorption: 2
+  holyDamageAbsorption: 2.2
+  immunity: 6
+  robustness: 8
+  focus: 11
+  vitality: 9
+  poise: 2
+  equipmentModels:
+  - {fileID: 11400000, guid: 6252b7caa4504aab99e00a054d5ec238, type: 2}
+  - {fileID: 11400000, guid: 591d1dcbb96c44038763f9456f29cd78, type: 2}
+  - {fileID: 11400000, guid: cce9e5c3b93643ea869a6a135287cda4, type: 2}
+  - {fileID: 11400000, guid: 15cc68b844fb49c8a4d52bf62ef8bacd, type: 2}

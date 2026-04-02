@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4da55954ce4ff3d4987b4d8d1a6643c4, type: 3}
+  m_Name: Ironclad Greaves
+  m_EditorClassIdentifier: 
+  itemName: Ironclad Greaves
+  itemIcon: {fileID: 21300000, guid: 628145fbd18e4db45b7f1760276bba23, type: 3}
+  itemDescription: Greaves and knee guards made to anchor a tanky build.
+  itemID: 0
+  itemWeight: 7.8
+  physicalDamageAbsorption: 8.5
+  magicDamageAbsorption: 6.9
+  fireDamageAbsorption: 6.9
+  lightningDamageAbsorption: 6
+  holyDamageAbsorption: 5.7
+  immunity: 20
+  robustness: 35
+  focus: 12
+  vitality: 12
+  poise: 17
+  equipmentModels:
+  - {fileID: 11400000, guid: 68b7b230326a444aabc74095de30deca, type: 2}
+  - {fileID: 11400000, guid: c4288f5bdd4f4a91b1d6602468d8e097, type: 2}
+  - {fileID: 11400000, guid: cf1dd74dfd3d455fa6747e7058fc4de9, type: 2}
+  - {fileID: 11400000, guid: a423dc0572d94c818ab252bc5c8970c8, type: 2}
+  - {fileID: 11400000, guid: f6039bf30a424a429b3c755dbf8793fa, type: 2}

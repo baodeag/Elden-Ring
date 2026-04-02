@@ -15691,25 +15691,97 @@ MonoBehaviour:
     - {fileID: 11400000, guid: f467c0bb713b36a4eaaf247d209f23c7, type: 2}
     - {fileID: 0}
   - className: Ranger
-    vitality: 6
-    endurance: 6
-    mind: 11
-    strength: 12
-    dexterity: 11
-    intelligence: 5
-    faith: 5
+    vitality: 8
+    endurance: 10
+    mind: 10
+    strength: 9
+    dexterity: 14
+    intelligence: 8
+    faith: 7
     mainHandWeapons:
     - {fileID: 11400000, guid: 8e41399ba98a2184984819f023083d90, type: 2}
-    - {fileID: 0}
+    - {fileID: 11400000, guid: 44cf7f826137bed409bf10c407725a1c, type: 2}
     - {fileID: 0}
     offHandWeapons:
+    - {fileID: 11400000, guid: 9db1c68afd41f204eb9ce916a7bea945, type: 2}
     - {fileID: 0}
     - {fileID: 0}
-    - {fileID: 0}
-    headEquipment: {fileID: 11400000, guid: f4b69d6394f36734b8ccb06f610049fe, type: 2}
-    bodyEquipment: {fileID: 11400000, guid: 7a9a409d5732a69469b7d433784133b2, type: 2}
+    headEquipment: {fileID: 11400000, guid: b5e3f874a87849dd8cc519f229539264, type: 2}
+    bodyEquipment: {fileID: 11400000, guid: 25027cf1470e4ff3bebe5a74894d36da, type: 2}
     legEquipment: {fileID: 11400000, guid: 78ca0d8554b1d09499208d5e2aadb59f, type: 2}
-    handEquipment: {fileID: 11400000, guid: 8fca7fb39e972c64dadbfac6422a88fa, type: 2}
+    handEquipment: {fileID: 11400000, guid: f22fbf1330b04bb9804a1482c671148d, type: 2}
+    quickSlotItems:
+    - {fileID: 11400000, guid: ad210e1b4fbe374419f5a11f90f84409, type: 2}
+    - {fileID: 11400000, guid: f467c0bb713b36a4eaaf247d209f23c7, type: 2}
+    - {fileID: 0}
+  - className: Vanguard
+    vitality: 14
+    endurance: 12
+    mind: 8
+    strength: 15
+    dexterity: 9
+    intelligence: 7
+    faith: 7
+    mainHandWeapons:
+    - {fileID: 11400000, guid: fd79804dafa6951429288c553a1c075a, type: 2}
+    - {fileID: 11400000, guid: 44cf7f826137bed409bf10c407725a1c, type: 2}
+    - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
+    offHandWeapons:
+    - {fileID: 11400000, guid: 00c7c97a002a22b439e1e236b455d6e0, type: 2}
+    - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
+    - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
+    headEquipment: {fileID: 11400000, guid: a9b85394bb934d908a8a1a64ca78b437, type: 2}
+    bodyEquipment: {fileID: 11400000, guid: 840aa2728d3b4ba4b12a7b307f824b94, type: 2}
+    legEquipment: {fileID: 11400000, guid: 78ca0d8554b1d09499208d5e2aadb59f, type: 2}
+    handEquipment: {fileID: 11400000, guid: 0f0cf68f8bb34cef8235d9df9af3c629, type: 2}
+    quickSlotItems:
+    - {fileID: 11400000, guid: ad210e1b4fbe374419f5a11f90f84409, type: 2}
+    - {fileID: 11400000, guid: f467c0bb713b36a4eaaf247d209f23c7, type: 2}
+    - {fileID: 0}
+  - className: Mystic
+    vitality: 8
+    endurance: 8
+    mind: 14
+    strength: 8
+    dexterity: 10
+    intelligence: 15
+    faith: 9
+    mainHandWeapons:
+    - {fileID: 11400000, guid: 8e41399ba98a2184984819f023083d90, type: 2}
+    - {fileID: 11400000, guid: 44cf7f826137bed409bf10c407725a1c, type: 2}
+    - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
+    offHandWeapons:
+    - {fileID: 11400000, guid: 00c7c97a002a22b439e1e236b455d6e0, type: 2}
+    - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
+    - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
+    headEquipment: {fileID: 11400000, guid: b5e3f874a87849dd8cc519f229539264, type: 2}
+    bodyEquipment: {fileID: 11400000, guid: 25027cf1470e4ff3bebe5a74894d36da, type: 2}
+    legEquipment: {fileID: 11400000, guid: 78ca0d8554b1d09499208d5e2aadb59f, type: 2}
+    handEquipment: {fileID: 11400000, guid: f22fbf1330b04bb9804a1482c671148d, type: 2}
+    quickSlotItems:
+    - {fileID: 11400000, guid: ad210e1b4fbe374419f5a11f90f84409, type: 2}
+    - {fileID: 11400000, guid: f467c0bb713b36a4eaaf247d209f23c7, type: 2}
+    - {fileID: 0}
+  - className: Confessor
+    vitality: 10
+    endurance: 10
+    mind: 12
+    strength: 10
+    dexterity: 9
+    intelligence: 8
+    faith: 14
+    mainHandWeapons:
+    - {fileID: 11400000, guid: 44cf7f826137bed409bf10c407725a1c, type: 2}
+    - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
+    - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
+    offHandWeapons:
+    - {fileID: 11400000, guid: 00c7c97a002a22b439e1e236b455d6e0, type: 2}
+    - {fileID: 11400000, guid: 9db1c68afd41f204eb9ce916a7bea945, type: 2}
+    - {fileID: 11400000, guid: 7e65f63c45dc06c43ad626fbc0c42012, type: 2}
+    headEquipment: {fileID: 11400000, guid: 87da904bd7804f9a92ab40742805c93a, type: 2}
+    bodyEquipment: {fileID: 11400000, guid: 44406cc871da43afa58a3812a49be1ed, type: 2}
+    legEquipment: {fileID: 11400000, guid: 78ca0d8554b1d09499208d5e2aadb59f, type: 2}
+    handEquipment: {fileID: 11400000, guid: a173fb3b19b245df924a7de01659f7b1, type: 2}
     quickSlotItems:
     - {fileID: 11400000, guid: ad210e1b4fbe374419f5a11f90f84409, type: 2}
     - {fileID: 11400000, guid: f467c0bb713b36a4eaaf247d209f23c7, type: 2}

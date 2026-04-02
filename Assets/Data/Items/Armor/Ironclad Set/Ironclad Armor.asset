@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 264bcc99cbfd10941b38e98b17f23827, type: 3}
+  m_Name: Ironclad Armor
+  m_EditorClassIdentifier: 
+  itemName: Ironclad Armor
+  itemIcon: {fileID: 21300000, guid: b2e3770e6c09eff4080afa88acb94b17, type: 3}
+  itemDescription: Layered steel plates and reinforced shoulders built for late-map frontline play.
+  itemID: 0
+  itemWeight: 13.4
+  physicalDamageAbsorption: 14.8
+  magicDamageAbsorption: 11.7
+  fireDamageAbsorption: 11.6
+  lightningDamageAbsorption: 10.6
+  holyDamageAbsorption: 9.8
+  immunity: 31
+  robustness: 55
+  focus: 20
+  vitality: 20
+  poise: 31
+  equipmentModels:
+  - {fileID: 11400000, guid: 46a5f2c5ef2c44a08815b3b8d1630c8b, type: 2}
+  - {fileID: 11400000, guid: 05431e75a4e2453da9242beeb20e8519, type: 2}
+  - {fileID: 11400000, guid: a634c13561884be4944b72dec0efdbab, type: 2}
+  - {fileID: 11400000, guid: 5bdca250464648b1849a972d46e25ba4, type: 2}
+  - {fileID: 11400000, guid: d9ec18d2979c48b29a15ca72703311db, type: 2}
+  - {fileID: 11400000, guid: bfcdafb539864f39836585468a1ec8a1, type: 2}
+  - {fileID: 11400000, guid: 2be9972adf3049aba59525cf92aa9a57, type: 2}

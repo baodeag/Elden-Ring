@@ -4,12 +4,14 @@ using UnityEngine.UI;
 using static UnityEngine.InputManagerEntry;
 using TMPro;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 namespace baodeag { 
     public class TitleScreenManager : MonoBehaviour
     {
         public static TitleScreenManager Instance;
         private const string DefaultNetworkAddress = "127.0.0.1:7777";
+        private const float RuntimeClassButtonHeight = 72f;
 
         //main menu
         [Header("Main Menu Menus")]
@@ -72,6 +74,15 @@ namespace baodeag {
         [SerializeField] private int selectedStartingClassID = -1;
         private bool networkMenuInitialized;
         private TitleScreenSettingsMenuView settingsMenuView;
+        private readonly List<Button> runtimeCharacterClassButtons = new List<Button>();
+        private RectTransform classReviewPanelRoot;
+        private TextMeshProUGUI classReviewTitleText;
+        private TextMeshProUGUI classReviewSubtitleText;
+        private TextMeshProUGUI classReviewDescriptionText;
+        private TextMeshProUGUI classReviewStatsText;
+        private TextMeshProUGUI classReviewLoadoutText;
+        private TextMeshProUGUI classReviewHintText;
+        private TextMeshProUGUI characterClassButtonLabel;
 
 
         private void Awake()
@@ -90,6 +101,7 @@ namespace baodeag {
         {
             HideLegacyNetworkControls();
             EnsureSettingsMenu();
+            EnsureCharacterClassSelectionUI();
         }
 
         private void Update()
@@ -306,6 +318,7 @@ namespace baodeag {
             CloseTitleScreenMainMenu();
 
             titleScreenCharacterCreationMenu.SetActive(true);
+            EnsureCharacterClassSelectionUI();
 
             PlayerManager player = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
 
@@ -317,6 +330,8 @@ namespace baodeag {
                 selectedStartingClassID = GetSelectedStartingClassID();
                 PreviewClass(selectedStartingClassID);
             }
+
+            UpdateCharacterClassPrimaryButtonLabel();
         }
 
         private bool EnsureHostSessionForSaveMenus()
@@ -476,14 +491,16 @@ namespace baodeag {
 
         public void OpenChooseCharacterClassSubMenu()
         {
+            EnsureCharacterClassSelectionUI();
             ToggleCharacterCreationScreenMainMenuButtons(false);
 
             characterClassMenu.SetActive(true);
 
-            if (characterClassButtons.Length > 0)
+            if (runtimeCharacterClassButtons.Count > 0)
             {
-                characterClassButtons[0].Select();
-                characterClassButtons[0].OnSelect(null);
+                int selectedClassID = GetSelectedStartingClassID();
+                runtimeCharacterClassButtons[selectedClassID].Select();
+                PreviewClass(selectedClassID);
             }
         }
 
@@ -666,7 +683,9 @@ namespace baodeag {
                 return;
 
             selectedStartingClassID = Mathf.Clamp(classID, 0, startingClasses.Length - 1);
-            startingClasses[classID].SetClass(player);
+            startingClasses[selectedStartingClassID].SetClass(player);
+            UpdateClassReviewPanel(selectedStartingClassID, true);
+            UpdateCharacterClassPrimaryButtonLabel();
             CloseChooseCharacterClassSubMenu();
         }
 
@@ -677,7 +696,9 @@ namespace baodeag {
             if (startingClasses.Length <= 0)
                 return;
 
-            startingClasses[classID].SetClass(player);
+            int clampedClassID = Mathf.Clamp(classID, 0, startingClasses.Length - 1);
+            startingClasses[clampedClassID].SetClass(player);
+            UpdateClassReviewPanel(clampedClassID, clampedClassID == selectedStartingClassID);
         }
 
         public int GetSelectedStartingClassID()
@@ -689,6 +710,379 @@ namespace baodeag {
                 selectedStartingClassID = 0;
 
             return selectedStartingClassID;
+        }
+
+        private void EnsureCharacterClassSelectionUI()
+        {
+            if (startingClasses == null || startingClasses.Length <= 0 || characterClassMenu == null)
+                return;
+
+            if (characterClassButtonLabel == null && characterClassButton != null)
+                characterClassButtonLabel = characterClassButton.GetComponentInChildren<TextMeshProUGUI>(true);
+
+            BuildRuntimeCharacterClassButtons();
+            EnsureClassReviewPanel();
+            UpdateCharacterClassPrimaryButtonLabel();
+            UpdateClassReviewPanel(GetSelectedStartingClassID(), true);
+        }
+
+        private void BuildRuntimeCharacterClassButtons()
+        {
+            runtimeCharacterClassButtons.Clear();
+
+            Button[] discoveredButtons = characterClassMenu.GetComponentsInChildren<Button>(true);
+
+            if (discoveredButtons == null || discoveredButtons.Length <= 0)
+                return;
+
+            Button templateButton = discoveredButtons[0];
+
+            for (int i = 0; i < startingClasses.Length; i++)
+            {
+                Button targetButton = i < discoveredButtons.Length
+                    ? discoveredButtons[i]
+                    : Instantiate(templateButton, characterClassMenu.transform, false);
+
+                ConfigureRuntimeCharacterClassButton(targetButton, i);
+                runtimeCharacterClassButtons.Add(targetButton);
+            }
+
+            for (int i = startingClasses.Length; i < discoveredButtons.Length; i++)
+            {
+                discoveredButtons[i].gameObject.SetActive(false);
+            }
+        }
+
+        private void ConfigureRuntimeCharacterClassButton(Button button, int classID)
+        {
+            if (button == null)
+                return;
+
+            button.gameObject.SetActive(true);
+            button.name = $"Class {classID}";
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(() => SelectClass(classID));
+
+            EventTrigger[] legacyTriggers = button.GetComponents<EventTrigger>();
+
+            for (int i = 0; i < legacyTriggers.Length; i++)
+            {
+                legacyTriggers[i].enabled = false;
+            }
+
+            RuntimeTitleScreenClassSelectionButton previewDriver = button.GetComponent<RuntimeTitleScreenClassSelectionButton>();
+
+            if (previewDriver == null)
+                previewDriver = button.gameObject.AddComponent<RuntimeTitleScreenClassSelectionButton>();
+
+            previewDriver.Configure(this, classID);
+
+            RectTransform buttonRect = button.GetComponent<RectTransform>();
+
+            if (buttonRect != null)
+                buttonRect.sizeDelta = new Vector2(buttonRect.sizeDelta.x, RuntimeClassButtonHeight);
+
+            LayoutElement layoutElement = button.GetComponent<LayoutElement>();
+
+            if (layoutElement == null)
+                layoutElement = button.gameObject.AddComponent<LayoutElement>();
+
+            layoutElement.minHeight = RuntimeClassButtonHeight;
+            layoutElement.preferredHeight = RuntimeClassButtonHeight;
+
+            TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>(true);
+
+            if (buttonText != null)
+            {
+                buttonText.enableAutoSizing = false;
+                buttonText.fontSize = 20;
+                buttonText.alignment = TextAlignmentOptions.Center;
+                buttonText.text = GetFormattedClassButtonLabel(startingClasses[classID]);
+            }
+        }
+
+        private void EnsureClassReviewPanel()
+        {
+            if (classReviewPanelRoot != null)
+                return;
+
+            if (titleScreenCharacterCreationMenu == null)
+                return;
+
+            Transform rightPanel = titleScreenCharacterCreationMenu.transform.Find("Right Panel (Character Review)");
+
+            if (rightPanel == null)
+                return;
+
+            TextMeshProUGUI templateText = FindBestRuntimeTextTemplate();
+
+            classReviewPanelRoot = new GameObject("Class Review Overlay", typeof(RectTransform), typeof(Image), typeof(VerticalLayoutGroup), typeof(ContentSizeFitter)).GetComponent<RectTransform>();
+            classReviewPanelRoot.SetParent(rightPanel, false);
+            classReviewPanelRoot.anchorMin = new Vector2(0f, 0f);
+            classReviewPanelRoot.anchorMax = new Vector2(1f, 0f);
+            classReviewPanelRoot.pivot = new Vector2(0.5f, 0f);
+            classReviewPanelRoot.anchoredPosition = new Vector2(0f, 24f);
+            classReviewPanelRoot.sizeDelta = new Vector2(-56f, 0f);
+
+            Image background = classReviewPanelRoot.GetComponent<Image>();
+            background.color = new Color(0f, 0f, 0f, 0.72f);
+
+            VerticalLayoutGroup layout = classReviewPanelRoot.GetComponent<VerticalLayoutGroup>();
+            layout.padding = new RectOffset(24, 24, 20, 20);
+            layout.spacing = 10;
+            layout.childControlWidth = true;
+            layout.childControlHeight = false;
+            layout.childForceExpandHeight = false;
+            layout.childForceExpandWidth = true;
+
+            ContentSizeFitter fitter = classReviewPanelRoot.GetComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            classReviewTitleText = CreateReviewText("Class Title", templateText, 30, FontStyles.Bold, new Color(1f, 0.85f, 0.35f));
+            classReviewSubtitleText = CreateReviewText("Class Subtitle", templateText, 18, FontStyles.Normal, Color.white);
+            classReviewDescriptionText = CreateReviewText("Class Description", templateText, 17, FontStyles.Normal, new Color(0.93f, 0.93f, 0.93f));
+            classReviewStatsText = CreateReviewText("Class Stats", templateText, 17, FontStyles.Bold, new Color(0.95f, 0.95f, 0.95f));
+            classReviewLoadoutText = CreateReviewText("Class Loadout", templateText, 16, FontStyles.Normal, new Color(0.88f, 0.88f, 0.88f));
+            classReviewHintText = CreateReviewText("Class Hint", templateText, 15, FontStyles.Italic, new Color(1f, 0.85f, 0.35f));
+        }
+
+        private TextMeshProUGUI CreateReviewText(string objectName, TextMeshProUGUI template, float fontSize, FontStyles fontStyle, Color color)
+        {
+            GameObject textObject = new GameObject(objectName, typeof(RectTransform), typeof(TextMeshProUGUI), typeof(LayoutElement));
+            textObject.transform.SetParent(classReviewPanelRoot, false);
+
+            LayoutElement layoutElement = textObject.GetComponent<LayoutElement>();
+            layoutElement.minHeight = fontSize + 10f;
+
+            TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
+
+            if (template != null)
+            {
+                text.font = template.font;
+                text.fontSharedMaterial = template.fontSharedMaterial;
+                text.textWrappingMode = TextWrappingModes.Normal;
+            }
+
+            text.fontSize = fontSize;
+            text.fontStyle = fontStyle;
+            text.color = color;
+            text.alignment = TextAlignmentOptions.TopLeft;
+            text.text = string.Empty;
+            text.margin = Vector4.zero;
+
+            return text;
+        }
+
+        private TextMeshProUGUI FindBestRuntimeTextTemplate()
+        {
+            if (characterClassMenu != null)
+            {
+                TextMeshProUGUI menuText = characterClassMenu.GetComponentInChildren<TextMeshProUGUI>(true);
+
+                if (menuText != null)
+                    return menuText;
+            }
+
+            if (startGameButton != null)
+                return startGameButton.GetComponentInChildren<TextMeshProUGUI>(true);
+
+            return null;
+        }
+
+        private void UpdateClassReviewPanel(int classID, bool isSelectedClass)
+        {
+            if (startingClasses == null || startingClasses.Length <= 0)
+                return;
+
+            EnsureClassReviewPanel();
+
+            if (classReviewPanelRoot == null)
+                return;
+
+            int clampedClassID = Mathf.Clamp(classID, 0, startingClasses.Length - 1);
+            CharacterClass characterClass = startingClasses[clampedClassID];
+
+            classReviewTitleText.text = characterClass.className.ToUpperInvariant();
+            classReviewSubtitleText.text = GetClassSubtitle(characterClass);
+            classReviewDescriptionText.text = GetClassDescription(characterClass);
+            classReviewStatsText.text = GetFormattedClassStats(characterClass);
+            classReviewLoadoutText.text = GetFormattedClassLoadout(characterClass);
+            classReviewHintText.text = isSelectedClass
+                ? "Selected for New Game. Choose START when you are ready."
+                : "Previewing class. Press Confirm to lock this choice in.";
+        }
+
+        private void UpdateCharacterClassPrimaryButtonLabel()
+        {
+            if (characterClassButton == null)
+                return;
+
+            if (startingClasses == null || startingClasses.Length <= 0)
+            {
+                characterClassButtonLabel.text = "CLASS";
+                return;
+            }
+
+            int classID = GetSelectedStartingClassID();
+            characterClassButtonLabel.text = $"CLASS\n<size=72%>{startingClasses[classID].className.ToUpperInvariant()}</size>";
+        }
+
+        private string GetFormattedClassButtonLabel(CharacterClass characterClass)
+        {
+            return $"{characterClass.className.ToUpperInvariant()}\n<size=70%>{GetClassSubtitle(characterClass).ToUpperInvariant()}</size>";
+        }
+
+        private string GetClassSubtitle(CharacterClass characterClass)
+        {
+            string normalizedClassName = characterClass.className.Trim().ToLowerInvariant();
+
+            switch (normalizedClassName)
+            {
+                case "knight":
+                    return "Balanced frontline fighter";
+                case "ranger":
+                    return "Dexterity archer skirmisher";
+                case "vanguard":
+                    return "Heavy bruiser with strong poise";
+                case "mystic":
+                    return "Sorcery-focused ranged caster";
+                case "confessor":
+                    return "Faith hybrid with safe sustain";
+                default:
+                    return BuildStatArchetypeSummary(characterClass);
+            }
+        }
+
+        private string GetClassDescription(CharacterClass characterClass)
+        {
+            string normalizedClassName = characterClass.className.Trim().ToLowerInvariant();
+
+            switch (normalizedClassName)
+            {
+                case "knight":
+                    return "A dependable all-rounder with sturdy armor, a shield, and enough offense to carry the early maps safely.";
+                case "ranger":
+                    return "Starts with ranged pressure and mobility, letting you thin packs before they can close the gap.";
+                case "vanguard":
+                    return "Built to trade hits and dominate close combat, ideal if you want raw strength and a forgiving health pool.";
+                case "mystic":
+                    return "Leans on mind and intelligence for spellcasting, trading durability for strong ranged burst and utility.";
+                case "confessor":
+                    return "A flexible hybrid that mixes melee with faith scaling, giving you safer progression and adaptable combat options.";
+                default:
+                    return $"An adaptable {BuildStatArchetypeSummary(characterClass).ToLowerInvariant()} that starts with {GetLoadoutHeadline(characterClass)}.";
+            }
+        }
+
+        private string BuildStatArchetypeSummary(CharacterClass characterClass)
+        {
+            int highestStatValue = characterClass.vitality;
+            string highestStatName = "Vigor";
+
+            UpdateHighestStat(characterClass.endurance, "Endurance", ref highestStatValue, ref highestStatName);
+            UpdateHighestStat(characterClass.mind, "Mind", ref highestStatValue, ref highestStatName);
+            UpdateHighestStat(characterClass.strength, "Strength", ref highestStatValue, ref highestStatName);
+            UpdateHighestStat(characterClass.dexterity, "Dexterity", ref highestStatValue, ref highestStatName);
+            UpdateHighestStat(characterClass.intelligence, "Intelligence", ref highestStatValue, ref highestStatName);
+            UpdateHighestStat(characterClass.faith, "Faith", ref highestStatValue, ref highestStatName);
+
+            return $"{highestStatName}-leaning adventurer";
+        }
+
+        private void UpdateHighestStat(int statValue, string statName, ref int highestStatValue, ref string highestStatName)
+        {
+            if (statValue <= highestStatValue)
+                return;
+
+            highestStatValue = statValue;
+            highestStatName = statName;
+        }
+
+        private string GetFormattedClassStats(CharacterClass characterClass)
+        {
+            return $"STATS  VIG {characterClass.vitality}  END {characterClass.endurance}  MND {characterClass.mind}\n" +
+                   $"        STR {characterClass.strength}  DEX {characterClass.dexterity}  INT {characterClass.intelligence}  FTH {characterClass.faith}";
+        }
+
+        private string GetFormattedClassLoadout(CharacterClass characterClass)
+        {
+            string rightHand = GetWeaponListLabel(characterClass.mainHandWeapons);
+            string leftHand = GetWeaponListLabel(characterClass.offHandWeapons);
+            string consumables = GetQuickSlotListLabel(characterClass.quickSlotItems);
+
+            return $"LOADOUT  RH: {rightHand}\n" +
+                   $"         LH: {leftHand}\n" +
+                   $"         ITEMS: {consumables}";
+        }
+
+        private string GetLoadoutHeadline(CharacterClass characterClass)
+        {
+            string firstWeaponName = GetFirstWeaponName(characterClass.mainHandWeapons);
+
+            if (!string.IsNullOrEmpty(firstWeaponName))
+                return firstWeaponName.ToLowerInvariant();
+
+            return "a flexible kit";
+        }
+
+        private string GetWeaponListLabel(WeaponItem[] weapons)
+        {
+            if (weapons == null || weapons.Length <= 0)
+                return "Unarmed";
+
+            List<string> labels = new List<string>();
+
+            for (int i = 0; i < weapons.Length; i++)
+            {
+                WeaponItem weapon = weapons[i];
+
+                if (weapon == null)
+                    continue;
+
+                labels.Add(weapon.itemName);
+            }
+
+            if (labels.Count <= 0)
+                return "Unarmed";
+
+            return string.Join(", ", labels);
+        }
+
+        private string GetQuickSlotListLabel(QuickSlotItem[] quickSlots)
+        {
+            if (quickSlots == null || quickSlots.Length <= 0)
+                return "None";
+
+            List<string> labels = new List<string>();
+
+            for (int i = 0; i < quickSlots.Length; i++)
+            {
+                QuickSlotItem item = quickSlots[i];
+
+                if (item == null)
+                    continue;
+
+                labels.Add(item.itemName);
+            }
+
+            if (labels.Count <= 0)
+                return "None";
+
+            return string.Join(", ", labels);
+        }
+
+        private string GetFirstWeaponName(WeaponItem[] weapons)
+        {
+            if (weapons == null)
+                return string.Empty;
+
+            for (int i = 0; i < weapons.Length; i++)
+            {
+                if (weapons[i] != null)
+                    return weapons[i].itemName;
+            }
+
+            return string.Empty;
         }
 
         public void SetCharacterClass(PlayerManager player, int vitality, int endurance, int mind, int strength, int dexterity, int intelligence, int faith,
@@ -709,15 +1103,19 @@ namespace baodeag {
             player.playerNetworkManager.faith.Value = faith;
 
             //set the weapons
-            player.playerInventoryManager.weaponsInRightHandSlots[0] = Instantiate(mainHandWeapons[0]);
-            player.playerInventoryManager.weaponsInRightHandSlots[1] = Instantiate(mainHandWeapons[1]);
-            player.playerInventoryManager.weaponsInRightHandSlots[2] = Instantiate(mainHandWeapons[2]);
+            for (int i = 0; i < player.playerInventoryManager.weaponsInRightHandSlots.Length; i++)
+            {
+                player.playerInventoryManager.weaponsInRightHandSlots[i] = InstantiateWeaponOrFallback(GetWeaponAtIndex(mainHandWeapons, i));
+            }
+
             player.playerInventoryManager.currentRightHandWeapon = player.playerInventoryManager.weaponsInRightHandSlots[0];
             player.playerNetworkManager.currentRightHandWeaponID.Value = player.playerInventoryManager.weaponsInRightHandSlots[0].itemID;
 
-            player.playerInventoryManager.weaponsInLeftHandSlots[0] = Instantiate(offHandWeapons[0]);
-            player.playerInventoryManager.weaponsInLeftHandSlots[1] = Instantiate(offHandWeapons[1]);
-            player.playerInventoryManager.weaponsInLeftHandSlots[2] = Instantiate(offHandWeapons[2]);
+            for (int i = 0; i < player.playerInventoryManager.weaponsInLeftHandSlots.Length; i++)
+            {
+                player.playerInventoryManager.weaponsInLeftHandSlots[i] = InstantiateWeaponOrFallback(GetWeaponAtIndex(offHandWeapons, i));
+            }
+
             player.playerInventoryManager.currentLeftHandWeapon = player.playerInventoryManager.weaponsInLeftHandSlots[0];
             player.playerNetworkManager.currentLeftHandWeaponID.Value = player.playerInventoryManager.weaponsInLeftHandSlots[0].itemID;
 
@@ -770,17 +1168,46 @@ namespace baodeag {
 
             //set the quick slot items
             player.playerInventoryManager.quickSlotItemIndex = 0;
+            player.playerInventoryManager.quickSlotItemsInQuickSlots[0] = null;
+            player.playerInventoryManager.quickSlotItemsInQuickSlots[1] = null;
+            player.playerInventoryManager.quickSlotItemsInQuickSlots[2] = null;
 
-            if (quickSlotItems[0] != null)
-                player.playerInventoryManager.quickSlotItemsInQuickSlots[0] = Instantiate(quickSlotItems[0]);
+            if (GetQuickSlotItemAtIndex(quickSlotItems, 0) != null)
+                player.playerInventoryManager.quickSlotItemsInQuickSlots[0] = Instantiate(GetQuickSlotItemAtIndex(quickSlotItems, 0));
 
-            if (quickSlotItems[1] != null)
-                player.playerInventoryManager.quickSlotItemsInQuickSlots[1] = Instantiate(quickSlotItems[1]);
+            if (GetQuickSlotItemAtIndex(quickSlotItems, 1) != null)
+                player.playerInventoryManager.quickSlotItemsInQuickSlots[1] = Instantiate(GetQuickSlotItemAtIndex(quickSlotItems, 1));
 
-            if (quickSlotItems[2] != null)
-                player.playerInventoryManager.quickSlotItemsInQuickSlots[2] = Instantiate(quickSlotItems[2]);
+            if (GetQuickSlotItemAtIndex(quickSlotItems, 2) != null)
+                player.playerInventoryManager.quickSlotItemsInQuickSlots[2] = Instantiate(GetQuickSlotItemAtIndex(quickSlotItems, 2));
 
             player.playerEquipmentManager.LoadQuickSlotEquipment(player.playerInventoryManager.quickSlotItemsInQuickSlots[player.playerInventoryManager.quickSlotItemIndex]);
+        }
+
+        private WeaponItem InstantiateWeaponOrFallback(WeaponItem sourceWeapon)
+        {
+            WeaponItem fallbackWeapon = sourceWeapon;
+
+            if (fallbackWeapon == null && WorldItemDatabase.Instance != null)
+                fallbackWeapon = WorldItemDatabase.Instance.unarmedWeapon;
+
+            return fallbackWeapon != null ? Instantiate(fallbackWeapon) : null;
+        }
+
+        private WeaponItem GetWeaponAtIndex(WeaponItem[] weapons, int index)
+        {
+            if (weapons == null || index < 0 || index >= weapons.Length)
+                return null;
+
+            return weapons[index];
+        }
+
+        private QuickSlotItem GetQuickSlotItemAtIndex(QuickSlotItem[] quickSlotItems, int index)
+        {
+            if (quickSlotItems == null || index < 0 || index >= quickSlotItems.Length)
+                return null;
+
+            return quickSlotItems[index];
         }
 
         //character hair
@@ -834,6 +1261,28 @@ namespace baodeag {
         public void SetBlueColorSlider(float blueValue)
         {
             blueSlider.value = blueValue;
+        }
+    }
+
+    public class RuntimeTitleScreenClassSelectionButton : MonoBehaviour, ISelectHandler, IPointerEnterHandler
+    {
+        private TitleScreenManager manager;
+        private int classID;
+
+        public void Configure(TitleScreenManager targetManager, int targetClassID)
+        {
+            manager = targetManager;
+            classID = targetClassID;
+        }
+
+        public void OnSelect(BaseEventData eventData)
+        {
+            manager?.PreviewClass(classID);
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            manager?.PreviewClass(classID);
         }
     }
 }
