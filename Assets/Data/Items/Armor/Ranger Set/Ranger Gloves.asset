@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a29f1419b0784834a84bdcb6648a279e, type: 3}
+  m_Name: Ranger Gloves
+  m_EditorClassIdentifier: 
+  itemName: Ranger Gloves
+  itemIcon: {fileID: 21300000, guid: a8104549ab8218a4fb97ad07c9217609, type: 3}
+  itemDescription: Light gloves and bracers for bow and blade control.
+  itemID: 0
+  itemWeight: 2.6
+  physicalDamageAbsorption: 2.4
+  magicDamageAbsorption: 2.1
+  fireDamageAbsorption: 2.2
+  lightningDamageAbsorption: 2.4
+  holyDamageAbsorption: 2.0
+  immunity: 8
+  robustness: 10
+  focus: 8
+  vitality: 8
+  poise: 2
+  equipmentModels:
+  - {fileID: 11400000, guid: 4e8c84943042489091518b4009a69394, type: 2}
+  - {fileID: 11400000, guid: 18a133b010fa49438115fd71e9a90e74, type: 2}
+  - {fileID: 11400000, guid: be5c8a486f37453085689fba2a71cee4, type: 2}
+  - {fileID: 11400000, guid: 0a0458375a9445d5b52df36307a8482e, type: 2}

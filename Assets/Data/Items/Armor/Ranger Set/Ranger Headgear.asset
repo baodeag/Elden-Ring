@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 217c17ecd7b347442b8422de26793538, type: 3}
+  m_Name: Ranger Headgear
+  m_EditorClassIdentifier: 
+  itemName: Ranger Headgear
+  itemIcon: {fileID: 21300000, guid: aa401913696fdd143942ff297b3dd1c4, type: 3}
+  itemDescription: A light ranger hood with hair silhouette preserved.
+  itemID: 0
+  itemWeight: 1.7
+  physicalDamageAbsorption: 1.9
+  magicDamageAbsorption: 2.0
+  fireDamageAbsorption: 2.0
+  lightningDamageAbsorption: 2.1
+  holyDamageAbsorption: 1.9
+  immunity: 9
+  robustness: 10
+  focus: 10
+  vitality: 9
+  poise: 2
+  equipmentModels:
+  - {fileID: 11400000, guid: f763c82a0eb94507b5dbe3a77debeb82, type: 2}
+  headEquipmentType: 1

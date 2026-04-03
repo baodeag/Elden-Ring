@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4da55954ce4ff3d4987b4d8d1a6643c4, type: 3}
+  m_Name: Vanguard Leggings
+  m_EditorClassIdentifier: 
+  itemName: Vanguard Leggings
+  itemIcon: {fileID: 21300000, guid: 628145fbd18e4db45b7f1760276bba23, type: 3}
+  itemDescription: Reinforced faulds and greaves for holding ground under pressure.
+  itemID: 0
+  itemWeight: 7.5
+  physicalDamageAbsorption: 8.3
+  magicDamageAbsorption: 6.6
+  fireDamageAbsorption: 6.7
+  lightningDamageAbsorption: 6.0
+  holyDamageAbsorption: 5.6
+  immunity: 19
+  robustness: 34
+  focus: 11
+  vitality: 11
+  poise: 16
+  equipmentModels:
+  - {fileID: 11400000, guid: d82556e547cc477ba4ce80833ff48353, type: 2}
+  - {fileID: 11400000, guid: 08cd98aac8794eb4b678f8061ece3ed9, type: 2}
+  - {fileID: 11400000, guid: 272576d5050b41e9ac9292a0db3d079e, type: 2}

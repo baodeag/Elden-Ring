@@ -1166,6 +1166,9 @@ namespace baodeag {
 
             player.playerEquipmentManager.EquipArmor();
 
+            if (player.playerInventoryManager.legEquipment != null)
+                player.playerEquipmentManager.ForceClassLegPreview(player.playerInventoryManager.legEquipment.itemName);
+
             //set the quick slot items
             player.playerInventoryManager.quickSlotItemIndex = 0;
             player.playerInventoryManager.quickSlotItemsInQuickSlots[0] = null;

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a29f1419b0784834a84bdcb6648a279e, type: 3}
+  m_Name: Confessor Gloves
+  m_EditorClassIdentifier: 
+  itemName: Confessor Gloves
+  itemIcon: {fileID: 21300000, guid: a8104549ab8218a4fb97ad07c9217609, type: 3}
+  itemDescription: Gloves and sleeves meant for blades, seals, and prayer.
+  itemID: 0
+  itemWeight: 3.0
+  physicalDamageAbsorption: 2.8
+  magicDamageAbsorption: 2.9
+  fireDamageAbsorption: 2.7
+  lightningDamageAbsorption: 2.5
+  holyDamageAbsorption: 3.0
+  immunity: 9
+  robustness: 12
+  focus: 9
+  vitality: 8
+  poise: 3
+  equipmentModels:
+  - {fileID: 11400000, guid: f1d1ac20fcaa4618a4be78e188d81825, type: 2}
+  - {fileID: 11400000, guid: 40e6949c185744ec868f4b28327fe605, type: 2}
+  - {fileID: 11400000, guid: a1dc4c56b18b49129fb442649ddac7e7, type: 2}
+  - {fileID: 11400000, guid: 67b7d1650bf1415f976b037e0604bd92, type: 2}

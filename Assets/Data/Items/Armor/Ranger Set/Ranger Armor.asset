@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 264bcc99cbfd10941b38e98b17f23827, type: 3}
+  m_Name: Ranger Armor
+  m_EditorClassIdentifier: 
+  itemName: Ranger Armor
+  itemIcon: {fileID: 21300000, guid: b2e3770e6c09eff4080afa88acb94b17, type: 3}
+  itemDescription: Layered leathers for a fast skirmisher and ranged hunter.
+  itemID: 0
+  itemWeight: 5.6
+  physicalDamageAbsorption: 5.4
+  magicDamageAbsorption: 4.4
+  fireDamageAbsorption: 4.5
+  lightningDamageAbsorption: 4.8
+  holyDamageAbsorption: 4.1
+  immunity: 16
+  robustness: 18
+  focus: 13
+  vitality: 13
+  poise: 5
+  equipmentModels:
+  - {fileID: 11400000, guid: ffcbafe64b5744ef8edeacc80d17574a, type: 2}
+  - {fileID: 11400000, guid: 8468d7c2fff8436eb529b196df732459, type: 2}
+  - {fileID: 11400000, guid: e18c1b59d1a24b4db5afc4b012006697, type: 2}

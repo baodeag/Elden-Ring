@@ -119,6 +119,14 @@ namespace baodeag
             LoadHandEquipment(player.playerInventoryManager.handEquipment);
         }
 
+        public void ForceClassLegPreview(string equipmentName)
+        {
+            if (string.IsNullOrEmpty(equipmentName))
+                return;
+
+            TryLoadClassLegFallback(equipmentName, player.playerNetworkManager.isMale.Value);
+        }
+
         //quick slots
         public void SwitchQuickSlotItem()
         {
@@ -728,10 +736,128 @@ namespace baodeag
                 model.LoadModel(player, player.playerNetworkManager.isMale.Value);
             }
 
+            if (!HasVisibleLegEquipment(player.playerNetworkManager.isMale.Value))
+            {
+                TryLoadClassLegFallback(equipment.itemName, player.playerNetworkManager.isMale.Value);
+
+                if (!HasVisibleLegEquipment(player.playerNetworkManager.isMale.Value))
+                {
+                    Debug.LogWarning($"Fallback leg equipment also failed on {player.name}. Re-enabling default lower body.");
+                    player.playerBodyManager.EnableLowerBody();
+                }
+            }
+
             player.playerStatsManager.CalculateTotalArmorAbsorption();
 
             if (player.IsOwner)
                 player.playerNetworkManager.legEquipmentID.Value = equipment.itemID;
+        }
+
+        private bool HasVisibleLegEquipment(bool isMale)
+        {
+            GameObject[] hips = isMale ? maleHips : femaleHips;
+            GameObject[] rightLegs = isMale ? maleRightLegs : femaleRightLegs;
+            GameObject[] leftLegs = isMale ? maleLeftLegs : femaleLeftLegs;
+
+            foreach (var model in hips)
+            {
+                if (model.activeSelf)
+                    return true;
+            }
+
+            foreach (var model in rightLegs)
+            {
+                if (model.activeSelf)
+                    return true;
+            }
+
+            foreach (var model in leftLegs)
+            {
+                if (model.activeSelf)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private void TryLoadClassLegFallback(string equipmentName, bool isMale)
+        {
+            switch (equipmentName)
+            {
+                case "Mystic Leggings":
+                    SetLegModelsActiveByName(isMale, "Chr_Hips_03", "Chr_LegRight_03", "Chr_LegLeft_03");
+                    break;
+                case "Ranger Leggings":
+                    SetLegModelsActiveByName(isMale, "Chr_Hips_06", "Chr_LegRight_06", "Chr_LegLeft_06");
+                    break;
+                case "Vanguard Leggings":
+                    SetLegModelsActiveByName(isMale, "Chr_Hips_13", "Chr_LegRight_13", "Chr_LegLeft_13");
+                    break;
+                case "Confessor Leggings":
+                    SetLegModelsActiveByName(isMale, "Chr_Hips_10", "Chr_LegRight_10", "Chr_LegLeft_10");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void SetLegModelsActiveByName(bool isMale, string hipsCodeName, string rightLegCodeName, string leftLegCodeName)
+        {
+            SetActiveModelByName(isMale ? maleHips : femaleHips, BuildGenderedModelName(hipsCodeName, isMale));
+            SetActiveModelByName(isMale ? maleRightLegs : femaleRightLegs, BuildGenderedModelName(rightLegCodeName, isMale));
+            SetActiveModelByName(isMale ? maleLeftLegs : femaleLeftLegs, BuildGenderedModelName(leftLegCodeName, isMale));
+        }
+
+        private void SetActiveModelByName(GameObject[] models, string modelName)
+        {
+            foreach (var model in models)
+            {
+                if (model.name == modelName)
+                {
+                    SetModelAndParentsActive(model.transform);
+                    return;
+                }
+            }
+
+            Transform[] allTransforms = player.GetComponentsInChildren<Transform>(true);
+
+            foreach (var transform in allTransforms)
+            {
+                if (transform.name == modelName)
+                {
+                    SetModelAndParentsActive(transform);
+                    return;
+                }
+            }
+        }
+
+        private string BuildGenderedModelName(string baseName, bool isMale)
+        {
+            int lastUnderscore = baseName.LastIndexOf('_');
+
+            if (lastUnderscore <= 0 || lastUnderscore >= baseName.Length - 1)
+                return baseName;
+
+            string prefix = baseName.Substring(0, lastUnderscore);
+            string suffix = baseName.Substring(lastUnderscore + 1);
+            string genderToken = isMale ? "Male" : "Female";
+
+            return $"{prefix}_{genderToken}_{suffix}";
+        }
+
+        private void SetModelAndParentsActive(Transform modelTransform)
+        {
+            Transform current = modelTransform;
+
+            while (current != null)
+            {
+                current.gameObject.SetActive(true);
+
+                if (current == player.transform)
+                    break;
+
+                current = current.parent;
+            }
         }
 
         private void UnloadLegEquipmentModels()
