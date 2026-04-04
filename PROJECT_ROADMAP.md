@@ -3,7 +3,7 @@
 Tai lieu nay luu cac hang muc can lam de hoan thien he thong game.
 Cap nhat file nay moi khi chot them tinh nang, doi uu tien, hoac hoan thanh dau viec.
 
-> **Cap nhat lan cuoi: 2026-04-02 (sau map progression pass, scene transition fix, va cleanup AI state khi doi map)**
+> **Cap nhat lan cuoi: 2026-04-03 (sau pass 5-class character creation, class armor setup, va ra soat lai roadmap theo trang thai hien tai)**
 
 ---
 
@@ -19,7 +19,7 @@ Muc tieu gameplay chinh:
 
 ---
 
-## Trang Thai Hien Tai (2026-04-02)
+## Trang Thai Hien Tai (2026-04-03)
 
 ### Da Hoan Thanh
 - [x] Core character system (Player + AI): stats, combat, locomotion, animation, network
@@ -41,9 +41,12 @@ Muc tieu gameplay chinh:
 - [x] Site of Grace system: `WorldLocationManager`, rest mechanic
 - [x] World scene progression foundation: `World_01` -> `World_05` da co trong build settings va co the transition duoc
 - [x] Main Menu scene: Title screen + load menu + settings
+- [x] Character creation flow da mo rong du 5 class: `Knight`, `Ranger`, `Vanguard`, `Mystic`, `Confessor`
+- [x] Preview class trong new game flow da co ten class, stat summary, loadout summary, va apply equipment khi hover/chon
+- [x] `Knight` da duoc giu lai outfit goc; cac class con lai da co data outfit rieng theo mesh set Polygon Hero
 
 ### Chua Co / Chua Hoan Thanh
-- [ ] Starting character selection screen polish/UI data day du (nen tang da co)
+- [ ] Chot visual polish cuoi cho character selection (class outfit fidelity, model preview consistency, UI wording)
 - [x] Multiple world scenes foundation (`World_01` -> `World_05`) da scaffold va add vao build settings
 - [x] Boss clear -> unlock map -> load scene/teleport sang map tiep theo da hoat dong
 - [x] Difficulty ramp theo tung map (nen tang da co)
@@ -52,6 +55,7 @@ Muc tieu gameplay chinh:
 - [ ] Economy balance (rune drop, level up cost, shop price)
 - [ ] UI progression day du (map current, map unlocked, victory screen)
 - [ ] Merchant data pass that trong world/prefab (merchantID, stock, required tier)
+- [ ] Fix dut diem preview hip/leg cho male model cua class-specific armor set (`03 / 06 / 10 / 13`) trong character creation
 
 ### Moi Hoan Thanh Trong Code
 - [x] `GameProgressionManager` singleton theo doi `startingClassID`, `currentMapIndex`, `mapsUnlocked`, `gameWon`
@@ -74,6 +78,11 @@ Muc tieu gameplay chinh:
 - [x] `WorldSceneManager` load map moi on dinh hon (resolve scene name + fallback single scene load)
 - [x] Loading/teleport handoff sang map moi da duoc giu den khi world/grace san sang
 - [x] Khi doi map, AI/NPC/boss cua map cu duoc cleanup truoc khi load map moi
+- [x] `TitleScreenManager` da support runtime button list cho du 5 class va cap nhat preview theo class dang hover/chon
+- [x] Da co review panel/summary cho class selection de hien archetype, stat tom tat, va loadout
+- [x] Da scaffold item/armor data cho class outfit moi trong `Assets/Data/Items/Armor`
+- [x] Da bo sung tai lieu workflow armor Polygon Hero de tiep tuc setup armor set nhat quan
+- [ ] Van con issue runtime voi male hip/leg preview khi dung full class-specific leg set; can chot fix o player prefab/runtime mapping
 
 ---
 
@@ -238,7 +247,9 @@ Muc tieu gameplay chinh:
 - [x] Dinh nghia class data bang `CharacterClass`.
 - [x] Preview/apply stat-model-equipment trong character creation flow.
 - [x] Noi class selection vao new game flow.
-- [ ] Polish UI data hien thi cho du 5 class.
+- [x] Mo rong data va runtime flow cho du 5 class co the preview/chon duoc.
+- [ ] Chot UI copy/presentation cho 5 class.
+- [ ] Chot armor preview fidelity, dac biet la male hip/leg mapping cho class-specific set.
 
 ### Phase 3. Settings *(DONE co ban)*
 - [x] Tao settings menu trong title menu.
@@ -282,7 +293,9 @@ Muc tieu gameplay chinh:
 - [x] **[P1]** Tao `GameProgressionConfig` asset va noi vao `GameProgressionManager`.
 - [x] **[P1]** Dien data progression co the test duoc cho 5 map trong `GameProgressionConfig`: `sceneBuildIndex`, `bossID`, `entrySiteOfGraceID`.
 - [x] **[P2]** Them `enemyHealthMultiplier` + `enemyDamageMultiplier` vao `GameProgressionConfig` va noi AI scale theo `currentMapIndex`.
-- [ ] **[P2]** Polish/hoan thien UI hien thi 5 class trong new game flow.
+- [x] **[P2]** Mo rong new game flow de preview/chon du 5 class.
+- [ ] **[P2]** Chot UI copy + visual polish cho man hinh 5 class.
+- [ ] **[P2]** Fix dut diem male hip/leg preview cho class-specific outfit (`03 / 06 / 10 / 13`).
 - [x] **[P2]** Boss clear event hook vao unlock map tiep theo + scene transition.
 - [ ] **[P3]** Dien merchant custom stock cho cac NPC trong World_01 inspector.
 - [ ] **[P3]** Gan `merchantID`, bat/tat auto tier, va dat `shopTierOffset` hop ly cho tung merchant.
@@ -305,6 +318,10 @@ Muc tieu gameplay chinh:
 - [x] Sua scene transition/load handoff de boss clear co the sang `World_02` -> `World_05`.
 - [x] Chot `entrySiteOfGraceID` cho 5 map trong `Game Progression Config.asset`.
 - [x] Cleanup AI/NPC/boss state cua map cu truoc khi load map moi.
+- [x] Mo rong man hinh character creation len du 5 class, co review panel va runtime button generation.
+- [x] Tao/scaffold them class armor data dua tren `PolygonFantasyHeroCharacters`.
+- [x] Them tai lieu `POLYGON_HERO_ARMOR_WORKFLOW.md` de ghi ro pipeline lay armor set tu Polygon Hero.
+- [ ] Male hip/leg preview cho class outfit rieng van chua on dinh, can fix tiep trong player preview/runtime mapping.
 
 ### Next (Lam Sau Immediate)
 - [ ] Them data balance day du cho rune, level up, shop price sau khi playtest progression.
@@ -344,8 +361,8 @@ Muc tieu gameplay chinh:
 ## Current Priority Recommendation
 
 Thu tu toi uu de tranh phai lam lai:
-1. **[P1] Pass content that cho `World_02` -> `World_05`** (layout, spawner, boss arena, grace placement)
-2. **[P1] 5 Starting class data + polish man hinh chon nhan vat**
+1. **[P1] Chot lai character creation visual pass** (fix male hip/leg preview, ra soat head/armor fidelity, xong visual 5 class)
+2. **[P1] Pass content that cho `World_02` -> `World_05`** (layout, spawner, boss arena, grace placement)
 3. **[P2] Hoan thien merchant stock va shop balance**
 4. **[P3] Progression UI day du** (`map current`, `maps unlocked`, `boss defeated`)
 5. **[P4] Win screen + transition polish neu can**
@@ -365,7 +382,7 @@ Thu tu toi uu de tranh phai lam lai:
 | Weapon upgrade UI | Hoan chinh |
 | Site of Grace | Hoan chinh |
 | Save/load (equipment/rune/boss/stock) | Hoan chinh |
-| Starting character selection | **Co nen tang, can polish** |
+| Starting character selection | **Da co du 5 class + preview, can chot visual polish** |
 | GameProgressionManager (5 map) | **Da co** |
 | GameProgressionConfig asset | **Da co** |
 | Boss gate -> unlock -> teleport | **Da hoat dong qua scene progression** |
@@ -375,6 +392,7 @@ Thu tu toi uu de tranh phai lam lai:
 | Win screen | **Chua co** |
 | Economy balance | **Chua co** |
 | Merchant NPC trong world | **Co tool setup, can data pass** |
+| Class outfit / armor preview | **Da co data + runtime flow, nhung male hip/leg preview van can fix dut diem** |
 
 
 
