@@ -11,7 +11,6 @@ namespace baodeag {
     {
         public static TitleScreenManager Instance;
         private const string DefaultNetworkAddress = "127.0.0.1:7777";
-        private const float RuntimeClassButtonHeight = 72f;
 
         //main menu
         [Header("Main Menu Menus")]
@@ -74,15 +73,16 @@ namespace baodeag {
         [SerializeField] private int selectedStartingClassID = -1;
         private bool networkMenuInitialized;
         private TitleScreenSettingsMenuView settingsMenuView;
-        private readonly List<Button> runtimeCharacterClassButtons = new List<Button>();
-        private RectTransform classReviewPanelRoot;
-        private TextMeshProUGUI classReviewTitleText;
-        private TextMeshProUGUI classReviewSubtitleText;
-        private TextMeshProUGUI classReviewDescriptionText;
-        private TextMeshProUGUI classReviewStatsText;
-        private TextMeshProUGUI classReviewLoadoutText;
-        private TextMeshProUGUI classReviewHintText;
         private TextMeshProUGUI characterClassButtonLabel;
+
+        [Header("Character Class Review UI")]
+        [SerializeField] private GameObject classReviewPanel;
+        [SerializeField] private TextMeshProUGUI classReviewTitleText;
+        [SerializeField] private TextMeshProUGUI classReviewSubtitleText;
+        [SerializeField] private TextMeshProUGUI classReviewDescriptionText;
+        [SerializeField] private TextMeshProUGUI classReviewStatsText;
+        [SerializeField] private TextMeshProUGUI classReviewLoadoutText;
+        [SerializeField] private TextMeshProUGUI classReviewHintText;
 
 
         private void Awake()
@@ -496,10 +496,11 @@ namespace baodeag {
 
             characterClassMenu.SetActive(true);
 
-            if (runtimeCharacterClassButtons.Count > 0)
+            int selectedClassID = GetSelectedStartingClassID();
+
+            if (characterClassButtons != null && selectedClassID >= 0 && selectedClassID < characterClassButtons.Length && characterClassButtons[selectedClassID] != null)
             {
-                int selectedClassID = GetSelectedStartingClassID();
-                runtimeCharacterClassButtons[selectedClassID].Select();
+                characterClassButtons[selectedClassID].Select();
                 PreviewClass(selectedClassID);
             }
         }
@@ -720,173 +721,46 @@ namespace baodeag {
             if (characterClassButtonLabel == null && characterClassButton != null)
                 characterClassButtonLabel = characterClassButton.GetComponentInChildren<TextMeshProUGUI>(true);
 
-            BuildRuntimeCharacterClassButtons();
-            EnsureClassReviewPanel();
+            RefreshSerializedCharacterClassButtons();
             UpdateCharacterClassPrimaryButtonLabel();
             UpdateClassReviewPanel(GetSelectedStartingClassID(), true);
         }
 
-        private void BuildRuntimeCharacterClassButtons()
+        private void RefreshSerializedCharacterClassButtons()
         {
-            runtimeCharacterClassButtons.Clear();
-
-            Button[] discoveredButtons = characterClassMenu.GetComponentsInChildren<Button>(true);
-
-            if (discoveredButtons == null || discoveredButtons.Length <= 0)
+            if (characterClassButtons == null || characterClassButtons.Length <= 0)
                 return;
-
-            Button templateButton = discoveredButtons[0];
 
             for (int i = 0; i < startingClasses.Length; i++)
             {
-                Button targetButton = i < discoveredButtons.Length
-                    ? discoveredButtons[i]
-                    : Instantiate(templateButton, characterClassMenu.transform, false);
+                if (i >= characterClassButtons.Length)
+                    break;
 
-                ConfigureRuntimeCharacterClassButton(targetButton, i);
-                runtimeCharacterClassButtons.Add(targetButton);
+                ConfigureSerializedCharacterClassButton(characterClassButtons[i], i);
             }
 
-            for (int i = startingClasses.Length; i < discoveredButtons.Length; i++)
+            for (int i = 0; i < characterClassButtons.Length; i++)
             {
-                discoveredButtons[i].gameObject.SetActive(false);
+                if (characterClassButtons[i] == null)
+                    continue;
+
+                characterClassButtons[i].gameObject.SetActive(i < startingClasses.Length);
             }
         }
 
-        private void ConfigureRuntimeCharacterClassButton(Button button, int classID)
+        private void ConfigureSerializedCharacterClassButton(Button button, int classID)
         {
             if (button == null)
                 return;
 
             button.gameObject.SetActive(true);
-            button.name = $"Class {classID}";
-            button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => SelectClass(classID));
-
-            EventTrigger[] legacyTriggers = button.GetComponents<EventTrigger>();
-
-            for (int i = 0; i < legacyTriggers.Length; i++)
-            {
-                legacyTriggers[i].enabled = false;
-            }
-
-            RuntimeTitleScreenClassSelectionButton previewDriver = button.GetComponent<RuntimeTitleScreenClassSelectionButton>();
-
-            if (previewDriver == null)
-                previewDriver = button.gameObject.AddComponent<RuntimeTitleScreenClassSelectionButton>();
-
-            previewDriver.Configure(this, classID);
-
-            RectTransform buttonRect = button.GetComponent<RectTransform>();
-
-            if (buttonRect != null)
-                buttonRect.sizeDelta = new Vector2(buttonRect.sizeDelta.x, RuntimeClassButtonHeight);
-
-            LayoutElement layoutElement = button.GetComponent<LayoutElement>();
-
-            if (layoutElement == null)
-                layoutElement = button.gameObject.AddComponent<LayoutElement>();
-
-            layoutElement.minHeight = RuntimeClassButtonHeight;
-            layoutElement.preferredHeight = RuntimeClassButtonHeight;
 
             TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>(true);
 
             if (buttonText != null)
             {
-                buttonText.enableAutoSizing = false;
-                buttonText.fontSize = 20;
-                buttonText.alignment = TextAlignmentOptions.Center;
                 buttonText.text = GetFormattedClassButtonLabel(startingClasses[classID]);
             }
-        }
-
-        private void EnsureClassReviewPanel()
-        {
-            if (classReviewPanelRoot != null)
-                return;
-
-            if (titleScreenCharacterCreationMenu == null)
-                return;
-
-            Transform rightPanel = titleScreenCharacterCreationMenu.transform.Find("Right Panel (Character Review)");
-
-            if (rightPanel == null)
-                return;
-
-            TextMeshProUGUI templateText = FindBestRuntimeTextTemplate();
-
-            classReviewPanelRoot = new GameObject("Class Review Overlay", typeof(RectTransform), typeof(Image), typeof(VerticalLayoutGroup), typeof(ContentSizeFitter)).GetComponent<RectTransform>();
-            classReviewPanelRoot.SetParent(rightPanel, false);
-            classReviewPanelRoot.anchorMin = new Vector2(0f, 0f);
-            classReviewPanelRoot.anchorMax = new Vector2(1f, 0f);
-            classReviewPanelRoot.pivot = new Vector2(0.5f, 0f);
-            classReviewPanelRoot.anchoredPosition = new Vector2(0f, 24f);
-            classReviewPanelRoot.sizeDelta = new Vector2(-56f, 0f);
-
-            Image background = classReviewPanelRoot.GetComponent<Image>();
-            background.color = new Color(0f, 0f, 0f, 0.72f);
-
-            VerticalLayoutGroup layout = classReviewPanelRoot.GetComponent<VerticalLayoutGroup>();
-            layout.padding = new RectOffset(24, 24, 20, 20);
-            layout.spacing = 10;
-            layout.childControlWidth = true;
-            layout.childControlHeight = false;
-            layout.childForceExpandHeight = false;
-            layout.childForceExpandWidth = true;
-
-            ContentSizeFitter fitter = classReviewPanelRoot.GetComponent<ContentSizeFitter>();
-            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-            classReviewTitleText = CreateReviewText("Class Title", templateText, 30, FontStyles.Bold, new Color(1f, 0.85f, 0.35f));
-            classReviewSubtitleText = CreateReviewText("Class Subtitle", templateText, 18, FontStyles.Normal, Color.white);
-            classReviewDescriptionText = CreateReviewText("Class Description", templateText, 17, FontStyles.Normal, new Color(0.93f, 0.93f, 0.93f));
-            classReviewStatsText = CreateReviewText("Class Stats", templateText, 17, FontStyles.Bold, new Color(0.95f, 0.95f, 0.95f));
-            classReviewLoadoutText = CreateReviewText("Class Loadout", templateText, 16, FontStyles.Normal, new Color(0.88f, 0.88f, 0.88f));
-            classReviewHintText = CreateReviewText("Class Hint", templateText, 15, FontStyles.Italic, new Color(1f, 0.85f, 0.35f));
-        }
-
-        private TextMeshProUGUI CreateReviewText(string objectName, TextMeshProUGUI template, float fontSize, FontStyles fontStyle, Color color)
-        {
-            GameObject textObject = new GameObject(objectName, typeof(RectTransform), typeof(TextMeshProUGUI), typeof(LayoutElement));
-            textObject.transform.SetParent(classReviewPanelRoot, false);
-
-            LayoutElement layoutElement = textObject.GetComponent<LayoutElement>();
-            layoutElement.minHeight = fontSize + 10f;
-
-            TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
-
-            if (template != null)
-            {
-                text.font = template.font;
-                text.fontSharedMaterial = template.fontSharedMaterial;
-                text.textWrappingMode = TextWrappingModes.Normal;
-            }
-
-            text.fontSize = fontSize;
-            text.fontStyle = fontStyle;
-            text.color = color;
-            text.alignment = TextAlignmentOptions.TopLeft;
-            text.text = string.Empty;
-            text.margin = Vector4.zero;
-
-            return text;
-        }
-
-        private TextMeshProUGUI FindBestRuntimeTextTemplate()
-        {
-            if (characterClassMenu != null)
-            {
-                TextMeshProUGUI menuText = characterClassMenu.GetComponentInChildren<TextMeshProUGUI>(true);
-
-                if (menuText != null)
-                    return menuText;
-            }
-
-            if (startGameButton != null)
-                return startGameButton.GetComponentInChildren<TextMeshProUGUI>(true);
-
-            return null;
         }
 
         private void UpdateClassReviewPanel(int classID, bool isSelectedClass)
@@ -894,10 +768,11 @@ namespace baodeag {
             if (startingClasses == null || startingClasses.Length <= 0)
                 return;
 
-            EnsureClassReviewPanel();
-
-            if (classReviewPanelRoot == null)
+            if (classReviewTitleText == null)
                 return;
+
+            if (classReviewPanel != null && !classReviewPanel.activeSelf)
+                classReviewPanel.SetActive(true);
 
             int clampedClassID = Mathf.Clamp(classID, 0, startingClasses.Length - 1);
             CharacterClass characterClass = startingClasses[clampedClassID];
@@ -908,8 +783,8 @@ namespace baodeag {
             classReviewStatsText.text = GetFormattedClassStats(characterClass);
             classReviewLoadoutText.text = GetFormattedClassLoadout(characterClass);
             classReviewHintText.text = isSelectedClass
-                ? "Selected for New Game. Choose START when you are ready."
-                : "Previewing class. Press Confirm to lock this choice in.";
+                ? "Selected. Press START."
+                : "Preview. Click to select.";
         }
 
         private void UpdateCharacterClassPrimaryButtonLabel()
@@ -939,15 +814,15 @@ namespace baodeag {
             switch (normalizedClassName)
             {
                 case "knight":
-                    return "Balanced frontline fighter";
+                    return "Balanced melee starter.";
                 case "ranger":
-                    return "Dexterity archer skirmisher";
+                    return "Fast bow skirmisher.";
                 case "vanguard":
-                    return "Heavy bruiser with strong poise";
+                    return "Heavy bruiser. High poise.";
                 case "mystic":
-                    return "Sorcery-focused ranged caster";
+                    return "Ranged sorcery caster.";
                 case "confessor":
-                    return "Faith hybrid with safe sustain";
+                    return "Faith melee hybrid.";
                 default:
                     return BuildStatArchetypeSummary(characterClass);
             }
@@ -960,33 +835,33 @@ namespace baodeag {
             switch (normalizedClassName)
             {
                 case "knight":
-                    return "A dependable all-rounder with sturdy armor, a shield, and enough offense to carry the early maps safely.";
+                    return "Safe all-round melee.";
                 case "ranger":
-                    return "Starts with ranged pressure and mobility, letting you thin packs before they can close the gap.";
+                    return "Kite and pick targets off.";
                 case "vanguard":
-                    return "Built to trade hits and dominate close combat, ideal if you want raw strength and a forgiving health pool.";
+                    return "Trades hits. Strong early melee.";
                 case "mystic":
-                    return "Leans on mind and intelligence for spellcasting, trading durability for strong ranged burst and utility.";
+                    return "Glass cannon with spells.";
                 case "confessor":
-                    return "A flexible hybrid that mixes melee with faith scaling, giving you safer progression and adaptable combat options.";
+                    return "Steady sustain and utility.";
                 default:
-                    return $"An adaptable {BuildStatArchetypeSummary(characterClass).ToLowerInvariant()} that starts with {GetLoadoutHeadline(characterClass)}.";
+                    return $"{BuildStatArchetypeSummary(characterClass)}.";
             }
         }
 
         private string BuildStatArchetypeSummary(CharacterClass characterClass)
         {
             int highestStatValue = characterClass.vitality;
-            string highestStatName = "Vigor";
+            string highestStatName = "VIG";
 
-            UpdateHighestStat(characterClass.endurance, "Endurance", ref highestStatValue, ref highestStatName);
-            UpdateHighestStat(characterClass.mind, "Mind", ref highestStatValue, ref highestStatName);
-            UpdateHighestStat(characterClass.strength, "Strength", ref highestStatValue, ref highestStatName);
-            UpdateHighestStat(characterClass.dexterity, "Dexterity", ref highestStatValue, ref highestStatName);
-            UpdateHighestStat(characterClass.intelligence, "Intelligence", ref highestStatValue, ref highestStatName);
-            UpdateHighestStat(characterClass.faith, "Faith", ref highestStatValue, ref highestStatName);
+            UpdateHighestStat(characterClass.endurance, "END", ref highestStatValue, ref highestStatName);
+            UpdateHighestStat(characterClass.mind, "MND", ref highestStatValue, ref highestStatName);
+            UpdateHighestStat(characterClass.strength, "STR", ref highestStatValue, ref highestStatName);
+            UpdateHighestStat(characterClass.dexterity, "DEX", ref highestStatValue, ref highestStatName);
+            UpdateHighestStat(characterClass.intelligence, "INT", ref highestStatValue, ref highestStatName);
+            UpdateHighestStat(characterClass.faith, "FTH", ref highestStatValue, ref highestStatName);
 
-            return $"{highestStatName}-leaning adventurer";
+            return $"{highestStatName}-focused.";
         }
 
         private void UpdateHighestStat(int statValue, string statName, ref int highestStatValue, ref string highestStatName)
@@ -1000,29 +875,17 @@ namespace baodeag {
 
         private string GetFormattedClassStats(CharacterClass characterClass)
         {
-            return $"STATS  VIG {characterClass.vitality}  END {characterClass.endurance}  MND {characterClass.mind}\n" +
-                   $"        STR {characterClass.strength}  DEX {characterClass.dexterity}  INT {characterClass.intelligence}  FTH {characterClass.faith}";
+            return $"VIG {characterClass.vitality}   END {characterClass.endurance}   MND {characterClass.mind}\n" +
+                   $"STR {characterClass.strength}   DEX {characterClass.dexterity}   INT {characterClass.intelligence}   FTH {characterClass.faith}";
         }
 
         private string GetFormattedClassLoadout(CharacterClass characterClass)
         {
-            string rightHand = GetWeaponListLabel(characterClass.mainHandWeapons);
-            string leftHand = GetWeaponListLabel(characterClass.offHandWeapons);
-            string consumables = GetQuickSlotListLabel(characterClass.quickSlotItems);
+            string rightHand = GetCompactItemListLabel(characterClass.mainHandWeapons, "Unarmed");
+            string leftHand = GetCompactItemListLabel(characterClass.offHandWeapons, "Unarmed");
+            string consumables = GetCompactItemListLabel(characterClass.quickSlotItems, "None");
 
-            return $"LOADOUT  RH: {rightHand}\n" +
-                   $"         LH: {leftHand}\n" +
-                   $"         ITEMS: {consumables}";
-        }
-
-        private string GetLoadoutHeadline(CharacterClass characterClass)
-        {
-            string firstWeaponName = GetFirstWeaponName(characterClass.mainHandWeapons);
-
-            if (!string.IsNullOrEmpty(firstWeaponName))
-                return firstWeaponName.ToLowerInvariant();
-
-            return "a flexible kit";
+            return $"RH  {rightHand}\nLH  {leftHand}\nITM {consumables}";
         }
 
         private string GetWeaponListLabel(WeaponItem[] weapons)
@@ -1071,18 +934,33 @@ namespace baodeag {
             return string.Join(", ", labels);
         }
 
-        private string GetFirstWeaponName(WeaponItem[] weapons)
+        private string GetCompactItemListLabel<T>(T[] items, string fallbackLabel) where T : Item
         {
-            if (weapons == null)
-                return string.Empty;
+            if (items == null || items.Length <= 0)
+                return fallbackLabel;
 
-            for (int i = 0; i < weapons.Length; i++)
+            List<string> labels = new List<string>();
+
+            for (int i = 0; i < items.Length; i++)
             {
-                if (weapons[i] != null)
-                    return weapons[i].itemName;
+                T item = items[i];
+
+                if (item == null)
+                    continue;
+
+                if (labels.Contains(item.itemName))
+                    continue;
+
+                labels.Add(item.itemName);
+
+                if (labels.Count >= 2)
+                    break;
             }
 
-            return string.Empty;
+            if (labels.Count <= 0)
+                return fallbackLabel;
+
+            return string.Join(", ", labels);
         }
 
         public void SetCharacterClass(PlayerManager player, int vitality, int endurance, int mind, int strength, int dexterity, int intelligence, int faith,
@@ -1267,25 +1145,4 @@ namespace baodeag {
         }
     }
 
-    public class RuntimeTitleScreenClassSelectionButton : MonoBehaviour, ISelectHandler, IPointerEnterHandler
-    {
-        private TitleScreenManager manager;
-        private int classID;
-
-        public void Configure(TitleScreenManager targetManager, int targetClassID)
-        {
-            manager = targetManager;
-            classID = targetClassID;
-        }
-
-        public void OnSelect(BaseEventData eventData)
-        {
-            manager?.PreviewClass(classID);
-        }
-
-        public void OnPointerEnter(PointerEventData eventData)
-        {
-            manager?.PreviewClass(classID);
-        }
-    }
 }
