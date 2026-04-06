@@ -3,7 +3,7 @@
 Tai lieu nay luu cac hang muc can lam de hoan thien he thong game.
 Cap nhat file nay moi khi chot them tinh nang, doi uu tien, hoac hoan thanh dau viec.
 
-> **Cap nhat lan cuoi: 2026-04-03 (sau pass 5-class character creation, class armor setup, va ra soat lai roadmap theo trang thai hien tai)**
+> **Cap nhat lan cuoi: 2026-04-05 (sau khi chuyen class selection + class review sang UI trong Title Screen Canvas, sua lai mapping Mystic/Confessor, va dong bo roadmap)**
 
 ---
 
@@ -44,6 +44,9 @@ Muc tieu gameplay chinh:
 - [x] Character creation flow da mo rong du 5 class: `Knight`, `Ranger`, `Vanguard`, `Mystic`, `Confessor`
 - [x] Preview class trong new game flow da co ten class, stat summary, loadout summary, va apply equipment khi hover/chon
 - [x] `Knight` da duoc giu lai outfit goc; cac class con lai da co data outfit rieng theo mesh set Polygon Hero
+- [x] 5 nut chon class trong character creation da dung UI co san trong `Title Screen Canvas`, khong con generate runtime button bang code
+- [x] Class review panel (title/subtitle/description/stats/loadout/hint) da dung UI co san trong `Title Screen Canvas`, khong con runtime-generated overlay
+- [x] Da sua lai mapping nut `Mystic` / `Confessor` de khop dung class ID
 
 ### Chua Co / Chua Hoan Thanh
 - [ ] Chot visual polish cuoi cho character selection (class outfit fidelity, model preview consistency, UI wording)
@@ -78,8 +81,10 @@ Muc tieu gameplay chinh:
 - [x] `WorldSceneManager` load map moi on dinh hon (resolve scene name + fallback single scene load)
 - [x] Loading/teleport handoff sang map moi da duoc giu den khi world/grace san sang
 - [x] Khi doi map, AI/NPC/boss cua map cu duoc cleanup truoc khi load map moi
-- [x] `TitleScreenManager` da support runtime button list cho du 5 class va cap nhat preview theo class dang hover/chon
+- [x] `TitleScreenManager` da support du 5 class va cap nhat preview theo class dang hover/chon
 - [x] Da co review panel/summary cho class selection de hien archetype, stat tom tat, va loadout
+- [x] Da chuyen class selection tu runtime-generated button sang serialized UI button trong `Main_Menu_01`
+- [x] Da chuyen class review summary tu runtime-generated overlay sang serialized UI panel trong `Main_Menu_01`
 - [x] Da scaffold item/armor data cho class outfit moi trong `Assets/Data/Items/Armor`
 - [x] Da bo sung tai lieu workflow armor Polygon Hero de tiep tuc setup armor set nhat quan
 - [ ] Van con issue runtime voi male hip/leg preview khi dung full class-specific leg set; can chot fix o player prefab/runtime mapping
@@ -206,7 +211,7 @@ Muc tieu gameplay chinh:
   - [x] Shop UI nam trong `Player UI Manager.prefab`.
   - [x] Co scroll list, item details, buy/sell, close.
   - [x] Khong con mo tu title menu.
-  - [ ] Tiep tuc polish layout bang prefab thay vi runtime code o mot so phan con lai.
+  - [ ] Tiep tuc polish layout/presentation cua shop o mot so phan con lai.
   - [x] Co checklist generator de ra merchant nao can setup.
 - Menu settings:
   - [x] Title menu settings da hoat dong.
@@ -247,7 +252,9 @@ Muc tieu gameplay chinh:
 - [x] Dinh nghia class data bang `CharacterClass`.
 - [x] Preview/apply stat-model-equipment trong character creation flow.
 - [x] Noi class selection vao new game flow.
-- [x] Mo rong data va runtime flow cho du 5 class co the preview/chon duoc.
+- [x] Mo rong data va flow cho du 5 class co the preview/chon duoc.
+- [x] Chuyen 5 nut class sang UI co san trong `Title Screen Canvas`.
+- [x] Chuyen class review panel sang UI co san trong `Title Screen Canvas`.
 - [ ] Chot UI copy/presentation cho 5 class.
 - [ ] Chot armor preview fidelity, dac biet la male hip/leg mapping cho class-specific set.
 
@@ -294,6 +301,8 @@ Muc tieu gameplay chinh:
 - [x] **[P1]** Dien data progression co the test duoc cho 5 map trong `GameProgressionConfig`: `sceneBuildIndex`, `bossID`, `entrySiteOfGraceID`.
 - [x] **[P2]** Them `enemyHealthMultiplier` + `enemyDamageMultiplier` vao `GameProgressionConfig` va noi AI scale theo `currentMapIndex`.
 - [x] **[P2]** Mo rong new game flow de preview/chon du 5 class.
+- [x] **[P2]** Chuyen 5 nut class trong character creation sang UI co san cua `Title Screen Canvas`.
+- [x] **[P2]** Chuyen class review text/panel sang UI co san, rut gon copy stat/loadout.
 - [ ] **[P2]** Chot UI copy + visual polish cho man hinh 5 class.
 - [ ] **[P2]** Fix dut diem male hip/leg preview cho class-specific outfit (`03 / 06 / 10 / 13`).
 - [x] **[P2]** Boss clear event hook vao unlock map tiep theo + scene transition.
@@ -318,7 +327,10 @@ Muc tieu gameplay chinh:
 - [x] Sua scene transition/load handoff de boss clear co the sang `World_02` -> `World_05`.
 - [x] Chot `entrySiteOfGraceID` cho 5 map trong `Game Progression Config.asset`.
 - [x] Cleanup AI/NPC/boss state cua map cu truoc khi load map moi.
-- [x] Mo rong man hinh character creation len du 5 class, co review panel va runtime button generation.
+- [x] Mo rong man hinh character creation len du 5 class, co review panel va nut class day du.
+- [x] Chuyen class selection sang UI button co san trong scene.
+- [x] Chuyen class review sang UI panel co san trong scene.
+- [x] Sua lai mapping nut `Mystic` / `Confessor` de khop dung class ID.
 - [x] Tao/scaffold them class armor data dua tren `PolygonFantasyHeroCharacters`.
 - [x] Them tai lieu `POLYGON_HERO_ARMOR_WORKFLOW.md` de ghi ro pipeline lay armor set tu Polygon Hero.
 - [ ] Male hip/leg preview cho class outfit rieng van chua on dinh, can fix tiep trong player preview/runtime mapping.
@@ -382,7 +394,7 @@ Thu tu toi uu de tranh phai lam lai:
 | Weapon upgrade UI | Hoan chinh |
 | Site of Grace | Hoan chinh |
 | Save/load (equipment/rune/boss/stock) | Hoan chinh |
-| Starting character selection | **Da co du 5 class + preview, can chot visual polish** |
+| Starting character selection | **Da co du 5 class + preview + UI scene that, can chot visual polish** |
 | GameProgressionManager (5 map) | **Da co** |
 | GameProgressionConfig asset | **Da co** |
 | Boss gate -> unlock -> teleport | **Da hoat dong qua scene progression** |
@@ -392,7 +404,7 @@ Thu tu toi uu de tranh phai lam lai:
 | Win screen | **Chua co** |
 | Economy balance | **Chua co** |
 | Merchant NPC trong world | **Co tool setup, can data pass** |
-| Class outfit / armor preview | **Da co data + runtime flow, nhung male hip/leg preview van can fix dut diem** |
+| Class outfit / armor preview | **Da co data + flow day du, nhung male hip/leg preview van can fix dut diem** |
 
 
 

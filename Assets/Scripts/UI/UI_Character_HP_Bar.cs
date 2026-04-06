@@ -18,10 +18,6 @@ namespace baodeag
         [SerializeField] TextMeshProUGUI characterDamage;
         [HideInInspector] public int oldHealthValue = 0;
 
-        [Header("Status Effects")]
-        [SerializeField] Image fillImage;
-        [SerializeField] Color regularColor;
-
         protected override void Awake()
         {
             base.Awake();
@@ -46,11 +42,11 @@ namespace baodeag
         {
             if (character.characterNetworkManager.isPoisoned.Value)
             {
-                fillImage.color = WorldUtilityManager.Instance.GetPoisonedColor();
+                barFillImage.color = WorldUtilityManager.Instance.GetPoisonedColor();
             }
             else
             {
-              fillImage.color = regularColor;
+                barFillImage.color = barFillColor;
             }
 
             if (displayCharacterNameOnDamage)

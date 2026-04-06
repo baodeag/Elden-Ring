@@ -14,8 +14,8 @@ namespace baodeag
         //secondary bar behind may bar for polish effect(yellow bar that shows how much an action/damage takes away from current stat)
 
         [Header("Fill Color")]
-        [SerializeField] Image fillImage;
-        [SerializeField] Color barFillColor;
+        [SerializeField] protected Image barFillImage;
+        [SerializeField] protected Color barFillColor;
 
         protected virtual void Awake()
         {
@@ -48,17 +48,17 @@ namespace baodeag
 
         public void ToggleBarFillColor(bool isPoisoned)
         {
-            if (fillImage == null)
+            if (barFillImage == null)
                 return;
 
             if (isPoisoned)
             {
-                fillImage.color = WorldUtilityManager.Instance.GetPoisonedColor();
+                barFillImage.color = WorldUtilityManager.Instance.GetPoisonedColor();
 
             }
             else
             {
-                fillImage.color = barFillColor;
+                barFillImage.color = barFillColor;
             }
         }
     }
