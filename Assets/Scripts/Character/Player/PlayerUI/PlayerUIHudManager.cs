@@ -383,8 +383,7 @@ namespace baodeag
             if (buffIcon == null)
                 return;
 
-            buffIcon.sprite = buffItem.itemIcon;
-            buffIcon.enabled = buffItem.itemIcon != null;
+            buffIcon.enabled = true;
 
             if (activeBuffsGameObject != null)
                 activeBuffsGameObject.SetActive(HasVisibleBuffIcon());
@@ -400,7 +399,6 @@ namespace baodeag
                 return;
 
             buffIcon.enabled = false;
-            buffIcon.sprite = null;
 
             if (activeBuffsGameObject != null)
                 activeBuffsGameObject.SetActive(HasVisibleBuffIcon());
@@ -449,7 +447,7 @@ namespace baodeag
 
         private bool IsBuffIconVisible(Image buffIcon)
         {
-            return buffIcon != null && buffIcon.enabled && buffIcon.sprite != null;
+            return buffIcon != null && buffIcon.enabled;
         }
 
         private void ClearBuffIcon(Image buffIcon)
@@ -458,7 +456,6 @@ namespace baodeag
                 return;
 
             buffIcon.enabled = false;
-            buffIcon.sprite = null;
         }
     }
 }
