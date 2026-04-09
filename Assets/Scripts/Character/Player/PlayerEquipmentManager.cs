@@ -117,6 +117,14 @@ namespace baodeag
             LoadBodyEquipment(player.playerInventoryManager.bodyEquipment);
             LoadLegEquipment(player.playerInventoryManager.legEquipment);
             LoadHandEquipment(player.playerInventoryManager.handEquipment);
+
+            // Some class-specific leg meshes can be hidden again by later body-type/runtime refreshes.
+            // Re-apply the leg visibility pass at the end so the world character keeps the same legs as preview.
+            if (player.playerInventoryManager.legEquipment != null &&
+                !HasVisibleLegEquipment(player.playerNetworkManager.isMale.Value))
+            {
+                ForceClassLegPreview(player.playerInventoryManager.legEquipment.itemName);
+            }
         }
 
         public void ForceClassLegPreview(string equipmentName)
@@ -127,71 +135,89 @@ namespace baodeag
             TryLoadClassLegFallback(equipmentName, player.playerNetworkManager.isMale.Value);
         }
 
+        public void ActivateEquipmentModelByName(string modelName)
+        {
+            if (string.IsNullOrEmpty(modelName))
+                return;
+
+            Transform[] allTransforms = player.GetComponentsInChildren<Transform>(true);
+
+            foreach (Transform transform in allTransforms)
+            {
+                if (transform.name != modelName)
+                    continue;
+
+                SetModelAndParentsActive(transform);
+                EnableRenderersRecursively(transform);
+                return;
+            }
+        }
+
         //quick slots
         public void SwitchQuickSlotItem()
         {
             if (!player.IsOwner)
                 return;
 
-            QuickSlotItem selectedItem = null;
+            int nextIndex = GetNextAvailableQuickSlotIndex(player.playerInventoryManager.quickSlotItemIndex);
+            SetCurrentQuickSlotIndex(nextIndex);
+        }
 
-            player.playerInventoryManager.quickSlotItemIndex += 1;
+        public void RefreshCurrentQuickSlotSelection()
+        {
+            if (!player.IsOwner)
+                return;
 
-            if (player.playerInventoryManager.quickSlotItemIndex < 0 || player.playerInventoryManager.quickSlotItemIndex > 2)
+            int currentIndex = player.playerInventoryManager.quickSlotItemIndex;
+
+            if (currentIndex >= 0 &&
+                currentIndex < player.playerInventoryManager.quickSlotItemsInQuickSlots.Length &&
+                player.playerInventoryManager.quickSlotItemsInQuickSlots[currentIndex] != null)
             {
-                player.playerInventoryManager.quickSlotItemIndex = 0;
-
-                //we check if we are holding more than one weapon
-                float itemCount = 0;
-                QuickSlotItem firstItem = null;
-                int firstItemPosition = 0;
-
-                for (int i = 0; i < player.playerInventoryManager.quickSlotItemsInQuickSlots.Length; i++)
-                {
-                    if (player.playerInventoryManager.quickSlotItemsInQuickSlots[i] != null)
-                    {
-                        itemCount += 1;
-
-                        if (firstItem == null)
-                        {
-                            firstItem = player.playerInventoryManager.quickSlotItemsInQuickSlots[i];
-                            firstItemPosition = i;
-                        }
-                    }
-                }
-
-                if (itemCount <= 1)
-                {
-                    //if we are only holding one weapon, we just equip it
-                    player.playerInventoryManager.quickSlotItemIndex = -1;
-                    selectedItem = null;
-                    player.playerNetworkManager.currentQuickSlotItemID.Value = -1;
-                }
-                else
-                {
-                    player.playerInventoryManager.quickSlotItemIndex = firstItemPosition;
-                    player.playerNetworkManager.currentQuickSlotItemID.Value = firstItem.itemID;
-                }
-
+                SetCurrentQuickSlotIndex(currentIndex);
                 return;
             }
 
-            //if the next weapon does not equal the unarmed weapon
-            if (player.playerInventoryManager.quickSlotItemsInQuickSlots[player.playerInventoryManager.quickSlotItemIndex] != null)
+            SetCurrentQuickSlotIndex(GetNextAvailableQuickSlotIndex(currentIndex));
+        }
+
+        private int GetNextAvailableQuickSlotIndex(int currentIndex)
+        {
+            QuickSlotItem[] quickSlots = player.playerInventoryManager.quickSlotItemsInQuickSlots;
+
+            if (quickSlots == null || quickSlots.Length == 0)
+                return -1;
+
+            for (int step = 1; step <= quickSlots.Length; step++)
             {
-                selectedItem = player.playerInventoryManager.quickSlotItemsInQuickSlots[player.playerInventoryManager.quickSlotItemIndex];
-                //assign the network weapon id so it switches for everyone
-                player.playerNetworkManager.currentQuickSlotItemID.Value = player.playerInventoryManager.quickSlotItemsInQuickSlots[player.playerInventoryManager.quickSlotItemIndex].itemID;
-            }
-            else
-            {
-                player.playerNetworkManager.currentQuickSlotItemID.Value = -1;
+                int candidateIndex = currentIndex + step;
+
+                if (candidateIndex >= quickSlots.Length)
+                    candidateIndex -= quickSlots.Length;
+
+                if (candidateIndex < 0 || candidateIndex >= quickSlots.Length)
+                    continue;
+
+                if (quickSlots[candidateIndex] != null)
+                    return candidateIndex;
             }
 
-            if (selectedItem == null && player.playerInventoryManager.quickSlotItemIndex <= 2)
+            return -1;
+        }
+
+        private void SetCurrentQuickSlotIndex(int slotIndex)
+        {
+            player.playerInventoryManager.quickSlotItemIndex = slotIndex;
+
+            if (slotIndex < 0 ||
+                slotIndex >= player.playerInventoryManager.quickSlotItemsInQuickSlots.Length ||
+                player.playerInventoryManager.quickSlotItemsInQuickSlots[slotIndex] == null)
             {
-                SwitchQuickSlotItem();
+                LoadQuickSlotEquipment(null);
+                return;
             }
+
+            LoadQuickSlotEquipment(player.playerInventoryManager.quickSlotItemsInQuickSlots[slotIndex]);
         }
 
         //equipment
@@ -860,6 +886,16 @@ namespace baodeag
             }
         }
 
+        private void EnableRenderersRecursively(Transform root)
+        {
+            Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
+
+            foreach (Renderer renderer in renderers)
+            {
+                renderer.enabled = true;
+            }
+        }
+
         private void UnloadLegEquipmentModels()
         {
             foreach (var model in maleHips)
@@ -1024,13 +1060,31 @@ namespace baodeag
                     player.playerNetworkManager.currentQuickSlotItemID.Value = -1; // -1 will never be an item id, its always null
 
                 player.playerInventoryManager.currentQuickSlotItem = null;
+
+                if (player.IsOwner && PlayerUIManager.instance != null)
+                    PlayerUIManager.instance.playerUIHudManager.SetQuickSlotItemQuickSlotIcon(null);
+
                 return;
             }
 
             player.playerInventoryManager.currentQuickSlotItem = equipment;
 
             if (player.IsOwner)
+            {
                 player.playerNetworkManager.currentQuickSlotItemID.Value = equipment.itemID;
+                
+                if (PlayerUIManager.instance != null)
+                    PlayerUIManager.instance.playerUIHudManager.SetQuickSlotItemQuickSlotIcon(equipment);
+            }
+        }
+
+        public void RefreshWeaponDamage()
+        {
+            if (rightWeaponManager != null && player.playerInventoryManager.currentRightHandWeapon != null)
+                rightWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentRightHandWeapon);
+
+            if (leftWeaponManager != null && player.playerInventoryManager.currentLeftHandWeapon != null)
+                leftWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentLeftHandWeapon);
         }
 
         //weapons

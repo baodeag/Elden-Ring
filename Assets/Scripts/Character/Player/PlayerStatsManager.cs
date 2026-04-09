@@ -10,6 +10,12 @@ namespace baodeag
         [Header("Runes")]
         public int runes = 0;
 
+        [Header("Buffs")]
+        public int maxHealthBuff = 0;
+        public int maxStaminaBuff = 0;
+        public int maxFocusPointsBuff = 0;
+        public float outgoingDamageBonusPercentage = 0f;
+
         protected override void Awake()
         {
             base.Awake();
@@ -26,6 +32,58 @@ namespace baodeag
             CalculateHealthBasedOnVitalityLevel(player.playerNetworkManager.vigor.Value);
             CalculateStaminaBasedOnEnduranceLevel(player.playerNetworkManager.endurance.Value);
             CalculateFocusPointsBasedOnMindLevel(player.playerNetworkManager.mind.Value);
+        }
+
+        public int CalculateModifiedMaxHealth()
+        {
+            return Mathf.Max(1, CalculateHealthBasedOnVitalityLevel(player.playerNetworkManager.vigor.Value) + maxHealthBuff);
+        }
+
+        public int CalculateModifiedMaxStamina()
+        {
+            return Mathf.Max(1, CalculateStaminaBasedOnEnduranceLevel(player.playerNetworkManager.endurance.Value) + maxStaminaBuff);
+        }
+
+        public int CalculateModifiedMaxFocusPoints()
+        {
+            return Mathf.Max(0, CalculateFocusPointsBasedOnMindLevel(player.playerNetworkManager.mind.Value) + maxFocusPointsBuff);
+        }
+
+        public float GetOutgoingDamageMultiplier()
+        {
+            return Mathf.Max(0.1f, 1f + (outgoingDamageBonusPercentage / 100f));
+        }
+
+        public void RefreshDerivedStats()
+        {
+            if (!player.IsOwner)
+                return;
+
+            int oldMaxHealth = player.playerNetworkManager.maxHealth.Value;
+            int oldMaxStamina = player.playerNetworkManager.maxStamina.Value;
+            int oldMaxFocusPoints = player.playerNetworkManager.maxFocusPoints.Value;
+
+            int newMaxHealth = CalculateModifiedMaxHealth();
+            int newMaxStamina = CalculateModifiedMaxStamina();
+            int newMaxFocusPoints = CalculateModifiedMaxFocusPoints();
+
+            player.playerNetworkManager.maxHealth.Value = newMaxHealth;
+            player.playerNetworkManager.maxStamina.Value = newMaxStamina;
+            player.playerNetworkManager.maxFocusPoints.Value = newMaxFocusPoints;
+
+            player.playerNetworkManager.currentHealth.Value = Mathf.Clamp(player.playerNetworkManager.currentHealth.Value + (newMaxHealth - oldMaxHealth), 0, newMaxHealth);
+            player.playerNetworkManager.currentStamina.Value = Mathf.Clamp(player.playerNetworkManager.currentStamina.Value + (newMaxStamina - oldMaxStamina), 0, newMaxStamina);
+            player.playerNetworkManager.currentFocusPoints.Value = Mathf.Clamp(player.playerNetworkManager.currentFocusPoints.Value + (newMaxFocusPoints - oldMaxFocusPoints), 0, newMaxFocusPoints);
+
+            if (player.IsOwner && PlayerUIManager.instance != null)
+            {
+                PlayerUIManager.instance.playerUIHudManager.SetMaxHealthValue(newMaxHealth);
+                PlayerUIManager.instance.playerUIHudManager.SetMaxStaminaValue(newMaxStamina);
+                PlayerUIManager.instance.playerUIHudManager.SetMaxFocusPointValue(newMaxFocusPoints);
+            }
+
+            if (player.playerEquipmentManager != null)
+                player.playerEquipmentManager.RefreshWeaponDamage();
         }
 
         public void CalculateTotalArmorAbsorption()

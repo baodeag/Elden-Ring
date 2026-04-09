@@ -36,7 +36,7 @@ namespace baodeag
 
         public virtual int GetCurrentAmount(PlayerManager player)
         {
-            return 0;
+            return itemAmount;
         }
     }
 }

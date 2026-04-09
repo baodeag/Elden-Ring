@@ -87,6 +87,7 @@ Muc tieu gameplay chinh:
 - [x] Da chuyen class review summary tu runtime-generated overlay sang serialized UI panel trong `Main_Menu_01`
 - [x] Da scaffold item/armor data cho class outfit moi trong `Assets/Data/Items/Armor`
 - [x] Da bo sung tai lieu workflow armor Polygon Hero de tiep tuc setup armor set nhat quan
+- [x] Da them he thong quick-slot buff charm cho player hoat dong ca offline/online, co buff HP/Stamina/FP/damage/stamina regen va co luu trang thai buff dang chay
 - [ ] Van con issue runtime voi male hip/leg preview khi dung full class-specific leg set; can chot fix o player prefab/runtime mapping
 
 ---

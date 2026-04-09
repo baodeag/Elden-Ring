@@ -434,10 +434,13 @@ namespace baodeag
             currentCharacterData.weaponsInInventory = new List<SerializableWeapon>();
             currentCharacterData.projectilesInInventory = new List<SerializableRangedProjectile>();
             currentCharacterData.quickSlotItemsInInventory = new List<SerializableQuickSlotItem>();
+            currentCharacterData.activeBuffs = new List<SerializableActiveBuff>();
             currentCharacterData.headEquipmentInInventory = new List<int>();
             currentCharacterData.bodyEquipmentInInventory = new List<int>();
             currentCharacterData.legEquipmentInInventory = new List<int>();
             currentCharacterData.handEquipmentInInventory = new List<int>();
+
+            playerEffectsManager.SaveActiveBuffs(currentCharacterData.activeBuffs);
 
             for (int i = 0; i < playerInventoryManager.itemsInInventory.Count; i++)
             {
@@ -502,9 +505,9 @@ namespace baodeag
             playerNetworkManager.faith.Value = currentCharacterData.faith;
 
             //this will be moved when saving and loading is added
-            playerNetworkManager.maxHealth.Value = playerStatsManager.CalculateHealthBasedOnVitalityLevel(playerNetworkManager.vigor.Value);
-            playerNetworkManager.maxStamina.Value = playerStatsManager.CalculateStaminaBasedOnEnduranceLevel(playerNetworkManager.endurance.Value);
-            playerNetworkManager.maxFocusPoints.Value = playerStatsManager.CalculateFocusPointsBasedOnMindLevel(playerNetworkManager.mind.Value);
+            playerNetworkManager.maxHealth.Value = playerStatsManager.CalculateModifiedMaxHealth();
+            playerNetworkManager.maxStamina.Value = playerStatsManager.CalculateModifiedMaxStamina();
+            playerNetworkManager.maxFocusPoints.Value = playerStatsManager.CalculateModifiedMaxFocusPoints();
             playerNetworkManager.currentHealth.Value = currentCharacterData.currentHealth > 0
                 ? Mathf.Min(currentCharacterData.currentHealth, playerNetworkManager.maxHealth.Value)
                 : playerNetworkManager.maxHealth.Value;
@@ -666,9 +669,12 @@ namespace baodeag
                 playerInventoryManager.AddItemToInventory(projectile);
             }
 
+            EnsureDefaultBuffCharmsAvailable(true);
+
             playerEquipmentManager.EquipArmor();
             playerEquipmentManager.LoadMainProjectileEquipment(currentCharacterData.mainProjectile.GetProjectile());
             playerEquipmentManager.LoadSecondaryProjectileEquipment(currentCharacterData.secondaryProjectile.GetProjectile());
+            playerEffectsManager.LoadActiveBuffs(currentCharacterData.activeBuffs);
         }
 
         public void LoadOtherPlayerCharacterWhenJoiningServer()
@@ -713,6 +719,67 @@ namespace baodeag
             {
                 playerNetworkManager.OnLockOnTargetIDChange(0, playerNetworkManager.currentTargetNetworkObjectID.Value);
             }
+        }
+
+        private void EnsureDefaultBuffCharmsAvailable(bool fillEmptyQuickSlots)
+        {
+            if (WorldItemDatabase.Instance == null)
+                return;
+
+            List<BuffCharmItem> defaultBuffCharms = WorldItemDatabase.Instance.GetDefaultBuffCharms();
+
+            if (defaultBuffCharms == null || defaultBuffCharms.Count == 0)
+                return;
+
+            for (int i = 0; i < defaultBuffCharms.Count; i++)
+            {
+                BuffCharmItem template = defaultBuffCharms[i];
+
+                if (template == null || PlayerAlreadyHasQuickSlotItem(template.itemID))
+                    continue;
+
+                playerInventoryManager.AddItemToInventory(Instantiate(template));
+            }
+
+            if (!fillEmptyQuickSlots)
+                return;
+
+            int templateIndex = 0;
+
+            for (int i = 0; i < playerInventoryManager.quickSlotItemsInQuickSlots.Length && templateIndex < defaultBuffCharms.Count; i++)
+            {
+                if (playerInventoryManager.quickSlotItemsInQuickSlots[i] != null)
+                    continue;
+
+                playerInventoryManager.quickSlotItemsInQuickSlots[i] = Instantiate(defaultBuffCharms[templateIndex]);
+                templateIndex++;
+            }
+        }
+
+        private bool PlayerAlreadyHasQuickSlotItem(int itemID)
+        {
+            for (int i = 0; i < playerInventoryManager.quickSlotItemsInQuickSlots.Length; i++)
+            {
+                if (playerInventoryManager.quickSlotItemsInQuickSlots[i] != null &&
+                    playerInventoryManager.quickSlotItemsInQuickSlots[i].itemID == itemID)
+                {
+                    return true;
+                }
+            }
+
+            if (playerInventoryManager.itemsInInventory == null)
+                return false;
+
+            for (int i = 0; i < playerInventoryManager.itemsInInventory.Count; i++)
+            {
+                if (playerInventoryManager.itemsInInventory[i] is QuickSlotItem quickSlotItem &&
+                    quickSlotItem.itemID == itemID)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         

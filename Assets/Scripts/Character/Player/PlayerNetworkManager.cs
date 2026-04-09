@@ -293,21 +293,21 @@ namespace baodeag
 
         public void SetNewMaxHealthValue(int oldVitality, int newVitality)
         {
-            maxHealth.Value = player.playerStatsManager.CalculateHealthBasedOnVitalityLevel(newVitality);
+            maxHealth.Value = player.playerStatsManager.CalculateModifiedMaxHealth();
             PlayerUIManager.instance.playerUIHudManager.SetMaxHealthValue(maxHealth.Value);
             currentHealth.Value = maxHealth.Value;
         }
 
         public void SetNewMaxStaminaValue(int oldEndurance, int newEndurance)
         {
-            maxStamina.Value = player.playerStatsManager.CalculateStaminaBasedOnEnduranceLevel(newEndurance);
+            maxStamina.Value = player.playerStatsManager.CalculateModifiedMaxStamina();
             PlayerUIManager.instance.playerUIHudManager.SetMaxStaminaValue(maxStamina.Value);
             currentStamina.Value = maxStamina.Value;
         }
 
         public void SetNewMaxFocusPointsValue(int oldMind, int newMind)
         {
-            maxFocusPoints.Value = player.playerStatsManager.CalculateFocusPointsBasedOnMindLevel(newMind);
+            maxFocusPoints.Value = player.playerStatsManager.CalculateModifiedMaxFocusPoints();
             PlayerUIManager.instance.playerUIHudManager.SetMaxFocusPointValue(maxFocusPoints.Value);
             currentFocusPoints.Value = maxFocusPoints.Value;
         }
@@ -420,7 +420,33 @@ namespace baodeag
         {
             QuickSlotItem newQuickSlotItem = null;
 
-            if (WorldItemDatabase.Instance.GetQuickSlotItemByID(newID))
+            if (player.IsOwner && player.playerInventoryManager.quickSlotItemsInQuickSlots != null)
+            {
+                int currentIndex = player.playerInventoryManager.quickSlotItemIndex;
+
+                if (currentIndex >= 0 &&
+                    currentIndex < player.playerInventoryManager.quickSlotItemsInQuickSlots.Length &&
+                    player.playerInventoryManager.quickSlotItemsInQuickSlots[currentIndex] != null &&
+                    player.playerInventoryManager.quickSlotItemsInQuickSlots[currentIndex].itemID == newID)
+                {
+                    newQuickSlotItem = player.playerInventoryManager.quickSlotItemsInQuickSlots[currentIndex];
+                }
+                else
+                {
+                    for (int i = 0; i < player.playerInventoryManager.quickSlotItemsInQuickSlots.Length; i++)
+                    {
+                        QuickSlotItem slottedItem = player.playerInventoryManager.quickSlotItemsInQuickSlots[i];
+
+                        if (slottedItem == null || slottedItem.itemID != newID)
+                            continue;
+
+                        newQuickSlotItem = slottedItem;
+                        break;
+                    }
+                }
+            }
+
+            if (newQuickSlotItem == null && WorldItemDatabase.Instance.GetQuickSlotItemByID(newID))
                 newQuickSlotItem = Instantiate(WorldItemDatabase.Instance.GetQuickSlotItemByID(newID));
 
             if (newQuickSlotItem != null)

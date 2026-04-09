@@ -1062,6 +1062,22 @@ namespace baodeag {
             if (GetQuickSlotItemAtIndex(quickSlotItems, 2) != null)
                 player.playerInventoryManager.quickSlotItemsInQuickSlots[2] = Instantiate(GetQuickSlotItemAtIndex(quickSlotItems, 2));
 
+            List<BuffCharmItem> defaultBuffCharms = WorldItemDatabase.Instance != null ? WorldItemDatabase.Instance.GetDefaultBuffCharms() : null;
+
+            if (defaultBuffCharms != null)
+            {
+                int defaultCharmIndex = 0;
+
+                for (int i = 0; i < player.playerInventoryManager.quickSlotItemsInQuickSlots.Length && defaultCharmIndex < defaultBuffCharms.Count; i++)
+                {
+                    if (player.playerInventoryManager.quickSlotItemsInQuickSlots[i] != null)
+                        continue;
+
+                    player.playerInventoryManager.quickSlotItemsInQuickSlots[i] = Instantiate(defaultBuffCharms[defaultCharmIndex]);
+                    defaultCharmIndex++;
+                }
+            }
+
             player.playerEquipmentManager.LoadQuickSlotEquipment(player.playerInventoryManager.quickSlotItemsInQuickSlots[player.playerInventoryManager.quickSlotItemIndex]);
         }
 

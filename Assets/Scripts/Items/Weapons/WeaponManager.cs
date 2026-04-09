@@ -61,6 +61,17 @@ namespace baodeag
                 holyDamage += upgradeDamage;
             meleeDamageCollider.holyDamage = holyDamage;
 
+            float outgoingDamageMultiplier = 1f;
+
+            if (characterWieldingWeapon != null && characterWieldingWeapon.characterStatsManager is PlayerStatsManager playerStatsManager)
+                outgoingDamageMultiplier = playerStatsManager.GetOutgoingDamageMultiplier();
+
+            meleeDamageCollider.physicalDamage *= outgoingDamageMultiplier;
+            meleeDamageCollider.magicDamage *= outgoingDamageMultiplier;
+            meleeDamageCollider.fireDamage *= outgoingDamageMultiplier;
+            meleeDamageCollider.lightningDamage *= outgoingDamageMultiplier;
+            meleeDamageCollider.holyDamage *= outgoingDamageMultiplier;
+
             meleeDamageCollider.poiseDamage = weapon.poiseDamage;
 
             meleeDamageCollider.light_Attack_01_Modifier = weapon.light_Attack_01_Modifier;

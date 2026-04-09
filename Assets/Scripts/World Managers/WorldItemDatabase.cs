@@ -44,6 +44,7 @@ namespace baodeag
 
         [Header("Quick Slot")]
         [SerializeField] List<QuickSlotItem> quickSlotItems = new List<QuickSlotItem>();
+        [SerializeField] List<BuffCharmItem> defaultBuffCharms = new List<BuffCharmItem>();
 
         [Header("Upgrade Materials")]
         [SerializeField] List<UpgradeMaterial> upgradeMaterials = new List<UpgradeMaterial>();
@@ -62,6 +63,8 @@ namespace baodeag
             {
                 Destroy(gameObject);
             }
+
+            RegisterDefaultBuffCharms();
 
             //add all of our weapons to the item list
             foreach (var weapon in weapons)
@@ -120,6 +123,101 @@ namespace baodeag
             {
                 items[i].itemID = i;
             }
+        }
+
+        private void RegisterDefaultBuffCharms()
+        {
+            if (quickSlotItems == null)
+                quickSlotItems = new List<QuickSlotItem>();
+
+            if (defaultBuffCharms == null)
+                defaultBuffCharms = new List<BuffCharmItem>();
+
+            if (defaultBuffCharms.Count > 0)
+                return;
+
+            Sprite placeholderIcon = quickSlotItems.Count > 0 ? quickSlotItems[0].itemIcon : null;
+
+            defaultBuffCharms.Add(CreateDefaultBuffCharm(
+                "Guardian Charm",
+                "Temporary blessing that raises maximum health.",
+                placeholderIcon,
+                45f,
+                maxHealthBonus: 80,
+                purchasePrice: 180,
+                sellPrice: 90));
+
+            defaultBuffCharms.Add(CreateDefaultBuffCharm(
+                "Wind Charm",
+                "Temporary blessing that raises maximum stamina and stamina recovery.",
+                placeholderIcon,
+                45f,
+                maxStaminaBonus: 45,
+                staminaRegenerationBonusPercentage: 25f,
+                purchasePrice: 180,
+                sellPrice: 90));
+
+            defaultBuffCharms.Add(CreateDefaultBuffCharm(
+                "Sage Charm",
+                "Temporary blessing that raises maximum mana.",
+                placeholderIcon,
+                45f,
+                maxFocusPointsBonus: 50,
+                purchasePrice: 180,
+                sellPrice: 90));
+
+            defaultBuffCharms.Add(CreateDefaultBuffCharm(
+                "War Charm",
+                "Temporary blessing that empowers all outgoing weapon damage.",
+                placeholderIcon,
+                35f,
+                outgoingDamageBonusPercentage: 20f,
+                purchasePrice: 220,
+                sellPrice: 110));
+
+            for (int i = 0; i < defaultBuffCharms.Count; i++)
+            {
+                if (defaultBuffCharms[i] != null)
+                    quickSlotItems.Add(defaultBuffCharms[i]);
+            }
+        }
+
+        private BuffCharmItem CreateDefaultBuffCharm(
+            string itemName,
+            string itemDescription,
+            Sprite icon,
+            float durationSeconds,
+            int maxHealthBonus = 0,
+            int maxStaminaBonus = 0,
+            int maxFocusPointsBonus = 0,
+            float staminaRegenerationBonusPercentage = 0f,
+            float outgoingDamageBonusPercentage = 0f,
+            int purchasePrice = 100,
+            int sellPrice = 50)
+        {
+            BuffCharmItem buffCharm = ScriptableObject.CreateInstance<BuffCharmItem>();
+            buffCharm.name = itemName;
+            buffCharm.InitializeRuntimeBuff(
+                itemName,
+                itemDescription,
+                icon,
+                durationSeconds,
+                maxHealthBonus,
+                maxStaminaBonus,
+                maxFocusPointsBonus,
+                staminaRegenerationBonusPercentage,
+                outgoingDamageBonusPercentage,
+                2,
+                5,
+                purchasePrice,
+                sellPrice);
+
+            return buffCharm;
+        }
+
+        public List<BuffCharmItem> GetDefaultBuffCharms()
+        {
+            return defaultBuffCharms;
         }
 
         //item database
