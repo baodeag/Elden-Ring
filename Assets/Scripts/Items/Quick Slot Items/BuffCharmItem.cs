@@ -128,6 +128,7 @@ namespace baodeag
         {
             PlayerStatBuffTimedEffect effect = ScriptableObject.CreateInstance<PlayerStatBuffTimedEffect>();
             effect.sourceItemID = itemID;
+            effect.effectID = 100000 + itemID;
             effect.defaultLengthOfEffect = Mathf.Max(1f, buffDurationSeconds);
             effect.timeRemainingOnEffect = effect.defaultLengthOfEffect;
             effect.maxHealthBonus = maxHealthBonus;
