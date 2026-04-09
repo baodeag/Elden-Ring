@@ -47,6 +47,9 @@ namespace baodeag
             player.playerNetworkManager.staminaRegenerationModifier.Value -= staminaRegenerationBonusPercentage;
             player.playerStatsManager.RefreshDerivedStats();
 
+            if (PlayerUIManager.instance != null && PlayerUIManager.instance.localPlayer == player)
+                PlayerUIManager.instance.playerUIHudManager?.HideActiveBuff(sourceItemID);
+
             effectHasBeenInitialized = false;
         }
 

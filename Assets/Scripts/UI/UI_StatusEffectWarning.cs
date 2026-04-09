@@ -18,20 +18,23 @@ namespace baodeag
             switch (status)
             {
                 case BuildUp.Poison:
-                    warningText.color = poisonedColor;
-                    warningText.text = "Poisoned!";
+                    SetCustomMessage("Poisoned!", poisonedColor);
                     break;
                 case BuildUp.Bleed:
-                    warningText.color = bloodLossColor;
-                    warningText.text = "Blood Loss!";
+                    SetCustomMessage("Blood Loss!", bloodLossColor);
                     break;
                 case BuildUp.Frost:
-                    warningText.color = frostColor;
-                    warningText.text = "Frostbite!";
+                    SetCustomMessage("Frostbite!", frostColor);
                     break;
                 default:
                     break;
             }
+        }
+
+        public void SetCustomMessage(string message, Color color)
+        {
+            warningText.color = color;
+            warningText.text = message;
         }
     }
 }

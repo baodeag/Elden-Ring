@@ -14,6 +14,9 @@ namespace baodeag
         [SerializeField] TextMeshProUGUI popUpMessageText;
         [SerializeField] GameObject popUpMessageGameObject;
         [SerializeField] private GameObject statusEffectPopUpPrefab;
+        [SerializeField] GameObject buffStatusPopUpGameObject;
+        [SerializeField] UI_StatusEffectWarning buffStatusPopUpWarning;
+        private Coroutine buffStatusPopUpCoroutine;
 
         [Header("Item Pop Up")]
         [SerializeField] GameObject itemPopUpGameObject;
@@ -47,11 +50,14 @@ namespace baodeag
         [SerializeField] TextMeshProUGUI dialoguePopUpText;
         [SerializeField] CharacterDialogue currentDialogue;
         private Coroutine dialogueCoroutine;
+        private static readonly Color buffPopUpColor = new Color(0.96f, 0.84f, 0.42f, 1f);
 
         public void CloseAllPopUpWindows()
         {
             popUpMessageGameObject.SetActive(false);
             itemPopUpGameObject.SetActive(false);
+            if (buffStatusPopUpGameObject != null)
+                buffStatusPopUpGameObject.SetActive(false);
 
             PlayerUIManager.instance.popUpWindowIsOpen = false;
         }
@@ -243,6 +249,23 @@ namespace baodeag
             StartCoroutine(FadeOutThenDestroy(popUpWarning.canvas, 2, popUp));
         }
 
+        public void SendBuffPopUp(Item item)
+        {
+            if (item == null || buffStatusPopUpGameObject == null || buffStatusPopUpWarning == null)
+                return;
+
+            if (buffStatusPopUpCoroutine != null)
+            {
+                StopCoroutine(buffStatusPopUpCoroutine);
+                buffStatusPopUpCoroutine = null;
+            }
+
+            buffStatusPopUpGameObject.SetActive(true);
+            buffStatusPopUpWarning.canvas.alpha = 1f;
+            buffStatusPopUpWarning.SetCustomMessage(item.itemName.ToUpperInvariant(), buffPopUpColor);
+            buffStatusPopUpCoroutine = StartCoroutine(FadeOutExistingPopUp(buffStatusPopUpWarning.canvas, 2f, buffStatusPopUpGameObject));
+        }
+
         public void SendDialoguePopUp(CharacterDialogue dialogue, AICharacterManager aiCharacter)
         {
             PlayerUIManager.instance.playerUIHudManager.ToggleHUDWithOutPopUps(false);
@@ -384,6 +407,30 @@ namespace baodeag
             Destroy(objectToDestroy);
 
             yield return null;
+        }
+
+        private IEnumerator FadeOutExistingPopUp(CanvasGroup canvas, float duration, GameObject popUpObject)
+        {
+            float timer = 0f;
+
+            while (timer < duration)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
+
+            float fadeOutTimer = 1f;
+
+            while (fadeOutTimer > 0f)
+            {
+                fadeOutTimer -= Time.deltaTime;
+                canvas.alpha = fadeOutTimer;
+                yield return null;
+            }
+
+            canvas.alpha = 1f;
+            popUpObject.SetActive(false);
+            buffStatusPopUpCoroutine = null;
         }
     }
 }

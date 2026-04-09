@@ -67,6 +67,9 @@ namespace baodeag
             if (!character.IsOwner || activeBuffs == null)
                 return;
 
+            if (PlayerUIManager.instance != null && PlayerUIManager.instance.localPlayer == character)
+                PlayerUIManager.instance.playerUIHudManager?.ClearActiveBuffs();
+
             for (int i = 0; i < activeBuffs.Count; i++)
             {
                 SerializableActiveBuff savedBuff = activeBuffs[i];
@@ -82,6 +85,9 @@ namespace baodeag
                 PlayerStatBuffTimedEffect effect = buffItem.CreateEffectInstance();
                 effect.timeRemainingOnEffect = Mathf.Max(1f, savedBuff.timeRemaining + 1f);
                 AddTimedEffect(effect);
+
+                if (PlayerUIManager.instance != null && PlayerUIManager.instance.localPlayer == character)
+                    PlayerUIManager.instance.playerUIHudManager?.ShowActiveBuff(buffItem);
             }
         }
     }

@@ -48,6 +48,13 @@ namespace baodeag
         [Header("Crosshair")]
         public GameObject crossHair;
 
+        [Header("Active Buffs")]
+        [SerializeField] GameObject activeBuffsGameObject;
+        [SerializeField] Image guardianBuffIcon;
+        [SerializeField] Image windBuffIcon;
+        [SerializeField] Image sageBuffIcon;
+        [SerializeField] Image warBuffIcon;
+
         public void ToggleHUD(bool status)
         {
             //to do fade in and out over time
@@ -364,6 +371,94 @@ namespace baodeag
             secondaryProjectileCount.text = projectileItem.currentAmmoAmount.ToString();
             secondaryProjectileQuickSlotIcon.enabled = true;
             secondaryProjectileCount.enabled = true;
+        }
+
+        public void ShowActiveBuff(BuffCharmItem buffItem)
+        {
+            if (buffItem == null)
+                return;
+
+            Image buffIcon = GetBuffIcon(buffItem);
+
+            if (buffIcon == null)
+                return;
+
+            buffIcon.sprite = buffItem.itemIcon;
+            buffIcon.enabled = buffItem.itemIcon != null;
+
+            if (activeBuffsGameObject != null)
+                activeBuffsGameObject.SetActive(HasVisibleBuffIcon());
+        }
+
+        public void HideActiveBuff(int sourceItemID)
+        {
+            Item item = WorldItemDatabase.Instance != null ? WorldItemDatabase.Instance.GetItemByID(sourceItemID) : null;
+            BuffCharmItem buffItem = item as BuffCharmItem;
+            Image buffIcon = GetBuffIcon(buffItem);
+
+            if (buffIcon == null)
+                return;
+
+            buffIcon.enabled = false;
+            buffIcon.sprite = null;
+
+            if (activeBuffsGameObject != null)
+                activeBuffsGameObject.SetActive(HasVisibleBuffIcon());
+        }
+
+        public void ClearActiveBuffs()
+        {
+            ClearBuffIcon(guardianBuffIcon);
+            ClearBuffIcon(windBuffIcon);
+            ClearBuffIcon(sageBuffIcon);
+            ClearBuffIcon(warBuffIcon);
+
+            if (activeBuffsGameObject != null)
+                activeBuffsGameObject.SetActive(false);
+        }
+
+        private Image GetBuffIcon(BuffCharmItem buffItem)
+        {
+            if (buffItem == null || string.IsNullOrWhiteSpace(buffItem.itemName))
+                return null;
+
+            string itemName = buffItem.itemName.ToLowerInvariant();
+
+            if (itemName.Contains("guardian"))
+                return guardianBuffIcon;
+
+            if (itemName.Contains("wind"))
+                return windBuffIcon;
+
+            if (itemName.Contains("sage"))
+                return sageBuffIcon;
+
+            if (itemName.Contains("war"))
+                return warBuffIcon;
+
+            return null;
+        }
+
+        private bool HasVisibleBuffIcon()
+        {
+            return IsBuffIconVisible(guardianBuffIcon)
+                || IsBuffIconVisible(windBuffIcon)
+                || IsBuffIconVisible(sageBuffIcon)
+                || IsBuffIconVisible(warBuffIcon);
+        }
+
+        private bool IsBuffIconVisible(Image buffIcon)
+        {
+            return buffIcon != null && buffIcon.enabled && buffIcon.sprite != null;
+        }
+
+        private void ClearBuffIcon(Image buffIcon)
+        {
+            if (buffIcon == null)
+                return;
+
+            buffIcon.enabled = false;
+            buffIcon.sprite = null;
         }
     }
 }

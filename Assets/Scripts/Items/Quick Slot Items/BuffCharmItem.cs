@@ -93,6 +93,15 @@ namespace baodeag
                 PlayerStatBuffTimedEffect effect = CreateEffectInstance();
                 player.playerEffectsManager.AddTimedEffect(effect);
 
+                if (PlayerUIManager.instance != null)
+                {
+                    if (PlayerUIManager.instance.playerUIPopUpManager != null)
+                        PlayerUIManager.instance.playerUIPopUpManager.SendBuffPopUp(this);
+
+                    if (PlayerUIManager.instance.playerUIHudManager != null)
+                        PlayerUIManager.instance.playerUIHudManager.ShowActiveBuff(this);
+                }
+
                 if (isConsumable)
                 {
                     itemAmount = Mathf.Max(0, itemAmount - 1);
