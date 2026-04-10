@@ -293,6 +293,14 @@ namespace baodeag
                 return;
             }
 
+            if (quickSlotItem.isConsumable && quickSlotItem.GetCurrentAmount(PlayerUIManager.instance.localPlayer) <= 0)
+            {
+                quickSlotItemQuickSlotIcon.enabled = false;
+                quickSlotItemQuickSlotIcon.sprite = null;
+                quickSlotItemCount.enabled = false;
+                return;
+            }
+
             if (quickSlotItem.itemIcon == null)
             {
                 Debug.Log("Item has no icon");

@@ -113,6 +113,9 @@ namespace baodeag
                         if (currentIndex >= 0 && currentIndex < player.playerInventoryManager.quickSlotItemsInQuickSlots.Length)
                             player.playerInventoryManager.quickSlotItemsInQuickSlots[currentIndex] = null;
 
+                        if (PlayerUIManager.instance != null && PlayerUIManager.instance.playerUIHudManager != null)
+                            PlayerUIManager.instance.playerUIHudManager.SetQuickSlotItemQuickSlotIcon(null);
+
                         player.playerEquipmentManager.RefreshCurrentQuickSlotSelection();
                     }
                     else
