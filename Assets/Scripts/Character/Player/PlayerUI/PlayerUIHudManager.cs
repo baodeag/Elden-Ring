@@ -52,10 +52,20 @@ namespace baodeag
         [Header("Active Buffs")]
         [SerializeField] GameObject activeBuffsGameObject;
         [SerializeField] Image guardianBuffIcon;
+        [SerializeField] TextMeshProUGUI guardianBuffTimerText;
         [SerializeField] Image windBuffIcon;
+        [SerializeField] TextMeshProUGUI windBuffTimerText;
         [SerializeField] Image sageBuffIcon;
+        [SerializeField] TextMeshProUGUI sageBuffTimerText;
         [SerializeField] Image warBuffIcon;
+        [SerializeField] TextMeshProUGUI warBuffTimerText;
         private readonly Dictionary<int, Image> activeBuffIconsBySourceID = new Dictionary<int, Image>();
+        private readonly Dictionary<int, TextMeshProUGUI> activeBuffTimerTextsBySourceID = new Dictionary<int, TextMeshProUGUI>();
+
+        private void Update()
+        {
+            RefreshActiveBuffTimerTexts();
+        }
 
         public void ToggleHUD(bool status)
         {
@@ -395,9 +405,13 @@ namespace baodeag
 
             RemoveExistingBuffMapping(buffIcon);
             activeBuffIconsBySourceID[buffItem.itemID] = buffIcon;
+            TextMeshProUGUI timerText = GetBuffTimerText(buffItem);
+            RemoveExistingBuffTimerMapping(timerText);
+            activeBuffTimerTextsBySourceID[buffItem.itemID] = timerText;
             buffIcon.gameObject.SetActive(true);
             buffIcon.enabled = true;
             buffIcon.rectTransform.SetAsLastSibling();
+            SetBuffTimerTextVisible(timerText, true);
 
             if (activeBuffsGameObject != null)
                 activeBuffsGameObject.SetActive(HasVisibleBuffIcon());
@@ -405,10 +419,10 @@ namespace baodeag
 
         public void HideActiveBuff(int sourceItemID)
         {
+            BuffCharmItem buffItem = null;
+
             if (!activeBuffIconsBySourceID.TryGetValue(sourceItemID, out Image buffIcon) || buffIcon == null)
             {
-                BuffCharmItem buffItem = null;
-
                 if (WorldItemDatabase.Instance != null)
                 {
                     buffItem = WorldItemDatabase.Instance.GetQuickSlotItemByID(sourceItemID) as BuffCharmItem;
@@ -424,8 +438,14 @@ namespace baodeag
                 return;
 
             activeBuffIconsBySourceID.Remove(sourceItemID);
+            TextMeshProUGUI timerText = null;
+            if (!activeBuffTimerTextsBySourceID.TryGetValue(sourceItemID, out timerText) || timerText == null)
+                timerText = GetBuffTimerText(buffItem);
+
+            activeBuffTimerTextsBySourceID.Remove(sourceItemID);
             buffIcon.enabled = false;
             buffIcon.gameObject.SetActive(false);
+            SetBuffTimerTextVisible(timerText, false);
 
             if (activeBuffsGameObject != null)
                 activeBuffsGameObject.SetActive(HasVisibleBuffIcon());
@@ -434,10 +454,15 @@ namespace baodeag
         public void ClearActiveBuffs()
         {
             activeBuffIconsBySourceID.Clear();
+            activeBuffTimerTextsBySourceID.Clear();
             ClearBuffIcon(guardianBuffIcon);
             ClearBuffIcon(windBuffIcon);
             ClearBuffIcon(sageBuffIcon);
             ClearBuffIcon(warBuffIcon);
+            ClearBuffTimerText(guardianBuffTimerText);
+            ClearBuffTimerText(windBuffTimerText);
+            ClearBuffTimerText(sageBuffTimerText);
+            ClearBuffTimerText(warBuffTimerText);
 
             if (activeBuffsGameObject != null)
                 activeBuffsGameObject.SetActive(false);
@@ -461,6 +486,28 @@ namespace baodeag
 
             if (itemName.Contains("war"))
                 return warBuffIcon;
+
+            return null;
+        }
+
+        private TextMeshProUGUI GetBuffTimerText(BuffCharmItem buffItem)
+        {
+            if (buffItem == null || string.IsNullOrWhiteSpace(buffItem.itemName))
+                return null;
+
+            string itemName = buffItem.itemName.ToLowerInvariant();
+
+            if (itemName.Contains("guardian"))
+                return guardianBuffTimerText;
+
+            if (itemName.Contains("wind"))
+                return windBuffTimerText;
+
+            if (itemName.Contains("sage"))
+                return sageBuffTimerText;
+
+            if (itemName.Contains("war"))
+                return warBuffTimerText;
 
             return null;
         }
@@ -498,6 +545,84 @@ namespace baodeag
                 activeBuffIconsBySourceID.Remove(sourceIDToRemove);
         }
 
+        private void RemoveExistingBuffTimerMapping(TextMeshProUGUI timerText)
+        {
+            if (timerText == null || activeBuffTimerTextsBySourceID.Count == 0)
+                return;
+
+            int sourceIDToRemove = -1;
+
+            foreach (KeyValuePair<int, TextMeshProUGUI> entry in activeBuffTimerTextsBySourceID)
+            {
+                if (entry.Value != timerText)
+                    continue;
+
+                sourceIDToRemove = entry.Key;
+                break;
+            }
+
+            if (sourceIDToRemove >= 0)
+                activeBuffTimerTextsBySourceID.Remove(sourceIDToRemove);
+        }
+
+        private void RefreshActiveBuffTimerTexts()
+        {
+            if (activeBuffTimerTextsBySourceID.Count == 0)
+                return;
+
+            if (PlayerUIManager.instance == null || PlayerUIManager.instance.localPlayer == null)
+                return;
+
+            PlayerEffectsManager playerEffectsManager = PlayerUIManager.instance.localPlayer.playerEffectsManager;
+
+            if (playerEffectsManager == null || playerEffectsManager.timedEffects == null)
+                return;
+
+            List<int> activeSourceIDs = new List<int>();
+
+            for (int i = 0; i < playerEffectsManager.timedEffects.Count; i++)
+            {
+                PlayerStatBuffTimedEffect buffEffect = playerEffectsManager.timedEffects[i] as PlayerStatBuffTimedEffect;
+
+                if (buffEffect == null || buffEffect.sourceItemID < 0 || buffEffect.timeRemainingOnEffect <= 0)
+                    continue;
+
+                activeSourceIDs.Add(buffEffect.sourceItemID);
+
+                if (!activeBuffTimerTextsBySourceID.TryGetValue(buffEffect.sourceItemID, out TextMeshProUGUI timerText) || timerText == null)
+                    continue;
+
+                SetBuffTimerTextVisible(timerText, true);
+                timerText.text = Mathf.CeilToInt(buffEffect.timeRemainingOnEffect).ToString() + "s";
+            }
+
+            List<int> expiredSourceIDs = new List<int>();
+
+            foreach (KeyValuePair<int, TextMeshProUGUI> entry in activeBuffTimerTextsBySourceID)
+            {
+                if (activeSourceIDs.Contains(entry.Key))
+                    continue;
+
+                expiredSourceIDs.Add(entry.Key);
+            }
+
+            for (int i = 0; i < expiredSourceIDs.Count; i++)
+            {
+                HideActiveBuff(expiredSourceIDs[i]);
+            }
+        }
+
+        private void SetBuffTimerTextVisible(TextMeshProUGUI timerText, bool isVisible)
+        {
+            if (timerText == null)
+                return;
+
+            timerText.gameObject.SetActive(isVisible);
+
+            if (!isVisible)
+                timerText.text = string.Empty;
+        }
+
         private void ClearBuffIcon(Image buffIcon)
         {
             if (buffIcon == null)
@@ -505,6 +630,15 @@ namespace baodeag
 
             buffIcon.enabled = false;
             buffIcon.gameObject.SetActive(false);
+        }
+
+        private void ClearBuffTimerText(TextMeshProUGUI timerText)
+        {
+            if (timerText == null)
+                return;
+
+            timerText.text = string.Empty;
+            timerText.gameObject.SetActive(false);
         }
     }
 }
