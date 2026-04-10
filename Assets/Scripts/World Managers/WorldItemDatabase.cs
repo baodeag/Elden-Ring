@@ -45,6 +45,10 @@ namespace baodeag
         [Header("Quick Slot")]
         [SerializeField] List<QuickSlotItem> quickSlotItems = new List<QuickSlotItem>();
         [SerializeField] List<BuffCharmItem> defaultBuffCharms = new List<BuffCharmItem>();
+        [SerializeField] Sprite guardianBuffQuickSlotIcon;
+        [SerializeField] Sprite windBuffQuickSlotIcon;
+        [SerializeField] Sprite sageBuffQuickSlotIcon;
+        [SerializeField] Sprite warBuffQuickSlotIcon;
         [SerializeField] GameObject guardianBuffFlaskPrefab;
         [SerializeField] GameObject windBuffFlaskPrefab;
         [SerializeField] GameObject sageBuffFlaskPrefab;
@@ -140,12 +144,10 @@ namespace baodeag
             if (defaultBuffCharms.Count > 0)
                 return;
 
-            Sprite placeholderIcon = quickSlotItems.Count > 0 ? quickSlotItems[0].itemIcon : null;
-
             defaultBuffCharms.Add(CreateDefaultBuffCharm(
                 "Guardian Charm",
                 "Temporary blessing that raises maximum health.",
-                placeholderIcon,
+                guardianBuffQuickSlotIcon,
                 45f,
                 maxHealthBonus: 80,
                 purchasePrice: 180,
@@ -154,7 +156,7 @@ namespace baodeag
             defaultBuffCharms.Add(CreateDefaultBuffCharm(
                 "Wind Charm",
                 "Temporary blessing that raises maximum stamina and stamina recovery.",
-                placeholderIcon,
+                windBuffQuickSlotIcon,
                 45f,
                 maxStaminaBonus: 45,
                 staminaRegenerationBonusPercentage: 25f,
@@ -164,7 +166,7 @@ namespace baodeag
             defaultBuffCharms.Add(CreateDefaultBuffCharm(
                 "Sage Charm",
                 "Temporary blessing that raises maximum mana.",
-                placeholderIcon,
+                sageBuffQuickSlotIcon,
                 45f,
                 maxFocusPointsBonus: 50,
                 purchasePrice: 180,
@@ -173,7 +175,7 @@ namespace baodeag
             defaultBuffCharms.Add(CreateDefaultBuffCharm(
                 "War Charm",
                 "Temporary blessing that empowers all outgoing weapon damage.",
-                placeholderIcon,
+                warBuffQuickSlotIcon,
                 35f,
                 outgoingDamageBonusPercentage: 20f,
                 purchasePrice: 220,
