@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using Unity.Netcode;
 using TMPro;
+using UnityEngine.EventSystems;
 
 namespace baodeag
 {
@@ -90,6 +91,7 @@ namespace baodeag
             ToggleEquipmentButtons(true);
             equipmentInventoryWindow.SetActive(false);
             ClearEquipmentInventory();
+            ClearCurrentSelection();
             RefreshEquipmentSlotIcons();
         }
 
@@ -101,25 +103,48 @@ namespace baodeag
 
         private void ToggleEquipmentButtons(bool isEnabled)
         {
-            rightHandSlot01Button.enabled = isEnabled;
-            rightHandSlot02Button.enabled = isEnabled;
-            rightHandSlot03Button.enabled = isEnabled;
+            rightHandSlot01Button.interactable = isEnabled;
+            rightHandSlot02Button.interactable = isEnabled;
+            rightHandSlot03Button.interactable = isEnabled;
 
-            leftHandSlot01Button.enabled = isEnabled;
-            leftHandSlot02Button.enabled = isEnabled;
-            leftHandSlot03Button.enabled = isEnabled;
+            leftHandSlot01Button.interactable = isEnabled;
+            leftHandSlot02Button.interactable = isEnabled;
+            leftHandSlot03Button.interactable = isEnabled;
 
-            headEquipmentSlotButton.enabled = isEnabled;
-            bodyEquipmentSlotButton.enabled = isEnabled;
-            legEquipmentSlotButton.enabled = isEnabled;
-            handEquipmentSlotButton.enabled = isEnabled;
+            headEquipmentSlotButton.interactable = isEnabled;
+            bodyEquipmentSlotButton.interactable = isEnabled;
+            legEquipmentSlotButton.interactable = isEnabled;
+            handEquipmentSlotButton.interactable = isEnabled;
 
-            mainProjectileEquipmentSlotButton.enabled = isEnabled;
-            secondaryProjectileEquipmentSlotButton.enabled = isEnabled;
+            mainProjectileEquipmentSlotButton.interactable = isEnabled;
+            secondaryProjectileEquipmentSlotButton.interactable = isEnabled;
 
-            quickSlot01Button.enabled = isEnabled;
-            quickSlot02Button.enabled = isEnabled;
-            quickSlot03Button.enabled = isEnabled;
+            quickSlot01Button.interactable = isEnabled;
+            quickSlot02Button.interactable = isEnabled;
+            quickSlot03Button.interactable = isEnabled;
+        }
+
+        private void ClearCurrentSelection()
+        {
+            if (EventSystem.current == null)
+                return;
+
+            EventSystem.current.SetSelectedGameObject(null);
+        }
+
+        private void SelectButton(Button button)
+        {
+            if (button == null || !button.gameObject.activeInHierarchy || !button.interactable)
+                return;
+
+            if (EventSystem.current != null)
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+                EventSystem.current.SetSelectedGameObject(button.gameObject);
+            }
+
+            button.Select();
+            button.OnSelect(null);
         }
 
         // this function simply return to the last selected button when you are finished equipping a new item
@@ -180,11 +205,15 @@ namespace baodeag
 
             if (lastSelectedButton != null)
             {
-                lastSelectedButton.Select();
-                lastSelectedButton.OnSelect(null);
+                equipmentInventoryWindow.SetActive(false);
+                ClearCurrentSelection();
+                SelectButton(lastSelectedButton);
             }
-
-            equipmentInventoryWindow.SetActive(false);
+            else
+            {
+                equipmentInventoryWindow.SetActive(false);
+                ClearCurrentSelection();
+            }
         }
 
         private void RefreshEquipmentSlotIcons()
@@ -425,6 +454,8 @@ namespace baodeag
         public void LoadEquipmentInventory()
         {
             ToggleEquipmentButtons(false);
+            ClearCurrentSelection();
+            ClearEquipmentInventory();
             equipmentInventoryWindow.SetActive(true);
 
             switch (currentSelectedEquipmentSlot)
@@ -515,8 +546,7 @@ namespace baodeag
                 {
                     hasSelectedFirstInventorySlot = true;
                     Button inventorySlotButton = inventorySlotGameObject.GetComponent<Button>();
-                    inventorySlotButton.Select();
-                    inventorySlotButton.OnSelect(null);
+                    SelectButton(inventorySlotButton);
                 }
             }
         }
@@ -557,8 +587,7 @@ namespace baodeag
                 {
                     hasSelectedFirstInventorySlot = true;
                     Button inventorySlotButton = inventorySlotGameObject.GetComponent<Button>();
-                    inventorySlotButton.Select();
-                    inventorySlotButton.OnSelect(null);
+                    SelectButton(inventorySlotButton);
                 }
             }
         }
@@ -599,8 +628,7 @@ namespace baodeag
                 {
                     hasSelectedFirstInventorySlot = true;
                     Button inventorySlotButton = inventorySlotGameObject.GetComponent<Button>();
-                    inventorySlotButton.Select();
-                    inventorySlotButton.OnSelect(null);
+                    SelectButton(inventorySlotButton);
                 }
             }
         }
@@ -641,8 +669,7 @@ namespace baodeag
                 {
                     hasSelectedFirstInventorySlot = true;
                     Button inventorySlotButton = inventorySlotGameObject.GetComponent<Button>();
-                    inventorySlotButton.Select();
-                    inventorySlotButton.OnSelect(null);
+                    SelectButton(inventorySlotButton);
                 }
             }
         }
@@ -683,8 +710,7 @@ namespace baodeag
                 {
                     hasSelectedFirstInventorySlot = true;
                     Button inventorySlotButton = inventorySlotGameObject.GetComponent<Button>();
-                    inventorySlotButton.Select();
-                    inventorySlotButton.OnSelect(null);
+                    SelectButton(inventorySlotButton);
                 }
             }
         }
@@ -725,8 +751,7 @@ namespace baodeag
                 {
                     hasSelectedFirstInventorySlot = true;
                     Button inventorySlotButton = inventorySlotGameObject.GetComponent<Button>();
-                    inventorySlotButton.Select();
-                    inventorySlotButton.OnSelect(null);
+                    SelectButton(inventorySlotButton);
                 }
             }
         }
@@ -767,8 +792,7 @@ namespace baodeag
                 {
                     hasSelectedFirstInventorySlot = true;
                     Button inventorySlotButton = inventorySlotGameObject.GetComponent<Button>();
-                    inventorySlotButton.Select();
-                    inventorySlotButton.OnSelect(null);
+                    SelectButton(inventorySlotButton);
                 }
             }
         }
