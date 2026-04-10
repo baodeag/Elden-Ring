@@ -4,6 +4,7 @@ using UnityEngine.Video;
 using TMPro;
 using Unity.Netcode;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace baodeag
 {
@@ -54,6 +55,7 @@ namespace baodeag
         [SerializeField] Image windBuffIcon;
         [SerializeField] Image sageBuffIcon;
         [SerializeField] Image warBuffIcon;
+        private readonly Dictionary<int, Image> activeBuffIconsBySourceID = new Dictionary<int, Image>();
 
         public void ToggleHUD(bool status)
         {
@@ -391,7 +393,11 @@ namespace baodeag
             if (buffIcon == null)
                 return;
 
+            RemoveExistingBuffMapping(buffIcon);
+            activeBuffIconsBySourceID[buffItem.itemID] = buffIcon;
+            buffIcon.gameObject.SetActive(true);
             buffIcon.enabled = true;
+            buffIcon.rectTransform.SetAsLastSibling();
 
             if (activeBuffsGameObject != null)
                 activeBuffsGameObject.SetActive(HasVisibleBuffIcon());
@@ -399,14 +405,27 @@ namespace baodeag
 
         public void HideActiveBuff(int sourceItemID)
         {
-            Item item = WorldItemDatabase.Instance != null ? WorldItemDatabase.Instance.GetItemByID(sourceItemID) : null;
-            BuffCharmItem buffItem = item as BuffCharmItem;
-            Image buffIcon = GetBuffIcon(buffItem);
+            if (!activeBuffIconsBySourceID.TryGetValue(sourceItemID, out Image buffIcon) || buffIcon == null)
+            {
+                BuffCharmItem buffItem = null;
+
+                if (WorldItemDatabase.Instance != null)
+                {
+                    buffItem = WorldItemDatabase.Instance.GetQuickSlotItemByID(sourceItemID) as BuffCharmItem;
+
+                    if (buffItem == null)
+                        buffItem = WorldItemDatabase.Instance.GetItemByID(sourceItemID) as BuffCharmItem;
+                }
+
+                buffIcon = GetBuffIcon(buffItem);
+            }
 
             if (buffIcon == null)
                 return;
 
+            activeBuffIconsBySourceID.Remove(sourceItemID);
             buffIcon.enabled = false;
+            buffIcon.gameObject.SetActive(false);
 
             if (activeBuffsGameObject != null)
                 activeBuffsGameObject.SetActive(HasVisibleBuffIcon());
@@ -414,6 +433,7 @@ namespace baodeag
 
         public void ClearActiveBuffs()
         {
+            activeBuffIconsBySourceID.Clear();
             ClearBuffIcon(guardianBuffIcon);
             ClearBuffIcon(windBuffIcon);
             ClearBuffIcon(sageBuffIcon);
@@ -458,12 +478,33 @@ namespace baodeag
             return buffIcon != null && buffIcon.enabled;
         }
 
+        private void RemoveExistingBuffMapping(Image buffIcon)
+        {
+            if (buffIcon == null || activeBuffIconsBySourceID.Count == 0)
+                return;
+
+            int sourceIDToRemove = -1;
+
+            foreach (KeyValuePair<int, Image> entry in activeBuffIconsBySourceID)
+            {
+                if (entry.Value != buffIcon)
+                    continue;
+
+                sourceIDToRemove = entry.Key;
+                break;
+            }
+
+            if (sourceIDToRemove >= 0)
+                activeBuffIconsBySourceID.Remove(sourceIDToRemove);
+        }
+
         private void ClearBuffIcon(Image buffIcon)
         {
             if (buffIcon == null)
                 return;
 
             buffIcon.enabled = false;
+            buffIcon.gameObject.SetActive(false);
         }
     }
 }
