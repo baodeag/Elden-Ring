@@ -103,6 +103,10 @@ MonoBehaviour:
   quickSlotItems:
   - {fileID: 11400000, guid: ad210e1b4fbe374419f5a11f90f84409, type: 2}
   - {fileID: 11400000, guid: f467c0bb713b36a4eaaf247d209f23c7, type: 2}
+  guardianBuffFlaskPrefab: {fileID: 800544459886674103, guid: 091de6b194d6e4c47a42d415ceafa140, type: 3}
+  windBuffFlaskPrefab: {fileID: 800544459886674103, guid: 4e80a379d02e79544bb83b5213eb7752, type: 3}
+  sageBuffFlaskPrefab: {fileID: 800544459886674103, guid: ebe7f3bb8796f0e468b8f7a70b75b858, type: 3}
+  warBuffFlaskPrefab: {fileID: 800544459886674103, guid: 404665e5353a2f14ba8fb6213a9446fd, type: 3}
   upgradeMaterials:
   - {fileID: 11400000, guid: dd0921e3223132746b9bacdb3acca269, type: 2}
   - {fileID: 11400000, guid: 6b6b98df85f408e4ea7f35142718f50c, type: 2}

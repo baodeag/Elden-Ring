@@ -38,5 +38,10 @@ namespace baodeag
         {
             return itemAmount;
         }
+
+        public void SetRuntimeItemModel(GameObject runtimeItemModel)
+        {
+            itemModel = runtimeItemModel;
+        }
     }
 }

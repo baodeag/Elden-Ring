@@ -3,7 +3,7 @@
 Tai lieu nay luu cac hang muc can lam de hoan thien he thong game.
 Cap nhat file nay moi khi chot them tinh nang, doi uu tien, hoac hoan thanh dau viec.
 
-> **Cap nhat lan cuoi: 2026-04-05 (sau khi chuyen class selection + class review sang UI trong Title Screen Canvas, sua lai mapping Mystic/Confessor, va dong bo roadmap)**
+> **Cap nhat lan cuoi: 2026-04-10 (sau khi ra soat lai project, chot fix class armor leg/runtime mapping, va bo sung HUD feedback cho buff charm bang prefab UI)**
 
 ---
 
@@ -19,7 +19,7 @@ Muc tieu gameplay chinh:
 
 ---
 
-## Trang Thai Hien Tai (2026-04-03)
+## Trang Thai Hien Tai (2026-04-10)
 
 ### Da Hoan Thanh
 - [x] Core character system (Player + AI): stats, combat, locomotion, animation, network
@@ -47,6 +47,9 @@ Muc tieu gameplay chinh:
 - [x] 5 nut chon class trong character creation da dung UI co san trong `Title Screen Canvas`, khong con generate runtime button bang code
 - [x] Class review panel (title/subtitle/description/stats/loadout/hint) da dung UI co san trong `Title Screen Canvas`, khong con runtime-generated overlay
 - [x] Da sua lai mapping nut `Mystic` / `Confessor` de khop dung class ID
+- [x] Da fix runtime class armor leg visibility cho cac class ngoai `Knight`; preview va vao game khong con bi mat chan do mapping/model activation
+- [x] He thong buff charm da hoat dong day du cho 4 buff mac dinh (HP / Stamina / FP / Damage), moi buff co timed effect rieng va co save/load buff dang chay
+- [x] HUD buff feedback da co popup va active buff icon bang prefab UI trong `Player UI Manager.prefab`
 
 ### Chua Co / Chua Hoan Thanh
 - [ ] Chot visual polish cuoi cho character selection (class outfit fidelity, model preview consistency, UI wording)
@@ -58,7 +61,7 @@ Muc tieu gameplay chinh:
 - [ ] Economy balance (rune drop, level up cost, shop price)
 - [ ] UI progression day du (map current, map unlocked, victory screen)
 - [ ] Merchant data pass that trong world/prefab (merchantID, stock, required tier)
-- [ ] Fix dut diem preview hip/leg cho male model cua class-specific armor set (`03 / 06 / 10 / 13`) trong character creation
+- [ ] Ra soat them 1 vong visual polish cho class-specific armor set sau khi da fix leg/runtime mapping (male/female, preview/in-game)
 
 ### Moi Hoan Thanh Trong Code
 - [x] `GameProgressionManager` singleton theo doi `startingClassID`, `currentMapIndex`, `mapsUnlocked`, `gameWon`
@@ -88,7 +91,9 @@ Muc tieu gameplay chinh:
 - [x] Da scaffold item/armor data cho class outfit moi trong `Assets/Data/Items/Armor`
 - [x] Da bo sung tai lieu workflow armor Polygon Hero de tiep tuc setup armor set nhat quan
 - [x] Da them he thong quick-slot buff charm cho player hoat dong ca offline/online, co buff HP/Stamina/FP/damage/stamina regen va co luu trang thai buff dang chay
-- [ ] Van con issue runtime voi male hip/leg preview khi dung full class-specific leg set; can chot fix o player prefab/runtime mapping
+- [x] Da fix issue runtime class leg visibility bang cach map/model activation on dinh hon tren player runtime hierarchy
+- [x] Da bo sung HUD buff popup + active buff icon su dung serialized prefab UI, khong con phu thuoc icon tao runtime
+- [x] Da tach effectID rieng cho tung buff charm de `Guardian / Wind / Sage / War` hoat dong doc lap
 
 ---
 
@@ -257,7 +262,7 @@ Muc tieu gameplay chinh:
 - [x] Chuyen 5 nut class sang UI co san trong `Title Screen Canvas`.
 - [x] Chuyen class review panel sang UI co san trong `Title Screen Canvas`.
 - [ ] Chot UI copy/presentation cho 5 class.
-- [ ] Chot armor preview fidelity, dac biet la male hip/leg mapping cho class-specific set.
+- [ ] Chot visual pass cuoi cho armor preview fidelity sau khi da fix leg/runtime mapping.
 
 ### Phase 3. Settings *(DONE co ban)*
 - [x] Tao settings menu trong title menu.
@@ -305,7 +310,7 @@ Muc tieu gameplay chinh:
 - [x] **[P2]** Chuyen 5 nut class trong character creation sang UI co san cua `Title Screen Canvas`.
 - [x] **[P2]** Chuyen class review text/panel sang UI co san, rut gon copy stat/loadout.
 - [ ] **[P2]** Chot UI copy + visual polish cho man hinh 5 class.
-- [ ] **[P2]** Fix dut diem male hip/leg preview cho class-specific outfit (`03 / 06 / 10 / 13`).
+- [ ] **[P2]** Ra soat lai visual 5 class sau khi fix leg/runtime mapping (preview, vao game, male/female neu can).
 - [x] **[P2]** Boss clear event hook vao unlock map tiep theo + scene transition.
 - [ ] **[P3]** Dien merchant custom stock cho cac NPC trong World_01 inspector.
 - [ ] **[P3]** Gan `merchantID`, bat/tat auto tier, va dat `shopTierOffset` hop ly cho tung merchant.
@@ -334,7 +339,9 @@ Muc tieu gameplay chinh:
 - [x] Sua lai mapping nut `Mystic` / `Confessor` de khop dung class ID.
 - [x] Tao/scaffold them class armor data dua tren `PolygonFantasyHeroCharacters`.
 - [x] Them tai lieu `POLYGON_HERO_ARMOR_WORKFLOW.md` de ghi ro pipeline lay armor set tu Polygon Hero.
-- [ ] Male hip/leg preview cho class outfit rieng van chua on dinh, can fix tiep trong player preview/runtime mapping.
+- [x] Fix class armor leg/runtime mapping de preview + vao game khong con mat chan o cac class ngoai `Knight`.
+- [x] Hoan thien buff charm IDs rieng cho tung buff de 4 charm hoat dong doc lap.
+- [x] Them buff popup + active buff icons vao HUD bang prefab UI.
 
 ### Next (Lam Sau Immediate)
 - [ ] Them data balance day du cho rune, level up, shop price sau khi playtest progression.
@@ -374,11 +381,11 @@ Muc tieu gameplay chinh:
 ## Current Priority Recommendation
 
 Thu tu toi uu de tranh phai lam lai:
-1. **[P1] Chot lai character creation visual pass** (fix male hip/leg preview, ra soat head/armor fidelity, xong visual 5 class)
+1. **[P1] Chot lai character creation visual pass** (ra soat head/armor fidelity, xac nhan preview/in-game consistency, xong visual 5 class)
 2. **[P1] Pass content that cho `World_02` -> `World_05`** (layout, spawner, boss arena, grace placement)
 3. **[P2] Hoan thien merchant stock va shop balance**
 4. **[P3] Progression UI day du** (`map current`, `maps unlocked`, `boss defeated`)
-5. **[P4] Win screen + transition polish neu can**
+5. **[P4] Buff charm / combat feedback polish** (icon art set, timer/readability, balancing)
 
 ---
 
@@ -405,7 +412,8 @@ Thu tu toi uu de tranh phai lam lai:
 | Win screen | **Chua co** |
 | Economy balance | **Chua co** |
 | Merchant NPC trong world | **Co tool setup, can data pass** |
-| Class outfit / armor preview | **Da co data + flow day du, nhung male hip/leg preview van can fix dut diem** |
+| Class outfit / armor preview | **Da co data + flow day du, runtime leg mapping da on dinh; con 1 vong visual polish cuoi** |
+| Buff charm system | **Da hoat dong + co HUD popup/icon, can polish art/balance** |
 
 
 

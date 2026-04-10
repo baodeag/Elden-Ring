@@ -45,6 +45,10 @@ namespace baodeag
         [Header("Quick Slot")]
         [SerializeField] List<QuickSlotItem> quickSlotItems = new List<QuickSlotItem>();
         [SerializeField] List<BuffCharmItem> defaultBuffCharms = new List<BuffCharmItem>();
+        [SerializeField] GameObject guardianBuffFlaskPrefab;
+        [SerializeField] GameObject windBuffFlaskPrefab;
+        [SerializeField] GameObject sageBuffFlaskPrefab;
+        [SerializeField] GameObject warBuffFlaskPrefab;
 
         [Header("Upgrade Materials")]
         [SerializeField] List<UpgradeMaterial> upgradeMaterials = new List<UpgradeMaterial>();
@@ -212,7 +216,31 @@ namespace baodeag
                 purchasePrice,
                 sellPrice);
 
+            buffCharm.SetRuntimeItemModel(GetDefaultBuffFlaskPrefab(itemName));
+
             return buffCharm;
+        }
+
+        private GameObject GetDefaultBuffFlaskPrefab(string itemName)
+        {
+            if (string.IsNullOrWhiteSpace(itemName))
+                return null;
+
+            string normalizedName = itemName.ToLowerInvariant();
+
+            if (normalizedName.Contains("guardian"))
+                return guardianBuffFlaskPrefab;
+
+            if (normalizedName.Contains("wind"))
+                return windBuffFlaskPrefab;
+
+            if (normalizedName.Contains("sage"))
+                return sageBuffFlaskPrefab;
+
+            if (normalizedName.Contains("war"))
+                return warBuffFlaskPrefab;
+
+            return null;
         }
 
         public List<BuffCharmItem> GetDefaultBuffCharms()
