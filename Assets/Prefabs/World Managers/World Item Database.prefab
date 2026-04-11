@@ -111,6 +111,10 @@ MonoBehaviour:
   windBuffFlaskPrefab: {fileID: 800544459886674103, guid: 4e80a379d02e79544bb83b5213eb7752, type: 3}
   sageBuffFlaskPrefab: {fileID: 800544459886674103, guid: ebe7f3bb8796f0e468b8f7a70b75b858, type: 3}
   warBuffFlaskPrefab: {fileID: 800544459886674103, guid: 404665e5353a2f14ba8fb6213a9446fd, type: 3}
+  guardianBuffPotionVFX: {fileID: 4808726079345785700, guid: 6fb8ad51b1bb42c4a8ad748654b08d33, type: 3}
+  windBuffPotionVFX: {fileID: 4808726079345785700, guid: 8efc4e026f314c889b75c3ce8dcc9653, type: 3}
+  sageBuffPotionVFX: {fileID: 4808726079345785700, guid: 1d72377d9df24ff5be435df15f752e9e, type: 3}
+  warBuffPotionVFX: {fileID: 4808726079345785700, guid: 9c12dfd8ab3d4f59a387ba30adbf036a, type: 3}
   upgradeMaterials:
   - {fileID: 11400000, guid: dd0921e3223132746b9bacdb3acca269, type: 2}
   - {fileID: 11400000, guid: 6b6b98df85f408e4ea7f35142718f50c, type: 2}

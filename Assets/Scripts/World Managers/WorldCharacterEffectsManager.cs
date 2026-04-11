@@ -16,6 +16,10 @@ namespace baodeag
         public GameObject poisonedVFX;
         public GameObject bloodLossVFX;
         public GameObject frostBiteVFX;
+        public GameObject guardianBuffPotionVFX;
+        public GameObject windBuffPotionVFX;
+        public GameObject sageBuffPotionVFX;
+        public GameObject warBuffPotionVFX;
 
         [Header("Damage")]
         public TakeDamageEffect takeDamageEffect;

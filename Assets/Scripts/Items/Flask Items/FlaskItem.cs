@@ -126,10 +126,9 @@ namespace baodeag
                 player.playerEffectsManager.activeQuickSlotItemFX = emptyFlask;
             }
 
-            PlayHealingFX(player);
         }
 
-        private void PlayHealingFX(PlayerManager player)
+        public override void PlayUseItemFX(PlayerManager player)
         {
             Instantiate(WorldCharacterEffectsManager.instance.healingFlaskVFX, player.transform);
             player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.healingFlaskSFX);

@@ -517,8 +517,11 @@ namespace baodeag
         //quick slot
         public void SuccesfullyUseQuickSlotItem()
         {
-            if (player.playerInventoryManager.currentQuickSlotItem != null)
-                player.playerInventoryManager.currentQuickSlotItem.SuccessfullyUseItem(player);
+            if (player.playerInventoryManager.currentQuickSlotItem == null)
+                return;
+
+            player.playerInventoryManager.currentQuickSlotItem.PlayUseItemFX(player);
+            player.playerInventoryManager.currentQuickSlotItem.SuccessfullyUseItem(player);
         }
 
         public WeaponItem SelectWeaponToPerformAshOfWar()

@@ -12,6 +12,9 @@ namespace baodeag
         [SerializeField] private float staminaRegenerationBonusPercentage = 0f;
         [SerializeField] private float outgoingDamageBonusPercentage = 0f;
 
+        [Header("Use VFX")]
+        [SerializeField] private GameObject useItemVFX;
+
         public void InitializeRuntimeBuff(
             string runtimeItemName,
             string runtimeItemDescription,
@@ -47,6 +50,11 @@ namespace baodeag
             maxFocusPointsBonus = focusBonus;
             staminaRegenerationBonusPercentage = staminaRegenBonusPercent;
             outgoingDamageBonusPercentage = damageBonusPercent;
+        }
+
+        public void SetRuntimeUseItemVFX(GameObject runtimeUseItemVFX)
+        {
+            useItemVFX = runtimeUseItemVFX;
         }
 
         public override bool CanIUseThisItem(PlayerManager player)
@@ -129,11 +137,6 @@ namespace baodeag
                 }
             }
 
-            if (WorldCharacterEffectsManager.instance != null && WorldCharacterEffectsManager.instance.healingFlaskVFX != null)
-                Instantiate(WorldCharacterEffectsManager.instance.healingFlaskVFX, player.transform);
-
-            if (player.characterSoundFXManager != null && WorldSoundFXManager.instance != null && WorldSoundFXManager.instance.healingFlaskSFX != null)
-                player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.healingFlaskSFX);
         }
 
         public PlayerStatBuffTimedEffect CreateEffectInstance()
@@ -149,6 +152,51 @@ namespace baodeag
             effect.staminaRegenerationBonusPercentage = staminaRegenerationBonusPercentage;
             effect.outgoingDamageBonusPercentage = outgoingDamageBonusPercentage;
             return effect;
+        }
+
+        private GameObject GetBuffUseVFXPrefab()
+        {
+            if (useItemVFX != null)
+                return useItemVFX;
+
+            if (WorldCharacterEffectsManager.instance == null)
+                return null;
+
+            if (string.IsNullOrWhiteSpace(itemName))
+                return WorldCharacterEffectsManager.instance.healingFlaskVFX;
+
+            string normalizedName = itemName.ToLowerInvariant();
+
+            if (normalizedName.Contains("guardian"))
+                return WorldCharacterEffectsManager.instance.guardianBuffPotionVFX;
+
+            if (normalizedName.Contains("wind"))
+                return WorldCharacterEffectsManager.instance.windBuffPotionVFX;
+
+            if (normalizedName.Contains("sage"))
+                return WorldCharacterEffectsManager.instance.sageBuffPotionVFX;
+
+            if (normalizedName.Contains("war"))
+                return WorldCharacterEffectsManager.instance.warBuffPotionVFX;
+
+            return WorldCharacterEffectsManager.instance.healingFlaskVFX;
+        }
+
+        public override void PlayUseItemFX(PlayerManager player)
+        {
+            if (player == null)
+                return;
+
+            GameObject buffVFX = GetBuffUseVFXPrefab();
+
+            if (buffVFX == null && WorldCharacterEffectsManager.instance != null)
+                buffVFX = WorldCharacterEffectsManager.instance.healingFlaskVFX;
+
+            if (buffVFX != null)
+                Instantiate(buffVFX, player.transform);
+
+            if (player.characterSoundFXManager != null && WorldSoundFXManager.instance != null && WorldSoundFXManager.instance.healingFlaskSFX != null)
+                player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.healingFlaskSFX);
         }
     }
 }

@@ -29,6 +29,11 @@ namespace baodeag
 
         }
 
+        public virtual void PlayUseItemFX(PlayerManager player)
+        {
+
+        }
+
         public virtual bool CanIUseThisItem(PlayerManager player)
         {
             return true;

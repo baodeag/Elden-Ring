@@ -53,6 +53,10 @@ namespace baodeag
         [SerializeField] GameObject windBuffFlaskPrefab;
         [SerializeField] GameObject sageBuffFlaskPrefab;
         [SerializeField] GameObject warBuffFlaskPrefab;
+        [SerializeField] GameObject guardianBuffPotionVFX;
+        [SerializeField] GameObject windBuffPotionVFX;
+        [SerializeField] GameObject sageBuffPotionVFX;
+        [SerializeField] GameObject warBuffPotionVFX;
 
         [Header("Upgrade Materials")]
         [SerializeField] List<UpgradeMaterial> upgradeMaterials = new List<UpgradeMaterial>();
@@ -141,49 +145,49 @@ namespace baodeag
             if (defaultBuffCharms == null)
                 defaultBuffCharms = new List<BuffCharmItem>();
 
-            if (defaultBuffCharms.Count > 0)
-                return;
+            if (defaultBuffCharms.Count == 0)
+            {
+                defaultBuffCharms.Add(CreateDefaultBuffCharm(
+                    "Guardian Charm",
+                    "Temporary blessing that raises maximum health.",
+                    guardianBuffQuickSlotIcon,
+                    45f,
+                    maxHealthBonus: 80,
+                    purchasePrice: 180,
+                    sellPrice: 90));
 
-            defaultBuffCharms.Add(CreateDefaultBuffCharm(
-                "Guardian Charm",
-                "Temporary blessing that raises maximum health.",
-                guardianBuffQuickSlotIcon,
-                45f,
-                maxHealthBonus: 80,
-                purchasePrice: 180,
-                sellPrice: 90));
+                defaultBuffCharms.Add(CreateDefaultBuffCharm(
+                    "Wind Charm",
+                    "Temporary blessing that raises maximum stamina and stamina recovery.",
+                    windBuffQuickSlotIcon,
+                    45f,
+                    maxStaminaBonus: 45,
+                    staminaRegenerationBonusPercentage: 25f,
+                    purchasePrice: 180,
+                    sellPrice: 90));
 
-            defaultBuffCharms.Add(CreateDefaultBuffCharm(
-                "Wind Charm",
-                "Temporary blessing that raises maximum stamina and stamina recovery.",
-                windBuffQuickSlotIcon,
-                45f,
-                maxStaminaBonus: 45,
-                staminaRegenerationBonusPercentage: 25f,
-                purchasePrice: 180,
-                sellPrice: 90));
+                defaultBuffCharms.Add(CreateDefaultBuffCharm(
+                    "Sage Charm",
+                    "Temporary blessing that raises maximum mana.",
+                    sageBuffQuickSlotIcon,
+                    45f,
+                    maxFocusPointsBonus: 50,
+                    purchasePrice: 180,
+                    sellPrice: 90));
 
-            defaultBuffCharms.Add(CreateDefaultBuffCharm(
-                "Sage Charm",
-                "Temporary blessing that raises maximum mana.",
-                sageBuffQuickSlotIcon,
-                45f,
-                maxFocusPointsBonus: 50,
-                purchasePrice: 180,
-                sellPrice: 90));
-
-            defaultBuffCharms.Add(CreateDefaultBuffCharm(
-                "War Charm",
-                "Temporary blessing that empowers all outgoing weapon damage.",
-                warBuffQuickSlotIcon,
-                35f,
-                outgoingDamageBonusPercentage: 20f,
-                purchasePrice: 220,
-                sellPrice: 110));
+                defaultBuffCharms.Add(CreateDefaultBuffCharm(
+                    "War Charm",
+                    "Temporary blessing that empowers all outgoing weapon damage.",
+                    warBuffQuickSlotIcon,
+                    35f,
+                    outgoingDamageBonusPercentage: 20f,
+                    purchasePrice: 220,
+                    sellPrice: 110));
+            }
 
             for (int i = 0; i < defaultBuffCharms.Count; i++)
             {
-                if (defaultBuffCharms[i] != null)
+                if (defaultBuffCharms[i] != null && !quickSlotItems.Contains(defaultBuffCharms[i]))
                     quickSlotItems.Add(defaultBuffCharms[i]);
             }
         }
@@ -219,6 +223,7 @@ namespace baodeag
                 sellPrice);
 
             buffCharm.SetRuntimeItemModel(GetDefaultBuffFlaskPrefab(itemName));
+            buffCharm.SetRuntimeUseItemVFX(GetDefaultBuffPotionVFXPrefab(itemName));
 
             return buffCharm;
         }
@@ -241,6 +246,28 @@ namespace baodeag
 
             if (normalizedName.Contains("war"))
                 return warBuffFlaskPrefab;
+
+            return null;
+        }
+
+        private GameObject GetDefaultBuffPotionVFXPrefab(string itemName)
+        {
+            if (string.IsNullOrWhiteSpace(itemName))
+                return null;
+
+            string normalizedName = itemName.ToLowerInvariant();
+
+            if (normalizedName.Contains("guardian"))
+                return guardianBuffPotionVFX;
+
+            if (normalizedName.Contains("wind"))
+                return windBuffPotionVFX;
+
+            if (normalizedName.Contains("sage"))
+                return sageBuffPotionVFX;
+
+            if (normalizedName.Contains("war"))
+                return warBuffPotionVFX;
 
             return null;
         }

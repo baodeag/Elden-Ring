@@ -3,7 +3,7 @@
 Tai lieu nay luu cac hang muc can lam de hoan thien he thong game.
 Cap nhat file nay moi khi chot them tinh nang, doi uu tien, hoac hoan thanh dau viec.
 
-> **Cap nhat lan cuoi: 2026-04-10 (sau khi ra soat lai project, chot fix class armor leg/runtime mapping, va bo sung HUD feedback cho buff charm bang prefab UI)**
+> **Cap nhat lan cuoi: 2026-04-11 (doc lai project, xac minh progression config/build settings, shop tier scaling, buff HUD, va chot lai backlog content/data pass)**
 
 ---
 
@@ -19,7 +19,7 @@ Muc tieu gameplay chinh:
 
 ---
 
-## Trang Thai Hien Tai (2026-04-10)
+## Trang Thai Hien Tai (2026-04-11)
 
 ### Da Hoan Thanh
 - [x] Core character system (Player + AI): stats, combat, locomotion, animation, network
@@ -62,6 +62,22 @@ Muc tieu gameplay chinh:
 - [ ] UI progression day du (map current, map unlocked, victory screen)
 - [ ] Merchant data pass that trong world/prefab (merchantID, stock, required tier)
 - [ ] Ra soat them 1 vong visual polish cho class-specific armor set sau khi da fix leg/runtime mapping (male/female, preview/in-game)
+- [ ] Content pass that cho `World_02` -> `World_05`: entry grace trong scene, boss/spawner/layout rieng, navmesh/lighting neu can
+- [ ] Playtest end-to-end progression 5 map tren Unity sau khi scene data duoc setup that
+
+### Da Xac Minh Khi Doc Lai Project (2026-04-11)
+- [x] `ProjectSettings/EditorBuildSettings.asset` da co `Main_Menu_01` va `World_01` -> `World_05` theo dung build index `0 -> 5`
+- [x] `Assets/Data/Game Progression Config.asset` da map dung:
+  - `Limgrave Gate` -> scene `1`, boss `0`, entry grace `0`
+  - `Storm Path` -> scene `2`, boss `1`, entry grace `100`
+  - `Ashen Keep` -> scene `3`, boss `2`, entry grace `200`
+  - `Black Vault` -> scene `4`, boss `3`, entry grace `300`
+  - `Erdtree Ascent` -> scene `5`, boss `4`, entry grace `400`
+- [x] `AIBossCharacterManager` va `EventTriggerBossFight` co auto-assign `bossID = sceneBuildIndex - 1` cho world scene `1 -> 5`
+- [x] `WorldSceneManager` resolve scene name tu build index va fallback sang `SceneManager.LoadScene` neu Netcode scene load khong start
+- [x] `ShopInventory` co `autoScaleShopTierFromProgression`, `shopTierOffset`, `requiredProgressionTier`, limited stock save key theo merchant
+- [x] `Assets/Docs/MERCHANT_SETUP_CHECKLIST.md` da detect merchant prefab `Merchant_AI_Dummy_01` voi `merchantID = merchant_ai_dummy_01`
+- [ ] `Assets/Docs/MAP_CONTENT_PASS_CHECKLIST.md` can cap nhat note cu ve `entrySiteOfGraceID`; config asset hien da la `0 / 100 / 200 / 300 / 400`, khong con la `0` cho ca 5 map
 
 ### Moi Hoan Thanh Trong Code
 - [x] `GameProgressionManager` singleton theo doi `startingClassID`, `currentMapIndex`, `mapsUnlocked`, `gameWon`
@@ -301,21 +317,19 @@ Muc tieu gameplay chinh:
 ## Concrete Task Backlog
 
 ### Immediate (Lam Ngay)
-- [x] **[P1]** Tao `GameProgressionManager` (singleton, theo doi mapIndex, mapsUnlocked, gameWon).
-- [x] **[P1]** Mo rong `CharacterSaveData`: them `startingClassID`, `mapsUnlocked`, `currentMapIndex`, `gameWon`.
-- [x] **[P1]** Tao `GameProgressionConfig` asset va noi vao `GameProgressionManager`.
-- [x] **[P1]** Dien data progression co the test duoc cho 5 map trong `GameProgressionConfig`: `sceneBuildIndex`, `bossID`, `entrySiteOfGraceID`.
-- [x] **[P2]** Them `enemyHealthMultiplier` + `enemyDamageMultiplier` vao `GameProgressionConfig` va noi AI scale theo `currentMapIndex`.
-- [x] **[P2]** Mo rong new game flow de preview/chon du 5 class.
-- [x] **[P2]** Chuyen 5 nut class trong character creation sang UI co san cua `Title Screen Canvas`.
-- [x] **[P2]** Chuyen class review text/panel sang UI co san, rut gon copy stat/loadout.
-- [ ] **[P2]** Chot UI copy + visual polish cho man hinh 5 class.
-- [ ] **[P2]** Ra soat lai visual 5 class sau khi fix leg/runtime mapping (preview, vao game, male/female neu can).
-- [x] **[P2]** Boss clear event hook vao unlock map tiep theo + scene transition.
-- [ ] **[P3]** Dien merchant custom stock cho cac NPC trong World_01 inspector.
-- [ ] **[P3]** Gan `merchantID`, bat/tat auto tier, va dat `shopTierOffset` hop ly cho tung merchant.
-- [ ] **[P3]** Chay merchant checklist generator, ra soat merchantID trung/lac, va chot stock cho tung merchant.
-- [ ] **[P3]** Balance rune drop + shop price sau playtest co ban.
+- [ ] **[P1]** Mo tung scene `World_02` -> `World_05` trong Unity va xac minh/gan dung entry `siteOfGraceID` theo config `100 / 200 / 300 / 400`.
+- [ ] **[P1]** Xac minh boss, fog wall, wake trigger trong tung world scene dang dung `bossID = sceneBuildIndex - 1`.
+- [ ] **[P1]** Lam content pass playable cho `World_02` -> `World_05`: layout toi thieu khac nhau, spawner khac nhau, boss arena khac nhau, entry spawn an toan.
+- [ ] **[P1]** Playtest flow lien tuc: New Game -> boss map 1 -> `World_02` -> ... -> boss map 5 -> `Victory Achieved` -> ve title.
+- [ ] **[P1]** Playtest save/load tai tung map sau khi vua transition, dam bao `currentMapIndex` va `lastSiteOfGraceRestedAt` khong sai.
+- [ ] **[P2]** Cap nhat `Assets/Docs/MAP_CONTENT_PASS_CHECKLIST.md` de bo note cu ve entry grace `0` cho ca 5 map.
+- [ ] **[P2]** Dien merchant custom stock cho cac NPC trong `World_01`/prefab va quyet dinh co tiep tuc `useGlobalPurchasableItems` hay chuyen sang curated stock.
+- [ ] **[P2]** Gan/ra soat `merchantID`, `autoScaleShopTierFromProgression`, `shopTierOffset`, `requiredProgressionTier` cho merchant stock that.
+- [ ] **[P2]** Chot bang gia economy pass 1: rune drop, level up cost, shop price, weapon upgrade cost.
+- [ ] **[P3]** Chot UI copy + visual polish cho man hinh 5 class.
+- [ ] **[P3]** Ra soat lai visual 5 class sau khi fix leg/runtime mapping (preview, vao game, male/female neu can).
+- [ ] **[P3]** Them progression UI day du: current map, unlocked maps, boss defeated state.
+- [ ] **[P3]** Thiet ke win screen/victory scene rieng thay vi chi popup + return title.
 
 ### Completed Recently
 - [x] Them menu settings trong title menu.
@@ -342,8 +356,11 @@ Muc tieu gameplay chinh:
 - [x] Fix class armor leg/runtime mapping de preview + vao game khong con mat chan o cac class ngoai `Knight`.
 - [x] Hoan thien buff charm IDs rieng cho tung buff de 4 charm hoat dong doc lap.
 - [x] Them buff popup + active buff icons vao HUD bang prefab UI.
+- [x] Ra soat lai roadmap/project ngay 2026-04-11 va xac nhan config progression/build settings dang khop voi muc tieu 5 map.
+- [x] Xac nhan merchant prefab hien co da co `merchantID`, auto tier scaling, va checklist setup rieng.
 
 ### Next (Lam Sau Immediate)
+- [ ] Sua/cap nhat `MAP_CONTENT_PASS_CHECKLIST.md` cho khop config entry grace hien tai.
 - [ ] Them data balance day du cho rune, level up, shop price sau khi playtest progression.
 - [ ] Them UI progression day du ngoai popup (`map current`, `maps unlocked`, `boss defeated`).
 - [x] Tang do kho co ban cua quai/boss theo tung map bang multiplier HP/damage.
@@ -380,12 +397,13 @@ Muc tieu gameplay chinh:
 
 ## Current Priority Recommendation
 
-Thu tu toi uu de tranh phai lam lai:
-1. **[P1] Chot lai character creation visual pass** (ra soat head/armor fidelity, xac nhan preview/in-game consistency, xong visual 5 class)
-2. **[P1] Pass content that cho `World_02` -> `World_05`** (layout, spawner, boss arena, grace placement)
-3. **[P2] Hoan thien merchant stock va shop balance**
-4. **[P3] Progression UI day du** (`map current`, `maps unlocked`, `boss defeated`)
-5. **[P4] Buff charm / combat feedback polish** (icon art set, timer/readability, balancing)
+Thu tu toi uu sau khi doc lai project ngay 2026-04-11:
+1. **[P1] Content/data pass cho `World_02` -> `World_05`** (entry grace trong scene, boss/fog/wake trigger, layout, spawner, boss arena)
+2. **[P1] Playtest progression end-to-end** (boss map 1 -> map 5, save/load tung map, victory popup + return title)
+3. **[P2] Hoan thien merchant stock va shop balance** (curated stock, required tier, price/rune pacing)
+4. **[P2] Progression UI day du** (`map current`, `maps unlocked`, `boss defeated`, victory screen rieng)
+5. **[P3] Character selection visual pass** (class outfit fidelity, preview/in-game consistency, UI wording)
+6. **[P4] Buff charm / combat feedback polish** (icon art set, timer/readability, balancing)
 
 ---
 
@@ -404,14 +422,15 @@ Thu tu toi uu de tranh phai lam lai:
 | Save/load (equipment/rune/boss/stock) | Hoan chinh |
 | Starting character selection | **Da co du 5 class + preview + UI scene that, can chot visual polish** |
 | GameProgressionManager (5 map) | **Da co** |
-| GameProgressionConfig asset | **Da co** |
+| GameProgressionConfig asset | **Da co va da xac minh `sceneBuildIndex`/`bossID`/`entrySiteOfGraceID` khop 5 map** |
 | Boss gate -> unlock -> teleport | **Da hoat dong qua scene progression** |
-| Map 2-5 scenes | **Da co scaffold, can content pass** |
+| Build settings 5 world scenes | **Da co `World_01` -> `World_05` o build index `1 -> 5`** |
+| Map 2-5 scenes | **Da co scaffold, can scene data/content pass va playtest trong Unity** |
 | Difficulty ramp | **Da co foundation data-driven** |
 | Popup Map Unlocked / Victory | **Da co** |
 | Win screen | **Chua co** |
 | Economy balance | **Chua co** |
-| Merchant NPC trong world | **Co tool setup, can data pass** |
+| Merchant NPC trong world | **Co prefab/checklist va auto tier scaling, can custom stock/data pass** |
 | Class outfit / armor preview | **Da co data + flow day du, runtime leg mapping da on dinh; con 1 vong visual polish cuoi** |
 | Buff charm system | **Da hoat dong + co HUD popup/icon, can polish art/balance** |
 
