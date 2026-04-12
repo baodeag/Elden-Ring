@@ -13,6 +13,15 @@ namespace baodeag
 
         private bool joinWorldUIInitialized;
         private bool menuButtonsInitialized;
+
+        [Header("Relay Join UI")]
+        [SerializeField] private RectTransform serializedJoinWorldControlsRoot;
+        [SerializeField] private TextMeshProUGUI serializedWorldAddressLabel;
+        [SerializeField] private TMP_InputField serializedJoinWorldAddressInputField;
+        [SerializeField] private Button serializedCheckCodeButton;
+        [SerializeField] private Button serializedJoinWorldButton;
+        [SerializeField] private TextMeshProUGUI serializedJoinStatusLabel;
+
         private RectTransform joinWorldControlsRoot;
         private TextMeshProUGUI worldAddressLabel;
         private TextMeshProUGUI joinStatusLabel;
@@ -94,6 +103,13 @@ namespace baodeag
             if (joinWorldUIInitialized)
                 return;
 
+            if (UseSerializedJoinWorldUI())
+            {
+                joinWorldUIInitialized = true;
+                RefreshJoinControlsState();
+                return;
+            }
+
             RectTransform menuRoot = transform.childCount > 0 ? transform.GetChild(0) as RectTransform : null;
 
             if (menuRoot == null)
@@ -114,6 +130,85 @@ namespace baodeag
 
             joinWorldUIInitialized = true;
             RefreshJoinControlsState();
+        }
+
+        private bool UseSerializedJoinWorldUI()
+        {
+            if (serializedJoinWorldControlsRoot == null ||
+                serializedWorldAddressLabel == null ||
+                serializedJoinWorldAddressInputField == null ||
+                serializedCheckCodeButton == null ||
+                serializedJoinWorldButton == null ||
+                serializedJoinStatusLabel == null)
+            {
+                TryFindSerializedJoinWorldUIByName();
+            }
+
+            if (serializedJoinWorldControlsRoot == null ||
+                serializedWorldAddressLabel == null ||
+                serializedJoinWorldAddressInputField == null ||
+                serializedCheckCodeButton == null ||
+                serializedJoinWorldButton == null ||
+                serializedJoinStatusLabel == null)
+            {
+                return false;
+            }
+
+            joinWorldControlsRoot = serializedJoinWorldControlsRoot;
+            worldAddressLabel = serializedWorldAddressLabel;
+            joinWorldAddressInputField = serializedJoinWorldAddressInputField;
+            checkCodeButton = serializedCheckCodeButton;
+            joinWorldButton = serializedJoinWorldButton;
+            joinStatusLabel = serializedJoinStatusLabel;
+
+            worldAddressLabelDefaultColor = worldAddressLabel.color;
+            joinStatusLabelDefaultColor = joinStatusLabel.color;
+
+            joinWorldAddressInputField.onValueChanged.RemoveAllListeners();
+            joinWorldAddressInputField.onValueChanged.AddListener(_ =>
+            {
+                verifiedRelayJoinCode = string.Empty;
+                RefreshJoinControlsState();
+            });
+
+            checkCodeButton.onClick.RemoveAllListeners();
+            checkCodeButton.onClick.AddListener(CheckRelayCodeFromCharacterMenu);
+
+            joinWorldButton.onClick.RemoveAllListeners();
+            joinWorldButton.onClick.AddListener(JoinWorldFromCharacterMenu);
+
+            return true;
+        }
+
+        private void TryFindSerializedJoinWorldUIByName()
+        {
+            Transform controlsRoot = transform.Find("Menu/Relay Join Panel");
+
+            if (controlsRoot == null)
+                controlsRoot = transform.Find("Relay Join Panel");
+
+            if (controlsRoot == null)
+                return;
+
+            serializedJoinWorldControlsRoot = controlsRoot as RectTransform;
+            serializedWorldAddressLabel = FindChildComponent<TextMeshProUGUI>(controlsRoot, "World Address Label");
+            serializedJoinWorldAddressInputField = FindChildComponent<TMP_InputField>(controlsRoot, "Relay Code Input");
+            serializedCheckCodeButton = FindChildComponent<Button>(controlsRoot, "Check Code Button");
+            serializedJoinWorldButton = FindChildComponent<Button>(controlsRoot, "Join World Button");
+            serializedJoinStatusLabel = FindChildComponent<TextMeshProUGUI>(controlsRoot, "Join Status Label");
+        }
+
+        private T FindChildComponent<T>(Transform root, string childName) where T : Component
+        {
+            Transform[] children = root.GetComponentsInChildren<Transform>(true);
+
+            for (int i = 0; i < children.Length; i++)
+            {
+                if (children[i] != null && children[i].name == childName)
+                    return children[i].GetComponent<T>();
+            }
+
+            return null;
         }
 
         private RectTransform CreateControlsRoot(RectTransform menuRoot)
