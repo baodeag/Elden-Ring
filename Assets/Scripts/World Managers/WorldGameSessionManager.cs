@@ -33,6 +33,8 @@ namespace baodeag
         private const string RelayConnectionType = "dtls";
         private Coroutine joinAsClientCoroutine;
         private string currentRelayJoinCode = string.Empty;
+        private string checkedRelayJoinCode = string.Empty;
+        private JoinAllocation checkedRelayJoinAllocation;
         private bool isStartingRelaySession;
 
         private void Awake()
@@ -370,13 +372,18 @@ namespace baodeag
 
         public bool StartGameAsClient(string addressInput)
         {
+            _ = StartGameAsClientAsync(addressInput);
+            return true;
+        }
+
+        public async Task<bool> StartGameAsClientAsync(string addressInput)
+        {
             if (joinAsClientCoroutine != null)
                 StopCoroutine(joinAsClientCoroutine);
 
             if (TryNormalizeRelayJoinCode(addressInput, out string relayJoinCode))
             {
-                _ = StartGameAsRelayClientAsync(relayJoinCode);
-                return true;
+                return await StartGameAsRelayClientAsync(relayJoinCode);
             }
 
             if (!TryParseAddressInput(addressInput, out string hostAddress, out ushort port))
@@ -428,18 +435,6 @@ namespace baodeag
                 return false;
             }
 
-            if (SceneManager.GetActiveScene().buildIndex != 0)
-            {
-                WorldSaveGameManager.instance.SaveGame();
-            }
-
-            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsClient)
-            {
-                NetworkManager.Singleton.Shutdown();
-            }
-
-            await Task.Yield();
-
             if (unityTransport == null)
             {
                 Debug.LogError("UnityTransport is missing from NetworkManager. Cannot join Relay session.");
@@ -450,7 +445,18 @@ namespace baodeag
             {
                 await EnsureUnityServicesSignedInAsync();
 
-                JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(relayJoinCode);
+                JoinAllocation joinAllocation = GetCheckedRelayJoinAllocation(relayJoinCode);
+
+                if (joinAllocation == null)
+                    joinAllocation = await RelayService.Instance.JoinAllocationAsync(relayJoinCode);
+
+                if (SceneManager.GetActiveScene().buildIndex != 0)
+                {
+                    WorldSaveGameManager.instance.SaveGame();
+                }
+
+                if (!await ShutdownNetworkSessionIfNeededAsync())
+                    return false;
 
                 currentRelayJoinCode = string.Empty;
                 unityTransport.UseWebSockets = false;
@@ -463,6 +469,7 @@ namespace baodeag
                 }
 
                 Debug.Log($"Relay client connecting with join code {relayJoinCode}.");
+                ClearCheckedRelayJoinCode();
                 return true;
             }
             catch (System.Exception exception)
@@ -470,6 +477,63 @@ namespace baodeag
                 Debug.LogError($"Failed to join Relay session '{relayJoinCode}': {exception.Message}");
                 return false;
             }
+        }
+
+        public async Task<bool> CheckRelayJoinCodeAsync(string relayJoinCode)
+        {
+            if (!TryNormalizeRelayJoinCode(relayJoinCode, out relayJoinCode))
+            {
+                Debug.LogError($"Invalid Relay join code '{relayJoinCode}'.");
+                ClearCheckedRelayJoinCode();
+                return false;
+            }
+
+            try
+            {
+                await EnsureUnityServicesSignedInAsync();
+
+                checkedRelayJoinAllocation = await RelayService.Instance.JoinAllocationAsync(relayJoinCode);
+                checkedRelayJoinCode = relayJoinCode;
+
+                Debug.Log($"Relay join code {relayJoinCode} is valid.");
+                return true;
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogError($"Relay join code check failed for '{relayJoinCode}': {exception.Message}");
+                ClearCheckedRelayJoinCode();
+                return false;
+            }
+        }
+
+        private async Task<bool> ShutdownNetworkSessionIfNeededAsync()
+        {
+            if (NetworkManager.Singleton == null)
+                return true;
+
+            NetworkManager networkManager = NetworkManager.Singleton;
+
+            if (networkManager.IsHost || networkManager.IsClient || networkManager.IsServer || networkManager.IsListening)
+            {
+                networkManager.Shutdown();
+            }
+
+            float timeoutTime = Time.realtimeSinceStartup + 5f;
+
+            while (networkManager != null &&
+                   (networkManager.ShutdownInProgress || networkManager.IsListening) &&
+                   Time.realtimeSinceStartup < timeoutTime)
+            {
+                await Task.Yield();
+            }
+
+            if (networkManager != null && (networkManager.ShutdownInProgress || networkManager.IsListening))
+            {
+                Debug.LogError("Timed out while shutting down the current network session before joining Relay.");
+                return false;
+            }
+
+            return true;
         }
 
         public string GetSuggestedHostAddress()
@@ -492,6 +556,27 @@ namespace baodeag
         public bool HasRelayJoinCode()
         {
             return !string.IsNullOrWhiteSpace(currentRelayJoinCode);
+        }
+
+        public bool IsRelayJoinCodeChecked(string relayJoinCode)
+        {
+            return TryNormalizeRelayJoinCode(relayJoinCode, out relayJoinCode) &&
+                   checkedRelayJoinAllocation != null &&
+                   checkedRelayJoinCode == relayJoinCode;
+        }
+
+        private JoinAllocation GetCheckedRelayJoinAllocation(string relayJoinCode)
+        {
+            if (!IsRelayJoinCodeChecked(relayJoinCode))
+                return null;
+
+            return checkedRelayJoinAllocation;
+        }
+
+        private void ClearCheckedRelayJoinCode()
+        {
+            checkedRelayJoinCode = string.Empty;
+            checkedRelayJoinAllocation = null;
         }
 
         private async Task EnsureUnityServicesSignedInAsync()

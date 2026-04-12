@@ -2,6 +2,7 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Threading.Tasks;
 
 namespace baodeag
 {
@@ -14,10 +15,17 @@ namespace baodeag
         private bool menuButtonsInitialized;
         private RectTransform joinWorldControlsRoot;
         private TextMeshProUGUI worldAddressLabel;
+        private TextMeshProUGUI joinStatusLabel;
         private TMP_InputField joinWorldAddressInputField;
         private Button joinWorldButton;
+        private Button checkCodeButton;
         private Button shopButton;
         private Button settingsButton;
+        private Color worldAddressLabelDefaultColor = Color.white;
+        private Color joinStatusLabelDefaultColor = Color.white;
+        private bool isJoiningWorld;
+        private bool isCheckingRelayCode;
+        private string verifiedRelayJoinCode = string.Empty;
 
         public override void OpenMenu()
         {
@@ -100,9 +108,12 @@ namespace baodeag
             joinWorldControlsRoot = CreateControlsRoot(menuRoot);
             worldAddressLabel = CreateInfoLabel(joinWorldControlsRoot, textTemplate);
             joinWorldAddressInputField = CreateAddressInputField(joinWorldControlsRoot, textTemplate);
-            joinWorldButton = CreateJoinWorldButton(joinWorldControlsRoot, buttonTemplate);
+            checkCodeButton = CreateCheckCodeButton(joinWorldControlsRoot, textTemplate);
+            joinWorldButton = CreateJoinWorldButton(joinWorldControlsRoot, textTemplate);
+            joinStatusLabel = CreateStatusLabel(joinWorldControlsRoot, textTemplate);
 
             joinWorldUIInitialized = true;
+            RefreshJoinControlsState();
         }
 
         private RectTransform CreateControlsRoot(RectTransform menuRoot)
@@ -117,7 +128,7 @@ namespace baodeag
             controlsRoot.anchorMax = new Vector2(1f, 1f);
             controlsRoot.pivot = new Vector2(1f, 1f);
             controlsRoot.anchoredPosition = new Vector2(-48f, -48f);
-            controlsRoot.sizeDelta = new Vector2(430f, 270f);
+            controlsRoot.sizeDelta = new Vector2(430f, 410f);
 
             background.color = new Color(0f, 0f, 0f, 0.72f);
 
@@ -143,6 +154,31 @@ namespace baodeag
             label.enableWordWrapping = true;
             label.overflowMode = TextOverflowModes.Ellipsis;
             label.text = "WORLD ADDRESS";
+            worldAddressLabelDefaultColor = label.color;
+
+            return label;
+        }
+
+        private TextMeshProUGUI CreateStatusLabel(RectTransform parent, TextMeshProUGUI textTemplate)
+        {
+            GameObject labelObject = new GameObject("Join Status Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+            RectTransform labelRect = labelObject.GetComponent<RectTransform>();
+            TextMeshProUGUI label = labelObject.GetComponent<TextMeshProUGUI>();
+
+            labelRect.SetParent(parent, false);
+            labelRect.anchorMin = new Vector2(0f, 1f);
+            labelRect.anchorMax = new Vector2(1f, 1f);
+            labelRect.pivot = new Vector2(0.5f, 1f);
+            labelRect.anchoredPosition = new Vector2(0f, -352f);
+            labelRect.sizeDelta = new Vector2(-32f, 42f);
+
+            CopyTextStyle(textTemplate, label);
+            label.fontSize = 18f;
+            label.alignment = TextAlignmentOptions.Left;
+            label.enableWordWrapping = true;
+            label.overflowMode = TextOverflowModes.Ellipsis;
+            label.text = string.Empty;
+            joinStatusLabelDefaultColor = label.color;
 
             return label;
         }
@@ -204,34 +240,86 @@ namespace baodeag
             inputField.contentType = TMP_InputField.ContentType.Standard;
             inputField.lineType = TMP_InputField.LineType.SingleLine;
             inputField.SetTextWithoutNotify(string.Empty);
+            inputField.onValueChanged.AddListener(_ =>
+            {
+                verifiedRelayJoinCode = string.Empty;
+                RefreshJoinControlsState();
+            });
 
             return inputField;
         }
 
-        private Button CreateJoinWorldButton(RectTransform parent, Button buttonTemplate)
+        private Button CreateCheckCodeButton(RectTransform parent, TextMeshProUGUI textTemplate)
         {
-            GameObject buttonObject = Object.Instantiate(buttonTemplate.gameObject, parent);
-            buttonObject.name = "Join World Button";
-            buttonObject.SetActive(true);
+            return CreateActionButton(
+                parent,
+                textTemplate,
+                "Check Relay Code Button",
+                "CHECK CODE",
+                -204f,
+                CheckRelayCodeFromCharacterMenu);
+        }
 
+        private Button CreateJoinWorldButton(RectTransform parent, TextMeshProUGUI textTemplate)
+        {
+            Button button = CreateActionButton(
+                parent,
+                textTemplate,
+                "Join World Button",
+                "JOIN WORLD",
+                -282f,
+                JoinWorldFromCharacterMenu);
+
+            button.interactable = false;
+            return button;
+        }
+
+        private Button CreateActionButton(RectTransform parent, TextMeshProUGUI textTemplate, string objectName, string label, float anchoredY, UnityEngine.Events.UnityAction callback)
+        {
+            GameObject buttonObject = new GameObject(objectName, typeof(RectTransform), typeof(Image), typeof(Button));
             RectTransform buttonRect = buttonObject.GetComponent<RectTransform>();
+            Image buttonImage = buttonObject.GetComponent<Image>();
+            Button button = buttonObject.GetComponent<Button>();
+
+            buttonRect.SetParent(parent, false);
             buttonRect.anchorMin = new Vector2(0f, 1f);
             buttonRect.anchorMax = new Vector2(1f, 1f);
             buttonRect.pivot = new Vector2(0.5f, 1f);
-            buttonRect.anchoredPosition = new Vector2(0f, -202f);
-            buttonRect.sizeDelta = new Vector2(-32f, 60f);
+            buttonRect.anchoredPosition = new Vector2(0f, anchoredY);
+            buttonRect.sizeDelta = new Vector2(-32f, 62f);
 
-            Button button = buttonObject.GetComponent<Button>();
+            buttonImage.color = new Color(1f, 1f, 1f, 0.14f);
+            buttonImage.raycastTarget = true;
+
+            button.targetGraphic = buttonImage;
             button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(JoinWorldFromCharacterMenu);
+            button.onClick.AddListener(callback);
 
-            TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>(true);
+            ColorBlock colors = button.colors;
+            colors.normalColor = new Color(1f, 1f, 1f, 0.14f);
+            colors.highlightedColor = new Color(1f, 1f, 1f, 0.24f);
+            colors.pressedColor = new Color(1f, 1f, 1f, 0.34f);
+            colors.selectedColor = colors.highlightedColor;
+            colors.disabledColor = new Color(1f, 1f, 1f, 0.05f);
+            button.colors = colors;
 
-            if (buttonText != null)
-            {
-                buttonText.text = "JOIN WORLD";
-            }
+            GameObject textObject = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+            RectTransform textRect = textObject.GetComponent<RectTransform>();
+            TextMeshProUGUI buttonText = textObject.GetComponent<TextMeshProUGUI>();
 
+            textRect.SetParent(buttonRect, false);
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+
+            CopyTextStyle(textTemplate, buttonText);
+            buttonText.fontSize = 24f;
+            buttonText.alignment = TextAlignmentOptions.Center;
+            buttonText.raycastTarget = false;
+            buttonText.text = label;
+
+            ForceButtonUsable(button);
             return button;
         }
 
@@ -239,6 +327,9 @@ namespace baodeag
         {
             if (!joinWorldUIInitialized || worldAddressLabel == null)
                 return;
+
+            worldAddressLabel.color = worldAddressLabelDefaultColor;
+            ClearJoinStatus();
 
             if (NetworkManager.Singleton.IsHost)
             {
@@ -256,16 +347,214 @@ namespace baodeag
             {
                 worldAddressLabel.text = "WORLD ADDRESS\n<size=75%>Enter a Relay code, or use IP for LAN.</size>";
             }
+
+            RefreshJoinControlsState();
         }
 
-        private void JoinWorldFromCharacterMenu()
+        private async void CheckRelayCodeFromCharacterMenu()
         {
-            string addressInput = joinWorldAddressInputField != null && !string.IsNullOrWhiteSpace(joinWorldAddressInputField.text)
-                ? joinWorldAddressInputField.text
-                : "127.0.0.1:7777";
+            if (isCheckingRelayCode || isJoiningWorld)
+                return;
+
+            string addressInput = GetJoinAddressInput();
+
+            if (!IsRelayCodeInput(addressInput))
+            {
+                verifiedRelayJoinCode = string.Empty;
+
+                if (IsAddressInput(addressInput))
+                {
+                    ShowJoinStatus("IP join does not need Relay check.", joinStatusLabelDefaultColor);
+                }
+                else
+                {
+                    ShowJoinStatus("Check failed: enter a 6-character Relay code.", new Color(1f, 0.38f, 0.28f, 1f));
+                }
+
+                RefreshJoinControlsState();
+                return;
+            }
+
+            isCheckingRelayCode = true;
+            RefreshJoinControlsState();
+            ShowJoinStatus("Checking code...", joinStatusLabelDefaultColor);
+
+            bool codeIsValid = await WorldGameSessionManager.instance.CheckRelayJoinCodeAsync(addressInput);
+
+            isCheckingRelayCode = false;
+
+            if (!codeIsValid)
+            {
+                verifiedRelayJoinCode = string.Empty;
+                ShowJoinStatus("Check failed: Relay code is invalid or expired.", new Color(1f, 0.38f, 0.28f, 1f));
+                RefreshJoinControlsState();
+                return;
+            }
+
+            verifiedRelayJoinCode = addressInput.Trim().ToUpperInvariant();
+            ShowJoinStatus($"Code ready: {verifiedRelayJoinCode}. You can join this world now.", new Color(0.45f, 1f, 0.55f, 1f));
+            RefreshJoinControlsState();
+        }
+
+        private async void JoinWorldFromCharacterMenu()
+        {
+            if (isJoiningWorld)
+                return;
+
+            string addressInput = GetJoinAddressInput();
+
+            if (IsRelayCodeInput(addressInput) && !IsCurrentRelayCodeVerified(addressInput))
+            {
+                ShowJoinStatus("Check code first. Relay code must pass before joining.", new Color(1f, 0.78f, 0.25f, 1f));
+                RefreshJoinControlsState();
+                return;
+            }
+
+            isJoiningWorld = true;
+            RefreshJoinControlsState();
+            ShowJoinStatus("Connecting...", joinStatusLabelDefaultColor);
+
+            bool joinStarted = await WorldGameSessionManager.instance.StartGameAsClientAsync(addressInput);
+
+            isJoiningWorld = false;
+            RefreshJoinControlsState();
+
+            if (!joinStarted)
+            {
+                ShowJoinStatus("Join failed: Relay code is invalid or expired.", new Color(1f, 0.38f, 0.28f, 1f));
+                return;
+            }
 
             PlayerUIManager.instance.CloseAllMenuWindows();
-            WorldGameSessionManager.instance.StartGameAsClient(addressInput);
+        }
+
+        private void SetJoinWorldButtonInteractable(bool isInteractable)
+        {
+            if (joinWorldButton != null)
+                joinWorldButton.interactable = isInteractable;
+        }
+
+        private void RefreshCheckCodeButtonState()
+        {
+            if (checkCodeButton != null)
+            {
+                checkCodeButton.interactable = !isCheckingRelayCode &&
+                                               !isJoiningWorld;
+            }
+        }
+
+        private void RefreshJoinControlsState()
+        {
+            RefreshCheckCodeButtonState();
+            RefreshJoinButtonState();
+        }
+
+        private void RefreshJoinButtonState()
+        {
+            if (joinWorldButton == null)
+                return;
+
+            if (isCheckingRelayCode || isJoiningWorld)
+            {
+                joinWorldButton.interactable = false;
+                return;
+            }
+
+            string addressInput = GetJoinAddressInput();
+
+            if (IsRelayCodeInput(addressInput))
+            {
+                joinWorldButton.interactable = IsCurrentRelayCodeVerified(addressInput);
+                return;
+            }
+
+            joinWorldButton.interactable = IsAddressInput(addressInput);
+        }
+
+        private string GetJoinAddressInput()
+        {
+            return joinWorldAddressInputField != null && !string.IsNullOrWhiteSpace(joinWorldAddressInputField.text)
+                ? joinWorldAddressInputField.text
+                : string.Empty;
+        }
+
+        private bool IsRelayCodeInput(string addressInput)
+        {
+            if (string.IsNullOrWhiteSpace(addressInput))
+                return false;
+
+            string trimmedInput = addressInput
+                .Replace("\u200B", string.Empty)
+                .Replace("\uFEFF", string.Empty)
+                .Trim();
+
+            if (trimmedInput.Contains(":") || trimmedInput.Contains("."))
+                return false;
+
+            return trimmedInput.Length == 6;
+        }
+
+        private bool IsAddressInput(string addressInput)
+        {
+            if (string.IsNullOrWhiteSpace(addressInput))
+                return false;
+
+            string trimmedInput = addressInput.Trim();
+            return trimmedInput.Contains(".") || trimmedInput.Contains(":");
+        }
+
+        private bool IsCurrentRelayCodeVerified(string addressInput)
+        {
+            if (!IsRelayCodeInput(addressInput))
+                return false;
+
+            return verifiedRelayJoinCode == addressInput.Trim().ToUpperInvariant() &&
+                   WorldGameSessionManager.instance.IsRelayJoinCodeChecked(addressInput);
+        }
+
+        private void ShowJoinStatus(string statusText, Color statusColor)
+        {
+            if (joinStatusLabel == null)
+                return;
+
+            joinStatusLabel.color = statusColor;
+            joinStatusLabel.text = statusText;
+        }
+
+        private void ClearJoinStatus()
+        {
+            if (joinStatusLabel == null)
+                return;
+
+            joinStatusLabel.color = joinStatusLabelDefaultColor;
+            joinStatusLabel.text = string.Empty;
+        }
+
+        private void ForceButtonUsable(Button button)
+        {
+            if (button == null)
+                return;
+
+            button.enabled = true;
+            button.interactable = true;
+            button.navigation = Navigation.defaultNavigation;
+
+            CanvasGroup canvasGroup = button.GetComponent<CanvasGroup>();
+
+            if (canvasGroup != null)
+            {
+                canvasGroup.alpha = 1f;
+                canvasGroup.interactable = true;
+                canvasGroup.blocksRaycasts = true;
+            }
+
+            Graphic[] graphics = button.GetComponentsInChildren<Graphic>(true);
+
+            for (int i = 0; i < graphics.Length; i++)
+            {
+                if (graphics[i] != null)
+                    graphics[i].raycastTarget = true;
+            }
         }
 
         private void CopyTextStyle(TextMeshProUGUI source, TextMeshProUGUI destination)
