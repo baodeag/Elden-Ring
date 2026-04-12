@@ -7,7 +7,7 @@ namespace baodeag
 {
     public class PlayerUICharacterMenuManager : PlayerUIMenu
     {
-        private const string DefaultJoinAddress = "127.0.0.1:7777";
+        private const string DefaultJoinAddress = "Relay code or 127.0.0.1:7777";
         private const string CharacterMenuShopTitle = "Roundtable Shop";
 
         private bool joinWorldUIInitialized;
@@ -117,7 +117,7 @@ namespace baodeag
             controlsRoot.anchorMax = new Vector2(1f, 1f);
             controlsRoot.pivot = new Vector2(1f, 1f);
             controlsRoot.anchoredPosition = new Vector2(-48f, -48f);
-            controlsRoot.sizeDelta = new Vector2(360f, 190f);
+            controlsRoot.sizeDelta = new Vector2(430f, 270f);
 
             background.color = new Color(0f, 0f, 0f, 0.72f);
 
@@ -135,12 +135,13 @@ namespace baodeag
             labelRect.anchorMax = new Vector2(1f, 1f);
             labelRect.pivot = new Vector2(0.5f, 1f);
             labelRect.anchoredPosition = new Vector2(0f, -18f);
-            labelRect.sizeDelta = new Vector2(-32f, 56f);
+            labelRect.sizeDelta = new Vector2(-32f, 86f);
 
             CopyTextStyle(textTemplate, label);
-            label.fontSize = 22f;
+            label.fontSize = 20f;
             label.alignment = TextAlignmentOptions.Left;
             label.enableWordWrapping = true;
+            label.overflowMode = TextOverflowModes.Ellipsis;
             label.text = "WORLD ADDRESS";
 
             return label;
@@ -157,7 +158,7 @@ namespace baodeag
             inputRootRect.anchorMin = new Vector2(0f, 1f);
             inputRootRect.anchorMax = new Vector2(1f, 1f);
             inputRootRect.pivot = new Vector2(0.5f, 1f);
-            inputRootRect.anchoredPosition = new Vector2(0f, -86f);
+            inputRootRect.anchoredPosition = new Vector2(0f, -128f);
             inputRootRect.sizeDelta = new Vector2(-32f, 54f);
 
             inputBackground.color = new Color(1f, 1f, 1f, 0.12f);
@@ -195,14 +196,14 @@ namespace baodeag
             CopyTextStyle(textTemplate, inputText);
             inputText.fontSize = 24f;
             inputText.alignment = TextAlignmentOptions.Left;
-            inputText.text = DefaultJoinAddress;
+            inputText.text = string.Empty;
 
             inputField.textViewport = textAreaRect;
             inputField.textComponent = inputText;
             inputField.placeholder = placeholderText;
             inputField.contentType = TMP_InputField.ContentType.Standard;
             inputField.lineType = TMP_InputField.LineType.SingleLine;
-            inputField.SetTextWithoutNotify(DefaultJoinAddress);
+            inputField.SetTextWithoutNotify(string.Empty);
 
             return inputField;
         }
@@ -217,7 +218,7 @@ namespace baodeag
             buttonRect.anchorMin = new Vector2(0f, 1f);
             buttonRect.anchorMax = new Vector2(1f, 1f);
             buttonRect.pivot = new Vector2(0.5f, 1f);
-            buttonRect.anchoredPosition = new Vector2(0f, -150f);
+            buttonRect.anchoredPosition = new Vector2(0f, -202f);
             buttonRect.sizeDelta = new Vector2(-32f, 60f);
 
             Button button = buttonObject.GetComponent<Button>();
@@ -241,20 +242,19 @@ namespace baodeag
 
             if (NetworkManager.Singleton.IsHost)
             {
-                worldAddressLabel.text = $"YOUR WORLD\n{WorldGameSessionManager.instance.GetCurrentConnectionAddress()}";
+                string addressLabel = WorldGameSessionManager.instance.HasRelayJoinCode()
+                    ? "YOUR RELAY CODE"
+                    : "YOUR LOCAL ADDRESS";
+
+                worldAddressLabel.text = $"{addressLabel}\n<size=140%>{WorldGameSessionManager.instance.GetCurrentConnectionAddress()}</size>\n<size=75%>Send this to the other player.</size>";
             }
             else if (NetworkManager.Singleton.IsClient)
             {
-                worldAddressLabel.text = "JOIN ANOTHER WORLD\nNhap dia chi host ben duoi";
+                worldAddressLabel.text = "JOIN ANOTHER WORLD\n<size=75%>Enter a Relay code, or use IP for LAN.</size>";
             }
             else
             {
-                worldAddressLabel.text = "WORLD ADDRESS\n127.0.0.1:7777";
-            }
-
-            if (joinWorldAddressInputField != null && string.IsNullOrWhiteSpace(joinWorldAddressInputField.text))
-            {
-                joinWorldAddressInputField.SetTextWithoutNotify(DefaultJoinAddress);
+                worldAddressLabel.text = "WORLD ADDRESS\n<size=75%>Enter a Relay code, or use IP for LAN.</size>";
             }
         }
 
@@ -262,7 +262,7 @@ namespace baodeag
         {
             string addressInput = joinWorldAddressInputField != null && !string.IsNullOrWhiteSpace(joinWorldAddressInputField.text)
                 ? joinWorldAddressInputField.text
-                : DefaultJoinAddress;
+                : "127.0.0.1:7777";
 
             PlayerUIManager.instance.CloseAllMenuWindows();
             WorldGameSessionManager.instance.StartGameAsClient(addressInput);

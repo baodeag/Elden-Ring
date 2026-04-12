@@ -10,17 +10,29 @@ namespace baodeag
 
         public bool IsMenuOpen()
         {
+            EnsureMenuReference();
             return menu != null && menu.activeInHierarchy;
         }
 
         public virtual void OpenMenu()
         {
+            EnsureMenuReference();
+
+            if (menu == null)
+                return;
+
             menu.SetActive(true);
-            PlayerUIManager.instance.RefreshMenuWindowState();
+            if (PlayerUIManager.instance != null)
+                PlayerUIManager.instance.RefreshMenuWindowState();
         }
 
         public virtual void OpenMenuAfterFixedFrame()
         {
+            EnsureMenuReference();
+
+            if (menu == null)
+                return;
+
             if (menu.activeInHierarchy)
                 return;
 
@@ -36,12 +48,23 @@ namespace baodeag
 
         public virtual void CloseMenu()
         {
+            EnsureMenuReference();
+
+            if (menu == null)
+                return;
+
             menu.SetActive(false);
-            PlayerUIManager.instance.RefreshMenuWindowState();
+            if (PlayerUIManager.instance != null)
+                PlayerUIManager.instance.RefreshMenuWindowState();
         }
 
         public virtual void CloseMenuAfterFixedFrame()
         {
+            EnsureMenuReference();
+
+            if (menu == null)
+                return;
+
             if (!menu.activeInHierarchy)
                 return;
 
@@ -53,6 +76,12 @@ namespace baodeag
             yield return new WaitForFixedUpdate();
 
             CloseMenu();
+        }
+
+        protected virtual void EnsureMenuReference()
+        {
+            if (menu == null)
+                menu = gameObject;
         }
     }
 }

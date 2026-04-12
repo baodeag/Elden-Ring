@@ -4,8 +4,14 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Collections;
 using Unity.Netcode.Transports.UTP;
+using Unity.Networking.Transport.Relay;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
+using Unity.Services.Relay;
+using Unity.Services.Relay.Models;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace baodeag
 {
@@ -23,7 +29,11 @@ namespace baodeag
 
         private UnityTransport unityTransport;
         private const ushort DefaultUnityTransportPort = 7777;
+        private const int DefaultRelayMaxConnections = 4;
+        private const string RelayConnectionType = "dtls";
         private Coroutine joinAsClientCoroutine;
+        private string currentRelayJoinCode = string.Empty;
+        private bool isStartingRelaySession;
 
         private void Awake()
         {
@@ -264,6 +274,66 @@ namespace baodeag
             return true;
         }
 
+        public async Task<bool> StartGameAsRelayHostAsync(int maxConnections = DefaultRelayMaxConnections)
+        {
+            if (NetworkManager.Singleton.IsHost)
+            {
+                if (!string.IsNullOrWhiteSpace(currentRelayJoinCode))
+                    return true;
+
+                Debug.LogWarning("A local host session is already active. Shut it down before starting a Relay host.");
+                return false;
+            }
+
+            if (NetworkManager.Singleton.IsClient)
+            {
+                Debug.LogWarning("Client session is active. Shut it down before starting a Relay host.");
+                return false;
+            }
+
+            if (unityTransport == null)
+            {
+                Debug.LogError("UnityTransport is missing from NetworkManager. Cannot start Relay host.");
+                return false;
+            }
+
+            if (isStartingRelaySession)
+                return false;
+
+            isStartingRelaySession = true;
+
+            try
+            {
+                await EnsureUnityServicesSignedInAsync();
+
+                Allocation allocation = await RelayService.Instance.CreateAllocationAsync(maxConnections);
+                currentRelayJoinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+
+                unityTransport.UseWebSockets = false;
+                unityTransport.SetRelayServerData(new RelayServerData(allocation, RelayConnectionType));
+
+                if (!NetworkManager.Singleton.StartHost())
+                {
+                    Debug.LogError("Failed to start Relay host session.");
+                    currentRelayJoinCode = string.Empty;
+                    return false;
+                }
+
+                Debug.Log($"Relay host started. Join code: {currentRelayJoinCode}");
+                return true;
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogError($"Failed to start Relay host: {exception.Message}");
+                currentRelayJoinCode = string.Empty;
+                return false;
+            }
+            finally
+            {
+                isStartingRelaySession = false;
+            }
+        }
+
         private void ConfigureUnityTransportPortForCurrentProject()
         {
             if (unityTransport == null)
@@ -303,9 +373,15 @@ namespace baodeag
             if (joinAsClientCoroutine != null)
                 StopCoroutine(joinAsClientCoroutine);
 
+            if (TryNormalizeRelayJoinCode(addressInput, out string relayJoinCode))
+            {
+                _ = StartGameAsRelayClientAsync(relayJoinCode);
+                return true;
+            }
+
             if (!TryParseAddressInput(addressInput, out string hostAddress, out ushort port))
             {
-                Debug.LogError($"Invalid address '{addressInput}'. Use an IP or host name, optionally with ':port', for example '127.0.0.1:7777'.");
+                Debug.LogError($"Invalid address '{addressInput}'. Use a Relay join code or an IP/host name, optionally with ':port', for example '127.0.0.1:7777'.");
                 return false;
             }
 
@@ -344,15 +420,110 @@ namespace baodeag
             Debug.Log($"Client connecting to {hostAddress}:{port}.");
         }
 
+        public async Task<bool> StartGameAsRelayClientAsync(string relayJoinCode)
+        {
+            if (!TryNormalizeRelayJoinCode(relayJoinCode, out relayJoinCode))
+            {
+                Debug.LogError($"Invalid Relay join code '{relayJoinCode}'.");
+                return false;
+            }
+
+            if (SceneManager.GetActiveScene().buildIndex != 0)
+            {
+                WorldSaveGameManager.instance.SaveGame();
+            }
+
+            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsClient)
+            {
+                NetworkManager.Singleton.Shutdown();
+            }
+
+            await Task.Yield();
+
+            if (unityTransport == null)
+            {
+                Debug.LogError("UnityTransport is missing from NetworkManager. Cannot join Relay session.");
+                return false;
+            }
+
+            try
+            {
+                await EnsureUnityServicesSignedInAsync();
+
+                JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(relayJoinCode);
+
+                currentRelayJoinCode = string.Empty;
+                unityTransport.UseWebSockets = false;
+                unityTransport.SetRelayServerData(new RelayServerData(joinAllocation, RelayConnectionType));
+
+                if (!NetworkManager.Singleton.StartClient())
+                {
+                    Debug.LogError($"Failed to start Relay client for join code {relayJoinCode}.");
+                    return false;
+                }
+
+                Debug.Log($"Relay client connecting with join code {relayJoinCode}.");
+                return true;
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogError($"Failed to join Relay session '{relayJoinCode}': {exception.Message}");
+                return false;
+            }
+        }
+
         public string GetSuggestedHostAddress()
         {
+            if (!string.IsNullOrWhiteSpace(currentRelayJoinCode))
+                return currentRelayJoinCode;
+
             return $"127.0.0.1:{GetUnityTransportPortForCurrentProject()}";
         }
 
         public string GetCurrentConnectionAddress()
         {
+            if (!string.IsNullOrWhiteSpace(currentRelayJoinCode))
+                return currentRelayJoinCode;
+
             ushort port = GetUnityTransportPortForCurrentProject();
             return $"127.0.0.1:{port}";
+        }
+
+        public bool HasRelayJoinCode()
+        {
+            return !string.IsNullOrWhiteSpace(currentRelayJoinCode);
+        }
+
+        private async Task EnsureUnityServicesSignedInAsync()
+        {
+            if (UnityServices.State != ServicesInitializationState.Initialized)
+            {
+                await UnityServices.InitializeAsync();
+            }
+
+            if (!AuthenticationService.Instance.IsSignedIn)
+            {
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            }
+        }
+
+        private bool TryNormalizeRelayJoinCode(string addressInput, out string relayJoinCode)
+        {
+            relayJoinCode = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(addressInput))
+                return false;
+
+            string trimmedInput = addressInput
+                .Replace("\u200B", string.Empty)
+                .Replace("\uFEFF", string.Empty)
+                .Trim();
+
+            if (!Regex.IsMatch(trimmedInput, @"^[A-Za-z0-9]{6}$"))
+                return false;
+
+            relayJoinCode = trimmedInput.ToUpperInvariant();
+            return true;
         }
 
         private bool TryParseAddressInput(string addressInput, out string hostAddress, out ushort port)

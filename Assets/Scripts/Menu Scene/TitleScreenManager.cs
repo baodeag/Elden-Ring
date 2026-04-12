@@ -5,6 +5,7 @@ using static UnityEngine.InputManagerEntry;
 using TMPro;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace baodeag { 
     public class TitleScreenManager : MonoBehaviour
@@ -132,9 +133,9 @@ namespace baodeag {
             Debug.Log("Join World has moved to the in-game character menu.");
         }
 
-        public void HostWorld()
+        public async void HostWorld()
         {
-            if (!WorldGameSessionManager.instance.StartGameAsHost())
+            if (!await WorldGameSessionManager.instance.StartGameAsRelayHostAsync())
                 return;
 
             if (networkAddressInputField != null)
@@ -232,9 +233,9 @@ namespace baodeag {
                 mainMenuSettingsButton.Select();
         }
 
-        public void AttemptToCreateNewCharacter()
+        public async void AttemptToCreateNewCharacter()
         {
-            if (!EnsureHostSessionForSaveMenus())
+            if (!await EnsureHostSessionForSaveMenus())
                 return;
 
             if (WorldSaveGameManager.instance.HasFreeCharacterSlot())
@@ -254,9 +255,9 @@ namespace baodeag {
             WorldSaveGameManager.instance.AttemptToCreateNewGame();
         }
 
-        public void OpenLoadGameMenu()
+        public async void OpenLoadGameMenu()
         {
-            if (!EnsureHostSessionForSaveMenus())
+            if (!await EnsureHostSessionForSaveMenus())
                 return;
 
             //close main menu
@@ -334,7 +335,7 @@ namespace baodeag {
             UpdateCharacterClassPrimaryButtonLabel();
         }
 
-        private bool EnsureHostSessionForSaveMenus()
+        private async Task<bool> EnsureHostSessionForSaveMenus()
         {
             if (NetworkManager.Singleton.IsHost)
                 return true;
@@ -345,7 +346,7 @@ namespace baodeag {
                 return false;
             }
 
-            return WorldGameSessionManager.instance.StartGameAsHost();
+            return await WorldGameSessionManager.instance.StartGameAsRelayHostAsync();
         }
 
         private void BuildNetworkMenuControls()
