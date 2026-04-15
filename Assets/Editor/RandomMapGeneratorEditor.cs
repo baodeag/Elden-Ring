@@ -63,7 +63,8 @@ namespace baodeag
                     EditorGUI.indentLevel++;
                     DrawPrefabArray(propTileset.FindPropertyRelative("floorPrefabs"), "Floor Prefabs", "Sàn gạch/đá (1x1 tile, scale đúng 1:1)");
                     DrawPrefabArray(propTileset.FindPropertyRelative("wallPrefabs"), "Wall Prefabs", "Tường (lấp cạnh tile, chiều cao = wallHeight)");
-                    DrawPrefabArray(propTileset.FindPropertyRelative("ceilingPrefabs"), "Ceiling Prefabs", "Trần nhà (1x1, đặt ở Y = wallHeight)");
+                    DrawPrefabArray(propTileset.FindPropertyRelative("wallArchPrefabs"), "Wall Arch Prefabs", "Mái/vòm đặt trên đỉnh tường, local +Z quay về phía sàn");
+                    DrawPrefabArray(propTileset.FindPropertyRelative("ceilingPrefabs"), "Ceiling Prefabs", "Trần phẳng đặt song song với nền ở Y nền + 10, chỉ trên phần ruột sau khi trừ biên nền");
                     DrawPrefabArray(propTileset.FindPropertyRelative("pillarPrefabs"), "Pillar Prefabs", "Cột góc phòng");
                     DrawPrefabArray(propTileset.FindPropertyRelative("doorwayPrefabs"), "Doorway Prefabs", "Cổng nối hành lang – phòng");
                     DrawPrefabArray(propTileset.FindPropertyRelative("stairPrefabs"), "Stair Prefabs", "Cầu thang (tuỳ chọn)");

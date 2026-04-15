@@ -18,7 +18,8 @@ namespace baodeag
     {
         [Header("── Cấu trúc ──")]
         public GameObject[] floorPrefabs;           // Sàn (scale 1x1, Y=0)
-        public GameObject[] wallPrefabs;            // Tường (scale 1x3, thẳng đứng)
+        public GameObject[] wallPrefabs;            // Tường (thẳng đứng)
+        public GameObject[] wallArchPrefabs;        // Mảnh cung/vòm trên đỉnh tường (SM_Env_Ceiling_Stone_Curved_01)
         public GameObject[] ceilingPrefabs;         // Trần (scale 1x1, cao)
         public GameObject[] pillarPrefabs;          // Cột góc phòng
         public GameObject[] doorwayPrefabs;         // Cổng nối phòng
@@ -101,6 +102,9 @@ namespace baodeag
 
     public class RandomMapGenerator : MonoBehaviour
     {
+        private const float WallYSink = 0.23764f;
+        private const float CeilingHeightAboveFloor = 10f;
+
         // ── Inspector ──────────────────────────────────────────────────────
 
         [Header("═══ TILESET ═══")]
@@ -127,7 +131,9 @@ namespace baodeag
         private float detectedStepZ = 5f;     // khoảng cách thực giữa 2 tile theo Z
         private float detectedFloorTopY = 0f; // Y của mặt trên sàn (floor surface)
         private float detectedWallYBase = 0f; // Y để đáy wall nằm trên sàn
+        private float detectedWallTopY  = 5f; // Y của đỉnh wall trong world space
         private float detectedWallWidthOfs = 0f; // offset tâm mesh wall theo local X (chiều rộng)
+        private float detectedWallArchWidthOfs = 0f; // offset tâm mesh mái/vòm theo local X
 
         // Được lưu sau khi dựng sàn: tile coord → bounds thực của mesh trong world space
         private Dictionary<Vector2Int, Bounds> floorBounds = new Dictionary<Vector2Int, Bounds>();
@@ -155,6 +161,7 @@ namespace baodeag
             // 0. Tự động đo kích thước thực của prefab → dùng làm bước tile và Y nền
             DetectTileSize();
             DetectWallYBase();
+            DetectWallArchOffset();
 
             // 1. Tạo bản đồ phòng (BSP-like)
             floorMap = new bool[config.mapWidth, config.mapHeight];
@@ -165,6 +172,7 @@ namespace baodeag
             // 2. Dựng geometry
             BuildFloors();
             BuildWalls();
+            BuildWallArches();   // vòm/cung trên đỉnh tường
             BuildCeilings();
             BuildPillars();
 
@@ -339,6 +347,7 @@ namespace baodeag
         {
             detectedWallYBase = detectedFloorTopY;
             detectedWallWidthOfs = 0f;
+            detectedWallTopY = detectedFloorTopY + config.wallHeight; // fallback
 
             if (tileset.wallPrefabs == null || tileset.wallPrefabs.Length == 0) return;
             GameObject prefab = tileset.wallPrefabs[0];
@@ -350,9 +359,13 @@ namespace baodeag
             Bounds b = GetWorldBounds(temp);
             Vector3 pivotPos = temp.transform.position;
 
-            // ── Y: tính điểm đặt wall để đáy cầm sàn ──
+            // pivotToBottom: khoảng cách từ pivot (Y=0) đến đáy wall
             float pivotToBottom  = b.min.y - pivotPos.y;
             detectedWallYBase    = detectedFloorTopY - pivotToBottom;
+
+            // đỉnh wall = YBase + khoảng từ pivot đến top (khi spawn tại origin)
+            float pivotToTop     = b.max.y - pivotPos.y;
+            detectedWallTopY     = detectedWallYBase + pivotToTop;
 
             // ── Width offset: tâm mesh theo local X lệch bao nhiêu so với pivot? ──
             // Ví dụ: wall pivot ở góc trái (X=0), mesh từ 0→5 → tâm mesh tại X=2.5 → ofs=+2.5
@@ -368,7 +381,32 @@ namespace baodeag
             Destroy(temp);
 #endif
 
-            Debug.Log($"[RandomMapGenerator] Wall detected: Y base={detectedWallYBase:F3} | widthOffset={detectedWallWidthOfs:F3}");
+            Debug.Log($"[RandomMapGenerator] Wall detected: Y base={detectedWallYBase:F3} | top={detectedWallTopY:F3} | widthOffset={detectedWallWidthOfs:F3}");
+        }
+
+        private void DetectWallArchOffset()
+        {
+            detectedWallArchWidthOfs = 0f;
+
+            if (tileset.wallArchPrefabs == null || tileset.wallArchPrefabs.Length == 0) return;
+            GameObject prefab = tileset.wallArchPrefabs[0];
+            if (prefab == null) return;
+
+            GameObject temp = SpawnSingle(prefab, Vector3.zero, Quaternion.identity, generatedRoot);
+            if (temp == null) return;
+
+            Bounds b = GetWorldBounds(temp);
+            Vector3 pivotPos = temp.transform.position;
+            float meshCenterX = (b.max.x + b.min.x) * 0.5f;
+            detectedWallArchWidthOfs = meshCenterX - pivotPos.x;
+
+#if UNITY_EDITOR
+            DestroyImmediate(temp);
+#else
+            Destroy(temp);
+#endif
+
+            Debug.Log($"[RandomMapGenerator] Wall arch detected: widthOffset={detectedWallArchWidthOfs:F3}");
         }
 
         // ── Coordinate helpers ────────────────────────────────────────────
@@ -488,7 +526,7 @@ namespace baodeag
                             break;
                     }
 
-                    Vector3 wallPos = new Vector3(wx, detectedWallYBase, wz);
+                    Vector3 wallPos = new Vector3(wx, detectedWallYBase - WallYSink, wz);
 
                     // Dedup: key làm tròn 2 chữ số
                     string key = $"{wx:F2}_{wz:F2}_{d}";
@@ -498,6 +536,166 @@ namespace baodeag
                     SpawnPrefab(tileset.wallPrefabs, wallPos, Quaternion.Euler(0, rotY[d], 0), parent);
                 }
             }
+        }
+
+        /// <summary>
+        /// Đặt mái/vòm lên đúng các cạnh tường thẳng, bỏ qua góc và xoay phần nhô về phía sàn.
+        /// </summary>
+        private void BuildWallArches()
+        {
+            if (tileset.wallArchPrefabs == null || tileset.wallArchPrefabs.Length == 0) return;
+            if (floorBounds.Count == 0) return;
+            Transform parent = GetOrCreateChild("Structure/WallArches");
+
+            Vector2Int[] dirs =
+            {
+                new Vector2Int( 1,  0),
+                new Vector2Int(-1,  0),
+                new Vector2Int( 0,  1),
+                new Vector2Int( 0, -1),
+            };
+
+            HashSet<string> placed = new HashSet<string>();
+
+            foreach (var kv in floorBounds)
+            {
+                Vector2Int tile = kv.Key;
+                Bounds bounds = kv.Value;
+
+                for (int d = 0; d < dirs.Length; d++)
+                {
+                    Vector2Int outward = dirs[d];
+                    if (!HasBoundaryWall(tile, outward)) continue;
+                    if (HasPerpendicularWallAtEitherEnd(tile, outward)) continue;
+
+                    Vector3 inward = new Vector3(-outward.x, 0f, -outward.y);
+                    Quaternion rotation = Quaternion.LookRotation(inward, Vector3.up);
+                    Vector3 archPos = GetWallArchEdgePosition(bounds, d, GetWallArchY(), rotation);
+                    string key = $"{archPos.x:F2}_{archPos.z:F2}_{d}";
+                    if (placed.Contains(key)) continue;
+                    placed.Add(key);
+
+                    SpawnPrefab(tileset.wallArchPrefabs, archPos, rotation, parent);
+                }
+            }
+        }
+
+        private bool HasBoundaryWall(Vector2Int floorTile, Vector2Int outward)
+        {
+            if (!floorBounds.ContainsKey(floorTile)) return false;
+            return !floorBounds.ContainsKey(floorTile + outward);
+        }
+
+        private bool HasPerpendicularWallAtEitherEnd(Vector2Int floorTile, Vector2Int outward)
+        {
+            GetWallEndpoints2(floorTile, outward, out Vector2Int endA, out Vector2Int endB);
+
+            Vector2Int[] dirs =
+            {
+                new Vector2Int( 1,  0),
+                new Vector2Int(-1,  0),
+                new Vector2Int( 0,  1),
+                new Vector2Int( 0, -1),
+            };
+
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dz = -1; dz <= 1; dz++)
+                {
+                    Vector2Int candidateTile = new Vector2Int(floorTile.x + dx, floorTile.y + dz);
+                    if (!floorBounds.ContainsKey(candidateTile)) continue;
+
+                    foreach (Vector2Int candidateOutward in dirs)
+                    {
+                        if (!IsPerpendicular(outward, candidateOutward)) continue;
+                        if (!HasBoundaryWall(candidateTile, candidateOutward)) continue;
+
+                        GetWallEndpoints2(candidateTile, candidateOutward, out Vector2Int candidateEndA, out Vector2Int candidateEndB);
+                        if (SharesEndpoint(endA, candidateEndA, candidateEndB) ||
+                            SharesEndpoint(endB, candidateEndA, candidateEndB))
+                            return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsPerpendicular(Vector2Int a, Vector2Int b)
+        {
+            return a.x * b.x + a.y * b.y == 0;
+        }
+
+        private bool SharesEndpoint(Vector2Int endpoint, Vector2Int otherA, Vector2Int otherB)
+        {
+            return endpoint == otherA || endpoint == otherB;
+        }
+
+        private void GetWallEndpoints2(Vector2Int floorTile, Vector2Int outward, out Vector2Int a, out Vector2Int b)
+        {
+            int centerX2 = floorTile.x * 2;
+            int centerZ2 = floorTile.y * 2;
+
+            if (outward.x != 0)
+            {
+                int edgeX2 = centerX2 + outward.x;
+                a = new Vector2Int(edgeX2, centerZ2 - 1);
+                b = new Vector2Int(edgeX2, centerZ2 + 1);
+            }
+            else
+            {
+                int edgeZ2 = centerZ2 + outward.y;
+                a = new Vector2Int(centerX2 - 1, edgeZ2);
+                b = new Vector2Int(centerX2 + 1, edgeZ2);
+            }
+        }
+
+        private Vector3 GetWallEdgePosition(Bounds bounds, int directionIndex, float y)
+        {
+            float wx, wz;
+            switch (directionIndex)
+            {
+                case 0:
+                    wx = bounds.max.x;
+                    wz = bounds.center.z + detectedWallWidthOfs;
+                    break;
+                case 1:
+                    wx = bounds.min.x;
+                    wz = bounds.center.z - detectedWallWidthOfs;
+                    break;
+                case 2:
+                    wx = bounds.center.x - detectedWallWidthOfs;
+                    wz = bounds.max.z;
+                    break;
+                default:
+                    wx = bounds.center.x + detectedWallWidthOfs;
+                    wz = bounds.min.z;
+                    break;
+            }
+
+            return new Vector3(wx, y, wz);
+        }
+
+        private Vector3 GetWallArchEdgePosition(Bounds bounds, int directionIndex, float y, Quaternion rotation)
+        {
+            Vector3 edgeCenter;
+            switch (directionIndex)
+            {
+                case 0:
+                    edgeCenter = new Vector3(bounds.max.x, y, bounds.center.z);
+                    break;
+                case 1:
+                    edgeCenter = new Vector3(bounds.min.x, y, bounds.center.z);
+                    break;
+                case 2:
+                    edgeCenter = new Vector3(bounds.center.x, y, bounds.max.z);
+                    break;
+                default:
+                    edgeCenter = new Vector3(bounds.center.x, y, bounds.min.z);
+                    break;
+            }
+
+            return edgeCenter - rotation * Vector3.right * detectedWallArchWidthOfs;
         }
 
         /// <summary>
@@ -511,11 +709,30 @@ namespace baodeag
 
             foreach (var kv in floorBounds)
             {
-                Bounds b = kv.Value;
+                Vector2Int tile = kv.Key;
+                if (!IsInteriorFloorTile(tile)) continue;
+
                 // Tâm XZ giống floor, Y = wallHeight
-                Vector3 pos = new Vector3(b.center.x, config.wallHeight, b.center.z);
+                Vector3 pos = T(tile.x, tile.y, CeilingHeightAboveFloor);
                 SpawnPrefab(tileset.ceilingPrefabs, pos, Quaternion.identity, parent);
             }
+        }
+
+        private float GetWallArchY()
+        {
+            return detectedWallYBase - WallYSink + 5f;
+        }
+
+        private bool IsInteriorFloorTile(Vector2Int tile)
+        {
+            if (!floorBounds.ContainsKey(tile)) return false;
+
+            for (int dx = -1; dx <= 1; dx++)
+                for (int dz = -1; dz <= 1; dz++)
+                    if ((dx != 0 || dz != 0) && !floorBounds.ContainsKey(tile + new Vector2Int(dx, dz)))
+                        return false;
+
+            return true;
         }
 
         private void BuildPillars()
