@@ -81,6 +81,9 @@ namespace baodeag
         public float torchLightRange = 8f;
         public float torchLightIntensity = 2f;
         public Color torchLightColor = new Color(1f, 0.58f, 0.25f);
+        public float chandelierLightRange = 10f;
+        public float chandelierLightIntensity = 2.5f;
+        public Color chandelierLightColor = new Color(1f, 0.62f, 0.32f);
 
         [Header("── Random prefab variants ──")]
         [Tooltip("Bật để mỗi tile chọn ngẫu nhiên một prefab trong array. Tắt để luôn dùng prefab đầu tiên, tiện kiểm tra layout/pivot.")]
@@ -1212,6 +1215,8 @@ namespace baodeag
             }
 
             // Đèn ambient trung tâm mỗi phòng
+            PlaceRoomLanterns(parent);
+
             if (tileset.ambientLightPrefabs != null && tileset.ambientLightPrefabs.Length > 0)
             {
                 foreach (var room in rooms)
@@ -1223,6 +1228,37 @@ namespace baodeag
         }
 
         // ── Gameplay objects ──────────────────────────────────────────────
+
+        private void PlaceRoomLanterns(Transform parent)
+        {
+            if (tileset.lanternPrefabs == null || tileset.lanternPrefabs.Length == 0) return;
+
+            foreach (RectInt room in rooms)
+            {
+                Vector2Int center = RoomCenter(room);
+                if (!floorBounds.ContainsKey(center)) continue;
+
+                Vector3 pos = T(center.x, center.y, CeilingHeightAboveFloor);
+                GameObject lantern = SpawnPrefab(tileset.lanternPrefabs, pos, Quaternion.identity, parent);
+                SpawnChandelierLight(lantern, pos, parent);
+            }
+        }
+
+        private void SpawnChandelierLight(GameObject chandelier, Vector3 chandelierPosition, Transform parent)
+        {
+            if (chandelier != null && chandelier.GetComponentInChildren<Light>() != null) return;
+
+            GameObject lightGo = new GameObject("Generated Chandelier Light");
+            lightGo.transform.SetParent(chandelier != null ? chandelier.transform : parent, false);
+            lightGo.transform.position = chandelierPosition + Vector3.down * (config.tileSize * 0.35f);
+
+            Light light = lightGo.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = config.chandelierLightColor;
+            light.range = config.chandelierLightRange;
+            light.intensity = config.chandelierLightIntensity;
+            light.shadows = LightShadows.Soft;
+        }
 
         private void SpawnTorchLight(GameObject torch, Vector3 torchPosition, Vector3 inward, Transform parent)
         {

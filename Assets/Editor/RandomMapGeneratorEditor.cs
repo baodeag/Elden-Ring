@@ -189,6 +189,9 @@ namespace baodeag
                     EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("torchLightRange"), new GUIContent("Torch Light Range", "Generated torch point light range"));
                     EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("torchLightIntensity"), new GUIContent("Torch Light Intensity", "Generated torch point light intensity"));
                     EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("torchLightColor"), new GUIContent("Torch Light Color", "Generated torch point light color"));
+                    EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("chandelierLightRange"), new GUIContent("Chandelier Light Range", "Generated chandelier point light range"));
+                    EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("chandelierLightIntensity"), new GUIContent("Chandelier Light Intensity", "Generated chandelier point light intensity"));
+                    EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("chandelierLightColor"), new GUIContent("Chandelier Light Color", "Generated chandelier point light color"));
                 });
 
                 DrawConfigSection("Random Prefab Variants", () =>
