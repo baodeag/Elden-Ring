@@ -77,6 +77,10 @@ namespace baodeag
         [Range(0f, 1f)] public float propDensity = 0.15f;
         [Range(0f, 1f)] public float decorationDensity = 0.2f;
         [Range(0f, 1f)] public float torchDensity = 0.3f;
+        [Min(1)] public int torchWallSpacing = 4;
+        public float torchLightRange = 8f;
+        public float torchLightIntensity = 2f;
+        public Color torchLightColor = new Color(1f, 0.58f, 0.25f);
 
         [Header("── Random prefab variants ──")]
         [Tooltip("Bật để mỗi tile chọn ngẫu nhiên một prefab trong array. Tắt để luôn dùng prefab đầu tiên, tiện kiểm tra layout/pivot.")]
@@ -1177,14 +1181,14 @@ namespace baodeag
             {
                 int[] dx = { 1, -1, 0, 0 };
                 int[] dz = { 0, 0, 1, -1 };
-                float[] rotY = { 0f, 180f, 90f, 270f };
+                int spacing = Mathf.Max(1, config.torchWallSpacing);
 
                 for (int x = 1; x < config.mapWidth - 1; x++)
                 {
                     for (int z = 1; z < config.mapHeight - 1; z++)
                     {
                         if (!floorMap[x, z]) continue;
-                        if ((float)rng.NextDouble() > config.torchDensity) continue;
+                        if (!floorBounds.TryGetValue(new Vector2Int(x, z), out Bounds bounds)) continue;
 
                         for (int d = 0; d < 4; d++)
                         {
@@ -1192,12 +1196,14 @@ namespace baodeag
                             if (nx < 0 || nx >= config.mapWidth || nz < 0 || nz >= config.mapHeight) continue;
                             if (!floorMap[nx, nz])
                             {
-                                Vector3 pos = new Vector3(
-                                    x * config.tileSize + dx[d] * config.tileSize * 0.42f,
-                                    config.wallHeight * 0.45f,
-                                    z * config.tileSize + dz[d] * config.tileSize * 0.42f
-                                );
-                                SpawnPrefab(tileset.torchPrefabs, pos, Quaternion.Euler(0, rotY[d] + 180f, 0), parent);
+                                int wallAxisIndex = dx[d] != 0 ? z : x;
+                                if (Mathf.Abs(wallAxisIndex) % spacing != 0) continue;
+
+                                Vector3 inward = new Vector3(-dx[d], 0f, -dz[d]);
+                                Vector3 pos = GetWallMountedTorchPosition(bounds, d, inward);
+                                Quaternion rotation = Quaternion.LookRotation(inward, Vector3.up);
+                                GameObject torch = SpawnPrefab(tileset.torchPrefabs, pos, rotation, parent);
+                                SpawnTorchLight(torch, pos, inward, parent);
                                 break;
                             }
                         }
@@ -1217,6 +1223,40 @@ namespace baodeag
         }
 
         // ── Gameplay objects ──────────────────────────────────────────────
+
+        private void SpawnTorchLight(GameObject torch, Vector3 torchPosition, Vector3 inward, Transform parent)
+        {
+            if (torch != null && torch.GetComponentInChildren<Light>() != null) return;
+
+            GameObject lightGo = new GameObject("Generated Torch Light");
+            lightGo.transform.SetParent(torch != null ? torch.transform : parent, false);
+            lightGo.transform.position = torchPosition + inward.normalized * (config.tileSize * 0.18f) + Vector3.up * (config.tileSize * 0.08f);
+
+            Light light = lightGo.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = config.torchLightColor;
+            light.range = config.torchLightRange;
+            light.intensity = config.torchLightIntensity;
+            light.shadows = LightShadows.Soft;
+        }
+
+        private Vector3 GetWallMountedTorchPosition(Bounds floorBoundsForTile, int directionIndex, Vector3 inward)
+        {
+            float y = (detectedWallYBase - WallYSink) + (detectedWallTopY - detectedWallYBase) * 0.45f + 0.69903f;
+            Vector3 inwardOffset = inward.normalized * 0.3f;
+
+            switch (directionIndex)
+            {
+                case 0:
+                    return new Vector3(floorBoundsForTile.max.x, y, floorBoundsForTile.center.z) + inwardOffset;
+                case 1:
+                    return new Vector3(floorBoundsForTile.min.x, y, floorBoundsForTile.center.z) + inwardOffset;
+                case 2:
+                    return new Vector3(floorBoundsForTile.center.x, y, floorBoundsForTile.max.z) + inwardOffset;
+                default:
+                    return new Vector3(floorBoundsForTile.center.x, y, floorBoundsForTile.min.z) + inwardOffset;
+            }
+        }
 
         private void PlacePlayerSpawn()
         {

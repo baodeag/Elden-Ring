@@ -183,6 +183,14 @@ namespace baodeag
                     EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("torchDensity"), new GUIContent("Torch Density", "Xác suất đặt đuốc tường"));
                 });
 
+                DrawConfigSection("Torch Lights", () =>
+                {
+                    EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("torchWallSpacing"), new GUIContent("Torch Wall Spacing", "Place one torch every N wall tiles"));
+                    EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("torchLightRange"), new GUIContent("Torch Light Range", "Generated torch point light range"));
+                    EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("torchLightIntensity"), new GUIContent("Torch Light Intensity", "Generated torch point light intensity"));
+                    EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("torchLightColor"), new GUIContent("Torch Light Color", "Generated torch point light color"));
+                });
+
                 DrawConfigSection("Random Prefab Variants", () =>
                 {
                     EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("randomizePrefabVariants"),

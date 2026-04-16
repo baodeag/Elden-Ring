@@ -45056,7 +45056,8 @@ MonoBehaviour:
     propPrefabs: []
     decorationPrefabs: []
     ruinPrefabs: []
-    torchPrefabs: []
+    torchPrefabs:
+    - {fileID: 2116296483428046337, guid: c58e551e285b55641a85c0f8abc350e1, type: 3}
     lanternPrefabs: []
     ambientLightPrefabs: []
     enemySpawnerPrefabs: []
