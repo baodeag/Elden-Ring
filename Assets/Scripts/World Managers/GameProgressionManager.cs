@@ -276,6 +276,19 @@ namespace baodeag
             UnlockMap(currentMapIndex);
         }
 
+        public bool PrepareTransitionToMap(int mapIndex, out int sceneBuildIndex)
+        {
+            EnsureConfigurationIsValid();
+
+            currentMapIndex = Mathf.Clamp(mapIndex, 0, TotalMapCount - 1);
+            UnlockMap(currentMapIndex);
+            pendingTransitionSiteOfGraceID = GetEntrySiteOfGraceIDForMap(currentMapIndex);
+            sceneBuildIndex = GetSceneBuildIndexForMap(currentMapIndex);
+
+            string scenePath = UnityEngine.SceneManagement.SceneUtility.GetScenePathByBuildIndex(sceneBuildIndex);
+            return !string.IsNullOrEmpty(scenePath);
+        }
+
         private void UnlockMap(int mapIndex)
         {
             if (mapIndex < 0 || mapIndex >= TotalMapCount)

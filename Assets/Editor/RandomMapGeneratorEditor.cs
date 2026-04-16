@@ -192,6 +192,9 @@ namespace baodeag
                     EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("chandelierLightRange"), new GUIContent("Chandelier Light Range", "Generated chandelier point light range"));
                     EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("chandelierLightIntensity"), new GUIContent("Chandelier Light Intensity", "Generated chandelier point light intensity"));
                     EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("chandelierLightColor"), new GUIContent("Chandelier Light Color", "Generated chandelier point light color"));
+                    EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("useWorld01LightingMode"), new GUIContent("Use World_01 Lighting Mode", "Apply Assets/System/World Lighting Settings.lighting after generating"));
+                    EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("markGeneratedMapForBake"), new GUIContent("Mark Generated Map For Bake", "Set generated renderers to Contribute GI and generated lights to Mixed"));
+                    EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("autoBakeNavMeshAfterGenerate"), new GUIContent("Auto Bake NavMesh", "Bake NavMesh on generated Structure/Floors after generating"));
                 });
 
                 DrawConfigSection("Random Prefab Variants", () =>
@@ -219,6 +222,35 @@ namespace baodeag
             DrawSectionHeader("📂  THÔNG TIN XUẤT RA");
             EditorGUILayout.PropertyField(propWorldSceneName, new GUIContent("World Scene Name", "Tên scene thế giới (World_02, World_03…)"));
             EditorGUILayout.PropertyField(propAreaName, new GUIContent("Area Name", "Tên khu vực (Area_02, Area_03…)"));
+
+            EditorGUILayout.Space(2);
+
+            if (GUILayout.Button("Apply World_01 Lighting Mode", GUILayout.Height(28)))
+            {
+                gen.ApplyWorld01LightingMode();
+                EditorUtility.SetDirty(gen.gameObject);
+            }
+
+            if (GUILayout.Button("Mark Generated Map For Bake", GUILayout.Height(28)))
+            {
+                gen.MarkGeneratedMapForBake();
+                EditorUtility.SetDirty(gen.gameObject);
+            }
+
+            if (GUILayout.Button("Bake Generated NavMesh", GUILayout.Height(30)))
+            {
+                gen.BakeGeneratedNavMesh();
+                EditorUtility.SetDirty(gen.gameObject);
+            }
+
+            if (GUILayout.Button("Bake Generated Lighting", GUILayout.Height(30)))
+            {
+                if (EditorUtility.DisplayDialog("Bake lighting?",
+                    "Apply World_01 lighting settings, mark generated objects for bake, then start Unity lighting bake.", "Bake", "Cancel"))
+                {
+                    gen.BakeGeneratedMapLighting();
+                }
+            }
 
             EditorGUILayout.Space(8);
 

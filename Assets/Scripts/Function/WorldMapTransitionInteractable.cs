@@ -1,0 +1,54 @@
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace baodeag
+{
+    public class WorldMapTransitionInteractable : Interactable
+    {
+        [Header("Map Transition")]
+        [SerializeField] private int targetMapIndex = 1;
+        [SerializeField] private string transitionText = "Travel to Map 2";
+
+        protected override void Awake()
+        {
+            base.Awake();
+            interactableText = transitionText;
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+            interactableText = transitionText;
+        }
+
+        public override void Interact(PlayerManager player)
+        {
+            if (player == null || !player.IsOwner)
+                return;
+
+            base.Interact(player);
+
+            if (!GameProgressionManager.Instance.PrepareTransitionToMap(targetMapIndex, out int sceneBuildIndex))
+            {
+                Debug.LogWarning($"WorldMapTransitionInteractable: Cannot resolve scene for map index {targetMapIndex}.");
+                return;
+            }
+
+            if (WorldSaveGameManager.instance != null && WorldSaveGameManager.instance.currentCharacterData != null)
+            {
+                WorldSaveGameManager.instance.currentCharacterData.currentMapIndex = targetMapIndex;
+                WorldSaveGameManager.instance.currentCharacterData.sceneIndex = sceneBuildIndex;
+                WorldSaveGameManager.instance.SaveGame();
+            }
+
+            if (WorldSceneManager.instance != null)
+            {
+                WorldSceneManager.instance.LoadWorldScene(sceneBuildIndex);
+            }
+            else
+            {
+                SceneManager.LoadScene(sceneBuildIndex, LoadSceneMode.Single);
+            }
+        }
+    }
+}

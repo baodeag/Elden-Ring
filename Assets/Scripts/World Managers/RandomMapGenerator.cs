@@ -1,6 +1,10 @@
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.PostProcessing;
 using System.Collections.Generic;
 using System.IO;
+using Unity.AI.Navigation;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -77,13 +81,16 @@ namespace baodeag
         [Range(0f, 1f)] public float propDensity = 0.15f;
         [Range(0f, 1f)] public float decorationDensity = 0.2f;
         [Range(0f, 1f)] public float torchDensity = 0.3f;
-        [Min(1)] public int torchWallSpacing = 4;
-        public float torchLightRange = 8f;
-        public float torchLightIntensity = 2f;
-        public Color torchLightColor = new Color(1f, 0.58f, 0.25f);
-        public float chandelierLightRange = 10f;
-        public float chandelierLightIntensity = 2.5f;
-        public Color chandelierLightColor = new Color(1f, 0.62f, 0.32f);
+        [UnityEngine.Min(1)] public int torchWallSpacing = 4;
+        public float torchLightRange = 5f;
+        public float torchLightIntensity = 1.4f;
+        public Color torchLightColor = new Color(0.8490566f, 0.657692f, 0.42052332f);
+        public float chandelierLightRange = 13f;
+        public float chandelierLightIntensity = 4f;
+        public Color chandelierLightColor = new Color(0.8490566f, 0.657692f, 0.42052332f);
+        public bool useWorld01LightingMode = true;
+        public bool markGeneratedMapForBake = true;
+        public bool autoBakeNavMeshAfterGenerate = false;
 
         [Header("── Random prefab variants ──")]
         [Tooltip("Bật để mỗi tile chọn ngẫu nhiên một prefab trong array. Tắt để luôn dùng prefab đầu tiên, tiện kiểm tra layout/pivot.")]
@@ -203,6 +210,15 @@ namespace baodeag
 
             // 5. Phân chia zone
             BuildZones();
+
+#if UNITY_EDITOR
+            if (config.useWorld01LightingMode)
+                ApplyWorld01LightingMode();
+            if (config.markGeneratedMapForBake)
+                MarkGeneratedMapForBake();
+            if (config.autoBakeNavMeshAfterGenerate)
+                BakeGeneratedNavMesh();
+#endif
 
             Debug.Log($"[RandomMapGenerator] Map '{areaName}' generated. Seed={usedSeed}, Rooms={rooms.Count}, Zones={generatedZones.Count}");
         }
@@ -1257,7 +1273,8 @@ namespace baodeag
             light.color = config.chandelierLightColor;
             light.range = config.chandelierLightRange;
             light.intensity = config.chandelierLightIntensity;
-            light.shadows = LightShadows.Soft;
+            light.shadows = LightShadows.None;
+            light.lightmapBakeType = LightmapBakeType.Mixed;
         }
 
         private void SpawnTorchLight(GameObject torch, Vector3 torchPosition, Vector3 inward, Transform parent)
@@ -1273,7 +1290,8 @@ namespace baodeag
             light.color = config.torchLightColor;
             light.range = config.torchLightRange;
             light.intensity = config.torchLightIntensity;
-            light.shadows = LightShadows.Soft;
+            light.shadows = LightShadows.None;
+            light.lightmapBakeType = LightmapBakeType.Mixed;
         }
 
         private Vector3 GetWallMountedTorchPosition(Bounds floorBoundsForTile, int directionIndex, Vector3 inward)
@@ -1428,6 +1446,187 @@ namespace baodeag
         }
 
         // ── Utility ───────────────────────────────────────────────────────
+
+#if UNITY_EDITOR
+        public void ApplyWorld01LightingMode()
+        {
+            LightingSettings settings = AssetDatabase.LoadAssetAtPath<LightingSettings>("Assets/System/World Lighting Settings.lighting");
+            if (settings != null)
+                Lightmapping.lightingSettings = settings;
+
+            ApplyWorld01RenderSettings();
+            ApplyWorld01PostProcessing();
+            ApplyWorld01GeneratedLightDefaults();
+            ApplyWorld01GeneratedLightValues();
+
+            Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
+            DynamicGI.UpdateEnvironment();
+            EditorUtility.SetDirty(this);
+            EditorSceneManager.MarkSceneDirty(gameObject.scene);
+        }
+
+        private void ApplyWorld01RenderSettings()
+        {
+            RenderSettings.fog = false;
+            RenderSettings.fogColor = new Color(0.5f, 0.5f, 0.5f, 1f);
+            RenderSettings.fogMode = FogMode.ExponentialSquared;
+            RenderSettings.fogDensity = 0.01f;
+            RenderSettings.ambientMode = AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor = new Color(0.212f, 0.227f, 0.259f, 1f);
+            RenderSettings.ambientEquatorColor = new Color(0.114f, 0.125f, 0.133f, 1f);
+            RenderSettings.ambientGroundColor = new Color(0.047f, 0.043f, 0.035f, 1f);
+            RenderSettings.ambientIntensity = 1f;
+            RenderSettings.reflectionBounces = 1;
+            RenderSettings.reflectionIntensity = 1f;
+        }
+
+        private void ApplyWorld01PostProcessing()
+        {
+            PostProcessProfile profile = AssetDatabase.LoadAssetAtPath<PostProcessProfile>("Assets/Scenes/Scene_World_01/Post Processing Profile.asset");
+            if (profile == null) return;
+
+            PostProcessVolume volume = FindFirstObjectByType<PostProcessVolume>();
+            if (volume == null)
+            {
+                GameObject volumeGo = GameObject.Find("Post Processing");
+                if (volumeGo == null)
+                    volumeGo = new GameObject("Post Processing");
+
+                volume = volumeGo.GetComponent<PostProcessVolume>();
+                if (volume == null)
+                    volume = volumeGo.AddComponent<PostProcessVolume>();
+            }
+
+            volume.isGlobal = true;
+            volume.priority = 0f;
+            volume.blendDistance = 0f;
+            volume.weight = 1f;
+            volume.sharedProfile = profile;
+            EditorUtility.SetDirty(volume);
+        }
+
+        private void ApplyWorld01GeneratedLightDefaults()
+        {
+            Color world01CandleColor = new Color(0.8490566f, 0.657692f, 0.42052332f);
+            config.torchLightColor = world01CandleColor;
+            config.torchLightRange = 5f;
+            config.torchLightIntensity = 1.4f;
+            config.chandelierLightColor = world01CandleColor;
+            config.chandelierLightRange = 13f;
+            config.chandelierLightIntensity = 4f;
+        }
+
+        private void ApplyWorld01GeneratedLightValues()
+        {
+            if (generatedRoot == null) return;
+
+            Light[] lights = generatedRoot.GetComponentsInChildren<Light>(true);
+            foreach (Light light in lights)
+            {
+                if (light == null || light.type != LightType.Point) continue;
+
+                bool chandelier = light.gameObject.name.Contains("Chandelier") ||
+                                  (light.transform.parent != null && light.transform.parent.name.Contains("Chandelier"));
+                light.color = chandelier ? config.chandelierLightColor : config.torchLightColor;
+                light.range = chandelier ? config.chandelierLightRange : config.torchLightRange;
+                light.intensity = chandelier ? config.chandelierLightIntensity : config.torchLightIntensity;
+                light.shadows = LightShadows.None;
+                light.lightmapBakeType = LightmapBakeType.Mixed;
+                EditorUtility.SetDirty(light);
+            }
+        }
+
+        public void MarkGeneratedMapForBake()
+        {
+            if (generatedRoot == null) return;
+
+            List<Transform> objects = new List<Transform>();
+            CollectAllChildren(generatedRoot, objects);
+
+            foreach (Transform t in objects)
+            {
+                if (t == null) continue;
+
+                Light light = t.GetComponent<Light>();
+                if (light != null)
+                {
+                    light.lightmapBakeType = LightmapBakeType.Mixed;
+                    EditorUtility.SetDirty(light);
+                }
+
+                if (t.GetComponent<Renderer>() == null) continue;
+
+                GameObjectUtility.SetStaticEditorFlags(
+                    t.gameObject,
+                    StaticEditorFlags.ContributeGI |
+                    StaticEditorFlags.BatchingStatic |
+                    StaticEditorFlags.OccluderStatic |
+                    StaticEditorFlags.ReflectionProbeStatic);
+                EditorUtility.SetDirty(t.gameObject);
+            }
+
+            EditorSceneManager.MarkSceneDirty(gameObject.scene);
+        }
+
+        public void BakeGeneratedMapLighting()
+        {
+            ApplyWorld01LightingMode();
+            MarkGeneratedMapForBake();
+            Lightmapping.BakeAsync();
+        }
+
+        public void BakeGeneratedNavMesh()
+        {
+            Transform root = GetGeneratedRoot();
+            Transform floors = root != null ? root.Find("Structure/Floors") : null;
+            if (floors == null)
+            {
+                Debug.LogWarning("[RandomMapGenerator] Cannot bake NavMesh: generated Structure/Floors not found.");
+                return;
+            }
+
+            NavMeshSurface surface = floors.GetComponent<NavMeshSurface>();
+            if (surface == null)
+                surface = floors.gameObject.AddComponent<NavMeshSurface>();
+
+            surface.collectObjects = CollectObjects.Children;
+            surface.useGeometry = NavMeshCollectGeometry.RenderMeshes;
+            surface.defaultArea = 0;
+            surface.ignoreNavMeshAgent = true;
+            surface.ignoreNavMeshObstacle = true;
+            surface.RemoveData();
+            surface.BuildNavMesh();
+
+            EditorUtility.SetDirty(surface);
+            EditorSceneManager.MarkSceneDirty(gameObject.scene);
+        }
+
+        private Transform GetGeneratedRoot()
+        {
+            if (generatedRoot != null)
+                return generatedRoot;
+
+            foreach (Transform child in transform)
+            {
+                if (child.name.StartsWith("[Generated]", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    generatedRoot = child;
+                    return generatedRoot;
+                }
+            }
+
+            foreach (GameObject root in gameObject.scene.GetRootGameObjects())
+            {
+                if (root.name.StartsWith("[Generated]", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    generatedRoot = root.transform;
+                    return generatedRoot;
+                }
+            }
+
+            return null;
+        }
+#endif
 
         private Transform GetOrCreateChild(string path)
         {
