@@ -20,6 +20,8 @@ namespace baodeag
         public GameObject[] floorPrefabs;           // Sàn (scale 1x1, Y=0)
         public GameObject[] wallPrefabs;            // Tường (thẳng đứng)
         public GameObject[] wallArchPrefabs;        // Mảnh cung/vòm trên đỉnh tường (SM_Env_Ceiling_Stone_Curved_01)
+        public GameObject[] wallArchCornerPrefabs;  // Corner wall arch (SM_Env_Ceiling_Stone_Curved_Corner_02)
+        public GameObject[] wallArchOuterCornerPrefabs; // Outer corner wall arch (SM_Env_Ceiling_Stone_Curved_Corner_01)
         public GameObject[] ceilingPrefabs;         // Trần (scale 1x1, cao)
         public GameObject[] pillarPrefabs;          // Cột góc phòng
         public GameObject[] doorwayPrefabs;         // Cổng nối phòng
@@ -75,6 +77,10 @@ namespace baodeag
         [Range(0f, 1f)] public float propDensity = 0.15f;
         [Range(0f, 1f)] public float decorationDensity = 0.2f;
         [Range(0f, 1f)] public float torchDensity = 0.3f;
+
+        [Header("── Random prefab variants ──")]
+        [Tooltip("Bật để mỗi tile chọn ngẫu nhiên một prefab trong array. Tắt để luôn dùng prefab đầu tiên, tiện kiểm tra layout/pivot.")]
+        public bool randomizePrefabVariants = true;
 
         [Header("── Seed ──")]
         public bool useRandomSeed = true;
@@ -475,7 +481,7 @@ namespace baodeag
             // Wall prefab 5×5×0.5 (X×Y×Z, pivot center):
             //   rotY=90 : local X(5) → world +Z  → dùng cho cạnh +X và -X
             //   rotY=0  : local X(5) → world +X  → dùng cho cạnh +Z và -Z
-            float[] rotY = { 90f, 270f, 0f, 180f };
+            float[] rotY = { 270f, 90f, 180f, 0f };
 
             HashSet<string> placed = new HashSet<string>();
 
@@ -510,18 +516,18 @@ namespace baodeag
                     {
                         case 0: // right (+X), rotY=90°: local X → World -Z → wz = center.z + ofs
                             wx = bounds.max.x;
-                            wz = bounds.center.z + detectedWallWidthOfs;
+                            wz = bounds.center.z - detectedWallWidthOfs;
                             break;
                         case 1: // left (-X), rotY=270°: local X → World +Z → wz = center.z - ofs
                             wx = bounds.min.x;
-                            wz = bounds.center.z - detectedWallWidthOfs;
+                            wz = bounds.center.z + detectedWallWidthOfs;
                             break;
                         case 2: // front (+Z), rotY=0°: local X → World +X → wx = center.x - ofs
-                            wx = bounds.center.x - detectedWallWidthOfs;
+                            wx = bounds.center.x + detectedWallWidthOfs;
                             wz = bounds.max.z;
                             break;
                         default: // back (-Z), rotY=180°: local X → World -X → wx = center.x + ofs
-                            wx = bounds.center.x + detectedWallWidthOfs;
+                            wx = bounds.center.x - detectedWallWidthOfs;
                             wz = bounds.min.z;
                             break;
                     }
@@ -543,7 +549,10 @@ namespace baodeag
         /// </summary>
         private void BuildWallArches()
         {
-            if (tileset.wallArchPrefabs == null || tileset.wallArchPrefabs.Length == 0) return;
+            bool hasStraightArches = tileset.wallArchPrefabs != null && tileset.wallArchPrefabs.Length > 0;
+            bool hasCornerArches = (tileset.wallArchCornerPrefabs != null && tileset.wallArchCornerPrefabs.Length > 0) ||
+                                   (tileset.wallArchOuterCornerPrefabs != null && tileset.wallArchOuterCornerPrefabs.Length > 0);
+            if (!hasStraightArches && !hasCornerArches) return;
             if (floorBounds.Count == 0) return;
             Transform parent = GetOrCreateChild("Structure/WallArches");
 
@@ -556,6 +565,7 @@ namespace baodeag
             };
 
             HashSet<string> placed = new HashSet<string>();
+            HashSet<string> placedCorners = new HashSet<string>();
 
             foreach (var kv in floorBounds)
             {
@@ -566,6 +576,12 @@ namespace baodeag
                 {
                     Vector2Int outward = dirs[d];
                     if (!HasBoundaryWall(tile, outward)) continue;
+
+                    GetWallEndpoints2(tile, outward, out Vector2Int endA, out Vector2Int endB);
+                    TryPlaceWallArchCorner(endA, outward, dirs, parent, placedCorners);
+                    TryPlaceWallArchCorner(endB, outward, dirs, parent, placedCorners);
+
+                    if (!hasStraightArches) continue;
                     if (HasPerpendicularWallAtEitherEnd(tile, outward)) continue;
 
                     Vector3 inward = new Vector3(-outward.x, 0f, -outward.y);
@@ -611,8 +627,64 @@ namespace baodeag
                         if (!HasBoundaryWall(candidateTile, candidateOutward)) continue;
 
                         GetWallEndpoints2(candidateTile, candidateOutward, out Vector2Int candidateEndA, out Vector2Int candidateEndB);
-                        if (SharesEndpoint(endA, candidateEndA, candidateEndB) ||
-                            SharesEndpoint(endB, candidateEndA, candidateEndB))
+                        if (IsBlockedCornerEndpoint(endA, candidateEndA, candidateEndB) ||
+                            IsBlockedCornerEndpoint(endB, candidateEndA, candidateEndB))
+                            return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private void TryPlaceWallArchCorner(Vector2Int endpoint, Vector2Int outward, Vector2Int[] dirs, Transform parent, HashSet<string> placedCorners)
+        {
+            int floorCount = CountFloorTilesAroundEndpoint(endpoint);
+            GameObject[] cornerPool = null;
+            Quaternion rotation;
+
+            if (floorCount == 3)
+            {
+                cornerPool = tileset.wallArchCornerPrefabs;
+                if (!TryGetCornerRotation(endpoint, out rotation)) return;
+            }
+            else if (floorCount == 1)
+            {
+                cornerPool = tileset.wallArchOuterCornerPrefabs;
+                if (!TryGetOuterCornerRotation(endpoint, out rotation)) return;
+            }
+            else
+                return;
+
+            if (cornerPool == null || cornerPool.Length == 0) return;
+            if (!HasPerpendicularBoundaryWallAtEndpoint(endpoint, outward, dirs)) return;
+
+            string key = $"{endpoint.x}_{endpoint.y}";
+            if (placedCorners.Contains(key)) return;
+            placedCorners.Add(key);
+
+            Vector3 pos = floorCount == 1
+                ? GetLeftWallPivotPositionForCorner(endpoint, dirs)
+                : GetLeftWallArchPivotPositionForCorner(endpoint, dirs);
+            SpawnPrefab(cornerPool, pos, rotation, parent);
+        }
+
+        private bool HasPerpendicularBoundaryWallAtEndpoint(Vector2Int endpoint, Vector2Int outward, Vector2Int[] dirs)
+        {
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dz = -1; dz <= 1; dz++)
+                {
+                    Vector2Int candidateTile = new Vector2Int(endpoint.x / 2 + dx, endpoint.y / 2 + dz);
+                    if (!floorBounds.ContainsKey(candidateTile)) continue;
+
+                    foreach (Vector2Int candidateOutward in dirs)
+                    {
+                        if (!IsPerpendicular(outward, candidateOutward)) continue;
+                        if (!HasBoundaryWall(candidateTile, candidateOutward)) continue;
+
+                        GetWallEndpoints2(candidateTile, candidateOutward, out Vector2Int candidateEndA, out Vector2Int candidateEndB);
+                        if (SharesEndpoint(endpoint, candidateEndA, candidateEndB))
                             return true;
                     }
                 }
@@ -629,6 +701,214 @@ namespace baodeag
         private bool SharesEndpoint(Vector2Int endpoint, Vector2Int otherA, Vector2Int otherB)
         {
             return endpoint == otherA || endpoint == otherB;
+        }
+
+        private bool IsBlockedCornerEndpoint(Vector2Int endpoint, Vector2Int otherA, Vector2Int otherB)
+        {
+            return SharesEndpoint(endpoint, otherA, otherB) && CountFloorTilesAroundEndpoint(endpoint) < 3;
+        }
+
+        private int CountFloorTilesAroundEndpoint(Vector2Int endpoint2)
+        {
+            int count = 0;
+
+            for (int xSign = -1; xSign <= 1; xSign += 2)
+            {
+                for (int zSign = -1; zSign <= 1; zSign += 2)
+                {
+                    Vector2Int tile = new Vector2Int((endpoint2.x + xSign) / 2, (endpoint2.y + zSign) / 2);
+                    if (floorBounds.ContainsKey(tile))
+                        count++;
+                }
+            }
+
+            return count;
+        }
+
+        private bool TryGetCornerRotation(Vector2Int endpoint2, out Quaternion rotation)
+        {
+            rotation = Quaternion.identity;
+
+            for (int xSign = -1; xSign <= 1; xSign += 2)
+            {
+                for (int zSign = -1; zSign <= 1; zSign += 2)
+                {
+                    Vector2Int tile = new Vector2Int((endpoint2.x + xSign) / 2, (endpoint2.y + zSign) / 2);
+                    if (floorBounds.ContainsKey(tile)) continue;
+
+                    float rotY;
+                    if (xSign > 0 && zSign < 0)
+                        rotY = -90f;   // bottom right
+                    else if (xSign < 0 && zSign < 0)
+                        rotY = 0f;     // bottom left
+                    else if (xSign > 0 && zSign > 0)
+                        rotY = 180f;   // top right
+                    else
+                        rotY = 90f;    // top left
+
+                    rotation = Quaternion.Euler(0f, rotY, 0f);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool TryGetOuterCornerRotation(Vector2Int endpoint2, out Quaternion rotation)
+        {
+            rotation = Quaternion.identity;
+
+            for (int xSign = -1; xSign <= 1; xSign += 2)
+            {
+                for (int zSign = -1; zSign <= 1; zSign += 2)
+                {
+                    Vector2Int tile = new Vector2Int((endpoint2.x + xSign) / 2, (endpoint2.y + zSign) / 2);
+                    if (!floorBounds.ContainsKey(tile)) continue;
+
+                    float rotY;
+                    if (xSign > 0 && zSign < 0)
+                        rotY = -90f;   // bottom right
+                    else if (xSign < 0 && zSign < 0)
+                        rotY = 0f;     // bottom left
+                    else if (xSign > 0 && zSign > 0)
+                        rotY = 180f;   // top right
+                    else
+                        rotY = 90f;    // top left
+
+                    rotation = Quaternion.Euler(0f, rotY + 180f, 0f);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private Vector3 GetLeftWallArchPivotPositionForCorner(Vector2Int endpoint, Vector2Int[] dirs)
+        {
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dz = -1; dz <= 1; dz++)
+                {
+                    Vector2Int candidateTile = new Vector2Int(endpoint.x / 2 + dx, endpoint.y / 2 + dz);
+                    if (!floorBounds.TryGetValue(candidateTile, out Bounds bounds)) continue;
+
+                    for (int d = 0; d < dirs.Length; d++)
+                    {
+                        Vector2Int candidateOutward = dirs[d];
+                        if (!HasBoundaryWall(candidateTile, candidateOutward)) continue;
+
+                        GetWallEndpoints2(candidateTile, candidateOutward, out Vector2Int endA, out Vector2Int endB);
+                        if (!SharesEndpoint(endpoint, endA, endB)) continue;
+                        if (!IsLeftEndpointWhenFacingOutward(endpoint, endA, endB, candidateOutward)) continue;
+
+                        Vector3 inward = new Vector3(-candidateOutward.x, 0f, -candidateOutward.y);
+                        Quaternion straightArchRotation = Quaternion.LookRotation(inward, Vector3.up);
+                        return GetWallArchEdgePosition(bounds, d, GetWallArchY(), straightArchRotation);
+                    }
+                }
+            }
+
+            return EndpointToWorld(endpoint, GetWallArchY());
+        }
+
+        private Vector3 GetLeftWallPivotPositionForCorner(Vector2Int endpoint, Vector2Int[] dirs)
+        {
+            if (!TryGetSingleFloorAroundEndpoint(endpoint, out Vector2Int floorTile, out int xSign, out int zSign))
+                return EndpointToWorld(endpoint, GetWallArchY());
+
+            if (!floorBounds.TryGetValue(floorTile, out Bounds bounds))
+                return EndpointToWorld(endpoint, GetWallArchY());
+
+            Vector2Int targetOutward;
+            if (xSign < 0 && zSign < 0)
+                targetOutward = new Vector2Int(0, 1);   // top-right corner: upper wall
+            else if (xSign > 0 && zSign > 0)
+                targetOutward = new Vector2Int(0, -1);  // bottom-left corner: lower wall
+            else if (xSign < 0 && zSign > 0)
+                targetOutward = new Vector2Int(1, 0);   // bottom-right corner: right wall
+            else
+                targetOutward = new Vector2Int(-1, 0);  // top-left corner: left wall
+
+            for (int d = 0; d < dirs.Length; d++)
+            {
+                if (dirs[d] != targetOutward) continue;
+                if (!HasBoundaryWall(floorTile, targetOutward)) break;
+
+                GetWallEndpoints2(floorTile, targetOutward, out Vector2Int endA, out Vector2Int endB);
+                if (SharesEndpoint(endpoint, endA, endB))
+                    return GetWallEdgePosition(bounds, d, GetWallArchY()) + GetOuterCornerPivotOffset(xSign, zSign);
+            }
+
+            return EndpointToWorld(endpoint, GetWallArchY());
+        }
+
+        private Vector3 GetOuterCornerPivotOffset(int xSign, int zSign)
+        {
+            if (xSign < 0 && zSign < 0)
+                return new Vector3(-detectedStepX, 0f, 0f); // top-right: left 1 wall
+            if (xSign > 0 && zSign > 0)
+                return new Vector3(detectedStepX, 0f, 0f);  // bottom-left: right 1 wall
+            if (xSign < 0 && zSign > 0)
+                return new Vector3(0f, 0f, detectedStepZ);  // bottom-right: up 1 wall
+
+            return new Vector3(0f, 0f, -detectedStepZ);     // top-left: down 1 wall
+        }
+
+        private bool TryGetSingleFloorAroundEndpoint(Vector2Int endpoint2, out Vector2Int floorTile, out int xSign, out int zSign)
+        {
+            floorTile = default;
+            xSign = 0;
+            zSign = 0;
+
+            for (int candidateXSign = -1; candidateXSign <= 1; candidateXSign += 2)
+            {
+                for (int candidateZSign = -1; candidateZSign <= 1; candidateZSign += 2)
+                {
+                    Vector2Int candidate = new Vector2Int((endpoint2.x + candidateXSign) / 2, (endpoint2.y + candidateZSign) / 2);
+                    if (!floorBounds.ContainsKey(candidate)) continue;
+
+                    floorTile = candidate;
+                    xSign = candidateXSign;
+                    zSign = candidateZSign;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsLeftEndpointWhenFacingOutward(Vector2Int endpoint, Vector2Int endA, Vector2Int endB, Vector2Int outward)
+        {
+            Vector2Int midpoint = new Vector2Int((endA.x + endB.x) / 2, (endA.y + endB.y) / 2);
+            Vector2Int left = new Vector2Int(-outward.y, outward.x);
+            return endpoint == midpoint + left;
+        }
+
+        private Vector3 EndpointToWorld(Vector2Int endpoint2, float y)
+        {
+            return new Vector3(endpoint2.x * detectedStepX * 0.5f, y, endpoint2.y * detectedStepZ * 0.5f);
+        }
+
+        private Vector3 GetAverageFloorDirectionFromEndpoint(Vector2Int endpoint2)
+        {
+            Vector3 endpointWorld = EndpointToWorld(endpoint2, 0f);
+            Vector3 direction = Vector3.zero;
+
+            for (int xSign = -1; xSign <= 1; xSign += 2)
+            {
+                for (int zSign = -1; zSign <= 1; zSign += 2)
+                {
+                    Vector2Int tile = new Vector2Int((endpoint2.x + xSign) / 2, (endpoint2.y + zSign) / 2);
+                    if (!floorBounds.ContainsKey(tile)) continue;
+
+                    Vector3 tileWorld = T(tile.x, tile.y, 0f);
+                    Vector3 toFloor = tileWorld - endpointWorld;
+                    toFloor.y = 0f;
+                    direction += toFloor.normalized;
+                }
+            }
+
+            return direction.normalized;
         }
 
         private void GetWallEndpoints2(Vector2Int floorTile, Vector2Int outward, out Vector2Int a, out Vector2Int b)
@@ -706,6 +986,7 @@ namespace baodeag
             if (tileset.ceilingPrefabs == null || tileset.ceilingPrefabs.Length == 0) return;
             if (floorBounds.Count == 0) return;
             Transform parent = GetOrCreateChild("Structure/Ceilings");
+            HashSet<Vector2Int> placedCeilings = new HashSet<Vector2Int>();
 
             foreach (var kv in floorBounds)
             {
@@ -713,9 +994,53 @@ namespace baodeag
                 if (!IsInteriorFloorTile(tile)) continue;
 
                 // Tâm XZ giống floor, Y = wallHeight
-                Vector3 pos = T(tile.x, tile.y, CeilingHeightAboveFloor);
-                SpawnPrefab(tileset.ceilingPrefabs, pos, Quaternion.identity, parent);
+                SpawnCeilingAtTile(tile, parent, placedCeilings);
             }
+
+            foreach (var kv in floorBounds)
+            {
+                Vector2Int tile = kv.Key;
+                Vector2Int[] endpoints =
+                {
+                    new Vector2Int(tile.x * 2 - 1, tile.y * 2 - 1),
+                    new Vector2Int(tile.x * 2 - 1, tile.y * 2 + 1),
+                    new Vector2Int(tile.x * 2 + 1, tile.y * 2 - 1),
+                    new Vector2Int(tile.x * 2 + 1, tile.y * 2 + 1),
+                };
+
+                foreach (Vector2Int endpoint in endpoints)
+                    if (TryGetThreeFloorCornerCeilingTile(endpoint, out Vector2Int ceilingTile))
+                        SpawnCeilingAtTile(ceilingTile, parent, placedCeilings);
+            }
+        }
+
+        private void SpawnCeilingAtTile(Vector2Int tile, Transform parent, HashSet<Vector2Int> placedCeilings)
+        {
+            if (!floorBounds.ContainsKey(tile)) return;
+            if (!placedCeilings.Add(tile)) return;
+
+            Vector3 pos = T(tile.x, tile.y, CeilingHeightAboveFloor);
+            SpawnPrefab(tileset.ceilingPrefabs, pos, Quaternion.identity, parent);
+        }
+
+        private bool TryGetThreeFloorCornerCeilingTile(Vector2Int endpoint2, out Vector2Int ceilingTile)
+        {
+            ceilingTile = default;
+            if (CountFloorTilesAroundEndpoint(endpoint2) != 3) return false;
+
+            for (int xSign = -1; xSign <= 1; xSign += 2)
+            {
+                for (int zSign = -1; zSign <= 1; zSign += 2)
+                {
+                    Vector2Int candidate = new Vector2Int((endpoint2.x + xSign) / 2, (endpoint2.y + zSign) / 2);
+                    if (floorBounds.ContainsKey(candidate)) continue;
+
+                    ceilingTile = new Vector2Int((endpoint2.x - xSign) / 2, (endpoint2.y - zSign) / 2);
+                    return floorBounds.ContainsKey(ceilingTile);
+                }
+            }
+
+            return false;
         }
 
         private float GetWallArchY()
@@ -1052,7 +1377,9 @@ namespace baodeag
         private GameObject SpawnPrefab(GameObject[] pool, Vector3 position, Quaternion rotation, Transform parent)
         {
             if (pool == null || pool.Length == 0) return null;
-            GameObject prefab = pool[rng.Next(0, pool.Length)];
+            GameObject prefab = config.randomizePrefabVariants
+                ? pool[rng.Next(0, pool.Length)]
+                : pool[0];
             if (prefab == null) return null;
             return SpawnSingle(prefab, position, rotation, parent);
         }

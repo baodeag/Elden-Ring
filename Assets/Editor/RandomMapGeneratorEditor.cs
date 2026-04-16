@@ -64,6 +64,8 @@ namespace baodeag
                     DrawPrefabArray(propTileset.FindPropertyRelative("floorPrefabs"), "Floor Prefabs", "Sàn gạch/đá (1x1 tile, scale đúng 1:1)");
                     DrawPrefabArray(propTileset.FindPropertyRelative("wallPrefabs"), "Wall Prefabs", "Tường (lấp cạnh tile, chiều cao = wallHeight)");
                     DrawPrefabArray(propTileset.FindPropertyRelative("wallArchPrefabs"), "Wall Arch Prefabs", "Mái/vòm đặt trên đỉnh tường, local +Z quay về phía sàn");
+                    DrawPrefabArray(propTileset.FindPropertyRelative("wallArchCornerPrefabs"), "Wall Arch Corner Prefabs", "Mái/vòm góc vuông đặt ở góc có 3 ô nền xung quanh");
+                    DrawPrefabArray(propTileset.FindPropertyRelative("wallArchOuterCornerPrefabs"), "Wall Arch Outer Corner Prefabs", "Mái/vòm góc vuông đặt ở góc chỉ có 1 ô nền xung quanh");
                     DrawPrefabArray(propTileset.FindPropertyRelative("ceilingPrefabs"), "Ceiling Prefabs", "Trần phẳng đặt song song với nền ở Y nền + 10, chỉ trên phần ruột sau khi trừ biên nền");
                     DrawPrefabArray(propTileset.FindPropertyRelative("pillarPrefabs"), "Pillar Prefabs", "Cột góc phòng");
                     DrawPrefabArray(propTileset.FindPropertyRelative("doorwayPrefabs"), "Doorway Prefabs", "Cổng nối hành lang – phòng");
@@ -179,6 +181,12 @@ namespace baodeag
                     EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("propDensity"), new GUIContent("Prop Density", "Xác suất đặt prop mỗi tile bên trong phòng"));
                     EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("decorationDensity"), new GUIContent("Decoration Density", "Xác suất đặt decoration tường"));
                     EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("torchDensity"), new GUIContent("Torch Density", "Xác suất đặt đuốc tường"));
+                });
+
+                DrawConfigSection("Random Prefab Variants", () =>
+                {
+                    EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("randomizePrefabVariants"),
+                        new GUIContent("Randomize Prefab Variants", "Bật để mỗi floor/wall/wall arch/ceiling chọn ngẫu nhiên prefab trong array. Tắt để luôn dùng prefab đầu tiên."));
                 });
 
                 DrawConfigSection("Seed", () =>
