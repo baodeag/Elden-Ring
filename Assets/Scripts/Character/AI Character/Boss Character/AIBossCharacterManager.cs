@@ -148,7 +148,6 @@ namespace baodeag
             int nextSceneBuildIndex = -1;
             int unlockedMapIndex = -1;
             bool gameWon = false;
-            string queuedMapUnlockedMessage = string.Empty;
 
             if (IsOwner)
             {
@@ -199,12 +198,6 @@ namespace baodeag
                 {
                     PlayerUIManager.instance.playerUIPopUpManager.SendVictoryPopUpDelayed("Victory Achieved", 5f);
                 }
-                else if (unlockedMapIndex >= 0)
-                {
-                    string mapName = GameProgressionManager.Instance.GetMapName(unlockedMapIndex);
-                    queuedMapUnlockedMessage = $"{mapName} Unlocked";
-                    PlayerUIManager.instance.playerUIPopUpManager.SendMapUnlockedPopUpDelayed(queuedMapUnlockedMessage, 5f);
-                }
 
                 WorldSaveGameManager.instance.SaveGame();
                 ApplyBossWorldState();
@@ -216,8 +209,7 @@ namespace baodeag
                     shouldLoadNextScene,
                     nextSceneBuildIndex,
                     gameWon,
-                    unlockedMapIndex,
-                    queuedMapUnlockedMessage);
+                    unlockedMapIndex);
             }
 
             yield break;

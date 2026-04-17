@@ -106,15 +106,15 @@ namespace baodeag
             returnToTitleCoroutine = StartCoroutine(ReturnToTitleAfterVictoryCoroutine(delay));
         }
 
-        public void ScheduleMapTransition(bool shouldLoadNextScene, int nextSceneBuildIndex, bool gameWon, int unlockedMapIndex, string queuedMapUnlockedMessage)
+        public void ScheduleMapTransition(bool shouldLoadNextScene, int nextSceneBuildIndex, bool gameWon, int unlockedMapIndex)
         {
             if (mapTransitionCoroutine != null)
                 StopCoroutine(mapTransitionCoroutine);
 
-            mapTransitionCoroutine = StartCoroutine(ScheduleMapTransitionCoroutine(shouldLoadNextScene, nextSceneBuildIndex, gameWon, unlockedMapIndex, queuedMapUnlockedMessage));
+            mapTransitionCoroutine = StartCoroutine(ScheduleMapTransitionCoroutine(shouldLoadNextScene, nextSceneBuildIndex, gameWon, unlockedMapIndex));
         }
 
-        private IEnumerator ScheduleMapTransitionCoroutine(bool shouldLoadNextScene, int nextSceneBuildIndex, bool gameWon, int unlockedMapIndex, string queuedMapUnlockedMessage)
+        private IEnumerator ScheduleMapTransitionCoroutine(bool shouldLoadNextScene, int nextSceneBuildIndex, bool gameWon, int unlockedMapIndex)
         {
             yield return new WaitForSeconds(5f);
 
@@ -124,9 +124,6 @@ namespace baodeag
                 mapTransitionCoroutine = null;
                 yield break;
             }
-
-            if (!string.IsNullOrEmpty(queuedMapUnlockedMessage))
-                yield return new WaitForSeconds(3f);
 
             if (shouldLoadNextScene && nextSceneBuildIndex >= 0 && nextSceneBuildIndex != SceneManager.GetActiveScene().buildIndex)
             {

@@ -31,6 +31,20 @@ namespace baodeag
             }
         }
 
+        public void ResetForWorldSceneTransition()
+        {
+            worldLocationRenderers.Clear();
+            playersInLocation.Clear();
+
+            PlayerManager[] players = FindObjectsByType<PlayerManager>(FindObjectsSortMode.None);
+
+            for (int i = 0; i < players.Length; i++)
+            {
+                if (players[i] != null)
+                    players[i].areaCurrentlyIn = null;
+            }
+        }
+
         public List<string> GenerateDoNotUnloadListBasedOnPlayerLocations()
         {
             List<string> doNotUnloadLocations = new List<string>();

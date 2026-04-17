@@ -155,6 +155,8 @@ namespace baodeag
         //used to load our main world scene
         public void LoadWorldScene(int buildIndex)
         {
+            PrepareForSingleWorldSceneLoad();
+
             //activate loading screen
             PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
 
@@ -191,12 +193,50 @@ namespace baodeag
             PlayerUIManager.instance.localPlayer.LoadGameDataFromCurrentCharacterData(ref WorldSaveGameManager.instance.currentCharacterData);
         }
 
+        private void PrepareForSingleWorldSceneLoad()
+        {
+            if (loadingAdditiveScenesCoroutine != null)
+            {
+                StopCoroutine(loadingAdditiveScenesCoroutine);
+                loadingAdditiveScenesCoroutine = null;
+            }
+
+            if (unloadAdditiveScenesCoroutine != null)
+            {
+                StopCoroutine(unloadAdditiveScenesCoroutine);
+                unloadAdditiveScenesCoroutine = null;
+            }
+
+            if (requiredRenderersCoroutine != null)
+            {
+                StopCoroutine(requiredRenderersCoroutine);
+                requiredRenderersCoroutine = null;
+            }
+
+            quedSceneIDs.Clear();
+            quedUnloadSceneIDs.Clear();
+            doNotUnLoadList.Clear();
+            loadedScenes.Clear();
+            quedScenesToLoad = 0;
+            quedScenesToUnload = 0;
+            sceneIsLoading = false;
+            sceneIsUnloading = false;
+
+            if (WorldLocationManager.instance != null)
+                WorldLocationManager.instance.ResetForWorldSceneTransition();
+        }
+
         private void OnUnitySceneLoaded(Scene scene, LoadSceneMode loadMode)
         {
             if (loadMode != LoadSceneMode.Single)
                 return;
 
             RefreshCurrentWorldSceneID(scene);
+            loadedScenes.Clear();
+            loadedScenes.Add(scene);
+
+            if (WorldLocationManager.instance != null)
+                WorldLocationManager.instance.ResetForWorldSceneTransition();
         }
 
         private void RefreshCurrentWorldSceneID(Scene scene)
