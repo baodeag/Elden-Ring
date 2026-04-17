@@ -105,14 +105,95 @@ namespace baodeag
     public class GeneratedZoneInfo
     {
         public string zoneName;
+        public List<Bounds> coverageBounds;
         public Bounds zoneBounds;           // world-space bounds
+        public GameObject zoneVolumeObject;
         public List<GameObject> objects;    // tất cả object trong zone này
 
         public GeneratedZoneInfo(string name, Bounds bounds)
         {
             zoneName = name;
             zoneBounds = bounds;
+            coverageBounds = new List<Bounds> { bounds };
             objects = new List<GameObject>();
+        }
+
+        public bool ContainsPosition(Vector3 position)
+        {
+            if (zoneBounds.Contains(position))
+                return true;
+
+            if (coverageBounds == null)
+                return false;
+
+            for (int i = 0; i < coverageBounds.Count; i++)
+            {
+                if (coverageBounds[i].Contains(position))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public float SqrDistanceTo(Vector3 position)
+        {
+            float bestDistance = zoneBounds.SqrDistance(position);
+
+            if (coverageBounds == null)
+                return bestDistance;
+
+            for (int i = 0; i < coverageBounds.Count; i++)
+            {
+                bestDistance = Mathf.Min(bestDistance, coverageBounds[i].SqrDistance(position));
+            }
+
+            return bestDistance;
+        }
+
+        public float SqrDistanceToCoverageCenter(Vector3 position)
+        {
+            float bestDistance = (zoneBounds.center - position).sqrMagnitude;
+
+            if (coverageBounds == null)
+                return bestDistance;
+
+            for (int i = 0; i < coverageBounds.Count; i++)
+            {
+                bestDistance = Mathf.Min(bestDistance, (coverageBounds[i].center - position).sqrMagnitude);
+            }
+
+            return bestDistance;
+        }
+
+        public float GetMaxOverlapAreaXZ(Bounds bounds)
+        {
+            float bestArea = GetOverlapAreaXZ(zoneBounds, bounds);
+
+            if (coverageBounds == null)
+                return bestArea;
+
+            for (int i = 0; i < coverageBounds.Count; i++)
+            {
+                bestArea = Mathf.Max(bestArea, GetOverlapAreaXZ(coverageBounds[i], bounds));
+            }
+
+            return bestArea;
+        }
+
+        public float GetRoomOverlapAreaXZ(Bounds bounds)
+        {
+            return GetOverlapAreaXZ(zoneBounds, bounds);
+        }
+
+        private static float GetOverlapAreaXZ(Bounds a, Bounds b)
+        {
+            float overlapX = Mathf.Min(a.max.x, b.max.x) - Mathf.Max(a.min.x, b.min.x);
+            float overlapZ = Mathf.Min(a.max.z, b.max.z) - Mathf.Max(a.min.z, b.min.z);
+
+            if (overlapX <= 0f || overlapZ <= 0f)
+                return 0f;
+
+            return overlapX * overlapZ;
         }
     }
 
@@ -209,7 +290,7 @@ namespace baodeag
             PlaceBossRoom();
 
             // 5. Phân chia zone
-            BuildZones();
+            BuildRoomZones();
 
 #if UNITY_EDITOR
             if (config.useWorld01LightingMode)
@@ -1392,6 +1473,240 @@ namespace baodeag
         }
 
         // ── Zone splitting ────────────────────────────────────────────────
+
+        private void BuildRoomZones()
+        {
+            generatedZones.Clear();
+
+            if (rooms == null || rooms.Count == 0)
+                return;
+
+            for (int i = 0; i < rooms.Count; i++)
+            {
+                RectInt room = rooms[i];
+                Bounds roomBounds = CreateRoomFloorBounds(room);
+
+                string zoneName = $"{areaName}_Room_{i + 1:00}";
+                GeneratedZoneInfo zone = new GeneratedZoneInfo(zoneName, roomBounds);
+                zone.zoneVolumeObject = CreateSceneVolumeCube(zoneName, roomBounds);
+
+                if (i > 0)
+                    AddCorridorCoverageToZone(zone, RoomCenter(rooms[i - 1]), RoomCenter(room));
+
+                generatedZones.Add(zone);
+            }
+
+            List<Transform> allObjects = new List<Transform>();
+            CollectAllChildren(generatedRoot, allObjects);
+
+            for (int i = 0; i < allObjects.Count; i++)
+            {
+                Transform t = allObjects[i];
+
+                if (t == null || IsSceneVolumeTransform(t))
+                    continue;
+
+                GeneratedZoneInfo zone = GetBestZoneForBounds(GetWorldBounds(t.gameObject));
+
+                if (zone != null && !zone.objects.Contains(t.gameObject))
+                    zone.objects.Add(t.gameObject);
+            }
+
+            Debug.Log($"[RandomMapGenerator] Split into {generatedZones.Count} room zones.");
+        }
+
+        private void AddCorridorCoverageToZone(GeneratedZoneInfo zone, Vector2Int from, Vector2Int to)
+        {
+            if (zone == null)
+                return;
+
+            zone.coverageBounds.Add(CreateTileCoverageBounds(from.x, from.y, to.x, from.y, 1));
+            zone.coverageBounds.Add(CreateTileCoverageBounds(to.x, from.y, to.x, to.y, 1));
+        }
+
+        private Bounds CreateRoomFloorBounds(RectInt room)
+        {
+            bool hasBounds = false;
+            Bounds combined = default;
+
+            for (int x = room.x; x < room.x + room.width; x++)
+            {
+                for (int z = room.y; z < room.y + room.height; z++)
+                {
+                    if (!floorBounds.TryGetValue(new Vector2Int(x, z), out Bounds tileBounds))
+                        continue;
+
+                    if (!hasBounds)
+                    {
+                        combined = tileBounds;
+                        hasBounds = true;
+                    }
+                    else
+                    {
+                        combined.Encapsulate(tileBounds);
+                    }
+                }
+            }
+
+            if (!hasBounds)
+            {
+                return CreateTileCoverageBounds(
+                    room.x,
+                    room.y,
+                    room.x + room.width - 1,
+                    room.y + room.height - 1,
+                    0);
+            }
+
+            float height = Mathf.Max(config.wallHeight + 20f, detectedWallTopY + 20f);
+            combined.center = new Vector3(combined.center.x, height * 0.5f, combined.center.z);
+            combined.size = new Vector3(combined.size.x, height, combined.size.z);
+            return combined;
+        }
+
+        private GameObject CreateSceneVolumeCube(string zoneName, Bounds bounds)
+        {
+            Transform parent = GetOrCreateChild("SceneVolumes");
+            GameObject volume = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            volume.name = $"{zoneName}_SceneVolume";
+            volume.transform.SetParent(parent, false);
+            volume.transform.position = bounds.center;
+            volume.transform.localScale = bounds.size;
+
+            MeshRenderer renderer = volume.GetComponent<MeshRenderer>();
+            if (renderer != null)
+                renderer.enabled = false;
+
+            BoxCollider collider = volume.GetComponent<BoxCollider>();
+            if (collider != null)
+                collider.isTrigger = true;
+
+            return volume;
+        }
+
+        private bool IsSceneVolumeTransform(Transform t)
+        {
+            while (t != null)
+            {
+                if (t.name == "SceneVolumes" ||
+                    t.name.EndsWith("_SceneVolume", System.StringComparison.OrdinalIgnoreCase) ||
+                    t.name.EndsWith("_CorridorVolume", System.StringComparison.OrdinalIgnoreCase))
+                    return true;
+
+                t = t.parent;
+            }
+
+            return false;
+        }
+
+        private Bounds CreateTileCoverageBounds(int x1, int z1, int x2, int z2, int paddingTiles)
+        {
+            int minX = Mathf.Min(x1, x2) - paddingTiles;
+            int maxX = Mathf.Max(x1, x2) + paddingTiles;
+            int minZ = Mathf.Min(z1, z2) - paddingTiles;
+            int maxZ = Mathf.Max(z1, z2) + paddingTiles;
+
+            float minWorldX = (minX - 0.5f) * detectedStepX;
+            float maxWorldX = (maxX + 0.5f) * detectedStepX;
+            float minWorldZ = (minZ - 0.5f) * detectedStepZ;
+            float maxWorldZ = (maxZ + 0.5f) * detectedStepZ;
+            float height = Mathf.Max(config.wallHeight + 20f, detectedWallTopY + 20f);
+
+            return new Bounds(
+                new Vector3((minWorldX + maxWorldX) * 0.5f, height * 0.5f, (minWorldZ + maxWorldZ) * 0.5f),
+                new Vector3(maxWorldX - minWorldX, height, maxWorldZ - minWorldZ));
+        }
+
+        private GeneratedZoneInfo GetBestZoneForBounds(Bounds bounds)
+        {
+            GeneratedZoneInfo bestRoomZone = null;
+            float bestRoomOverlapArea = 0f;
+
+            for (int i = 0; i < generatedZones.Count; i++)
+            {
+                GeneratedZoneInfo zone = generatedZones[i];
+
+                if (zone == null)
+                    continue;
+
+                float roomOverlapArea = zone.GetRoomOverlapAreaXZ(bounds);
+
+                if (roomOverlapArea > bestRoomOverlapArea)
+                {
+                    bestRoomOverlapArea = roomOverlapArea;
+                    bestRoomZone = zone;
+                }
+            }
+
+            if (bestRoomZone != null)
+                return bestRoomZone;
+
+            GeneratedZoneInfo bestCoverageZone = null;
+            float bestCoverageOverlapArea = 0f;
+
+            for (int i = 0; i < generatedZones.Count; i++)
+            {
+                GeneratedZoneInfo zone = generatedZones[i];
+
+                if (zone == null)
+                    continue;
+
+                float coverageOverlapArea = zone.GetMaxOverlapAreaXZ(bounds);
+
+                if (coverageOverlapArea > bestCoverageOverlapArea)
+                {
+                    bestCoverageOverlapArea = coverageOverlapArea;
+                    bestCoverageZone = zone;
+                }
+            }
+
+            if (bestCoverageZone != null)
+                return bestCoverageZone;
+
+            return GetBestZoneForPosition(bounds.center);
+        }
+
+        private GeneratedZoneInfo GetBestZoneForPosition(Vector3 position)
+        {
+            GeneratedZoneInfo containingZone = null;
+            float containingDistance = float.MaxValue;
+            GeneratedZoneInfo nearestZone = null;
+            float nearestDistance = float.MaxValue;
+
+            for (int i = 0; i < generatedZones.Count; i++)
+            {
+                GeneratedZoneInfo zone = generatedZones[i];
+
+                if (zone == null)
+                    continue;
+
+                if (zone.ContainsPosition(position))
+                {
+                    float distanceToCoverageCenter = zone.SqrDistanceToCoverageCenter(position);
+
+                    if (distanceToCoverageCenter < containingDistance)
+                    {
+                        containingDistance = distanceToCoverageCenter;
+                        containingZone = zone;
+                    }
+
+                    continue;
+                }
+
+                float distance = zone.SqrDistanceTo(position);
+
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearestZone = zone;
+                }
+            }
+
+            if (containingZone != null)
+                return containingZone;
+
+            return nearestZone;
+        }
 
         private void BuildZones()
         {

@@ -10,6 +10,8 @@ namespace baodeag
     [CustomEditor(typeof(RandomMapGenerator))]
     public class RandomMapGeneratorEditor : UnityEditor.Editor
     {
+        private const string WorldLocationRendererPrefabPath = "Assets/Prefabs/World Managers/World Location Renderer.prefab";
+
         // ── Foldout states ────────────────────────────────────────────────
         private bool foldTileset = true;
         private bool foldStructure = true;
@@ -353,6 +355,9 @@ namespace baodeag
 
         private void ExportZonesToScenes(RandomMapGenerator gen)
         {
+            if (!PrepareEditorForSubSceneExport())
+                return;
+
             string scenesRoot = "Assets/Scenes";
             string areaFolder = $"{scenesRoot}/{gen.areaName}";
 
@@ -371,31 +376,26 @@ namespace baodeag
 
             int totalScenes = gen.generatedZones.Count * 4;
             int done = 0;
+            int exportedRootCount = 0;
+            List<string> exportedScenePaths = new List<string>();
+            List<string> exportedSceneNames = new List<string>();
 
             try
             {
+                Dictionary<string, Dictionary<string, List<GameObject>>> exportGroups = BuildExportGroupsFromGeneratedHierarchy(gen, categoryMap);
+
                 foreach (var zone in gen.generatedZones)
                 {
                     // Với mỗi zone, tạo 4 sub-scene
+                    exportGroups.TryGetValue(zone.zoneName, out Dictionary<string, List<GameObject>> zoneGroups);
+
                     var subSceneGroups = new Dictionary<string, List<GameObject>>
                     {
-                        { "_Structure", new List<GameObject>() },
-                        { "_Props",     new List<GameObject>() },
-                        { "_Effects",   new List<GameObject>() },
-                        { "_Spawners",  new List<GameObject>() },
+                        { "_Structure", GetExportGroup(zoneGroups, "_Structure") },
+                        { "_Props",     GetExportGroup(zoneGroups, "_Props")     },
+                        { "_Effects",   GetExportGroup(zoneGroups, "_Effects")   },
+                        { "_Spawners",  GetExportGroup(zoneGroups, "_Spawners")  },
                     };
-
-                    foreach (var go in zone.objects)
-                    {
-                        if (go == null) continue;
-                        string category = GetCategoryFromHierarchy(go);
-                        string suffix = "_Props"; // default
-
-                        if (categoryMap.TryGetValue(category, out string mapped))
-                            suffix = mapped;
-
-                        subSceneGroups[suffix].Add(go);
-                    }
 
                     foreach (var kvp in subSceneGroups)
                     {
@@ -403,19 +403,18 @@ namespace baodeag
                         string scenePath = $"{areaFolder}/{sceneName}.unity";
 
                         // Tạo scene mới
-                        Scene newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
-                        newScene.name = sceneName;
+                        if (!TryCreateAdditiveExportScene(sceneName, out Scene newScene))
+                            return;
 
                         // Move objects vào scene mới
-                        foreach (var go in kvp.Value)
-                        {
-                            if (go == null) continue;
-                            SceneManager.MoveGameObjectToScene(go, newScene);
-                        }
+                        exportedRootCount += MoveObjectsToSceneWithFolders(kvp.Value, newScene);
 
                         // Lưu scene
+                        EnsureWorldLocationRenderer(newScene, kvp.Key);
                         EditorSceneManager.SaveScene(newScene, scenePath);
                         EditorSceneManager.CloseScene(newScene, false);
+                        exportedScenePaths.Add(scenePath);
+                        exportedSceneNames.Add(sceneName);
 
                         done++;
                         float progress = (float)done / totalScenes;
@@ -426,6 +425,20 @@ namespace baodeag
                     }
                 }
 
+                if (exportedRootCount < 10)
+                {
+                    Debug.LogError($"[RandomMapGeneratorEditor] Export stopped before cleanup because only {exportedRootCount} root object(s) were exported. Generate the map again and export after fixing the hierarchy grouping.");
+                    EditorUtility.DisplayDialog(
+                        "Export chua du map",
+                        $"Chi xuat duoc {exportedRootCount} root object. Tool se khong xoa map trong scene chinh de tranh mat map. Hay Generate Map lai roi Export lai.",
+                        "OK");
+                    return;
+                }
+
+                CleanupExportedMapFromMainScene(gen);
+                UpdateWorldAdditiveSceneBootstrap(gen, exportedSceneNames);
+                AddScenesToBuildSettings(exportedScenePaths);
+                EditorSceneManager.SaveScene(gen.gameObject.scene);
                 AssetDatabase.Refresh();
                 EditorUtility.DisplayDialog(
                     "Xuất thành công!",
@@ -445,14 +458,525 @@ namespace baodeag
             }
         }
 
+        private bool PrepareEditorForSubSceneExport()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                EditorUtility.DisplayDialog(
+                    "Khong the export",
+                    "Hay dung Play Mode truoc khi xuat sub-scene.",
+                    "OK");
+                return false;
+            }
+
+            if (PrefabStageUtility.GetCurrentPrefabStage() != null)
+                StageUtility.GoToMainStage();
+
+            return true;
+        }
+
+        private Dictionary<string, Dictionary<string, List<GameObject>>> BuildExportGroupsFromGeneratedHierarchy(
+            RandomMapGenerator gen,
+            Dictionary<string, string> categoryMap)
+        {
+            Dictionary<string, Dictionary<string, List<GameObject>>> groups = new Dictionary<string, Dictionary<string, List<GameObject>>>();
+            Transform generatedRoot = GetGeneratedRoot(gen);
+
+            if (generatedRoot == null)
+                return groups;
+
+            List<Transform> allChildren = new List<Transform>();
+            CollectChildren(generatedRoot, allChildren);
+            HashSet<GameObject> exportRoots = new HashSet<GameObject>();
+
+            for (int i = 0; i < allChildren.Count; i++)
+            {
+                GameObject exportRoot = GetExportRootForSubScene(allChildren[i].gameObject);
+
+                if (exportRoot == null || !exportRoots.Add(exportRoot))
+                    continue;
+
+                string category = GetCategoryFromHierarchy(exportRoot);
+                string suffix = categoryMap.TryGetValue(category, out string mapped) ? mapped : "_Props";
+                string zoneName = GetZoneNameForObject(gen, exportRoot);
+
+                if (string.IsNullOrEmpty(zoneName))
+                    continue;
+
+                if (!groups.TryGetValue(zoneName, out Dictionary<string, List<GameObject>> zoneGroups))
+                {
+                    zoneGroups = new Dictionary<string, List<GameObject>>();
+                    groups[zoneName] = zoneGroups;
+                }
+
+                if (!zoneGroups.TryGetValue(suffix, out List<GameObject> objects))
+                {
+                    objects = new List<GameObject>();
+                    zoneGroups[suffix] = objects;
+                }
+
+                objects.Add(exportRoot);
+            }
+
+            return groups;
+        }
+
+        private List<GameObject> GetExportGroup(Dictionary<string, List<GameObject>> zoneGroups, string suffix)
+        {
+            if (zoneGroups != null && zoneGroups.TryGetValue(suffix, out List<GameObject> objects))
+                return objects;
+
+            return new List<GameObject>();
+        }
+
+        private int MoveObjectsToSceneWithFolders(List<GameObject> objects, Scene scene)
+        {
+            if (objects == null || !scene.IsValid())
+                return 0;
+
+            Dictionary<string, Transform> folderRoots = new Dictionary<string, Transform>();
+            int movedCount = 0;
+
+            for (int i = 0; i < objects.Count; i++)
+            {
+                GameObject go = objects[i];
+
+                if (go == null)
+                    continue;
+
+                string folderName = GetExportFolderName(go);
+                Transform folder = GetOrCreateExportFolder(folderRoots, scene, folderName);
+
+                go.transform.SetParent(null, true);
+                SceneManager.MoveGameObjectToScene(go, scene);
+
+                if (folder != null)
+                    go.transform.SetParent(folder, true);
+
+                movedCount++;
+            }
+
+            return movedCount;
+        }
+
+        private Transform GetOrCreateExportFolder(Dictionary<string, Transform> folderRoots, Scene scene, string folderName)
+        {
+            if (string.IsNullOrWhiteSpace(folderName))
+                folderName = "Misc";
+
+            if (folderRoots.TryGetValue(folderName, out Transform folder) && folder != null)
+                return folder;
+
+            GameObject folderObject = new GameObject(folderName);
+            SceneManager.MoveGameObjectToScene(folderObject, scene);
+            folderObject.transform.SetParent(null, true);
+            folderRoots[folderName] = folderObject.transform;
+            return folderObject.transform;
+        }
+
+        private string GetExportFolderName(GameObject go)
+        {
+            Transform t = go != null ? go.transform : null;
+
+            while (t != null)
+            {
+                string name = t.name;
+
+                if (name == "Floors")
+                    return "Floors";
+                if (name == "Walls")
+                    return "Walls";
+                if (name == "WallArches" || name == "Ceilings" || name == "Roofs")
+                    return "Roofs";
+                if (name == "Pillars")
+                    return "Pillars";
+                if (name == "Doorways" || name == "Doors")
+                    return "Doors";
+                if (name == "Stairs")
+                    return "Stairs";
+                if (name == "Props")
+                    return "Props";
+                if (name == "Decorations")
+                    return "Decorations";
+                if (name == "Effects" || name == "Lights")
+                    return "Lights";
+                if (name == "Spawners")
+                    return "Spawners";
+                if (name == "Gameplay")
+                    return "Gameplay";
+                if (name == "Boss")
+                    return "Boss";
+
+                t = t.parent;
+            }
+
+            return "Misc";
+        }
+
+        private Transform GetGeneratedRoot(RandomMapGenerator gen)
+        {
+            if (gen == null)
+                return null;
+
+            foreach (Transform child in gen.transform)
+            {
+                if (child != null && child.name.StartsWith("[Generated]", System.StringComparison.OrdinalIgnoreCase))
+                    return child;
+            }
+
+            return null;
+        }
+
+        private void CollectChildren(Transform root, List<Transform> children)
+        {
+            if (root == null)
+                return;
+
+            foreach (Transform child in root)
+            {
+                children.Add(child);
+                CollectChildren(child, children);
+            }
+        }
+
+        private string GetZoneNameForObject(RandomMapGenerator gen, GameObject go)
+        {
+            if (gen == null || go == null || gen.generatedZones == null)
+                return string.Empty;
+
+            Bounds objectBounds = GetObjectBounds(go);
+            GeneratedZoneInfo bestRoomZone = null;
+            float bestRoomOverlapArea = 0f;
+
+            for (int i = 0; i < gen.generatedZones.Count; i++)
+            {
+                GeneratedZoneInfo zone = gen.generatedZones[i];
+
+                if (zone == null)
+                    continue;
+
+                float roomOverlapArea = zone.GetRoomOverlapAreaXZ(objectBounds);
+
+                if (roomOverlapArea > bestRoomOverlapArea)
+                {
+                    bestRoomOverlapArea = roomOverlapArea;
+                    bestRoomZone = zone;
+                }
+            }
+
+            if (bestRoomZone != null)
+                return bestRoomZone.zoneName;
+
+            GeneratedZoneInfo bestCoverageZone = null;
+            float bestCoverageOverlapArea = 0f;
+
+            for (int i = 0; i < gen.generatedZones.Count; i++)
+            {
+                GeneratedZoneInfo zone = gen.generatedZones[i];
+
+                if (zone == null)
+                    continue;
+
+                float coverageOverlapArea = zone.GetMaxOverlapAreaXZ(objectBounds);
+
+                if (coverageOverlapArea > bestCoverageOverlapArea)
+                {
+                    bestCoverageOverlapArea = coverageOverlapArea;
+                    bestCoverageZone = zone;
+                }
+            }
+
+            if (bestCoverageZone != null)
+                return bestCoverageZone.zoneName;
+
+            Vector3 position = objectBounds.center;
+            GeneratedZoneInfo nearestZone = null;
+            float nearestDistance = float.MaxValue;
+
+            for (int i = 0; i < gen.generatedZones.Count; i++)
+            {
+                GeneratedZoneInfo zone = gen.generatedZones[i];
+
+                if (zone == null)
+                    continue;
+
+                float distance = zone.SqrDistanceTo(position);
+
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearestZone = zone;
+                }
+            }
+
+            if (nearestZone != null)
+                return nearestZone.zoneName;
+
+            return string.Empty;
+        }
+
+        private Bounds GetObjectBounds(GameObject go)
+        {
+            Renderer[] renderers = go.GetComponentsInChildren<Renderer>(true);
+
+            if (renderers.Length == 0)
+                return new Bounds(go.transform.position, Vector3.one);
+
+            Bounds bounds = renderers[0].bounds;
+
+            for (int i = 1; i < renderers.Length; i++)
+            {
+                if (renderers[i] != null)
+                    bounds.Encapsulate(renderers[i].bounds);
+            }
+
+            return bounds;
+        }
+
+        private Vector3 GetObjectCenter(GameObject go)
+        {
+            Renderer[] renderers = go.GetComponentsInChildren<Renderer>(true);
+
+            if (renderers.Length == 0)
+                return go.transform.position;
+
+            Bounds bounds = renderers[0].bounds;
+
+            for (int i = 1; i < renderers.Length; i++)
+            {
+                if (renderers[i] != null)
+                    bounds.Encapsulate(renderers[i].bounds);
+            }
+
+            return bounds.center;
+        }
+
+        private void CleanupExportedMapFromMainScene(RandomMapGenerator gen)
+        {
+            if (gen == null)
+                return;
+
+            List<GameObject> generatedRoots = new List<GameObject>();
+
+            foreach (Transform child in gen.transform)
+            {
+                if (child != null && child.name.StartsWith("[Generated]", System.StringComparison.OrdinalIgnoreCase))
+                    generatedRoots.Add(child.gameObject);
+            }
+
+            for (int i = 0; i < generatedRoots.Count; i++)
+            {
+                if (generatedRoots[i] != null)
+                    DestroyImmediate(generatedRoots[i]);
+            }
+
+            EditorUtility.SetDirty(gen);
+            EditorSceneManager.MarkSceneDirty(gen.gameObject.scene);
+        }
+
+        private void UpdateWorldAdditiveSceneBootstrap(RandomMapGenerator gen, List<string> sceneNames)
+        {
+            if (gen == null)
+                return;
+
+            System.Type bootstrapType = System.Type.GetType("baodeag.WorldAdditiveSceneBootstrap, Assembly-CSharp");
+
+            if (bootstrapType == null)
+            {
+                Debug.LogWarning("[RandomMapGeneratorEditor] WorldAdditiveSceneBootstrap is not compiled yet. Let Unity refresh scripts, then export again to write the additive scene list.");
+                return;
+            }
+
+            Component bootstrap = gen.GetComponent(bootstrapType);
+
+            if (bootstrap == null)
+                bootstrap = gen.gameObject.AddComponent(bootstrapType);
+
+            System.Reflection.MethodInfo setter = bootstrapType.GetMethod("SetAdditiveScenes");
+            setter?.Invoke(bootstrap, new object[] { sceneNames });
+
+            EditorUtility.SetDirty(bootstrap);
+            EditorUtility.SetDirty(gen.gameObject);
+            EditorSceneManager.MarkSceneDirty(gen.gameObject.scene);
+        }
+
+        private void AddScenesToBuildSettings(List<string> scenePaths)
+        {
+            if (scenePaths == null || scenePaths.Count == 0)
+                return;
+
+            List<EditorBuildSettingsScene> scenes = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
+
+            for (int i = 0; i < scenePaths.Count; i++)
+            {
+                string path = scenePaths[i];
+
+                if (string.IsNullOrWhiteSpace(path))
+                    continue;
+
+                int existingIndex = scenes.FindIndex(scene => scene.path == path);
+
+                if (existingIndex >= 0)
+                {
+                    scenes[existingIndex] = new EditorBuildSettingsScene(path, true);
+                    continue;
+                }
+
+                scenes.Add(new EditorBuildSettingsScene(path, true));
+            }
+
+            EditorBuildSettings.scenes = scenes.ToArray();
+        }
+
+        private bool TryCreateAdditiveExportScene(string sceneName, out Scene newScene)
+        {
+            try
+            {
+                newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
+                newScene.name = sceneName;
+                return true;
+            }
+            catch (System.InvalidOperationException ex)
+            {
+                newScene = default;
+                Debug.LogError($"[RandomMapGeneratorEditor] Cannot create additive export scene '{sceneName}': {ex}");
+                EditorUtility.DisplayDialog(
+                    "Khong the tao sub-scene",
+                    "Unity dang o Prefab Mode/Preview Stage hoac mot editor mode khong cho tao additive scene. Hay thoat Prefab Mode, chon object Random Map Generator trong scene World_02, roi export lai.",
+                    "OK");
+                return false;
+            }
+        }
+
         /// <summary>Xác định category dựa vào tên cha gần nhất trong hierarchy.</summary>
+        [MenuItem("Tools/Random Map Generator/Normalize Area_02 Sub Scenes")]
+        public static void NormalizeArea02SubScenes()
+        {
+            NormalizeSubScenesInFolder("Assets/Scenes/Area_02");
+        }
+
+        private static void NormalizeSubScenesInFolder(string folderPath)
+        {
+            if (!AssetDatabase.IsValidFolder(folderPath))
+            {
+                Debug.LogWarning($"[RandomMapGeneratorEditor] Folder not found: {folderPath}");
+                return;
+            }
+
+            string[] sceneGuids = AssetDatabase.FindAssets("t:Scene", new[] { folderPath });
+            int normalizedCount = 0;
+
+            for (int i = 0; i < sceneGuids.Length; i++)
+            {
+                string scenePath = AssetDatabase.GUIDToAssetPath(sceneGuids[i]);
+
+                if (string.IsNullOrWhiteSpace(scenePath))
+                    continue;
+
+                string suffix = GetSceneCategorySuffix(scenePath);
+
+                if (!ShouldCreateWorldLocationRenderer(suffix))
+                    continue;
+
+                Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
+                EnsureWorldLocationRenderer(scene, suffix);
+                EditorSceneManager.SaveScene(scene);
+                EditorSceneManager.CloseScene(scene, true);
+                normalizedCount++;
+            }
+
+            AssetDatabase.Refresh();
+            Debug.Log($"[RandomMapGeneratorEditor] Normalized {normalizedCount} Area_02 sub-scene(s) with World Location Renderer.");
+        }
+
+        private static string GetSceneCategorySuffix(string scenePath)
+        {
+            string fileName = Path.GetFileNameWithoutExtension(scenePath);
+
+            if (fileName.EndsWith("_Structure", System.StringComparison.OrdinalIgnoreCase))
+                return "_Structure";
+            if (fileName.EndsWith("_Props", System.StringComparison.OrdinalIgnoreCase))
+                return "_Props";
+            if (fileName.EndsWith("_Effects", System.StringComparison.OrdinalIgnoreCase))
+                return "_Effects";
+            if (fileName.EndsWith("_Spawners", System.StringComparison.OrdinalIgnoreCase))
+                return "_Spawners";
+
+            return string.Empty;
+        }
+
+        private static void EnsureWorldLocationRenderer(Scene scene, string categorySuffix)
+        {
+            if (!scene.IsValid() || !ShouldCreateWorldLocationRenderer(categorySuffix))
+                return;
+
+            WorldLocationRendererManager rendererManager = null;
+            GameObject rendererObject = null;
+            GameObject[] roots = scene.GetRootGameObjects();
+
+            for (int i = 0; i < roots.Length; i++)
+            {
+                if (roots[i] == null)
+                    continue;
+
+                WorldLocationRendererManager existing = roots[i].GetComponent<WorldLocationRendererManager>();
+
+                if (existing == null)
+                    continue;
+
+                rendererManager = existing;
+                rendererObject = roots[i];
+                break;
+            }
+
+            if (rendererManager == null)
+            {
+                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(WorldLocationRendererPrefabPath);
+
+                if (prefab != null)
+                {
+                    rendererObject = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+                }
+                else
+                {
+                    rendererObject = new GameObject("World Location Renderer");
+                    rendererObject.AddComponent<WorldLocationRendererManager>();
+                }
+
+                if (rendererObject == null)
+                    return;
+
+                rendererObject.name = "World Location Renderer";
+                SceneManager.MoveGameObjectToScene(rendererObject, scene);
+                rendererManager = rendererObject.GetComponent<WorldLocationRendererManager>();
+            }
+
+            if (rendererManager == null)
+                return;
+
+            rendererObject.transform.SetParent(null, true);
+            rendererObject.transform.SetAsFirstSibling();
+            rendererManager.FindAllRootObjects();
+            rendererManager.FindAllMeshRenderers();
+            EditorUtility.SetDirty(rendererManager);
+            EditorUtility.SetDirty(rendererObject);
+            EditorSceneManager.MarkSceneDirty(scene);
+        }
+
+        private static bool ShouldCreateWorldLocationRenderer(string categorySuffix)
+        {
+            return categorySuffix == "_Structure" ||
+                   categorySuffix == "_Props" ||
+                   categorySuffix == "_Effects";
+        }
+
         private string GetCategoryFromHierarchy(GameObject go)
         {
             Transform t = go.transform.parent;
             while (t != null)
             {
                 string name = t.name;
-                if (name == "Structure" || name == "Floors" || name == "Walls" || name == "Ceilings" || name == "Pillars" || name == "Doorways")
+                if (name == "Structure" || name == "Floors" || name == "Walls" || name == "WallArches" || name == "Ceilings" || name == "Roofs" || name == "Pillars" || name == "Doorways" || name == "Doors" || name == "Stairs")
                     return "Structure";
                 if (name == "Props" || name == "Decorations")
                     return "Props";
@@ -466,6 +990,69 @@ namespace baodeag
         }
 
         // ── UI Helpers ────────────────────────────────────────────────────
+
+        private GameObject GetExportRootForSubScene(GameObject go)
+        {
+            if (go == null)
+                return null;
+
+            Transform exportRoot = go.transform;
+
+            if (IsSceneVolumeNode(exportRoot))
+                return null;
+
+            if (IsGeneratedGroupingNode(exportRoot.name))
+                return null;
+
+            while (exportRoot.parent != null &&
+                   !IsGeneratedGroupingNode(exportRoot.parent.name) &&
+                   !exportRoot.parent.name.StartsWith("[Generated]", System.StringComparison.OrdinalIgnoreCase))
+            {
+                exportRoot = exportRoot.parent;
+            }
+
+            if (IsGeneratedGroupingNode(exportRoot.name))
+                return null;
+
+            return exportRoot.gameObject;
+        }
+
+        private bool IsSceneVolumeNode(Transform t)
+        {
+            while (t != null)
+            {
+                if (t.name == "SceneVolumes" ||
+                    t.name.EndsWith("_SceneVolume", System.StringComparison.OrdinalIgnoreCase) ||
+                    t.name.EndsWith("_CorridorVolume", System.StringComparison.OrdinalIgnoreCase))
+                    return true;
+
+                t = t.parent;
+            }
+
+            return false;
+        }
+
+        private bool IsGeneratedGroupingNode(string name)
+        {
+            return name == "Structure" ||
+                   name == "Floors" ||
+                   name == "Walls" ||
+                   name == "WallArches" ||
+                   name == "Ceilings" ||
+                   name == "Roofs" ||
+                   name == "Pillars" ||
+                   name == "Doorways" ||
+                   name == "Doors" ||
+                   name == "Stairs" ||
+                   name == "Props" ||
+                   name == "Decorations" ||
+                   name == "Effects" ||
+                   name == "Lights" ||
+                   name == "Spawners" ||
+                   name == "Gameplay" ||
+                   name == "Boss" ||
+                   name == "SceneVolumes";
+        }
 
         private void DrawBanner()
         {
