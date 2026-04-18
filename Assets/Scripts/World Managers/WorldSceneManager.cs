@@ -24,6 +24,14 @@ namespace baodeag
         private int quedScenesToUnload = 0;
         private Coroutine loadingAdditiveScenesCoroutine;
         private Coroutine unloadAdditiveScenesCoroutine;
+        private Coroutine delayedUnloadCoroutine;
+        private readonly Dictionary<string, float> pendingUnrequiredSceneUnloadTimes = new Dictionary<string, float>();
+
+        [Header("Scene Streaming")]
+        [SerializeField] private float unrequiredSceneUnloadDelay = 12f;
+        [SerializeField] private bool loadNonWorld01MapsAllAtOnce = true;
+        [SerializeField] private string roomStreamingWorldSceneName = "World_01";
+        private bool generatedWorldAllScenesQueued = false;
 
         //loading status
         private bool sceneIsLoading = false;
@@ -159,6 +167,7 @@ namespace baodeag
 
             //activate loading screen
             PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
+            PlayerUIManager.instance.playerUILoadingScreenManager.SetProgress(0.02f, "Loading World");
 
             string worldScenePath = SceneUtility.GetScenePathByBuildIndex(buildIndex);
 
@@ -217,6 +226,8 @@ namespace baodeag
             quedUnloadSceneIDs.Clear();
             doNotUnLoadList.Clear();
             loadedScenes.Clear();
+            pendingUnrequiredSceneUnloadTimes.Clear();
+            generatedWorldAllScenesQueued = false;
             quedScenesToLoad = 0;
             quedScenesToUnload = 0;
             sceneIsLoading = false;
@@ -234,6 +245,7 @@ namespace baodeag
             RefreshCurrentWorldSceneID(scene);
             loadedScenes.Clear();
             loadedScenes.Add(scene);
+            generatedWorldAllScenesQueued = false;
 
             if (WorldLocationManager.instance != null)
                 WorldLocationManager.instance.ResetForWorldSceneTransition();
@@ -260,6 +272,74 @@ namespace baodeag
             return world;
         }
 
+        public bool ShouldLoadGeneratedWorldAllAtOnce()
+        {
+            return loadNonWorld01MapsAllAtOnce &&
+                   !string.IsNullOrWhiteSpace(roomStreamingWorldSceneName) &&
+                   !string.Equals(GetCurrentWorldSceneID(), roomStreamingWorldSceneName, System.StringComparison.OrdinalIgnoreCase) &&
+                   !string.IsNullOrWhiteSpace(GetGeneratedWorldAreaScenePrefix());
+        }
+
+        public void LoadAllGeneratedWorldAreaScenes()
+        {
+            if (!ShouldLoadGeneratedWorldAllAtOnce())
+                return;
+
+            if (generatedWorldAllScenesQueued)
+                return;
+
+            List<string> scenesToLoad = GetGeneratedWorldAreaSceneNames();
+
+            if (scenesToLoad.Count <= 0)
+                return;
+
+            generatedWorldAllScenesQueued = true;
+            LoadAdditiveScenes(scenesToLoad);
+        }
+
+        public List<string> GetGeneratedWorldAreaSceneNames()
+        {
+            List<string> sceneNames = new List<string>();
+            string areaScenePrefix = GetGeneratedWorldAreaScenePrefix();
+
+            if (string.IsNullOrWhiteSpace(areaScenePrefix))
+                return sceneNames;
+
+            for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+            {
+                string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+
+                if (string.IsNullOrWhiteSpace(scenePath))
+                    continue;
+
+                string sceneName = Path.GetFileNameWithoutExtension(scenePath);
+
+                if (!sceneName.StartsWith(areaScenePrefix, System.StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                if (!sceneNames.Contains(sceneName))
+                    sceneNames.Add(sceneName);
+            }
+
+            return sceneNames;
+        }
+
+        private string GetGeneratedWorldAreaScenePrefix()
+        {
+            string currentWorldSceneID = GetCurrentWorldSceneID();
+
+            if (string.IsNullOrWhiteSpace(currentWorldSceneID))
+                return string.Empty;
+
+            System.Text.RegularExpressions.Match worldIndexMatch =
+                System.Text.RegularExpressions.Regex.Match(currentWorldSceneID, @"^World_(\d+)$", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+            if (!worldIndexMatch.Success)
+                return string.Empty;
+
+            return $"Area_{worldIndexMatch.Groups[1].Value}_";
+        }
+
         //used to load additive scenes in main world scene
         private void LoadAdditiveScene(string sceneName)
         {
@@ -276,27 +356,126 @@ namespace baodeag
 
             //load the scene
             sceneIsLoading = true;
-            var loadSceneStatus = NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+            SceneEventProgressStatus loadSceneStatus = SceneEventProgressStatus.Started;
+
+            if (NetworkManager.Singleton != null &&
+                NetworkManager.Singleton.SceneManager != null &&
+                (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer))
+            {
+                loadSceneStatus = NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+            }
+            else
+            {
+                StartCoroutine(LoadAdditiveSceneNonNetworkCoroutine(sceneName));
+                return;
+            }
+
+            if (loadSceneStatus != SceneEventProgressStatus.Started)
+            {
+                Debug.LogWarning($"WorldSceneManager: Netcode additive scene load did not start for '{sceneName}' ({loadSceneStatus}). Falling back to local additive load.");
+                StartCoroutine(LoadAdditiveSceneNonNetworkCoroutine(sceneName));
+            }
+        }
+
+        private IEnumerator LoadAdditiveSceneNonNetworkCoroutine(string sceneName)
+        {
+            AsyncOperation loadingOperation = null;
+
+            try
+            {
+                loadingOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogWarning($"WorldSceneManager: Local additive scene load failed for '{sceneName}': {exception.Message}");
+                sceneIsLoading = false;
+                yield break;
+            }
+
+            if (loadingOperation == null)
+            {
+                sceneIsLoading = false;
+                yield break;
+            }
+
+            while (!loadingOperation.isDone)
+            {
+                yield return null;
+            }
+
+            Scene scene = SceneManager.GetSceneByName(sceneName);
+
+            if (scene.IsValid() && scene.isLoaded)
+            {
+                bool alreadyTracked = false;
+
+                for (int i = 0; i < loadedScenes.Count; i++)
+                {
+                    if (loadedScenes[i].IsValid() && loadedScenes[i].name == scene.name)
+                    {
+                        alreadyTracked = true;
+                        break;
+                    }
+                }
+
+                if (!alreadyTracked)
+                    loadedScenes.Add(scene);
+            }
+
+            sceneIsLoading = false;
+            CheckForRequiredRenderers();
         }
 
         //used to load multiple additive scenes at once when entering new area
         public void LoadAdditiveScenes(List<string> scenesToLoad)
         {
-            if (!NetworkManager.IsServer)
+            if (NetworkManager.Singleton != null &&
+                NetworkManager.Singleton.IsClient &&
+                !NetworkManager.Singleton.IsServer)
+            {
                 return;
+            }
 
             //pass all of our scenes to load to our qued scene list
             for (int i = 0; i < scenesToLoad.Count; i++)
             {
+                if (string.IsNullOrWhiteSpace(scenesToLoad[i]))
+                    continue;
+
+                if (IsSceneLoadedOrQueued(scenesToLoad[i]))
+                    continue;
+
                 quedSceneIDs.Add(scenesToLoad[i]);
             }
 
             quedScenesToLoad = quedSceneIDs.Count;
 
+            if (quedScenesToLoad <= 0)
+                return;
+
             if (loadingAdditiveScenesCoroutine != null)
                 StopCoroutine(loadingAdditiveScenesCoroutine);
 
             loadingAdditiveScenesCoroutine = StartCoroutine(LoadAdditiveScenesCoroutine());
+        }
+
+        private bool IsSceneLoadedOrQueued(string sceneName)
+        {
+            if (quedSceneIDs.Contains(sceneName))
+                return true;
+
+            Scene scene = SceneManager.GetSceneByName(sceneName);
+
+            if (scene.IsValid() && scene.isLoaded)
+                return true;
+
+            for (int i = 0; i < loadedScenes.Count; i++)
+            {
+                if (loadedScenes[i].IsValid() && loadedScenes[i].isLoaded && loadedScenes[i].name == sceneName)
+                    return true;
+            }
+
+            return false;
         }
 
         private IEnumerator LoadAdditiveScenesCoroutine()
@@ -483,6 +662,14 @@ namespace baodeag
 
         public void CheckForUnrequiredScenes()
         {
+            if (ShouldLoadGeneratedWorldAllAtOnce())
+            {
+                doNotUnLoadList = GetGeneratedWorldAreaSceneNames();
+                doNotUnLoadList.Add(GetCurrentWorldSceneID());
+                pendingUnrequiredSceneUnloadTimes.Clear();
+                return;
+            }
+
             List<string> scenesToUnload = new List<string>();
 
             //get all currently loaded scenes
@@ -493,14 +680,72 @@ namespace baodeag
 
             doNotUnLoadList = WorldLocationManager.instance.GenerateDoNotUnloadListBasedOnPlayerLocations();
 
+            for (int i = doNotUnLoadList.Count - 1; i >= 0; i--)
+            {
+                if (pendingUnrequiredSceneUnloadTimes.ContainsKey(doNotUnLoadList[i]))
+                    pendingUnrequiredSceneUnloadTimes.Remove(doNotUnLoadList[i]);
+            }
+
             //compare all loaded scenes
-            for (int i = 0; i < scenesToUnload.Count; i++)
+            for (int i = scenesToUnload.Count - 1; i >= 0; i--)
             {
                 if (doNotUnLoadList.Contains(scenesToUnload[i]))
                     scenesToUnload.Remove(scenesToUnload[i]);
             }
 
-            UnloadAdditiveScenes(scenesToUnload);
+            QueueUnrequiredScenesForDelayedUnload(scenesToUnload);
+        }
+
+        private void QueueUnrequiredScenesForDelayedUnload(List<string> scenesToUnload)
+        {
+            if (scenesToUnload == null || scenesToUnload.Count <= 0)
+                return;
+
+            List<string> expiredScenes = new List<string>();
+
+            for (int i = 0; i < scenesToUnload.Count; i++)
+            {
+                string sceneName = scenesToUnload[i];
+
+                if (string.IsNullOrWhiteSpace(sceneName))
+                    continue;
+
+                if (!pendingUnrequiredSceneUnloadTimes.ContainsKey(sceneName))
+                    pendingUnrequiredSceneUnloadTimes[sceneName] = Time.time + unrequiredSceneUnloadDelay;
+
+                if (Time.time >= pendingUnrequiredSceneUnloadTimes[sceneName])
+                    expiredScenes.Add(sceneName);
+            }
+
+            for (int i = 0; i < expiredScenes.Count; i++)
+            {
+                pendingUnrequiredSceneUnloadTimes.Remove(expiredScenes[i]);
+            }
+
+            if (expiredScenes.Count > 0)
+                UnloadAdditiveScenes(expiredScenes);
+
+            if (pendingUnrequiredSceneUnloadTimes.Count > 0 && delayedUnloadCoroutine == null)
+                delayedUnloadCoroutine = StartCoroutine(DelayedUnrequiredSceneUnloadCoroutine());
+        }
+
+        private IEnumerator DelayedUnrequiredSceneUnloadCoroutine()
+        {
+            while (pendingUnrequiredSceneUnloadTimes.Count > 0)
+            {
+                float nextUnloadTime = float.MaxValue;
+
+                foreach (KeyValuePair<string, float> pair in pendingUnrequiredSceneUnloadTimes)
+                {
+                    if (pair.Value < nextUnloadTime)
+                        nextUnloadTime = pair.Value;
+                }
+
+                yield return new WaitForSeconds(Mathf.Max(0.25f, nextUnloadTime - Time.time));
+                CheckForUnrequiredScenes();
+            }
+
+            delayedUnloadCoroutine = null;
         }
 
         public void CheckForRequiredRenderers()
@@ -525,6 +770,20 @@ namespace baodeag
                 yield return new WaitForEndOfFrame();
             }
 
+            if (ShouldLoadGeneratedWorldAllAtOnce())
+            {
+                for (int i = 0; i < WorldLocationManager.instance.worldLocationRenderers.Count; i++)
+                {
+                    if (WorldLocationManager.instance.worldLocationRenderers[i] == null)
+                        continue;
+
+                    WorldLocationManager.instance.worldLocationRenderers[i].ToggleMeshRenderers(true);
+                    WorldLocationManager.instance.worldLocationRenderers[i].ToggleRootObjects(true);
+                }
+
+                yield break;
+            }
+
             List<string> scenesRelevantToLocationCurrentlyIn = location.GetRequiredSceneIDsForWorldLocation();
             List<int> sceneBuildIndexes = new List<int>();
 
@@ -532,7 +791,21 @@ namespace baodeag
             {
                 for (int i = 0; i < scenesRelevantToLocationCurrentlyIn.Count; i++)
                 {
-                    sceneBuildIndexes.Add(GetBuildIndexFromSceneID(scenesRelevantToLocationCurrentlyIn[i]));
+                    int sceneBuildIndex = GetBuildIndexFromSceneID(scenesRelevantToLocationCurrentlyIn[i]);
+
+                    if (!sceneBuildIndexes.Contains(sceneBuildIndex))
+                        sceneBuildIndexes.Add(sceneBuildIndex);
+                }
+            }
+
+            if (doNotUnLoadList != null)
+            {
+                for (int i = 0; i < doNotUnLoadList.Count; i++)
+                {
+                    int sceneBuildIndex = GetBuildIndexFromSceneID(doNotUnLoadList[i]);
+
+                    if (!sceneBuildIndexes.Contains(sceneBuildIndex))
+                        sceneBuildIndexes.Add(sceneBuildIndex);
                 }
             }
 
@@ -554,14 +827,10 @@ namespace baodeag
                 }
                 else
                 {
-                    if (PlayerUIManager.instance.playerUILoadingScreenManager.LoadingScreenIsActive())
-                    {
-                        WorldLocationManager.instance.worldLocationRenderers[i].ToggleMeshRenderers(false);
-                    }
-                    else
-                    {
-                        WorldLocationManager.instance.worldLocationRenderers[i].ToggleAllMeshRenderersOverTime(false);
-                    }
+                    // Keep loaded areas visible until their additive scene is
+                    // actually unloaded. Turning renderers off immediately at
+                    // room borders causes visible pop-out when the player moves
+                    // back and forth across generated World_02 room triggers.
                 }
             }
 

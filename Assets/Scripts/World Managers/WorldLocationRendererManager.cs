@@ -26,14 +26,10 @@ namespace baodeag
 
         private void Start()
         {
-            if (PlayerUIManager.instance.playerUILoadingScreenManager.LoadingScreenIsActive())
-            {
-                ToggleRootObjects(true);
-            }
-            else
-            {
-                StartCoroutine(EnableRootGameObjectsOverTime());
-            }
+            // Always enable root objects immediately so all worlds load their
+            // map geometry right away, regardless of whether a loading screen
+            // is currently active (mirrors World 01 load-game behaviour).
+            ToggleRootObjects(true);
         }
 
         //root gameobjects
@@ -76,18 +72,7 @@ namespace baodeag
             #endif
         }
 
-        private IEnumerator EnableRootGameObjectsOverTime()
-        {
-            for (int i = 0; i < rootGameObjects.Count; i++)
-            {
-                if (rootGameObjects[i] == null)
-                    continue;
 
-                rootGameObjects[i].SetActive(true);
-
-                yield return new WaitForEndOfFrame();
-            }
-        }
 
         //renderers
         public void FindAllMeshRenderers()
@@ -136,17 +121,17 @@ namespace baodeag
 
         private IEnumerator ToggleAllMeshRenderersOverTimeCoroutine(bool status)
         {
-            yield return new WaitForEndOfFrame();
-
+            // Enable/disable all renderers immediately (no stagger) so areas
+            // appear fully built as soon as their scene finishes loading.
             for (int i = 0; i < meshRenderers.Count; i++)
             {
                 if (meshRenderers[i] == null)
                     continue;
 
                 meshRenderers[i].enabled = status;
-
-
             }
+
+            yield break;
         }
     }
 }

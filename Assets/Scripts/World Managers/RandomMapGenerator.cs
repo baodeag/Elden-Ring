@@ -220,6 +220,10 @@ namespace baodeag
         [Tooltip("Tên khu vực (Area_02, Area_03…) dùng để đặt tên sub-scene")]
         public string areaName = "Area_02";
 
+        [Header("Site Of Grace")]
+        [Tooltip("ID assigned to the generated Site Of Grace.")]
+        public int generatedSiteOfGraceID = 0;
+
         // ── Runtime dữ liệu nội bộ ───────────────────────────────────────
 
         private System.Random rng;
@@ -1444,7 +1448,10 @@ namespace baodeag
             Vector2Int c = RoomCenter(rooms[0]);
             // Đặt lệch 1.5 tile so với spawn
             Vector3 pos = T(c.x, c.y, 0f) + new Vector3(config.tileSize * 1.5f, 0f, config.tileSize * 1.5f);
-            SpawnSingle(tileset.siteOfGracePrefab, pos, Quaternion.identity, parent);
+            GameObject siteOfGrace = SpawnSingle(tileset.siteOfGracePrefab, pos, Quaternion.identity, parent);
+
+            if (siteOfGrace != null && siteOfGrace.TryGetComponent(out SiteOfGraceInteractable siteOfGraceInteractable))
+                siteOfGraceInteractable.siteOfGraceID = generatedSiteOfGraceID;
         }
 
         private void PlaceBossRoom()
@@ -1485,6 +1492,7 @@ namespace baodeag
             {
                 RectInt room = rooms[i];
                 Bounds roomBounds = CreateRoomFloorBounds(room);
+                roomBounds = ExpandRoomBoundsForStructure(roomBounds);
 
                 string zoneName = $"{areaName}_Room_{i + 1:00}";
                 GeneratedZoneInfo zone = new GeneratedZoneInfo(zoneName, roomBounds);
@@ -1513,6 +1521,18 @@ namespace baodeag
             }
 
             Debug.Log($"[RandomMapGenerator] Split into {generatedZones.Count} room zones.");
+        }
+
+        private Bounds ExpandRoomBoundsForStructure(Bounds roomFloorBounds)
+        {
+            float expandX = Mathf.Max(detectedStepX * 0.75f, config.wallThickness + detectedWallArchWidthOfs + 0.5f);
+            float expandZ = Mathf.Max(detectedStepZ * 0.75f, config.wallThickness + detectedWallArchWidthOfs + 0.5f);
+            float height = Mathf.Max(config.wallHeight + 20f, detectedWallTopY + 20f, CeilingHeightAboveFloor + 5f);
+
+            roomFloorBounds.Expand(new Vector3(expandX * 2f, 0f, expandZ * 2f));
+            roomFloorBounds.center = new Vector3(roomFloorBounds.center.x, height * 0.5f, roomFloorBounds.center.z);
+            roomFloorBounds.size = new Vector3(roomFloorBounds.size.x, height, roomFloorBounds.size.z);
+            return roomFloorBounds;
         }
 
         private void AddCorridorCoverageToZone(GeneratedZoneInfo zone, Vector2Int from, Vector2Int to)
@@ -1619,6 +1639,11 @@ namespace baodeag
 
         private GeneratedZoneInfo GetBestZoneForBounds(Bounds bounds)
         {
+            GeneratedZoneInfo centerZone = GetContainingZoneForPosition(bounds.center);
+
+            if (centerZone != null)
+                return centerZone;
+
             GeneratedZoneInfo bestRoomZone = null;
             float bestRoomOverlapArea = 0f;
 
@@ -1664,6 +1689,30 @@ namespace baodeag
                 return bestCoverageZone;
 
             return GetBestZoneForPosition(bounds.center);
+        }
+
+        private GeneratedZoneInfo GetContainingZoneForPosition(Vector3 position)
+        {
+            GeneratedZoneInfo containingZone = null;
+            float containingDistance = float.MaxValue;
+
+            for (int i = 0; i < generatedZones.Count; i++)
+            {
+                GeneratedZoneInfo zone = generatedZones[i];
+
+                if (zone == null || !zone.ContainsPosition(position))
+                    continue;
+
+                float distanceToCoverageCenter = zone.SqrDistanceToCoverageCenter(position);
+
+                if (distanceToCoverageCenter < containingDistance)
+                {
+                    containingDistance = distanceToCoverageCenter;
+                    containingZone = zone;
+                }
+            }
+
+            return containingZone;
         }
 
         private GeneratedZoneInfo GetBestZoneForPosition(Vector3 position)

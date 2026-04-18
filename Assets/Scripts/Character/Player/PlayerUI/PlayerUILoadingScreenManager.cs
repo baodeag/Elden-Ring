@@ -9,7 +9,11 @@ namespace baodeag
     {
         [SerializeField] GameObject loadingScreen;
         [SerializeField] CanvasGroup canvasGroup;
+        [Header("Loading Progress")]
+        [SerializeField] Slider progressBar;
+        [SerializeField] Text progressText;
         private Coroutine fadeLoadingScreenCoroutine;
+        private const string DefaultProgressLabel = "Loading";
 
 
         private void Start()
@@ -34,6 +38,22 @@ namespace baodeag
 
             canvasGroup.alpha = 1;
             loadingScreen.SetActive(true);
+            SetProgress(0, DefaultProgressLabel);
+        }
+
+        public void SetProgress(float progress, string label = DefaultProgressLabel)
+        {
+            progress = Mathf.Clamp01(progress);
+
+            if (progressBar != null)
+                progressBar.value = progress;
+
+            if (progressText != null)
+            {
+                int percent = Mathf.RoundToInt(progress * 100f);
+                string progressLabel = string.IsNullOrWhiteSpace(label) ? DefaultProgressLabel : label;
+                progressText.text = $"{progressLabel} {percent}%";
+            }
         }
 
         public void DeactivateLoadingScreen(float delay = 1)
@@ -47,6 +67,8 @@ namespace baodeag
                 StopCoroutine(fadeLoadingScreenCoroutine);
                 fadeLoadingScreenCoroutine = null;
             }
+
+            SetProgress(1, "Ready");
 
             //the duration is how long the fade will take, the delay is how long to wait before starting the fade
             fadeLoadingScreenCoroutine = StartCoroutine(FadeLoadingScreen(1, delay));
@@ -140,6 +162,7 @@ namespace baodeag
                 fadeLoadingScreenCoroutine = null;
             }
 
+            SetProgress(1, "Ready");
             canvasGroup.alpha = 0;
             loadingScreen.SetActive(false);
         }

@@ -15,6 +15,11 @@ namespace baodeag
 
         [Header("Players In Locations")]
         private Dictionary<WorldLocationSceneSet, List<PlayerManager>> playersInLocation = new Dictionary<WorldLocationSceneSet, List<PlayerManager>>();
+        private readonly Dictionary<WorldLocationSceneSet, float> recentlyVisitedLocations = new Dictionary<WorldLocationSceneSet, float>();
+        private Coroutine recentlyVisitedCleanupCoroutine;
+
+        [Header("Location Streaming")]
+        [SerializeField] private float recentlyVisitedLocationHoldTime = 12f;
 
         [Header("Probe Volumn Set")]
         [SerializeField] ProbeVolumeBakingSet bakeSet;
@@ -35,6 +40,13 @@ namespace baodeag
         {
             worldLocationRenderers.Clear();
             playersInLocation.Clear();
+            recentlyVisitedLocations.Clear();
+
+            if (recentlyVisitedCleanupCoroutine != null)
+            {
+                StopCoroutine(recentlyVisitedCleanupCoroutine);
+                recentlyVisitedCleanupCoroutine = null;
+            }
 
             PlayerManager[] players = FindObjectsByType<PlayerManager>(FindObjectsSortMode.None);
 
@@ -81,8 +93,36 @@ namespace baodeag
 
                 for (int j = 0; j < scenesRequired.Count; j++)
                 {
-                    doNotUnloadLocations.Add(scenesRequired[j]);
+                    if (!doNotUnloadLocations.Contains(scenesRequired[j]))
+                        doNotUnloadLocations.Add(scenesRequired[j]);
                 }
+            }
+
+            List<WorldLocationSceneSet> expiredRecentlyVisitedLocations = new List<WorldLocationSceneSet>();
+
+            foreach (KeyValuePair<WorldLocationSceneSet, float> pair in recentlyVisitedLocations)
+            {
+                if (pair.Key == null || Time.time >= pair.Value)
+                {
+                    expiredRecentlyVisitedLocations.Add(pair.Key);
+                    continue;
+                }
+
+                if (areasWithPlayersActive.Contains(pair.Key))
+                    continue;
+
+                List<string> scenesRequired = pair.Key.GetRequiredSceneIDsForWorldLocation();
+
+                for (int j = 0; j < scenesRequired.Count; j++)
+                {
+                    if (!doNotUnloadLocations.Contains(scenesRequired[j]))
+                        doNotUnloadLocations.Add(scenesRequired[j]);
+                }
+            }
+
+            for (int i = 0; i < expiredRecentlyVisitedLocations.Count; i++)
+            {
+                recentlyVisitedLocations.Remove(expiredRecentlyVisitedLocations[i]);
             }
 
             return doNotUnloadLocations;
@@ -98,7 +138,14 @@ namespace baodeag
 
             AddPlayerToNewLocation(areaCurrentlyIn, player);
 
-            LoadAdditiveScenesAroundCurrentArea(areaCurrentlyIn);
+            if (WorldSceneManager.instance.ShouldLoadGeneratedWorldAllAtOnce())
+            {
+                WorldSceneManager.instance.LoadAllGeneratedWorldAreaScenes();
+            }
+            else
+            {
+                LoadAdditiveScenesAroundCurrentArea(areaCurrentlyIn);
+            }
 
             WorldSceneManager.instance.CheckForUnrequiredScenes();
             WorldSceneManager.instance.CheckForRequiredRenderers();
@@ -119,8 +166,12 @@ namespace baodeag
             if (player == null)
                 return;
 
+            List<WorldLocationSceneSet> emptiedLocations = new List<WorldLocationSceneSet>();
+
             foreach (KeyValuePair<WorldLocationSceneSet, List<PlayerManager>> pair in playersInLocation)
             {
+                bool playerWasInLocation = pair.Value.Contains(player);
+
                 if (pair.Value.Contains(player))
                     pair.Value.Remove(player);
 
@@ -129,6 +180,14 @@ namespace baodeag
                     if (pair.Value[i] == null)
                         pair.Value.RemoveAt(i);
                 }
+
+                if (playerWasInLocation && pair.Value.Count <= 0 && pair.Key != null)
+                    emptiedLocations.Add(pair.Key);
+            }
+
+            for (int i = 0; i < emptiedLocations.Count; i++)
+            {
+                MarkLocationAsRecentlyVisited(emptiedLocations[i]);
             }
         }
 
@@ -157,6 +216,57 @@ namespace baodeag
                         pair.Value.RemoveAt(i);
                 }
             }
+        }
+
+        private void MarkLocationAsRecentlyVisited(WorldLocationSceneSet location)
+        {
+            if (location == null)
+                return;
+
+            recentlyVisitedLocations[location] = Time.time + recentlyVisitedLocationHoldTime;
+
+            if (recentlyVisitedCleanupCoroutine == null)
+                recentlyVisitedCleanupCoroutine = StartCoroutine(CleanupRecentlyVisitedLocationsCoroutine());
+        }
+
+        private IEnumerator CleanupRecentlyVisitedLocationsCoroutine()
+        {
+            while (recentlyVisitedLocations.Count > 0)
+            {
+                float nextExpiryTime = float.MaxValue;
+                List<WorldLocationSceneSet> expiredLocations = new List<WorldLocationSceneSet>();
+
+                foreach (KeyValuePair<WorldLocationSceneSet, float> pair in recentlyVisitedLocations)
+                {
+                    if (pair.Key == null || Time.time >= pair.Value)
+                    {
+                        expiredLocations.Add(pair.Key);
+                        continue;
+                    }
+
+                    if (pair.Value < nextExpiryTime)
+                        nextExpiryTime = pair.Value;
+                }
+
+                for (int i = 0; i < expiredLocations.Count; i++)
+                {
+                    recentlyVisitedLocations.Remove(expiredLocations[i]);
+                }
+
+                if (expiredLocations.Count > 0 && WorldSceneManager.instance != null)
+                {
+                    WorldSceneManager.instance.CheckForUnrequiredScenes();
+                    WorldSceneManager.instance.CheckForRequiredRenderers();
+                }
+
+                if (recentlyVisitedLocations.Count <= 0)
+                    break;
+
+                float waitTime = Mathf.Max(0.25f, nextExpiryTime - Time.time);
+                yield return new WaitForSeconds(waitTime);
+            }
+
+            recentlyVisitedCleanupCoroutine = null;
         }
 
         private void LoadAdditiveScenesAroundCurrentArea(WorldLocationSceneSet area)

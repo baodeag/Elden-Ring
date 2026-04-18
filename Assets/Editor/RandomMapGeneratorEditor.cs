@@ -11,6 +11,11 @@ namespace baodeag
     public class RandomMapGeneratorEditor : UnityEditor.Editor
     {
         private const string WorldLocationRendererPrefabPath = "Assets/Prefabs/World Managers/World Location Renderer.prefab";
+        private const int RoomPreloadPreviousRadius = 2;
+        private const int RoomPreloadNextRadius = 4;
+        private const int LoadAllRoomsWhenRoomCountAtMost = 6;
+        private const float SceneTriggerPaddingXZ = 12f;
+        private const float SceneTriggerPaddingY = 6f;
 
         // ── Foldout states ────────────────────────────────────────────────
         private bool foldTileset = true;
@@ -34,6 +39,7 @@ namespace baodeag
         private SerializedProperty propConfig;
         private SerializedProperty propWorldSceneName;
         private SerializedProperty propAreaName;
+        private SerializedProperty propGeneratedSiteOfGraceID;
 
         private void OnEnable()
         {
@@ -41,6 +47,7 @@ namespace baodeag
             propConfig = serializedObject.FindProperty("config");
             propWorldSceneName = serializedObject.FindProperty("worldSceneName");
             propAreaName = serializedObject.FindProperty("areaName");
+            propGeneratedSiteOfGraceID = serializedObject.FindProperty("generatedSiteOfGraceID");
         }
 
         public override void OnInspectorGUI()
@@ -224,6 +231,12 @@ namespace baodeag
             DrawSectionHeader("📂  THÔNG TIN XUẤT RA");
             EditorGUILayout.PropertyField(propWorldSceneName, new GUIContent("World Scene Name", "Tên scene thế giới (World_02, World_03…)"));
             EditorGUILayout.PropertyField(propAreaName, new GUIContent("Area Name", "Tên khu vực (Area_02, Area_03…)"));
+
+            EditorGUILayout.Space(4);
+            DrawConfigSection("Site Of Grace", () =>
+            {
+                EditorGUILayout.PropertyField(propGeneratedSiteOfGraceID, new GUIContent("Generated Site Of Grace ID", "ID ghi vao SiteOfGraceInteractable khi generate"));
+            });
 
             EditorGUILayout.Space(2);
 
@@ -435,8 +448,9 @@ namespace baodeag
                     return;
                 }
 
+                SetupWorldLocationSceneSetsAndTriggers(gen);
                 CleanupExportedMapFromMainScene(gen);
-                UpdateWorldAdditiveSceneBootstrap(gen, exportedSceneNames);
+                DisableWorldAdditiveSceneBootstrap(gen);
                 AddScenesToBuildSettings(exportedScenePaths);
                 EditorSceneManager.SaveScene(gen.gameObject.scene);
                 AssetDatabase.Refresh();
@@ -645,6 +659,11 @@ namespace baodeag
                 return string.Empty;
 
             Bounds objectBounds = GetObjectBounds(go);
+            string centerZoneName = GetZoneNameContainingPosition(gen, objectBounds.center);
+
+            if (!string.IsNullOrEmpty(centerZoneName))
+                return centerZoneName;
+
             GeneratedZoneInfo bestRoomZone = null;
             float bestRoomOverlapArea = 0f;
 
@@ -713,6 +732,30 @@ namespace baodeag
                 return nearestZone.zoneName;
 
             return string.Empty;
+        }
+
+        private string GetZoneNameContainingPosition(RandomMapGenerator gen, Vector3 position)
+        {
+            GeneratedZoneInfo containingZone = null;
+            float containingDistance = float.MaxValue;
+
+            for (int i = 0; i < gen.generatedZones.Count; i++)
+            {
+                GeneratedZoneInfo zone = gen.generatedZones[i];
+
+                if (zone == null || !zone.ContainsPosition(position))
+                    continue;
+
+                float distance = zone.SqrDistanceToCoverageCenter(position);
+
+                if (distance < containingDistance)
+                {
+                    containingDistance = distance;
+                    containingZone = zone;
+                }
+            }
+
+            return containingZone != null ? containingZone.zoneName : string.Empty;
         }
 
         private Bounds GetObjectBounds(GameObject go)
@@ -800,6 +843,32 @@ namespace baodeag
             EditorSceneManager.MarkSceneDirty(gen.gameObject.scene);
         }
 
+        private void DisableWorldAdditiveSceneBootstrap(RandomMapGenerator gen)
+        {
+            if (gen == null)
+                return;
+
+            WorldAdditiveSceneBootstrap bootstrap = gen.GetComponent<WorldAdditiveSceneBootstrap>();
+
+            if (bootstrap == null)
+                return;
+
+            SerializedObject serializedBootstrap = new SerializedObject(bootstrap);
+            SerializedProperty additiveScenesProperty = serializedBootstrap.FindProperty("additiveScenesToLoad");
+            SerializedProperty loadOnStartProperty = serializedBootstrap.FindProperty("loadOnStart");
+
+            if (additiveScenesProperty != null)
+                additiveScenesProperty.arraySize = 0;
+
+            if (loadOnStartProperty != null)
+                loadOnStartProperty.boolValue = false;
+
+            serializedBootstrap.ApplyModifiedProperties();
+            EditorUtility.SetDirty(bootstrap);
+            EditorUtility.SetDirty(gen.gameObject);
+            EditorSceneManager.MarkSceneDirty(gen.gameObject.scene);
+        }
+
         private void AddScenesToBuildSettings(List<string> scenePaths)
         {
             if (scenePaths == null || scenePaths.Count == 0)
@@ -826,6 +895,212 @@ namespace baodeag
             }
 
             EditorBuildSettings.scenes = scenes.ToArray();
+        }
+
+        private void SetupWorldLocationSceneSetsAndTriggers(RandomMapGenerator gen)
+        {
+            if (gen == null || gen.generatedZones == null || gen.generatedZones.Count == 0)
+                return;
+
+            Dictionary<string, WorldLocationSceneSet> sceneSetsByZone = CreateWorldLocationSceneSets(gen);
+            AssignRequiredNeighborLocations(gen, sceneSetsByZone);
+            CreateWorldLocationTriggers(gen, sceneSetsByZone);
+        }
+
+        private Dictionary<string, WorldLocationSceneSet> CreateWorldLocationSceneSets(RandomMapGenerator gen)
+        {
+            const string dataRoot = "Assets/Data";
+            const string locationFolder = "Assets/Data/World Locations";
+            Dictionary<string, WorldLocationSceneSet> sceneSetsByZone = new Dictionary<string, WorldLocationSceneSet>();
+
+            if (!AssetDatabase.IsValidFolder(dataRoot))
+                AssetDatabase.CreateFolder("Assets", "Data");
+
+            if (!AssetDatabase.IsValidFolder(locationFolder))
+                AssetDatabase.CreateFolder(dataRoot, "World Locations");
+
+            for (int i = 0; i < gen.generatedZones.Count; i++)
+            {
+                GeneratedZoneInfo zone = gen.generatedZones[i];
+
+                if (zone == null || string.IsNullOrWhiteSpace(zone.zoneName))
+                    continue;
+
+                string assetPath = $"{locationFolder}/{zone.zoneName}.asset";
+                WorldLocationSceneSet sceneSet = AssetDatabase.LoadAssetAtPath<WorldLocationSceneSet>(assetPath);
+
+                if (sceneSet == null)
+                {
+                    sceneSet = ScriptableObject.CreateInstance<WorldLocationSceneSet>();
+                    AssetDatabase.CreateAsset(sceneSet, assetPath);
+                }
+
+                sceneSet.scenesRequiredForThisLocation.Clear();
+                sceneSet.scenesRequiredForThisLocation.Add($"{zone.zoneName}_Structure");
+                sceneSet.scenesRequiredForThisLocation.Add($"{zone.zoneName}_Props");
+                sceneSet.scenesRequiredForThisLocation.Add($"{zone.zoneName}_Effects");
+                sceneSet.scenesRequiredForThisLocation.Add($"{zone.zoneName}_Spawners");
+                EditorUtility.SetDirty(sceneSet);
+                sceneSetsByZone[zone.zoneName] = sceneSet;
+            }
+
+            AssetDatabase.SaveAssets();
+            return sceneSetsByZone;
+        }
+
+        private void AssignRequiredNeighborLocations(RandomMapGenerator gen, Dictionary<string, WorldLocationSceneSet> sceneSetsByZone)
+        {
+            if (sceneSetsByZone == null || sceneSetsByZone.Count == 0)
+                return;
+
+            for (int i = 0; i < gen.generatedZones.Count; i++)
+            {
+                GeneratedZoneInfo zone = gen.generatedZones[i];
+
+                if (zone == null || !sceneSetsByZone.TryGetValue(zone.zoneName, out WorldLocationSceneSet sceneSet))
+                    continue;
+
+                List<WorldLocationSceneSet> requiredLocations = new List<WorldLocationSceneSet>();
+
+                int firstPreloadIndex = gen.generatedZones.Count <= LoadAllRoomsWhenRoomCountAtMost
+                    ? 0
+                    : Mathf.Max(0, i - RoomPreloadPreviousRadius);
+                int lastPreloadIndex = gen.generatedZones.Count <= LoadAllRoomsWhenRoomCountAtMost
+                    ? gen.generatedZones.Count - 1
+                    : Mathf.Min(gen.generatedZones.Count - 1, i + RoomPreloadNextRadius);
+
+                for (int neighborIndex = firstPreloadIndex;
+                     neighborIndex <= lastPreloadIndex;
+                     neighborIndex++)
+                {
+                    if (neighborIndex == i)
+                        continue;
+
+                    GeneratedZoneInfo neighborZone = gen.generatedZones[neighborIndex];
+
+                    if (neighborZone != null &&
+                        sceneSetsByZone.TryGetValue(neighborZone.zoneName, out WorldLocationSceneSet neighborSceneSet) &&
+                        !requiredLocations.Contains(neighborSceneSet))
+                    {
+                        requiredLocations.Add(neighborSceneSet);
+                    }
+                }
+
+                SerializedObject serializedSceneSet = new SerializedObject(sceneSet);
+                SerializedProperty requiredLocationsProperty = serializedSceneSet.FindProperty("requiredLocations");
+                requiredLocationsProperty.arraySize = requiredLocations.Count;
+
+                for (int j = 0; j < requiredLocations.Count; j++)
+                {
+                    requiredLocationsProperty.GetArrayElementAtIndex(j).objectReferenceValue = requiredLocations[j];
+                }
+
+                serializedSceneSet.ApplyModifiedProperties();
+                EditorUtility.SetDirty(sceneSet);
+            }
+
+            AssetDatabase.SaveAssets();
+        }
+
+        private void CreateWorldLocationTriggers(RandomMapGenerator gen, Dictionary<string, WorldLocationSceneSet> sceneSetsByZone)
+        {
+            if (sceneSetsByZone == null || sceneSetsByZone.Count == 0)
+                return;
+
+            Transform triggerRoot = GetOrCreateSceneRoot(gen.gameObject.scene, "_SCENE_TRIGGERS").transform;
+            ClearAreaSceneTriggers(triggerRoot, gen.areaName);
+
+            for (int i = 0; i < gen.generatedZones.Count; i++)
+            {
+                GeneratedZoneInfo zone = gen.generatedZones[i];
+
+                if (zone == null || !sceneSetsByZone.TryGetValue(zone.zoneName, out WorldLocationSceneSet sceneSet))
+                    continue;
+
+                Bounds triggerBounds = GetZoneTriggerBounds(zone);
+                GameObject trigger = new GameObject($"Scene_Trigger_{zone.zoneName}");
+                SceneManager.MoveGameObjectToScene(trigger, gen.gameObject.scene);
+                trigger.transform.SetParent(triggerRoot, true);
+                trigger.transform.position = triggerBounds.center;
+                trigger.transform.rotation = Quaternion.identity;
+                trigger.transform.localScale = Vector3.one;
+                trigger.layer = 11;
+
+                BoxCollider collider = trigger.AddComponent<BoxCollider>();
+                collider.isTrigger = true;
+                collider.size = triggerBounds.size;
+                collider.center = Vector3.zero;
+
+                EventTriggerLoadScene loadTrigger = trigger.AddComponent<EventTriggerLoadScene>();
+                SerializedObject serializedTrigger = new SerializedObject(loadTrigger);
+                serializedTrigger.FindProperty("area").objectReferenceValue = sceneSet;
+                serializedTrigger.ApplyModifiedPropertiesWithoutUndo();
+                EditorUtility.SetDirty(loadTrigger);
+                EditorUtility.SetDirty(trigger);
+            }
+
+            EditorSceneManager.MarkSceneDirty(gen.gameObject.scene);
+        }
+
+        private GameObject GetOrCreateSceneRoot(Scene scene, string rootName)
+        {
+            GameObject[] roots = scene.GetRootGameObjects();
+
+            for (int i = 0; i < roots.Length; i++)
+            {
+                if (roots[i] != null && roots[i].name == rootName)
+                    return roots[i];
+            }
+
+            GameObject root = new GameObject(rootName);
+            SceneManager.MoveGameObjectToScene(root, scene);
+            return root;
+        }
+
+        private void ClearAreaSceneTriggers(Transform triggerRoot, string areaName)
+        {
+            if (triggerRoot == null)
+                return;
+
+            List<GameObject> triggersToDelete = new List<GameObject>();
+
+            foreach (Transform child in triggerRoot)
+            {
+                if (child != null && child.name.StartsWith($"Scene_Trigger_{areaName}_", System.StringComparison.OrdinalIgnoreCase))
+                    triggersToDelete.Add(child.gameObject);
+            }
+
+            for (int i = 0; i < triggersToDelete.Count; i++)
+            {
+                if (triggersToDelete[i] != null)
+                    DestroyImmediate(triggersToDelete[i]);
+            }
+        }
+
+        private Bounds GetZoneTriggerBounds(GeneratedZoneInfo zone)
+        {
+            Bounds triggerBounds = zone.zoneBounds;
+
+            if (zone.zoneVolumeObject != null)
+            {
+                BoxCollider collider = zone.zoneVolumeObject.GetComponent<BoxCollider>();
+
+                if (collider != null)
+                    triggerBounds = collider.bounds;
+                else
+                    triggerBounds = GetObjectBounds(zone.zoneVolumeObject);
+            }
+
+            if (zone.coverageBounds != null)
+            {
+                for (int i = 0; i < zone.coverageBounds.Count; i++)
+                {
+                    triggerBounds.Encapsulate(zone.coverageBounds[i]);
+                }
+            }
+
+            triggerBounds.Expand(new Vector3(SceneTriggerPaddingXZ, SceneTriggerPaddingY, SceneTriggerPaddingXZ));
+            return triggerBounds;
         }
 
         private bool TryCreateAdditiveExportScene(string sceneName, out Scene newScene)

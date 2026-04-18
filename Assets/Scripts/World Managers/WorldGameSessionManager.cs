@@ -171,9 +171,7 @@ namespace baodeag
 
             while ((PlayerUIManager.instance == null ||
                     PlayerUIManager.instance.localPlayer == null ||
-                    WorldObjectManager.instance == null ||
-                    WorldObjectManager.instance.sitesOfGrace == null ||
-                    WorldObjectManager.instance.sitesOfGrace.Count == 0) &&
+                    WorldObjectManager.instance == null) &&
                    elapsedTime < timeout)
             {
                 elapsedTime += Time.deltaTime;
@@ -184,6 +182,32 @@ namespace baodeag
             {
                 pendingMapEntryCoroutine = null;
                 yield break;
+            }
+
+            SetLoadingProgress(0.05f, "Loading Map");
+
+            bool loadGeneratedWorldAllAtOnce = WorldSceneManager.instance != null &&
+                                               WorldSceneManager.instance.ShouldLoadGeneratedWorldAllAtOnce();
+
+            if (loadGeneratedWorldAllAtOnce)
+            {
+                yield return WaitForRequiredAreaScenes(null, 30f, 0.05f, 0.75f);
+            }
+            else
+            {
+                WorldLocationSceneSet initialArea = TriggerInitialAreaLoadForPlayer(PlayerUIManager.instance.localPlayer);
+                yield return WaitForRequiredAreaScenes(initialArea, 30f, 0.05f, 0.55f);
+            }
+
+            elapsedTime = 0f;
+
+            while ((WorldObjectManager.instance == null ||
+                    WorldObjectManager.instance.sitesOfGrace == null ||
+                    WorldObjectManager.instance.sitesOfGrace.Count == 0) &&
+                   elapsedTime < timeout)
+            {
+                elapsedTime += Time.deltaTime;
+                yield return null;
             }
 
             SiteOfGraceInteractable targetSiteOfGrace = null;
@@ -212,16 +236,195 @@ namespace baodeag
                 localPlayer.playerNetworkManager.lastSiteOfGraceUsed.Value = targetSiteOfGrace.siteOfGraceID;
                 WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = targetSiteOfGrace.siteOfGraceID;
                 WorldSaveGameManager.instance.SaveGame();
+
+                // Wait one frame for the teleport position to take effect, then
+                // manually fire area loading so additive scenes are queued while
+                // the loading screen is still active (bypasses OnTriggerEnter
+                // timing issues and catches cases where the trigger collider is
+                // too small to overlap the spawn point).
+                yield return null;
+
+                if (loadGeneratedWorldAllAtOnce)
+                {
+                    if (WorldSceneManager.instance != null)
+                        WorldSceneManager.instance.CheckForRequiredRenderers();
+
+                    SetLoadingProgress(0.95f, "Loading Map");
+                }
+                else
+                {
+                    WorldLocationSceneSet entryArea = TriggerNearestAreaLoadForPlayer(localPlayer, targetSiteOfGrace.transform.position);
+                    yield return WaitForRequiredAreaScenes(entryArea, 30f, 0.55f, 0.95f);
+                }
+            }
+            else
+            {
+                SetLoadingProgress(0.95f, "Loading Map");
+                yield return new WaitForSeconds(4f);
             }
 
-            // Give the new world scene and additive areas extra time to finish creating
-            // objects before revealing gameplay.
-            yield return new WaitForSeconds(4f);
-
             if (PlayerUIManager.instance != null)
+            {
+                SetLoadingProgress(1f, "Ready");
                 PlayerUIManager.instance.playerUILoadingScreenManager.DeactivateLoadingScreen(2.5f);
+            }
 
             pendingMapEntryCoroutine = null;
+        }
+
+        /// <summary>
+        /// Finds the nearest EventTriggerLoadScene to <paramref name="origin"/> within
+        /// <paramref name="searchRadius"/> metres and manually fires area loading for
+        /// <paramref name="player"/>. This is called right after a world-transition
+        /// teleport so that additive sub-scenes start loading while a loading screen
+        /// is still covering the screen.
+        /// </summary>
+        private WorldLocationSceneSet TriggerNearestAreaLoadForPlayer(PlayerManager player, Vector3 origin, float searchRadius = 120f)
+        {
+            EventTriggerLoadScene[] allTriggers = FindObjectsByType<EventTriggerLoadScene>(FindObjectsSortMode.None);
+
+            EventTriggerLoadScene nearest = null;
+            float nearestDistSq = searchRadius * searchRadius;
+
+            for (int i = 0; i < allTriggers.Length; i++)
+            {
+                if (allTriggers[i] == null)
+                    continue;
+
+                Collider triggerCollider = allTriggers[i].GetComponent<Collider>();
+                float distSq = (allTriggers[i].transform.position - origin).sqrMagnitude;
+
+                if (triggerCollider != null)
+                {
+                    Vector3 closestPoint = triggerCollider.ClosestPoint(origin);
+                    distSq = (closestPoint - origin).sqrMagnitude;
+
+                    if (distSq <= 0.01f)
+                    {
+                        nearest = allTriggers[i];
+                        break;
+                    }
+                }
+
+                if (distSq < nearestDistSq)
+                {
+                    nearestDistSq = distSq;
+                    nearest = allTriggers[i];
+                }
+            }
+
+            if (nearest != null)
+            {
+                nearest.ManualTriggerForPlayer(player);
+                return nearest.GetArea();
+            }
+
+            return null;
+        }
+
+        private WorldLocationSceneSet TriggerInitialAreaLoadForPlayer(PlayerManager player)
+        {
+            EventTriggerLoadScene[] allTriggers = FindObjectsByType<EventTriggerLoadScene>(FindObjectsSortMode.None);
+            EventTriggerLoadScene firstTrigger = null;
+
+            for (int i = 0; i < allTriggers.Length; i++)
+            {
+                EventTriggerLoadScene trigger = allTriggers[i];
+
+                if (trigger == null)
+                    continue;
+
+                if (firstTrigger == null ||
+                    string.Compare(trigger.name, firstTrigger.name, System.StringComparison.OrdinalIgnoreCase) < 0)
+                {
+                    firstTrigger = trigger;
+                }
+            }
+
+            if (firstTrigger == null)
+                return null;
+
+            firstTrigger.ManualTriggerForPlayer(player);
+            return firstTrigger.GetArea();
+        }
+
+        private IEnumerator WaitForRequiredAreaScenes(WorldLocationSceneSet area, float timeout, float startProgress = 0.1f, float endProgress = 0.95f)
+        {
+            List<string> requiredScenes = area != null
+                ? area.GetRequiredSceneIDsForWorldLocation()
+                : new List<string>();
+
+            if (WorldSceneManager.instance != null && WorldSceneManager.instance.ShouldLoadGeneratedWorldAllAtOnce())
+            {
+                WorldSceneManager.instance.LoadAllGeneratedWorldAreaScenes();
+                requiredScenes = WorldSceneManager.instance.GetGeneratedWorldAreaSceneNames();
+            }
+            else if (area == null)
+            {
+                SetLoadingProgress(endProgress, "Loading Map");
+                yield return new WaitForSeconds(4f);
+                yield break;
+            }
+
+            float elapsedTime = 0f;
+            SetLoadingProgress(startProgress, "Loading Map");
+
+            while (elapsedTime < timeout)
+            {
+                bool allScenesLoaded = true;
+                int requiredSceneCount = 0;
+                int loadedSceneCount = 0;
+
+                for (int i = 0; i < requiredScenes.Count; i++)
+                {
+                    if (string.IsNullOrWhiteSpace(requiredScenes[i]))
+                        continue;
+
+                    requiredSceneCount++;
+                    Scene scene = SceneManager.GetSceneByName(requiredScenes[i]);
+
+                    if (scene.IsValid() && scene.isLoaded)
+                    {
+                        loadedSceneCount++;
+                    }
+                    else
+                    {
+                        allScenesLoaded = false;
+                    }
+                }
+
+                float sceneProgress = requiredSceneCount <= 0 ? 1f : (float)loadedSceneCount / requiredSceneCount;
+                SetLoadingProgress(Mathf.Lerp(startProgress, endProgress, sceneProgress), "Loading Map");
+
+                if (allScenesLoaded)
+                {
+                    if (WorldSceneManager.instance != null)
+                        WorldSceneManager.instance.CheckForRequiredRenderers();
+
+                    SetLoadingProgress(endProgress, "Loading Map");
+                    yield return null;
+                    yield break;
+                }
+
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            Debug.LogWarning($"WorldGameSessionManager: Timed out while waiting for required area scenes for '{area.name}'. Continuing so the player is not stuck on the loading screen.");
+
+            if (WorldSceneManager.instance != null)
+                WorldSceneManager.instance.CheckForRequiredRenderers();
+
+            SetLoadingProgress(endProgress, "Loading Map");
+            yield return null;
+        }
+
+        private void SetLoadingProgress(float progress, string label)
+        {
+            if (PlayerUIManager.instance == null || PlayerUIManager.instance.playerUILoadingScreenManager == null)
+                return;
+
+            PlayerUIManager.instance.playerUILoadingScreenManager.SetProgress(progress, label);
         }
 
         private IEnumerator ReturnToTitleAfterVictoryCoroutine(float delay)
