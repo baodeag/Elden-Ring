@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 217c17ecd7b347442b8422de26793538, type: 3}
+  m_Name: Polygon_Hood_13
+  m_EditorClassIdentifier: 
+  itemName: Polygon Hood 13
+  itemIcon: {fileID: 21300000, guid: aa401913696fdd143942ff297b3dd1c4, type: 3}
+  itemDescription: 
+  itemID: -1
+  itemWeight: 2.5
+  physicalDamageAbsorption: 2.5
+  magicDamageAbsorption: 2.12
+  fireDamageAbsorption: 2.12
+  lightningDamageAbsorption: 1.88
+  holyDamageAbsorption: 1.88
+  immunity: 6
+  robustness: 11
+  focus: 4
+  vitality: 4
+  poise: 3
+  equipmentModels:
+  - {fileID: 11400000, guid: a32cb20bce704ea98dca1cac7dbe2e92, type: 2}
+  headEquipmentType: 2

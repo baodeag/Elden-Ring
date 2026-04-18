@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 264bcc99cbfd10941b38e98b17f23827, type: 3}
+  m_Name: Polygon_Armor_26
+  m_EditorClassIdentifier: 
+  itemName: Polygon Armor 26
+  itemIcon: {fileID: 21300000, guid: b2e3770e6c09eff4080afa88acb94b17, type: 3}
+  itemDescription: 
+  itemID: -1
+  itemWeight: 8
+  physicalDamageAbsorption: 8
+  magicDamageAbsorption: 6.8
+  fireDamageAbsorption: 6.8
+  lightningDamageAbsorption: 6
+  holyDamageAbsorption: 6
+  immunity: 20
+  robustness: 36
+  focus: 12
+  vitality: 12
+  poise: 16
+  equipmentModels:
+  - {fileID: 11400000, guid: 5e98a48941e54e979caff7448d293c4c, type: 2}
