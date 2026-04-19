@@ -19,17 +19,13 @@ namespace baodeag
         public void PlaceWeaponModelIntoSlot(GameObject weaponModel)
         {
             currentWeaponModel = weaponModel;
-            weaponModel.transform.parent = transform;
-
-            weaponModel.transform.localPosition = Vector3.zero;
-            weaponModel.transform.localRotation = Quaternion.identity;
-            weaponModel.transform.localScale = Vector3.one;
+            weaponModel.transform.SetParent(transform, false);
         }
 
         public void PlaceWeaponModelInUnequippedSlot(GameObject weaponModel, WeaponClass weaponClass, PlayerManager player)
         {
             currentWeaponModel = weaponModel;
-            weaponModel.transform.parent = transform;
+            weaponModel.transform.SetParent(transform, false);
 
             switch (weaponClass)
             {
