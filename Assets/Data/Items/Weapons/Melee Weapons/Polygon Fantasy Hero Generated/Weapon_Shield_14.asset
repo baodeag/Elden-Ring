@@ -15,23 +15,23 @@ MonoBehaviour:
   itemName: Polygon Shield 14
   itemIcon: {fileID: 21300000, guid: 6f49fe118643fcb4c9f78638e34b26b2, type: 3}
   itemDescription: 
-  itemID: -1
-  itemWeight: 5
+  itemID: 1020
+  itemWeight: 6.5
   weaponAnimator: {fileID: 22100000, guid: 00b7c2d9ad64ddf4da7744ae13bb005e, type: 2}
   weaponModelType: 1
-  weaponModel: {fileID: 3129524049806679696, guid: 08d8359bce844129b8c43e29e73df43e, type: 3}
+  weaponModel: {fileID: 3655762614452610535, guid: 08d8359bce844129b8c43e29e73df43e, type: 3}
   weaponClass: 2
   upgradeLevel: 0
-  strengthREQ: 10
+  strengthREQ: 12
   dexREQ: 8
   intREQ: 0
   faithREQ: 0
-  physicalDamage: 76
+  physicalDamage: 72
   magicDamage: 0
   fireDamage: 0
   holyDamage: 0
   lightningDamage: 0
-  poiseDamage: 25
+  poiseDamage: 26
   light_Attack_01_Modifier: 1.1
   light_Attack_02_Modifier: 1.2
   light_Jumping_Attack_01_Modifier: 1
@@ -50,18 +50,18 @@ MonoBehaviour:
   dw_Roll_Attack_01_Modifier: 0.72
   dw_Backstep_Attack_01_Modifier: 0.77
   baseStaminaCost: 18
-  lightAttackStaminaCostMultiplier: 0.9
+  lightAttackStaminaCostMultiplier: 1
   heavyAttackStaminaCostMultiplier: 1.3
   chargedAttackStaminaCostMultiplier: 1.5
   runningAttackStaminaCostMultiplier: 1.1
-  rollingAttackStaminaCostMultiplier: 1.1
-  backstepAttackStaminaCostMultiplier: 1.1
-  physicalBaseDamageAbsorption: 82
-  magicBaseDamageAbsorption: 60
-  fireBaseDamageAbsorption: 68
-  lightningBaseDamageAbsorption: 58
-  holyBaseDamageAbsorption: 58
-  stability: 55
+  rollingAttackStaminaCostMultiplier: 1.05
+  backstepAttackStaminaCostMultiplier: 1.05
+  physicalBaseDamageAbsorption: 86
+  magicBaseDamageAbsorption: 55
+  fireBaseDamageAbsorption: 52
+  lightningBaseDamageAbsorption: 48
+  holyBaseDamageAbsorption: 52
+  stability: 58
   oh_RB_Action: {fileID: 11400000, guid: 7ded38d00ecd2fb4bb1d9c059955ab0f, type: 2}
   oh_RT_Action: {fileID: 11400000, guid: 0c09a584d46b74442a155e216ac45ba7, type: 2}
   oh_LB_Action: {fileID: 11400000, guid: cfe3d18711ba1614d9476db6ca13f85b, type: 2}

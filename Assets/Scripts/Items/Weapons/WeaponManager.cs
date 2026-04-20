@@ -15,7 +15,7 @@ namespace baodeag
 
         private void Awake()
         {
-            meleeDamageCollider = GetComponentInChildren<MeleeWeaponDamageCollider>();
+            meleeDamageCollider = GetComponentInChildren<MeleeWeaponDamageCollider>(true);
         }
 
         public void SetWeaponDamage(CharacterManager characterWieldingWeapon, WeaponItem weapon)

@@ -57,7 +57,11 @@ namespace baodeag
 
                     //re-equip the new weapon if wea are holding the current weapon in this slot
                     if (player.playerInventoryManager.rightHandWeaponIndex == 0)
+                    {
+                        player.playerInventoryManager.currentRightHandWeapon = currentItem as WeaponItem;
                         player.playerNetworkManager.currentRightHandWeaponID.Value = currentItem.itemID;
+                        player.playerEquipmentManager.LoadRightWeapon();
+                    }
 
                     //refresh the equipment window
                     PlayerUIManager.instance.playerUIEquipmentManager.RefreshMenu();
@@ -79,7 +83,11 @@ namespace baodeag
 
                     //re-equip the new weapon if wea are holding the current weapon in this slot
                     if (player.playerInventoryManager.rightHandWeaponIndex == 1)
+                    {
+                        player.playerInventoryManager.currentRightHandWeapon = currentItem as WeaponItem;
                         player.playerNetworkManager.currentRightHandWeaponID.Value = currentItem.itemID;
+                        player.playerEquipmentManager.LoadRightWeapon();
+                    }
 
                     //refresh the equipment window
                     PlayerUIManager.instance.playerUIEquipmentManager.RefreshMenu();
@@ -101,7 +109,11 @@ namespace baodeag
 
                     //re-equip the new weapon if wea are holding the current weapon in this slot
                     if (player.playerInventoryManager.rightHandWeaponIndex == 2)
+                    {
+                        player.playerInventoryManager.currentRightHandWeapon = currentItem as WeaponItem;
                         player.playerNetworkManager.currentRightHandWeaponID.Value = currentItem.itemID;
+                        player.playerEquipmentManager.LoadRightWeapon();
+                    }
 
                     //refresh the equipment window
                     PlayerUIManager.instance.playerUIEquipmentManager.RefreshMenu();
@@ -123,7 +135,11 @@ namespace baodeag
 
                     //re-equip the new weapon if wea are holding the current weapon in this slot
                     if (player.playerInventoryManager.leftHandWeaponIndex == 0)
+                    {
+                        player.playerInventoryManager.currentLeftHandWeapon = currentItem as WeaponItem;
                         player.playerNetworkManager.currentLeftHandWeaponID.Value = currentItem.itemID;
+                        player.playerEquipmentManager.LoadLeftWeapon();
+                    }
 
                     //refresh the equipment window
                     PlayerUIManager.instance.playerUIEquipmentManager.RefreshMenu();
@@ -145,7 +161,11 @@ namespace baodeag
 
                     //re-equip the new weapon if wea are holding the current weapon in this slot
                     if (player.playerInventoryManager.leftHandWeaponIndex == 1)
+                    {
+                        player.playerInventoryManager.currentLeftHandWeapon = currentItem as WeaponItem;
                         player.playerNetworkManager.currentLeftHandWeaponID.Value = currentItem.itemID;
+                        player.playerEquipmentManager.LoadLeftWeapon();
+                    }
 
                     //refresh the equipment window
                     PlayerUIManager.instance.playerUIEquipmentManager.RefreshMenu();
@@ -167,7 +187,11 @@ namespace baodeag
 
                     //re-equip the new weapon if wea are holding the current weapon in this slot
                     if (player.playerInventoryManager.leftHandWeaponIndex == 2)
+                    {
+                        player.playerInventoryManager.currentLeftHandWeapon = currentItem as WeaponItem;
                         player.playerNetworkManager.currentLeftHandWeaponID.Value = currentItem.itemID;
+                        player.playerEquipmentManager.LoadLeftWeapon();
+                    }
 
                     //refresh the equipment window
                     PlayerUIManager.instance.playerUIEquipmentManager.RefreshMenu();

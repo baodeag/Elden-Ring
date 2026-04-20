@@ -9,6 +9,9 @@ namespace baodeag
 
         public virtual void AttemptToPerformAction(PlayerManager playerPerformingAction, WeaponItem weaponPerformingAction)
         {
+            if (playerPerformingAction == null || weaponPerformingAction == null)
+                return;
+
             if (playerPerformingAction.IsOwner)
             {
                 playerPerformingAction.playerNetworkManager.currentWeaponBeingUsed.Value = weaponPerformingAction.itemID;

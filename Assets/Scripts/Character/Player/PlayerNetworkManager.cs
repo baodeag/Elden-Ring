@@ -390,7 +390,20 @@ namespace baodeag
 
         public void OnCurrentWeaponBeingUsedIDChange(int oldID, int newID)
         {
-            WeaponItem newWeapon = Instantiate(WorldItemDatabase.Instance.GetWeaponByID(newID));
+            WeaponItem weaponTemplate = WorldItemDatabase.Instance.GetWeaponByID(newID);
+
+            if (weaponTemplate == null)
+            {
+                weaponTemplate = GetEquippedWeaponByID(newID);
+            }
+
+            if (weaponTemplate == null)
+            {
+                Debug.LogWarning($"Weapon being used with ID {newID} was not found in the World Item Database or equipped weapon slots.");
+                return;
+            }
+
+            WeaponItem newWeapon = Instantiate(weaponTemplate);
             player.playerCombatManager.currentWeaponBeingUsed = newWeapon;
 
             if (player.IsOwner)
@@ -398,6 +411,23 @@ namespace baodeag
 
             if (player.playerCombatManager.currentWeaponBeingUsed != null)
                 player.playerAnimatorManager.UpdateAnimatorController(player.playerCombatManager.currentWeaponBeingUsed.weaponAnimator);
+        }
+
+        private WeaponItem GetEquippedWeaponByID(int weaponID)
+        {
+            if (player.playerInventoryManager.currentRightHandWeapon != null &&
+                player.playerInventoryManager.currentRightHandWeapon.itemID == weaponID)
+                return player.playerInventoryManager.currentRightHandWeapon;
+
+            if (player.playerInventoryManager.currentLeftHandWeapon != null &&
+                player.playerInventoryManager.currentLeftHandWeapon.itemID == weaponID)
+                return player.playerInventoryManager.currentLeftHandWeapon;
+
+            if (player.playerInventoryManager.currentTwoHandWeapon != null &&
+                player.playerInventoryManager.currentTwoHandWeapon.itemID == weaponID)
+                return player.playerInventoryManager.currentTwoHandWeapon;
+
+            return null;
         }
 
         public void OnCurrentSpellIDChange(int oldID, int newID)
@@ -557,22 +587,27 @@ namespace baodeag
         {
             if (!isTwoHandingWeapon.Value)
             {
+                player.animator.SetBool("isTwoHandingWeapon", false);
+
                 if (IsOwner)
                 {
                     isTwoHandingLeftWeapon.Value = false;
                     isTwoHandingRightWeapon.Value = false;
+                    currentWeaponBeingTwoHanded.Value = 0;
                 }
 
+                player.playerInventoryManager.currentTwoHandWeapon = null;
                 player.playerEquipmentManager.UnTwoHandWeapon();
                 player.playerEffectsManager.RemoveStaticEffect(WorldCharacterEffectsManager.instance.twoHandingEffect.staticEffectID);
+                player.animator.SetBool("isTwoHandingWeapon", false);
+                player.animator.CrossFade("Empty", 0.2f);
             }
             else
             {
                 StaticCharacterEffect twoHandEffect = Instantiate(WorldCharacterEffectsManager.instance.twoHandingEffect);
                 player.playerEffectsManager.AddStaticEffect(twoHandEffect);
+                player.animator.SetBool("isTwoHandingWeapon", true);
             }
-
-            player.animator.SetBool("isTwoHandingWeapon", isTwoHandingWeapon.Value);
         }
 
         public void OnIsTwoHandingRightWeaponChanged(bool oldStatus, bool newStatus)
@@ -708,14 +743,18 @@ namespace baodeag
         private void PerformWeaponBasedAction(int actionID, int weaponID)
         {
             WeaponItemAction weaponAction = WorldActionManager.instance.GetWeaponItemActionByID(actionID);
+            WeaponItem weapon = WorldItemDatabase.Instance.GetWeaponByID(weaponID);
 
-            if (weaponAction != null)
+            if (weapon == null)
+                weapon = GetEquippedWeaponByID(weaponID);
+
+            if (weaponAction != null && weapon != null)
             {
-                weaponAction.AttemptToPerformAction(player, WorldItemDatabase.Instance.GetWeaponByID(weaponID));
+                weaponAction.AttemptToPerformAction(player, weapon);
             }
             else
             {
-                Debug.LogError("Action is null, cant be performed");
+                Debug.LogWarning($"Weapon action {actionID} could not be performed because action or weapon ID {weaponID} was not found.");
             }
         }
 

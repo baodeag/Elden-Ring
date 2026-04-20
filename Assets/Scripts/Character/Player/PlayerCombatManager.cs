@@ -96,10 +96,8 @@ namespace baodeag
         {
             base.CloseAllDamageColliders();
 
-            player.playerEquipmentManager.rightWeaponManager.ToggleWeaponTrail(false);
-            player.playerEquipmentManager.leftWeaponManager.ToggleWeaponTrail(false);
-            player.playerEquipmentManager.rightWeaponManager.meleeDamageCollider.DisableDamageCollider();
-            player.playerEquipmentManager.leftWeaponManager.meleeDamageCollider.DisableDamageCollider();
+            player.playerEquipmentManager.CloseMainHandDamageCollider();
+            player.playerEquipmentManager.CloseOffHandDamageCollider();
         }
 
         //critical attacks

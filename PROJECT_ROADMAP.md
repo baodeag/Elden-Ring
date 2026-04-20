@@ -3,7 +3,7 @@
 Tai lieu nay luu cac hang muc can lam de hoan thien he thong game.
 Cap nhat file nay moi khi chot them tinh nang, doi uu tien, hoac hoan thanh dau viec.
 
-> **Cap nhat lan cuoi: 2026-04-11 (doc lai project, xac minh progression config/build settings, shop tier scaling, buff HUD, va chot lai backlog content/data pass)**
+> **Cap nhat lan cuoi: 2026-04-20 (cap nhat weapon/armor content pass: import Polygon Fantasy Hero + Polygon Dungeon weapons, tao item data, collider/damage setup, shield setup, va dong bo held pivot theo `Weapon_Axe_01`)**
 
 ---
 
@@ -19,7 +19,7 @@ Muc tieu gameplay chinh:
 
 ---
 
-## Trang Thai Hien Tai (2026-04-11)
+## Trang Thai Hien Tai (2026-04-20)
 
 ### Da Hoan Thanh
 - [x] Core character system (Player + AI): stats, combat, locomotion, animation, network
@@ -50,6 +50,12 @@ Muc tieu gameplay chinh:
 - [x] Da fix runtime class armor leg visibility cho cac class ngoai `Knight`; preview va vao game khong con bi mat chan do mapping/model activation
 - [x] He thong buff charm da hoat dong day du cho 4 buff mac dinh (HP / Stamina / FP / Damage), moi buff co timed effect rieng va co save/load buff dang chay
 - [x] HUD buff feedback da co popup va active buff icon bang prefab UI trong `Player UI Manager.prefab`
+- [x] Da import va tao prefab/item data cho weapon tu `PolygonFantasyHeroCharacters` va `PolygonDungeon`
+- [x] Weapon prefab moi da co `WeaponManager`, damage collider, model/pivot hierarchy, item asset, va duoc add vao `World Item Database`
+- [x] Shield prefab moi da setup theo mau `Weapon_Medium_Shield_01`
+- [x] Non-shield melee weapon da dong bo held `Weapon Pivot` theo transform `Weapon_Axe_01` da duoc canh tay hop ly
+- [x] Da tach rieng nhom khong dong bo transform melee: `Shield`, `Bow`, `Unarmed`
+- [x] Armor tu `PolygonFantasyHeroCharacters` da duoc doc/lay vao pipeline content pass
 
 ### Chua Co / Chua Hoan Thanh
 - [ ] Chot visual polish cuoi cho character selection (class outfit fidelity, model preview consistency, UI wording)
@@ -62,6 +68,8 @@ Muc tieu gameplay chinh:
 - [ ] UI progression day du (map current, map unlocked, victory screen)
 - [ ] Merchant data pass that trong world/prefab (merchantID, stock, required tier)
 - [ ] Ra soat them 1 vong visual polish cho class-specific armor set sau khi da fix leg/runtime mapping (male/female, preview/in-game)
+- [ ] Playtest visual tung nhom weapon moi tren player animation thuc te (straight sword, axe, mace, staff/spear, dagger/knife, greatsword)
+- [ ] Balance chi so sat thuong/weight/price cho weapon moi sau khi da co prefab/item data
 - [ ] Content pass that cho `World_02` -> `World_05`: entry grace trong scene, boss/spawner/layout rieng, navmesh/lighting neu can
 - [ ] Playtest end-to-end progression 5 map tren Unity sau khi scene data duoc setup that
 
@@ -110,6 +118,13 @@ Muc tieu gameplay chinh:
 - [x] Da fix issue runtime class leg visibility bang cach map/model activation on dinh hon tren player runtime hierarchy
 - [x] Da bo sung HUD buff popup + active buff icon su dung serialized prefab UI, khong con phu thuoc icon tao runtime
 - [x] Da tach effectID rieng cho tung buff charm de `Guardian / Wind / Sage / War` hoat dong doc lap
+- [x] Da tao hang loat weapon prefab moi trong `Assets/Prefabs/Items/Weapons` tu Polygon Fantasy Hero va Polygon Dungeon
+- [x] Da tao item asset tuong ung trong `Assets/Data/Items/Weapons/Melee Weapons/Polygon Fantasy Hero Generated` va `Polygon Dungeon Generated`
+- [x] Da add generated weapons vao `Assets/Prefabs/World Managers/World Item Database.prefab`
+- [x] Da setup box damage collider khop mesh theo do dai/rong chinh cua weapon, tach can/phan sat thuong theo kha nang mesh bounds
+- [x] Da setup shield generated theo component/model transform cua `Weapon_Medium_Shield_01`
+- [x] Da dong bo held pivot cho 80 melee weapon non-shield theo transform `Weapon_Axe_01` da duoc canh bang tay
+- [x] `dotnet build '.\Elden Ring.sln'` pass sau weapon pivot sync, chi con warning cu khong lien quan
 
 ---
 
@@ -207,6 +222,23 @@ Muc tieu gameplay chinh:
 
 ## Supporting Systems Needed
 
+### Weapon / Armor Content
+- Weapon content:
+  - [x] Import weapon tu Polygon Fantasy Hero.
+  - [x] Import weapon tu Polygon Dungeon.
+  - [x] Tao prefab trong `Assets/Prefabs/Items/Weapons`.
+  - [x] Tao item data trong `Assets/Data/Items/Weapons/Melee Weapons`.
+  - [x] Add weapon moi vao `World Item Database`.
+  - [x] Add `WeaponManager` + damage collider.
+  - [x] Setup shield theo mau `Weapon_Medium_Shield_01`.
+  - [x] Dong bo held pivot cho melee weapon theo `Weapon_Axe_01`.
+  - [ ] Playtest tung weapon family tren animation idle/attack/roll/backstab/riposte.
+  - [ ] Balance damage/stamina/price/upgrade scaling cho weapon moi.
+- Armor content:
+  - [x] Doc va lay armor tu `PolygonFantasyHeroCharacters`.
+  - [ ] Chot armor set dung cho 5 starting class va merchant/drop pool.
+  - [ ] Ra soat visual male/female/preview/in-game sau khi gan vao player.
+
 ### Economy And Progression
 - Rune balance cho quai thuong, elite, boss.
 - Bang gia item va upgrade.
@@ -280,6 +312,17 @@ Muc tieu gameplay chinh:
 - [ ] Chot UI copy/presentation cho 5 class.
 - [ ] Chot visual pass cuoi cho armor preview fidelity sau khi da fix leg/runtime mapping.
 
+### Phase 2B. Weapon / Armor Content Pass *(DA CO NEN TANG, CAN PLAYTEST/BALANCE)*
+- [x] Import va tao prefab/item data cho Polygon Fantasy Hero weapons.
+- [x] Import va tao prefab/item data cho Polygon Dungeon weapons.
+- [x] Setup damage collider cho weapon moi.
+- [x] Setup shield theo mau `Weapon_Medium_Shield_01`.
+- [x] Dong bo held transform melee weapon theo `Weapon_Axe_01`.
+- [ ] Playtest weapon moi tren player: idle, walk/run, attack, two-hand, back slot, riposte/backstab.
+- [ ] Chia weapon moi vao shop/drop/loadout theo progression tier.
+- [ ] Balance stat item: base damage, stamina cost, weight, price, upgrade curve.
+- [ ] Hoan thien armor set/loadout cho class va merchant/drop pool.
+
 ### Phase 3. Settings *(DONE co ban)*
 - [x] Tao settings menu trong title menu.
 - [x] Luu settings persistent.
@@ -317,6 +360,8 @@ Muc tieu gameplay chinh:
 ## Concrete Task Backlog
 
 ### Immediate (Lam Ngay)
+- [ ] **[P1]** Playtest nhanh weapon moi sau pivot sync: equip `Weapon_Axe_01`, sword, staff/spear, mace/hammer, dagger/knife, greatsword de xac nhan khong con lech sau lung/player hand.
+- [ ] **[P1]** Xac minh two-hand/back-slot behavior cho weapon moi, vi pivot cam tay da on nhung slot sau lung co transform rieng theo `WeaponClass`.
 - [ ] **[P1]** Mo tung scene `World_02` -> `World_05` trong Unity va xac minh/gan dung entry `siteOfGraceID` theo config `100 / 200 / 300 / 400`.
 - [ ] **[P1]** Xac minh boss, fog wall, wake trigger trong tung world scene dang dung `bossID = sceneBuildIndex - 1`.
 - [ ] **[P1]** Lam content pass playable cho `World_02` -> `World_05`: layout toi thieu khac nhau, spawner khac nhau, boss arena khac nhau, entry spawn an toan.
@@ -326,6 +371,8 @@ Muc tieu gameplay chinh:
 - [ ] **[P2]** Dien merchant custom stock cho cac NPC trong `World_01`/prefab va quyet dinh co tiep tuc `useGlobalPurchasableItems` hay chuyen sang curated stock.
 - [ ] **[P2]** Gan/ra soat `merchantID`, `autoScaleShopTierFromProgression`, `shopTierOffset`, `requiredProgressionTier` cho merchant stock that.
 - [ ] **[P2]** Chot bang gia economy pass 1: rune drop, level up cost, shop price, weapon upgrade cost.
+- [ ] **[P2]** Gan weapon/armor moi vao shop/drop/loadout theo map tier.
+- [ ] **[P2]** Balance weapon moi: damage, stamina modifier, price, upgrade pacing.
 - [ ] **[P3]** Chot UI copy + visual polish cho man hinh 5 class.
 - [ ] **[P3]** Ra soat lai visual 5 class sau khi fix leg/runtime mapping (preview, vao game, male/female neu can).
 - [ ] **[P3]** Them progression UI day du: current map, unlocked maps, boss defeated state.
@@ -358,8 +405,15 @@ Muc tieu gameplay chinh:
 - [x] Them buff popup + active buff icons vao HUD bang prefab UI.
 - [x] Ra soat lai roadmap/project ngay 2026-04-11 va xac nhan config progression/build settings dang khop voi muc tieu 5 map.
 - [x] Xac nhan merchant prefab hien co da co `merchantID`, auto tier scaling, va checklist setup rieng.
+- [x] Import/setup weapon moi tu Polygon Fantasy Hero + Polygon Dungeon vao prefab/item database.
+- [x] Setup damage collider va `WeaponManager` cho weapon generated.
+- [x] Setup shield generated theo mau `Weapon_Medium_Shield_01`.
+- [x] Dong bo pivot cam tay cho melee weapon non-shield theo `Weapon_Axe_01` da canh bang tay.
+- [x] Build pass sau content/pivot sync weapon.
 
 ### Next (Lam Sau Immediate)
+- [ ] Playtest weapon generated theo family va tinh chinh rieng cac model neu co mesh/origin qua khac.
+- [ ] Gan weapon/armor generated vao merchant/drop/loadout progression.
 - [ ] Sua/cap nhat `MAP_CONTENT_PASS_CHECKLIST.md` cho khop config entry grace hien tai.
 - [ ] Them data balance day du cho rune, level up, shop price sau khi playtest progression.
 - [ ] Them UI progression day du ngoai popup (`map current`, `maps unlocked`, `boss defeated`).
@@ -403,7 +457,8 @@ Thu tu toi uu sau khi doc lai project ngay 2026-04-11:
 3. **[P2] Hoan thien merchant stock va shop balance** (curated stock, required tier, price/rune pacing)
 4. **[P2] Progression UI day du** (`map current`, `maps unlocked`, `boss defeated`, victory screen rieng)
 5. **[P3] Character selection visual pass** (class outfit fidelity, preview/in-game consistency, UI wording)
-6. **[P4] Buff charm / combat feedback polish** (icon art set, timer/readability, balancing)
+6. **[P3] Weapon/armor content pass** (playtest generated weapons, balance stats, assign shop/drop/loadout tiers)
+7. **[P4] Buff charm / combat feedback polish** (icon art set, timer/readability, balancing)
 
 ---
 
@@ -433,6 +488,9 @@ Thu tu toi uu sau khi doc lai project ngay 2026-04-11:
 | Merchant NPC trong world | **Co prefab/checklist va auto tier scaling, can custom stock/data pass** |
 | Class outfit / armor preview | **Da co data + flow day du, runtime leg mapping da on dinh; con 1 vong visual polish cuoi** |
 | Buff charm system | **Da hoat dong + co HUD popup/icon, can polish art/balance** |
+| Generated weapon content | **Da import/setup prefab + item data + database; melee held pivot da dong bo theo `Weapon_Axe_01`; can playtest family/balance** |
+| Generated shield content | **Da setup theo mau `Weapon_Medium_Shield_01`; can playtest left-hand/block visual** |
+| Armor content | **Da doc/lay tu Polygon Fantasy Hero pipeline; can chot set/drop/shop/class loadout** |
 
 
 

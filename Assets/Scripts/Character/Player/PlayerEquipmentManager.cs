@@ -1167,6 +1167,7 @@ namespace baodeag
                 else
                 {
                     player.playerInventoryManager.rightHandWeaponIndex = firstWeaponPosition;
+                    selectedWeapon = firstWeapon;
                     player.playerInventoryManager.currentRightHandWeapon = selectedWeapon;
                     player.playerNetworkManager.currentRightHandWeaponID.Value = firstWeapon.itemID;
                 }
@@ -1218,6 +1219,9 @@ namespace baodeag
                 rightHandWeaponModel = Instantiate(weaponModelPrefab);
                 rightHandWeaponSlot.PlaceWeaponModelIntoSlot(rightHandWeaponModel);
                 rightWeaponManager = rightHandWeaponModel.GetComponent<WeaponManager>();
+
+                if (rightWeaponManager == null)
+                    rightWeaponManager = rightHandWeaponModel.GetComponentInChildren<WeaponManager>(true);
 
                 if (rightWeaponManager != null)
                     rightWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentRightHandWeapon);
@@ -1274,6 +1278,7 @@ namespace baodeag
                 else
                 {
                     player.playerInventoryManager.leftHandWeaponIndex = firstWeaponPosition;
+                    selectedWeapon = firstWeapon;
                     player.playerInventoryManager.currentLeftHandWeapon = selectedWeapon;
                     player.playerNetworkManager.currentLeftHandWeaponID.Value = firstWeapon.itemID;
                 }
@@ -1342,6 +1347,9 @@ namespace baodeag
 
                 leftWeaponManager = leftHandWeaponModel.GetComponent<WeaponManager>();
 
+                if (leftWeaponManager == null)
+                    leftWeaponManager = leftHandWeaponModel.GetComponentInChildren<WeaponManager>(true);
+
                 if (leftWeaponManager != null)
                     leftWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentLeftHandWeapon);
             }
@@ -1365,8 +1373,11 @@ namespace baodeag
             //right hand
             rightHandWeaponSlot.PlaceWeaponModelIntoSlot(rightHandWeaponModel);
 
-            rightWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentRightHandWeapon);
-            leftWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentLeftHandWeapon);
+            if (rightWeaponManager != null)
+                rightWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentRightHandWeapon);
+
+            if (leftWeaponManager != null)
+                leftWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentLeftHandWeapon);
         }
 
         public void TwoHandRightWeapon()
@@ -1388,8 +1399,11 @@ namespace baodeag
 
             rightHandWeaponSlot.PlaceWeaponModelIntoSlot(rightHandWeaponModel);
 
-            rightWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentRightHandWeapon);
-            leftWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentLeftHandWeapon);
+            if (rightWeaponManager != null)
+                rightWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentRightHandWeapon);
+
+            if (leftWeaponManager != null)
+                leftWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentLeftHandWeapon);
         }
 
         public void TwoHandLeftWeapon()
@@ -1410,8 +1424,11 @@ namespace baodeag
             
             rightHandWeaponSlot.PlaceWeaponModelIntoSlot(leftHandWeaponModel);
 
-            rightWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentRightHandWeapon);
-            leftWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentLeftHandWeapon);
+            if (rightWeaponManager != null)
+                rightWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentRightHandWeapon);
+
+            if (leftWeaponManager != null)
+                leftWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentLeftHandWeapon);
         }
 
         //damage colliders
@@ -1421,16 +1438,16 @@ namespace baodeag
             //open right weapon damage collider
             if (player.playerNetworkManager.isUsingRightHand.Value)
             {
-                rightWeaponManager.ToggleWeaponTrail(true);
-                rightWeaponManager.meleeDamageCollider.EnableDamageCollider();
-                player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(player.playerInventoryManager.currentRightHandWeapon.whooshes));
+                OpenWeaponDamageCollider(ref rightWeaponManager, rightHandWeaponModel, player.playerInventoryManager.currentRightHandWeapon);
             }
             //open left weapon damage collider
             else if (player.playerNetworkManager.isUsingLeftHand.Value)
             {
-                leftWeaponManager.ToggleWeaponTrail(true);
-                leftWeaponManager.meleeDamageCollider.EnableDamageCollider();
-                player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(player.playerInventoryManager.currentLeftHandWeapon.whooshes));
+                OpenWeaponDamageCollider(ref leftWeaponManager, leftHandWeaponModel, player.playerInventoryManager.currentLeftHandWeapon);
+            }
+            else
+            {
+                OpenMainHandDamageCollider();
             }
         }
 
@@ -1439,39 +1456,80 @@ namespace baodeag
             //close right weapon damage collider
             if (player.playerNetworkManager.isUsingRightHand.Value)
             {
-                rightWeaponManager.meleeDamageCollider.DisableDamageCollider();
-                rightWeaponManager.ToggleWeaponTrail(false);
+                CloseWeaponDamageCollider(ref rightWeaponManager, rightHandWeaponModel);
             }
             //close left weapon damage collider
             else if (player.playerNetworkManager.isUsingLeftHand.Value)
             {
-                leftWeaponManager.meleeDamageCollider.DisableDamageCollider();
-                leftWeaponManager.ToggleWeaponTrail(false);
+                CloseWeaponDamageCollider(ref leftWeaponManager, leftHandWeaponModel);
+            }
+            else
+            {
+                CloseMainHandDamageCollider();
             }
         }
 
         public void OpenMainHandDamageCollider()
         {
-            rightWeaponManager.ToggleWeaponTrail(true);
-            rightWeaponManager.meleeDamageCollider.EnableDamageCollider();
-            player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(player.playerInventoryManager.currentRightHandWeapon.whooshes));
+            OpenWeaponDamageCollider(ref rightWeaponManager, rightHandWeaponModel, player.playerInventoryManager.currentRightHandWeapon);
         }
 
         public void CloseMainHandDamageCollider()
         {
-            rightWeaponManager.ToggleWeaponTrail(false);
-            rightWeaponManager.meleeDamageCollider.DisableDamageCollider();
+            CloseWeaponDamageCollider(ref rightWeaponManager, rightHandWeaponModel);
         }
 
         public void OpenOffHandDamageCollider()
         {
-            leftWeaponManager.meleeDamageCollider.EnableDamageCollider();
-            player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(player.playerInventoryManager.currentLeftHandWeapon.whooshes));
+            OpenWeaponDamageCollider(ref leftWeaponManager, leftHandWeaponModel, player.playerInventoryManager.currentLeftHandWeapon);
         }
 
         public void CloseOffHandDamageCollider()
         {
-            leftWeaponManager.meleeDamageCollider.DisableDamageCollider();
+            CloseWeaponDamageCollider(ref leftWeaponManager, leftHandWeaponModel);
+        }
+
+        private void OpenWeaponDamageCollider(ref WeaponManager weaponManager, GameObject weaponModel, WeaponItem weaponItem)
+        {
+            if (!TryResolveWeaponManager(ref weaponManager, weaponModel) || weaponManager.meleeDamageCollider == null)
+                return;
+
+            if (weaponItem != null)
+                weaponManager.SetWeaponDamage(player, weaponItem);
+
+            weaponManager.ToggleWeaponTrail(true);
+            weaponManager.meleeDamageCollider.EnableDamageCollider();
+
+            if (weaponItem != null && weaponItem.whooshes != null && weaponItem.whooshes.Length > 0)
+                player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.ChooseRandomSFXFromArray(weaponItem.whooshes));
+        }
+
+        private void CloseWeaponDamageCollider(ref WeaponManager weaponManager, GameObject weaponModel)
+        {
+            if (!TryResolveWeaponManager(ref weaponManager, weaponModel))
+                return;
+
+            if (weaponManager.meleeDamageCollider != null)
+                weaponManager.meleeDamageCollider.DisableDamageCollider();
+
+            weaponManager.ToggleWeaponTrail(false);
+        }
+
+        private bool TryResolveWeaponManager(ref WeaponManager weaponManager, GameObject weaponModel)
+        {
+            if (weaponManager == null && weaponModel != null)
+                weaponManager = weaponModel.GetComponent<WeaponManager>();
+
+            if (weaponManager == null && weaponModel != null)
+                weaponManager = weaponModel.GetComponentInChildren<WeaponManager>(true);
+
+            if (weaponManager != null && weaponManager.meleeDamageCollider == null)
+                weaponManager.meleeDamageCollider = weaponManager.GetComponentInChildren<MeleeWeaponDamageCollider>(true);
+
+            if (weaponManager != null && weaponManager.meleeDamageCollider == null && weaponModel != null)
+                weaponManager.meleeDamageCollider = weaponModel.GetComponentInChildren<MeleeWeaponDamageCollider>(true);
+
+            return weaponManager != null;
         }
 
         //unique weapons
