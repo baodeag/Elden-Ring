@@ -10,6 +10,9 @@ namespace baodeag
 
         public void OnHPChanged(int oldValue, int newValue)
         {
+            if (characterHPBar == null)
+                return;
+
             characterHPBar.oldHealthValue = oldValue;
             characterHPBar.SetStat(newValue);
         }

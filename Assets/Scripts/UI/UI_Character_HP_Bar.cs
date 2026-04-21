@@ -31,6 +31,20 @@ namespace baodeag
             }
         }
 
+        private bool EnsureUiReferences()
+        {
+            if (slider == null)
+                slider = GetComponent<Slider>();
+
+            if (barFillImage == null && slider != null && slider.fillRect != null)
+                barFillImage = slider.fillRect.GetComponent<Image>();
+
+            if (barFillImage != null && barFillColor.a <= 0f)
+                barFillColor = barFillImage.color;
+
+            return character != null && character.characterNetworkManager != null && slider != null;
+        }
+
         protected override void Start()
         {
             base.Start();
@@ -40,16 +54,21 @@ namespace baodeag
 
         public override void SetStat(int newValue)
         {
+            if (!EnsureUiReferences())
+                return;
+
             if (character.characterNetworkManager.isPoisoned.Value)
             {
-                barFillImage.color = WorldUtilityManager.Instance.GetPoisonedColor();
+                if (barFillImage != null)
+                    barFillImage.color = WorldUtilityManager.Instance.GetPoisonedColor();
             }
             else
             {
-                barFillImage.color = barFillColor;
+                if (barFillImage != null)
+                    barFillImage.color = barFillColor;
             }
 
-            if (displayCharacterNameOnDamage)
+            if (displayCharacterNameOnDamage && characterName != null)
             {
                 characterName.enabled = true;
 
@@ -69,11 +88,13 @@ namespace baodeag
             if (currentDamageTaken < 0)
             {
                 currentDamageTaken = Mathf.Abs(currentDamageTaken);
-                characterDamage.text = "+ " + currentDamageTaken.ToString();
+                if (characterDamage != null)
+                    characterDamage.text = "+ " + currentDamageTaken.ToString();
             }
             else
             {
-                characterDamage.text = "- " + currentDamageTaken.ToString();
+                if (characterDamage != null)
+                    characterDamage.text = "- " + currentDamageTaken.ToString();
             }
 
             slider.value = newValue;
@@ -87,7 +108,8 @@ namespace baodeag
 
         private void Update()
         {
-            transform.LookAt(transform.position + Camera.main.transform.forward);
+            if (Camera.main != null)
+                transform.LookAt(transform.position + Camera.main.transform.forward);
 
             if (hideTimer > 0)
             {
