@@ -8,7 +8,8 @@ namespace baodeag
 {
     public class PlayerUICharacterMenuManager : PlayerUIMenu
     {
-        private const string DefaultJoinAddress = "Relay code or 127.0.0.1:7777";
+        private const string RelayJoinPlaceholder = "Enter 6-character Relay code";
+        private const string DirectJoinPlaceholder = "127.0.0.1:7777";
         private const string CharacterMenuShopTitle = "Roundtable Shop";
 
         private bool joinWorldUIInitialized;
@@ -314,7 +315,7 @@ namespace baodeag
             placeholderText.fontSize = 24f;
             placeholderText.color = new Color(1f, 1f, 1f, 0.35f);
             placeholderText.alignment = TextAlignmentOptions.Left;
-            placeholderText.text = DefaultJoinAddress;
+            placeholderText.text = DirectJoinPlaceholder;
 
             GameObject textObject = new GameObject("Text", typeof(RectTransform), typeof(TextMeshProUGUI));
             RectTransform textRect = textObject.GetComponent<RectTransform>();
@@ -423,7 +424,21 @@ namespace baodeag
             if (!joinWorldUIInitialized || worldAddressLabel == null)
                 return;
 
+            bool showJoinWorldPanel = WorldGameSessionManager.instance != null &&
+                                      WorldGameSessionManager.instance.RequiresRelayForCurrentMode();
+
+            if (joinWorldControlsRoot != null)
+                joinWorldControlsRoot.gameObject.SetActive(showJoinWorldPanel);
+
+            if (!showJoinWorldPanel)
+            {
+                verifiedRelayJoinCode = string.Empty;
+                ClearJoinStatus();
+                return;
+            }
+
             worldAddressLabel.color = worldAddressLabelDefaultColor;
+            UpdateJoinInputPlaceholder();
             ClearJoinStatus();
 
             if (NetworkManager.Singleton.IsHost)
@@ -436,11 +451,15 @@ namespace baodeag
             }
             else if (NetworkManager.Singleton.IsClient)
             {
-                worldAddressLabel.text = "JOIN ANOTHER WORLD\n<size=75%>Enter a Relay code, or use IP for LAN.</size>";
+                worldAddressLabel.text = WorldGameSessionManager.instance.RequiresRelayForCurrentMode()
+                    ? "JOIN ANOTHER WORLD\n<size=75%>Enter a valid Relay code to join.</size>"
+                    : "JOIN ANOTHER WORLD\n<size=75%>Enter a local IP address to join directly.</size>";
             }
             else
             {
-                worldAddressLabel.text = "WORLD ADDRESS\n<size=75%>Enter a Relay code, or use IP for LAN.</size>";
+                worldAddressLabel.text = WorldGameSessionManager.instance.RequiresRelayForCurrentMode()
+                    ? "WORLD ADDRESS\n<size=75%>Multiplayer requires a valid Relay code.</size>"
+                    : "WORLD ADDRESS\n<size=75%>Singleplayer uses a local host address, not Relay.</size>";
             }
 
             RefreshJoinControlsState();
@@ -450,6 +469,14 @@ namespace baodeag
         {
             if (isCheckingRelayCode || isJoiningWorld)
                 return;
+
+            if (!WorldGameSessionManager.instance.RequiresRelayForCurrentMode())
+            {
+                verifiedRelayJoinCode = string.Empty;
+                ShowJoinStatus("Singleplayer mode does not use Relay.", joinStatusLabelDefaultColor);
+                RefreshJoinControlsState();
+                return;
+            }
 
             string addressInput = GetJoinAddressInput();
 
@@ -498,6 +525,13 @@ namespace baodeag
 
             string addressInput = GetJoinAddressInput();
 
+            if (WorldGameSessionManager.instance.RequiresRelayForCurrentMode() && !IsRelayCodeInput(addressInput))
+            {
+                ShowJoinStatus("Multiplayer mode only accepts Relay codes.", new Color(1f, 0.78f, 0.25f, 1f));
+                RefreshJoinControlsState();
+                return;
+            }
+
             if (IsRelayCodeInput(addressInput) && !IsCurrentRelayCodeVerified(addressInput))
             {
                 ShowJoinStatus("Check code first. Relay code must pass before joining.", new Color(1f, 0.78f, 0.25f, 1f));
@@ -533,6 +567,8 @@ namespace baodeag
         {
             if (checkCodeButton != null)
             {
+                checkCodeButton.gameObject.SetActive(WorldGameSessionManager.instance != null &&
+                                                     WorldGameSessionManager.instance.RequiresRelayForCurrentMode());
                 checkCodeButton.interactable = !isCheckingRelayCode &&
                                                !isJoiningWorld;
             }
@@ -556,6 +592,13 @@ namespace baodeag
             }
 
             string addressInput = GetJoinAddressInput();
+
+            if (WorldGameSessionManager.instance != null && WorldGameSessionManager.instance.RequiresRelayForCurrentMode())
+            {
+                joinWorldButton.interactable = IsRelayCodeInput(addressInput) &&
+                                               IsCurrentRelayCodeVerified(addressInput);
+                return;
+            }
 
             if (IsRelayCodeInput(addressInput))
             {
@@ -623,6 +666,22 @@ namespace baodeag
 
             joinStatusLabel.color = joinStatusLabelDefaultColor;
             joinStatusLabel.text = string.Empty;
+        }
+
+        private void UpdateJoinInputPlaceholder()
+        {
+            if (joinWorldAddressInputField == null)
+                return;
+
+            TMP_Text placeholderText = joinWorldAddressInputField.placeholder as TMP_Text;
+
+            if (placeholderText == null)
+                return;
+
+            placeholderText.text = WorldGameSessionManager.instance != null &&
+                                   WorldGameSessionManager.instance.RequiresRelayForCurrentMode()
+                ? RelayJoinPlaceholder
+                : DirectJoinPlaceholder;
         }
 
         private void ForceButtonUsable(Button button)

@@ -16,6 +16,7 @@ namespace baodeag {
         //main menu
         [Header("Main Menu Menus")]
         [SerializeField] GameObject titleScreenMainMenu;
+        [SerializeField] GameObject titleScreenModeSelectionMenu;
         [SerializeField] GameObject titleScreenLoadMenu;
         [SerializeField] GameObject titleScreenCharacterCreationMenu;
         [SerializeField] GameObject titleScreenSettingsMenu;
@@ -26,6 +27,8 @@ namespace baodeag {
         [SerializeField] Button mainMenuLoadGameButton;
         [SerializeField] Button mainMenuNewGameButton;
         [SerializeField] Button mainMenuSettingsButton;
+        [SerializeField] Button singleplayerModeButton;
+        [SerializeField] Button multiplayerModeButton;
         [SerializeField] Button deleteCharacterPopUpConfirmButton;
         [SerializeField] Button hostWorldButton;
         [SerializeField] Button joinWorldButton;
@@ -85,6 +88,7 @@ namespace baodeag {
         [SerializeField] private TextMeshProUGUI classReviewLoadoutText;
         [SerializeField] private TextMeshProUGUI classReviewHintText;
 
+        private bool launchModeMenuInitialized;
 
         private void Awake()
         {
@@ -103,6 +107,7 @@ namespace baodeag {
             HideLegacyNetworkControls();
             EnsureSettingsMenu();
             EnsureCharacterClassSelectionUI();
+            EnsureLaunchModeMenu();
         }
 
         private void Update()
@@ -118,14 +123,38 @@ namespace baodeag {
 
         public void PressStart()
         {
-            OpenTitleScreenMainMenu();
+            CloseTitleScreenMainMenu();
+            CloseLoadGameMenuIfOpen();
+            CloseCharacterCreationMenuIfOpen();
+            OpenLaunchModeMenu();
 
             if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null)
             {
                 EventSystem.current.currentSelectedGameObject.SetActive(false);
             }
 
-            mainMenuNewGameButton.Select();
+            if (singleplayerModeButton != null)
+                singleplayerModeButton.Select();
+        }
+
+        public void SelectSingleplayerMode()
+        {
+            SetLaunchMode(SessionLaunchMode.Singleplayer);
+            CloseLaunchModeMenu();
+            OpenTitleScreenMainMenu();
+
+            if (mainMenuNewGameButton != null)
+                mainMenuNewGameButton.Select();
+        }
+
+        public void SelectMultiplayerMode()
+        {
+            SetLaunchMode(SessionLaunchMode.Multiplayer);
+            CloseLaunchModeMenu();
+            OpenTitleScreenMainMenu();
+
+            if (mainMenuNewGameButton != null)
+                mainMenuNewGameButton.Select();
         }
 
         public void JoinOnlineGame()
@@ -208,6 +237,7 @@ namespace baodeag {
             if (titleScreenSettingsMenu == null)
                 return;
 
+            CloseLaunchModeMenu();
             CloseTitleScreenMainMenu();
             titleScreenLoadMenu.SetActive(false);
             titleScreenCharacterCreationMenu.SetActive(false);
@@ -300,12 +330,48 @@ namespace baodeag {
 
         public void OpenTitleScreenMainMenu()
         {
+            CloseLaunchModeMenu();
             titleScreenMainMenu.SetActive(true);
         }
 
         public void CloseTitleScreenMainMenu()
         {
             titleScreenMainMenu.SetActive(false);
+        }
+
+        public void OpenLaunchModeMenu()
+        {
+            EnsureLaunchModeMenu();
+
+            if (titleScreenModeSelectionMenu == null)
+                return;
+
+            SetBannerActive(true);
+            titleScreenModeSelectionMenu.SetActive(true);
+        }
+
+        public void CloseLaunchModeMenu()
+        {
+            if (titleScreenModeSelectionMenu != null)
+                titleScreenModeSelectionMenu.SetActive(false);
+        }
+
+        private void EnsureLaunchModeMenu()
+        {
+            if (launchModeMenuInitialized)
+                return;
+
+            if (titleScreenModeSelectionMenu == null ||
+                singleplayerModeButton == null ||
+                multiplayerModeButton == null)
+                return;
+
+            if (titleScreenModeSelectionMenu != null)
+                titleScreenModeSelectionMenu.SetActive(false);
+
+            launchModeMenuInitialized = titleScreenModeSelectionMenu != null &&
+                                        singleplayerModeButton != null &&
+                                        multiplayerModeButton != null;
         }
 
         private void SetBannerActive(bool isActive)
@@ -346,7 +412,27 @@ namespace baodeag {
                 return false;
             }
 
-            return await WorldGameSessionManager.instance.StartGameAsRelayHostAsync();
+            return WorldGameSessionManager.instance.RequiresRelayForCurrentMode()
+                ? await WorldGameSessionManager.instance.StartGameAsRelayHostAsync()
+                : WorldGameSessionManager.instance.StartGameAsHost();
+        }
+
+        private void SetLaunchMode(SessionLaunchMode launchMode)
+        {
+            if (WorldGameSessionManager.instance != null)
+                WorldGameSessionManager.instance.SetLaunchMode(launchMode);
+        }
+
+        private void CloseLoadGameMenuIfOpen()
+        {
+            if (titleScreenLoadMenu != null)
+                titleScreenLoadMenu.SetActive(false);
+        }
+
+        private void CloseCharacterCreationMenuIfOpen()
+        {
+            if (titleScreenCharacterCreationMenu != null)
+                titleScreenCharacterCreationMenu.SetActive(false);
         }
 
         private void BuildNetworkMenuControls()
@@ -459,7 +545,7 @@ namespace baodeag {
                 return;
 
             button.name = objectName;
-            button.onClick.RemoveAllListeners();
+            button.onClick = new Button.ButtonClickedEvent();
             button.onClick.AddListener(callback);
 
             TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>(true);

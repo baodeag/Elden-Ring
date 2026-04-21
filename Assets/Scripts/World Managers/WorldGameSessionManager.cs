@@ -15,6 +15,13 @@ using System.Threading.Tasks;
 
 namespace baodeag
 {
+    public enum SessionLaunchMode
+    {
+        None = 0,
+        Singleplayer = 1,
+        Multiplayer = 2
+    }
+
     public class WorldGameSessionManager : MonoBehaviour
     {
         public static WorldGameSessionManager instance;
@@ -36,6 +43,7 @@ namespace baodeag
         private string checkedRelayJoinCode = string.Empty;
         private JoinAllocation checkedRelayJoinAllocation;
         private bool isStartingRelaySession;
+        private SessionLaunchMode currentLaunchMode = SessionLaunchMode.Singleplayer;
 
         private void Awake()
         {
@@ -476,6 +484,28 @@ namespace baodeag
             return true;
         }
 
+        public void SetLaunchMode(SessionLaunchMode launchMode)
+        {
+            currentLaunchMode = launchMode == SessionLaunchMode.None
+                ? SessionLaunchMode.Singleplayer
+                : launchMode;
+        }
+
+        public SessionLaunchMode GetLaunchMode()
+        {
+            return currentLaunchMode;
+        }
+
+        public bool RequiresRelayForCurrentMode()
+        {
+            return currentLaunchMode == SessionLaunchMode.Multiplayer;
+        }
+
+        public bool AllowsDirectAddressForCurrentMode()
+        {
+            return !RequiresRelayForCurrentMode();
+        }
+
         public async Task<bool> StartGameAsRelayHostAsync(int maxConnections = DefaultRelayMaxConnections)
         {
             if (NetworkManager.Singleton.IsHost)
@@ -584,6 +614,12 @@ namespace baodeag
             if (TryNormalizeRelayJoinCode(addressInput, out string relayJoinCode))
             {
                 return await StartGameAsRelayClientAsync(relayJoinCode);
+            }
+
+            if (RequiresRelayForCurrentMode())
+            {
+                Debug.LogError("Multiplayer mode requires a valid Relay join code.");
+                return false;
             }
 
             if (!TryParseAddressInput(addressInput, out string hostAddress, out ushort port))
