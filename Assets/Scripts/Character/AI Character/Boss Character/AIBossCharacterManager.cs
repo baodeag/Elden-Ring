@@ -15,6 +15,7 @@ namespace baodeag
         [SerializeField] AudioClip bossBattleLoopClip;
 
         [Header("Status")]
+        [SerializeField] bool autoWakeOnSpawn = false;
         public NetworkVariable<bool> bossFightIsActive = new NetworkVariable<bool>
             (false,
             NetworkVariableReadPermission.Everyone,
@@ -71,6 +72,11 @@ namespace baodeag
             {
                 sleepState = Instantiate(sleepState);
                 currentState = sleepState;
+
+                if (autoWakeOnSpawn && !hasBeenDefeated.Value)
+                {
+                    StartCoroutine(AutoWakeWhenReady());
+                }
             }
 
             if (IsServer)
@@ -121,6 +127,19 @@ namespace baodeag
         {
             yield return StartCoroutine(GetFogWallsFromWorldObjectManager());
             ApplyBossWorldState();
+        }
+
+        private IEnumerator AutoWakeWhenReady()
+        {
+            while (fogWalls == null)
+                yield return null;
+
+            yield return null;
+
+            if (!hasBeenDefeated.Value)
+            {
+                WakeBoss();
+            }
         }
 
         private void ApplyBossWorldState()

@@ -18,6 +18,7 @@ namespace baodeag
 
         [Header("Nav Mesh Agent")]
         public NavMeshAgent navMeshAgent;
+        [SerializeField] bool useNavMeshTranslationForInPlaceAnimations = false;
 
         [Header("Current State")]
         public AIState currentState;
@@ -409,6 +410,11 @@ namespace baodeag
             aiCharacterNetworkManager.currentHealth.Value = scaledMaxHealth;
 
             hasAppliedProgressionDifficultyScaling = true;
+        }
+
+        public bool ShouldUseNavMeshTranslationForInPlaceAnimations()
+        {
+            return useNavMeshTranslationForInPlaceAnimations;
         }
     }
 }
