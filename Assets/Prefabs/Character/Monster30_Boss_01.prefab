@@ -1239,14 +1239,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5121628480115291783}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.04328469, y: 0.1834634, z: 0.98203796, w: 0.008307307}
-  m_LocalPosition: {x: 0.7842091, y: 0.7704989, z: 0.072459765}
+  m_LocalRotation: {x: 0.70642215, y: -0.031108668, z: 0.031108668, w: 0.70642215}
+  m_LocalPosition: {x: 0.691, y: 0.672, z: 0.062}
   m_LocalScale: {x: 1.0000001, y: 1.0000002, z: 0.99999976}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6130771824046427554}
   m_Father: {fileID: 5026847668010894944}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: -5.043, z: 0}
 --- !u!1773428102 &824826582015739690
 ParentConstraint:
   m_ObjectHideFlags: 0
@@ -1269,8 +1269,8 @@ ParentConstraint:
   m_AffectRotationX: 1
   m_AffectRotationY: 1
   m_AffectRotationZ: 1
-  m_Active: 1
-  m_IsLocked: 1
+  m_Active: 0
+  m_IsLocked: 0
   m_Sources:
   - sourceTransform: {fileID: 1462550005742517276}
     weight: 1
@@ -1608,10 +1608,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.28
-  m_Height: 1.35
-  m_Direction: 2
-  m_Center: {x: 0, y: 0, z: -0.42}
+  m_Radius: 0.3534653
+  m_Height: 1.6991214
+  m_Direction: 1
+  m_Center: {x: -0.010019412, y: 0.9999859, z: 0}
 --- !u!114 &3299820546758387339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1753,14 +1753,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7144070344573098184}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.043358024, y: 0.18344617, z: 0.9820412, w: -0.007914404}
-  m_LocalPosition: {x: -0.78433526, y: 0.77112675, z: 0.072459914}
+  m_LocalRotation: {x: 0.70641756, y: 0.031213436, z: -0.031213436, w: 0.70641756}
+  m_LocalPosition: {x: -0.7, y: 0.65, z: 0.081}
   m_LocalScale: {x: 1.0000001, y: 0.9999999, z: 0.99999976}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6363175472408334425}
   m_Father: {fileID: 5026847668010894944}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 5.06, z: 0}
 --- !u!1773428102 &2570124023040529339
 ParentConstraint:
   m_ObjectHideFlags: 0
@@ -1783,8 +1783,8 @@ ParentConstraint:
   m_AffectRotationX: 1
   m_AffectRotationY: 1
   m_AffectRotationZ: 1
-  m_Active: 1
-  m_IsLocked: 1
+  m_Active: 0
+  m_IsLocked: 0
   m_Sources:
   - sourceTransform: {fileID: 986934698538374463}
     weight: 1
@@ -1829,6 +1829,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 386165671790609029}
+  - component: {fileID: 869582869839520544}
   m_Layer: 7
   m_Name: Monster30_VisualRoot
   m_TagString: Untagged
@@ -1854,6 +1855,18 @@ Transform:
   - {fileID: 1913487100103292899}
   m_Father: {fileID: 5166221640653714332}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &869582869839520544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7703288957140074590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7d2de879bf14ce6b41e99b6bc70d1df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7797620667996288682
 GameObject:
   m_ObjectHideFlags: 0
@@ -2132,10 +2145,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.28
-  m_Height: 1.35
-  m_Direction: 2
-  m_Center: {x: 0, y: 0, z: -0.42}
+  m_Radius: 0.3534653
+  m_Height: 1.6991214
+  m_Direction: 1
+  m_Center: {x: -0.010019412, y: 0.9999859, z: 0}
 --- !u!114 &1427641438289180713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2249,7 +2262,7 @@ Animator:
   m_GameObject: {fileID: 8897954906100663348}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: b20a3c10714a6ac439af479e3273de65, type: 3}
-  m_Controller: {fileID: 9100000, guid: 6da4b1e373515d940ae6c31ffe4a9356, type: 2}
+  m_Controller: {fileID: 9100000, guid: 6b096788b2d9f33488f0ab09bc495efb, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -2273,7 +2286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1285237278
+  GlobalObjectIdHash: 2401936223
   InScenePlacedSourceGlobalObjectIdHash: 859443067
   DeferredDespawnTick: 0
   Ownership: 1

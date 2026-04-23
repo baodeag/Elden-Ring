@@ -10,7 +10,6 @@ using UnityEngine.SceneManagement;
 
 namespace baodeag.EditorTools
 {
-    [InitializeOnLoad]
     public static class Monster30BossPrefabBuilder
     {
         private const string SourceTemplatePath = "Assets/Prefabs/Character/Undead/Undead_Dummy_30.prefab";
@@ -43,16 +42,10 @@ namespace baodeag.EditorTools
         private const string GolemComboPath = "Assets/Art/Animations/Humanoid/Golem/Standing Melee Combo Attack Ver. 1.fbx";
         private const string GolemComboRebasedPath = "Assets/Art/Animations/Humanoid/Golem/Monster30_Standing Melee Combo Attack Ver. 1.anim";
         private const string TargetPrefabPath = "Assets/Prefabs/Character/Monster30_Boss_01.prefab";
-        private const string AutoRunSessionKey = "Monster30BossPrefabBuilder.AutoRunAttempted.v8";
         private const int CharacterLayer = 6;
         private const int DamageableCharacterLayer = 7;
         private const int DamageColliderLayer = 10;
         private const string MonsterAnimationRootPrefix = "Monster30_VisualRoot/Monster30_FreeTrial/";
-
-        static Monster30BossPrefabBuilder()
-        {
-            EditorApplication.delayCall += TryAutoBuildOnce;
-        }
 
         [MenuItem("Tools/Bosses/Create Monster30 Boss")]
         public static void CreateMonster30Boss()
@@ -136,6 +129,7 @@ namespace baodeag.EditorTools
                 }
 
                 ConfigureVisualHierarchy(visualInstance.transform);
+                EnsureWeaponConstraintBootstrap(visualInstance);
                 RebuildGameplayHooks(prefabRoot, visualInstance.transform, sourceAnimator);
 
                 UnityEngine.Object.DestroyImmediate(sourceAnimator, true);
@@ -175,17 +169,6 @@ namespace baodeag.EditorTools
             {
                 PrefabUtility.UnloadPrefabContents(prefabRoot);
             }
-        }
-
-        private static void TryAutoBuildOnce()
-        {
-            if (SessionState.GetBool(AutoRunSessionKey, false))
-            {
-                return;
-            }
-
-            SessionState.SetBool(AutoRunSessionKey, true);
-            CreateMonster30Boss();
         }
 
         private static void ReplaceCharacterManager(GameObject prefabRoot, AIBossCharacterManager bossReferenceManager)
@@ -1379,8 +1362,31 @@ namespace baodeag.EditorTools
             constraint.SetRotationOffset(0, Vector3.zero);
             constraint.translationAxis = Axis.X | Axis.Y | Axis.Z;
             constraint.rotationAxis = Axis.X | Axis.Y | Axis.Z;
-            constraint.constraintActive = true;
-            constraint.locked = true;
+            constraint.constraintActive = false;
+            constraint.locked = false;
+        }
+
+        private static void EnsureWeaponConstraintBootstrap(GameObject visualRoot)
+        {
+            if (visualRoot == null)
+            {
+                return;
+            }
+
+            var bootstrapType = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(assembly => assembly.GetTypes())
+                .FirstOrDefault(type => type.Name == "Monster30WeaponConstraintBootstrap" && typeof(MonoBehaviour).IsAssignableFrom(type));
+
+            if (bootstrapType == null)
+            {
+                Debug.LogWarning("Monster30 builder could not find Monster30WeaponConstraintBootstrap type.");
+                return;
+            }
+
+            if (visualRoot.GetComponent(bootstrapType) == null)
+            {
+                visualRoot.AddComponent(bootstrapType);
+            }
         }
 
         private static void EnsureBodyColliders(Animator animator)
