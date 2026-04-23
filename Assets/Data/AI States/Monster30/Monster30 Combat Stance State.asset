@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 212e6cbc83a1ea54588a056213f0fbc5, type: 3}
+  m_Name: Monster30 Combat Stance State
+  m_EditorClassIdentifier: 
+  aiCharacterAttacks:
+  - {fileID: 11400000, guid: 131b5d251393de944be0cb98adee64bb, type: 2}
+  - {fileID: 11400000, guid: 0dea115b4fe0f9c48987e7edba561dd3, type: 2}
+  - {fileID: 11400000, guid: 37f51ad6ec8e72d4fb7f3d2276366c30, type: 2}
+  potentialAttacks:
+  - {fileID: 11400000, guid: 131b5d251393de944be0cb98adee64bb, type: 2}
+  - {fileID: 11400000, guid: 0dea115b4fe0f9c48987e7edba561dd3, type: 2}
+  - {fileID: 11400000, guid: 37f51ad6ec8e72d4fb7f3d2276366c30, type: 2}
+  chosenAttack: {fileID: 0}
+  previousAttack: {fileID: 0}
+  canPerformCombo: 1
+  percentageOfTimeWillPerformCombo: 100
+  onlyPerformComboIfInitialAttackHits: 1
+  maximumEngagementDistance: 5.75
+  willCircleTarget: 0
+  canBlock: 0
+  percentageOfTimeWillBlock: 75
+  canEvade: 0
+  percentageOfTimeWillEvade: 75

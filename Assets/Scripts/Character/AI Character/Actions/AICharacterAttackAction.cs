@@ -23,6 +23,8 @@ namespace baodeag
 
         public void AttemptToPerformAction(AICharacterManager aiCharacter)
         {
+            aiCharacter.characterCombatManager.currentAttackType = attackType;
+            aiCharacter.characterCombatManager.lastAttackAnimationPerformed = attackAnimation;
             aiCharacter.characterAnimatorManager.PlayTargetActionAnimation(attackAnimation, true);
             aiCharacter.aiCharacterNetworkManager.isParryable.Value = isParryable;
         }
