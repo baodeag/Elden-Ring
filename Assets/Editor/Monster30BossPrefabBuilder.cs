@@ -21,7 +21,8 @@ namespace baodeag.EditorTools
         private const string MonsterWalkAnimationPath = "Assets/Stylized3DMonster/Monster30_FreeTrial/Anim/Monster30_Walk_InPlace.anim";
         private const string MonsterRebasedIdleAnimationPath = "Assets/Stylized3DMonster/Monster30_FreeTrial/Anim/Monster30_Boss_Idle_Rebased.anim";
         private const string MonsterRebasedWalkAnimationPath = "Assets/Stylized3DMonster/Monster30_FreeTrial/Anim/Monster30_Boss_Walk_Rebased.anim";
-        private const string TargetAnimatorControllerPath = "Assets/Data/Animator Controllers/Monster30_Boss.controller";
+        private const string TargetAnimatorControllerPath = "Assets/Data/Animator Controllers/Monster30_Boss_Clean.controller";
+        private const string LegacyAnimatorControllerPath = "Assets/Data/Animator Controllers/Monster30_Boss.controller";
         private const string AttackStateTemplatePath = "Assets/Data/AI States/Undead/Undead Attack State.asset";
         private const string CombatStanceTemplatePath = "Assets/Data/AI States/Undead/Undead Combat Stance State.asset";
         private const string TargetAttackStatePath = "Assets/Data/AI States/Monster30/Monster30 Attack State.asset";
@@ -52,6 +53,7 @@ namespace baodeag.EditorTools
         {
             var sourceTemplate = AssetDatabase.LoadAssetAtPath<GameObject>(SourceTemplatePath);
             var bossReference = AssetDatabase.LoadAssetAtPath<GameObject>(BossReferencePath);
+            bool targetPrefabExists = AssetDatabase.LoadAssetAtPath<GameObject>(TargetPrefabPath) != null;
 
             if (sourceTemplate == null || bossReference == null)
             {
@@ -66,7 +68,7 @@ namespace baodeag.EditorTools
                 return;
             }
 
-            var prefabRoot = PrefabUtility.LoadPrefabContents(SourceTemplatePath);
+            var prefabRoot = PrefabUtility.LoadPrefabContents(targetPrefabExists ? TargetPrefabPath : SourceTemplatePath);
 
             try
             {
@@ -76,38 +78,49 @@ namespace baodeag.EditorTools
                 ReplaceCharacterManager(prefabRoot, bossReferenceManager);
                 ReplaceSoundFXManager(prefabRoot, bossReference);
                 PrepareBossStats(prefabRoot);
-                RemoveOldVisualChildren(prefabRoot.transform);
 
-                var visualInstance = CreateEmbeddedMonster30Visual(prefabRoot.scene);
-                if (visualInstance == null)
+                var visualTransform = prefabRoot.transform.Find("Monster30_VisualRoot");
+                bool createdVisualThisRun = false;
+                GameObject visualInstance;
+
+                if (visualTransform != null)
                 {
-                    Debug.LogError("Failed to instantiate Monster30 visual prefab.");
-                    return;
+                    visualInstance = visualTransform.gameObject;
                 }
+                else
+                {
+                    RemoveOldVisualChildren(prefabRoot.transform);
 
-                visualInstance.name = "Monster30_VisualRoot";
-                visualInstance.transform.SetParent(prefabRoot.transform, false);
-                visualInstance.transform.localPosition = Vector3.zero;
-                visualInstance.transform.localRotation = Quaternion.identity;
-                visualInstance.transform.localScale = Vector3.one;
+                    visualInstance = CreateEmbeddedMonster30Visual(prefabRoot.scene);
+                    if (visualInstance == null)
+                    {
+                        Debug.LogError("Failed to instantiate Monster30 visual prefab.");
+                        return;
+                    }
+
+                    visualInstance.name = "Monster30_VisualRoot";
+                    visualInstance.transform.SetParent(prefabRoot.transform, false);
+                    visualInstance.transform.localPosition = Vector3.zero;
+                    visualInstance.transform.localRotation = Quaternion.identity;
+                    visualInstance.transform.localScale = Vector3.one;
+                    createdVisualThisRun = true;
+                }
 
                 var monsterAvatar = LoadMonsterAvatar();
                 var sourceAnimator = visualInstance.GetComponent<Animator>();
                 var rootAnimator = prefabRoot.GetComponent<Animator>();
 
-                if (sourceAnimator == null)
+                if (createdVisualThisRun && monsterAvatar != null)
                 {
-                    sourceAnimator = visualInstance.AddComponent<Animator>();
+                    if (sourceAnimator != null)
+                    {
+                        sourceAnimator.avatar = monsterAvatar;
+                    }
                 }
 
-                if (monsterAvatar != null)
+                if (rootAnimator == null)
                 {
-                    sourceAnimator.avatar = monsterAvatar;
-                }
-
-                if (rootAnimator == null || sourceAnimator == null)
-                {
-                    Debug.LogError($"Monster30 boss builder could not find required animator components. rootAnimatorNull={rootAnimator == null}, sourceAnimatorNull={sourceAnimator == null}, monsterAvatarNull={monsterAvatar == null}");
+                    Debug.LogError($"Monster30 boss builder could not find required animator components. rootAnimatorNull={rootAnimator == null}, monsterAvatarNull={monsterAvatar == null}");
                     return;
                 }
 
@@ -115,7 +128,7 @@ namespace baodeag.EditorTools
                 {
                     rootAnimator.avatar = monsterAvatar;
                 }
-                else if (sourceAnimator.avatar != null)
+                else if (sourceAnimator != null && sourceAnimator.avatar != null)
                 {
                     rootAnimator.avatar = sourceAnimator.avatar;
                 }
@@ -128,17 +141,25 @@ namespace baodeag.EditorTools
                     return;
                 }
 
-                ConfigureVisualHierarchy(visualInstance.transform);
-                EnsureWeaponConstraintBootstrap(visualInstance);
-                RebuildGameplayHooks(prefabRoot, visualInstance.transform, sourceAnimator);
+                if (createdVisualThisRun)
+                {
+                    ConfigureVisualHierarchy(visualInstance.transform);
+                    EnsureWeaponConstraintBootstrap(visualInstance);
+                    RebuildGameplayHooks(prefabRoot, visualInstance.transform, rootAnimator);
+                }
 
-                UnityEngine.Object.DestroyImmediate(sourceAnimator, true);
+                if (createdVisualThisRun && sourceAnimator != null)
+                {
+                    UnityEngine.Object.DestroyImmediate(sourceAnimator, true);
+                }
 
                 PrefabUtility.SaveAsPrefabAsset(prefabRoot, TargetPrefabPath);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
 
-                Debug.Log("Created Monster30_Boss_01 prefab with boss gameplay hooks.");
+                Debug.Log(targetPrefabExists
+                    ? "Updated Monster30_Boss_01 root logic/components only. Existing visual hierarchy/model edits were left untouched."
+                    : "Created Monster30_Boss_01 prefab with boss gameplay hooks.");
             }
             finally
             {
@@ -490,6 +511,7 @@ namespace baodeag.EditorTools
             EditorUtility.SetDirty(controller);
             AssetDatabase.SaveAssets();
             AssetDatabase.ImportAsset(TargetAnimatorControllerPath, ImportAssetOptions.ForceUpdate);
+            DeleteLegacyAnimatorController();
 
             return AssetDatabase.LoadAssetAtPath<AnimatorController>(TargetAnimatorControllerPath);
         }
@@ -923,7 +945,8 @@ namespace baodeag.EditorTools
                 CreateAnimationEvent(openTime, "OpenLeftHandDamageCollider"),
                 CreateAnimationEvent(closeTime, "CloseRightHandDamageCollider"),
                 CreateAnimationEvent(closeTime, "CloseLeftHandDamageCollider"),
-                CreateAnimationEvent(rotateDisableTime, "DisableCanRotate")
+                CreateAnimationEvent(rotateDisableTime, "DisableCanRotate"),
+                CreateAnimationEvent(Mathf.Min(clipLength * 0.98f, clipLength - 0.01f), "ForceEndCurrentAction")
             };
 
             if (enablesCombo)
@@ -1161,10 +1184,14 @@ namespace baodeag.EditorTools
         private static void EnsureComboState(AnimatorController controller, AnimationClip comboClip)
         {
             var baseStateMachine = controller.layers[0].stateMachine;
-            var comboState = FindState(controller, "Attack_01_Combo");
+            var actionOverdriveStateMachine = FindStateMachine(controller, "Action Overdrive") ?? baseStateMachine;
+
+            RemoveStateIfExists(baseStateMachine, "Attack_01_Combo");
+
+            var comboState = FindStateInStateMachine(actionOverdriveStateMachine, "Attack_01_Combo");
             if (comboState == null)
             {
-                comboState = baseStateMachine.AddState("Attack_01_Combo", new Vector3(420f, 160f, 0f));
+                comboState = actionOverdriveStateMachine.AddState("Attack_01_Combo", new Vector3(870f, -190f, 0f));
             }
 
             comboState.motion = comboClip;
@@ -1176,7 +1203,8 @@ namespace baodeag.EditorTools
                 comboState.RemoveTransition(transition);
             }
 
-            var destinationState = FindState(controller, "Idle")
+            var destinationState = FindStateInStateMachine(actionOverdriveStateMachine, "Empty")
+                ?? FindState(controller, "Idle")
                 ?? FindState(controller, "Locomotion");
 
             if (destinationState == null)
@@ -1207,6 +1235,20 @@ namespace baodeag.EditorTools
             return null;
         }
 
+        private static AnimatorStateMachine FindStateMachine(AnimatorController controller, string stateMachineName)
+        {
+            foreach (var layer in controller.layers)
+            {
+                var stateMachine = FindStateMachineRecursive(layer.stateMachine, stateMachineName);
+                if (stateMachine != null)
+                {
+                    return stateMachine;
+                }
+            }
+
+            return null;
+        }
+
         private static AnimatorState FindStateRecursive(AnimatorStateMachine stateMachine, string stateName)
         {
             foreach (var childState in stateMachine.states)
@@ -1227,6 +1269,72 @@ namespace baodeag.EditorTools
             }
 
             return null;
+        }
+
+        private static AnimatorStateMachine FindStateMachineRecursive(AnimatorStateMachine stateMachine, string stateMachineName)
+        {
+            if (stateMachine != null && stateMachine.name == stateMachineName)
+            {
+                return stateMachine;
+            }
+
+            foreach (var childStateMachine in stateMachine.stateMachines)
+            {
+                var foundStateMachine = FindStateMachineRecursive(childStateMachine.stateMachine, stateMachineName);
+                if (foundStateMachine != null)
+                {
+                    return foundStateMachine;
+                }
+            }
+
+            return null;
+        }
+
+        private static AnimatorState FindStateInStateMachine(AnimatorStateMachine stateMachine, string stateName)
+        {
+            if (stateMachine == null)
+            {
+                return null;
+            }
+
+            foreach (var childState in stateMachine.states)
+            {
+                if (childState.state != null && childState.state.name == stateName)
+                {
+                    return childState.state;
+                }
+            }
+
+            return null;
+        }
+
+        private static void RemoveStateIfExists(AnimatorStateMachine stateMachine, string stateName)
+        {
+            if (stateMachine == null)
+            {
+                return;
+            }
+
+            foreach (var childState in stateMachine.states.ToArray())
+            {
+                if (childState.state == null || childState.state.name != stateName)
+                {
+                    continue;
+                }
+
+                stateMachine.RemoveState(childState.state);
+            }
+        }
+
+        private static void DeleteLegacyAnimatorController()
+        {
+            if (!AssetDatabase.LoadAssetAtPath<AnimatorController>(LegacyAnimatorControllerPath))
+            {
+                return;
+            }
+
+            AssetDatabase.DeleteAsset(LegacyAnimatorControllerPath);
+            AssetDatabase.SaveAssets();
         }
 
         private static void EnsureFolderExistsForAsset(string assetPath)

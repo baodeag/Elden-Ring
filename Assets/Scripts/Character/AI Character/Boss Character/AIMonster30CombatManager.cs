@@ -13,8 +13,22 @@ namespace baodeag
         [SerializeField] float attack02DamageModifier = 1.65f;
         [SerializeField] float attack03DamageModifier = 1.9f;
 
+        protected override void Awake()
+        {
+            base.Awake();
+            ResolveDamageColliders();
+        }
+
+#if UNITY_EDITOR
+        void OnValidate()
+        {
+            ResolveDamageColliders();
+        }
+#endif
+
         public void SetAttack01Damage()
         {
+            ResolveDamageColliders();
             ApplyDamage(rightHandDamageCollider, attack01DamageModifier);
             ApplyDamage(leftHandDamageCollider, attack01DamageModifier);
             aiCharacter.characterSoundFXManager.PlayAttackGruntSoundFX();
@@ -22,6 +36,7 @@ namespace baodeag
 
         public void SetAttack02Damage()
         {
+            ResolveDamageColliders();
             ApplyDamage(rightHandDamageCollider, attack02DamageModifier);
             ApplyDamage(leftHandDamageCollider, attack02DamageModifier);
             aiCharacter.characterSoundFXManager.PlayAttackGruntSoundFX();
@@ -29,6 +44,7 @@ namespace baodeag
 
         public void SetAttack03Damage()
         {
+            ResolveDamageColliders();
             ApplyDamage(rightHandDamageCollider, attack03DamageModifier);
             ApplyDamage(leftHandDamageCollider, attack03DamageModifier);
             aiCharacter.characterSoundFXManager.PlayAttackGruntSoundFX();
@@ -36,6 +52,7 @@ namespace baodeag
 
         public void OpenRightHandDamageCollider()
         {
+            ResolveDamageColliders();
             rightHandDamageCollider?.EnableDamageCollider();
         }
 
@@ -46,6 +63,7 @@ namespace baodeag
 
         public void OpenLeftHandDamageCollider()
         {
+            ResolveDamageColliders();
             leftHandDamageCollider?.EnableDamageCollider();
         }
 
@@ -88,6 +106,34 @@ namespace baodeag
 
             collider.physicalDamage = baseDamage * modifier;
             collider.poiseDamage = basePoiseDamage * modifier;
+        }
+
+        private void ResolveDamageColliders()
+        {
+            if (rightHandDamageCollider == null)
+                rightHandDamageCollider = FindColliderByObjectName("Monster30_Weapon_01_Hitbox")
+                    ?? FindColliderByObjectName("root_dupli_001.x");
+
+            if (leftHandDamageCollider == null)
+                leftHandDamageCollider = FindColliderByObjectName("Monster30_Weapon_02_Hitbox")
+                    ?? FindColliderByObjectName("root_dupli_002.x");
+        }
+
+        private ManualDamageCollider FindColliderByObjectName(string objectName)
+        {
+            foreach (var collider in GetComponentsInChildren<ManualDamageCollider>(true))
+            {
+                if (collider == null)
+                    continue;
+
+                if (collider.gameObject.name == objectName)
+                    return collider;
+
+                if (collider.transform.parent != null && collider.transform.parent.name == objectName)
+                    return collider;
+            }
+
+            return null;
         }
     }
 }

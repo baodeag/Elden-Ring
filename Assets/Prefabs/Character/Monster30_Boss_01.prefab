@@ -1240,7 +1240,7 @@ Transform:
   m_GameObject: {fileID: 5121628480115291783}
   serializedVersion: 2
   m_LocalRotation: {x: 0.70642215, y: -0.031108668, z: 0.031108668, w: 0.70642215}
-  m_LocalPosition: {x: 0.691, y: 0.672, z: 0.062}
+  m_LocalPosition: {x: 0.7842091, y: 0.7704989, z: 0.072459765}
   m_LocalScale: {x: 1.0000001, y: 1.0000002, z: 0.99999976}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1434,6 +1434,61 @@ Transform:
   - {fileID: 5364562808196582807}
   m_Father: {fileID: 5456411386184918393}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5884762561128163544
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1783112477136665057}
+  - component: {fileID: 4927670159177379994}
+  m_Layer: 7
+  m_Name: Monster30_Main_Hurtbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1783112477136665057
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5884762561128163544}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5166221640653714332}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &4927670159177379994
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5884762561128163544}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.4
+  m_Height: 1.6
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.55, z: 0}
 --- !u!1 &5996131507091284406
 GameObject:
   m_ObjectHideFlags: 0
@@ -1608,7 +1663,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.3534653
+  m_Radius: 1
   m_Height: 1.6991214
   m_Direction: 1
   m_Center: {x: -0.010019412, y: 0.9999859, z: 0}
@@ -1754,7 +1809,7 @@ Transform:
   m_GameObject: {fileID: 7144070344573098184}
   serializedVersion: 2
   m_LocalRotation: {x: 0.70641756, y: 0.031213436, z: -0.031213436, w: 0.70641756}
-  m_LocalPosition: {x: -0.7, y: 0.65, z: 0.081}
+  m_LocalPosition: {x: -0.78433526, y: 0.77112675, z: 0.072459914}
   m_LocalScale: {x: 1.0000001, y: 0.9999999, z: 0.99999976}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1996,6 +2051,50 @@ Transform:
   - {fileID: 5026847668010894944}
   m_Father: {fileID: 386165671790609029}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8440375069347261427
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4805115535937457550}
+  - component: {fileID: 8423686863703118286}
+  m_Layer: 7
+  m_Name: Lock on Target
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4805115535937457550
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8440375069347261427}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5166221640653714332}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8423686863703118286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8440375069347261427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43ed6c764c97c3d4c8e4a9ddcd2b7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8453174531590947622
 GameObject:
   m_ObjectHideFlags: 0
@@ -2145,7 +2244,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.3534653
+  m_Radius: 1
   m_Height: 1.6991214
   m_Direction: 1
   m_Center: {x: -0.010019412, y: 0.9999859, z: 0}
@@ -2224,9 +2323,9 @@ GameObject:
   - component: {fileID: 2228190074681707830}
   - component: {fileID: 8045674013864987420}
   - component: {fileID: 2412008134813534575}
-  - component: {fileID: 8067615794367816690}
-  - component: {fileID: 4136838260436756380}
-  - component: {fileID: 1769351768624484947}
+  - component: {fileID: 7190005552599284552}
+  - component: {fileID: 5350618458137759843}
+  - component: {fileID: 3325716520712479097}
   m_Layer: 6
   m_Name: Monster30_Boss_01
   m_TagString: Untagged
@@ -2250,6 +2349,8 @@ Transform:
   - {fileID: 2643882301038938364}
   - {fileID: 162606935889608649}
   - {fileID: 386165671790609029}
+  - {fileID: 4805115535937457550}
+  - {fileID: 1783112477136665057}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 186.268, z: 0}
 --- !u!95 &9101950024061261320
@@ -2262,7 +2363,7 @@ Animator:
   m_GameObject: {fileID: 8897954906100663348}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: b20a3c10714a6ac439af479e3273de65, type: 3}
-  m_Controller: {fileID: 9100000, guid: 6b096788b2d9f33488f0ab09bc495efb, type: 2}
+  m_Controller: {fileID: 9100000, guid: 97fc02a9d2bd80d44b1f8143320a281b, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -2878,7 +2979,7 @@ MonoBehaviour:
         byte0059: 0
         byte0060: 0
         byte0061: 0
---- !u!114 &8067615794367816690
+--- !u!114 &7190005552599284552
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2929,7 +3030,7 @@ MonoBehaviour:
   attack01DamageModifier: 1.2
   attack02DamageModifier: 1.65
   attack03DamageModifier: 1.9
---- !u!114 &4136838260436756380
+--- !u!114 &5350618458137759843
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2989,7 +3090,7 @@ MonoBehaviour:
   phase02CombatStanceState: {fileID: 11400000, guid: 602aa319d66a89d4da7ebf8a39a42499, type: 2}
   sleepState: {fileID: 11400000, guid: ac7604d23513bcb4f8d06458c46d5055, type: 2}
   monster30CombatManager: {fileID: 0}
---- !u!114 &1769351768624484947
+--- !u!114 &3325716520712479097
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

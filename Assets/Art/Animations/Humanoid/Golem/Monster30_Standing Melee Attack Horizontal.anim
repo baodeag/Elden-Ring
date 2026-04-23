@@ -10414,7 +10414,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 3.3269765
+    m_StopTime: 4.2900486
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -73355,6 +73355,13 @@ AnimationClip:
     messageOptions: 0
   - time: 3.3269765
     functionName: DisableCanRotate
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 4.2900486
+    functionName: ForceEndCurrentAction
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
