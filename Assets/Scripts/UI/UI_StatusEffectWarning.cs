@@ -10,6 +10,7 @@ namespace baodeag
 
         [Header("Effect Colors")]
         [SerializeField] Color poisonedColor;
+        [SerializeField] Color burningColor = new Color(1f, 0.45f, 0.1f, 1f);
         [SerializeField] Color bloodLossColor;
         [SerializeField] Color frostColor;
 
@@ -19,6 +20,9 @@ namespace baodeag
             {
                 case BuildUp.Poison:
                     SetCustomMessage("Poisoned!", poisonedColor);
+                    break;
+                case BuildUp.Fire:
+                    SetCustomMessage("Burning!", burningColor);
                     break;
                 case BuildUp.Bleed:
                     SetCustomMessage("Blood Loss!", bloodLossColor);

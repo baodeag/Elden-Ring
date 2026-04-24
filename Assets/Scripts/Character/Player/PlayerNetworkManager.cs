@@ -207,12 +207,9 @@ namespace baodeag
                 if (isPoisoned.Value)
                 {
                     PlayerUIManager.instance.playerUIPopUpManager.SendStatusEffectPopUp(BuildUp.Poison);
-                    PlayerUIManager.instance.playerUIHudManager.healthBar.ToggleBarFillColor(true);
                 }
-                else
-                {
-                    PlayerUIManager.instance.playerUIHudManager.healthBar.ToggleBarFillColor(false);
-                }
+
+                RefreshHealthBarStatusColor();
             }
 
             if (isPoisoned.Value)
@@ -234,6 +231,19 @@ namespace baodeag
                 Destroy(character.characterEffectsManager.poisonedVFX);
 
             }          
+        }
+
+        public override void OnIsBurningChanged(bool oldStatus, bool newStatus)
+        {
+            if (player.IsOwner)
+            {
+                if (isBurning.Value)
+                    PlayerUIManager.instance.playerUIPopUpManager.SendStatusEffectPopUp(BuildUp.Fire);
+
+                RefreshHealthBarStatusColor();
+            }
+
+            base.OnIsBurningChanged(oldStatus, newStatus);
         }
 
         public override void OnIsFrostBittenChanged(bool oldStatus, bool newStatus)
@@ -269,6 +279,25 @@ namespace baodeag
             if (!isFrozen.Value && IsOwner)
             {
                 isFrostBitten.Value = false;
+            }
+        }
+
+        private void RefreshHealthBarStatusColor()
+        {
+            if (PlayerUIManager.instance == null || PlayerUIManager.instance.playerUIHudManager == null)
+                return;
+
+            if (isBurning.Value)
+            {
+                PlayerUIManager.instance.playerUIHudManager.healthBar.SetBarFillColor(WorldUtilityManager.Instance.GetBurningColor());
+            }
+            else if (isPoisoned.Value)
+            {
+                PlayerUIManager.instance.playerUIHudManager.healthBar.SetBarFillColor(WorldUtilityManager.Instance.GetPoisonedColor());
+            }
+            else
+            {
+                PlayerUIManager.instance.playerUIHudManager.healthBar.ResetBarFillColor();
             }
         }
 

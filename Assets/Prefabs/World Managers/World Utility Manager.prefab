@@ -54,5 +54,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   poisonedColor: {r: 0.17678142, g: 0.2830189, b: 0.17488432, a: 1}
+  burningColor: {r: 1, g: 0.45, b: 0.1, a: 1}
   frozenMaterial: {fileID: 2100000, guid: ce4282d300258e046971ac93eaf5c9ff, type: 2}
   slopeSlideForce: -15

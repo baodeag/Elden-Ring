@@ -55,7 +55,8 @@ public enum BuildUp
 {
     Poison,
     Bleed,
-    Frost
+    Frost,
+    Fire
 }
 
 public enum WeaponModelSlot 

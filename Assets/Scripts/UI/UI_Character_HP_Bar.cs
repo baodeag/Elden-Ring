@@ -57,7 +57,12 @@ namespace baodeag
             if (!EnsureUiReferences())
                 return;
 
-            if (character.characterNetworkManager.isPoisoned.Value)
+            if (character.characterNetworkManager.isBurning.Value)
+            {
+                if (barFillImage != null)
+                    barFillImage.color = WorldUtilityManager.Instance.GetBurningColor();
+            }
+            else if (character.characterNetworkManager.isPoisoned.Value)
             {
                 if (barFillImage != null)
                     barFillImage.color = WorldUtilityManager.Instance.GetPoisonedColor();

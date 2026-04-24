@@ -110,6 +110,7 @@ namespace baodeag
 
                 //update ui build up bars when build up changes
                 playerNetworkManager.poisonBuildUp.OnValueChanged += PlayerUIManager.instance.playerUIHudManager.SetNewPoisonBuildUpAmount;
+                playerNetworkManager.fireBuildUp.OnValueChanged += PlayerUIManager.instance.playerUIHudManager.SetNewFireBuildUpAmount;
                 playerNetworkManager.bleedBuildUp.OnValueChanged += PlayerUIManager.instance.playerUIHudManager.SetNewBleedBuildUpAmount;
                 playerNetworkManager.frostBiteBuildUp.OnValueChanged += PlayerUIManager.instance.playerUIHudManager.SetNewFrostBuildUpAmount;
 
@@ -138,6 +139,7 @@ namespace baodeag
 
             //status effects
             playerNetworkManager.isPoisoned.OnValueChanged += playerNetworkManager.OnIsPoisonedChanged;
+            playerNetworkManager.isBurning.OnValueChanged += playerNetworkManager.OnIsBurningChanged;
             playerNetworkManager.isBleeding.OnValueChanged += playerNetworkManager.OnIsBleedingChanged;
             playerNetworkManager.isFrostBitten.OnValueChanged += playerNetworkManager.OnIsFrostBittenChanged;
             playerNetworkManager.isFrozen.OnValueChanged += playerNetworkManager.OnIsFrozenChanged;
@@ -214,6 +216,7 @@ namespace baodeag
 
                 //update ui build up bars when build up changes
                 playerNetworkManager.poisonBuildUp.OnValueChanged -= PlayerUIManager.instance.playerUIHudManager.SetNewPoisonBuildUpAmount;
+                playerNetworkManager.fireBuildUp.OnValueChanged -= PlayerUIManager.instance.playerUIHudManager.SetNewFireBuildUpAmount;
                 playerNetworkManager.bleedBuildUp.OnValueChanged -= PlayerUIManager.instance.playerUIHudManager.SetNewBleedBuildUpAmount;
                 playerNetworkManager.frostBiteBuildUp.OnValueChanged -= PlayerUIManager.instance.playerUIHudManager.SetNewFrostBuildUpAmount;
 
@@ -234,6 +237,7 @@ namespace baodeag
 
             //status effects
             playerNetworkManager.isPoisoned.OnValueChanged -= playerNetworkManager.OnIsPoisonedChanged;
+            playerNetworkManager.isBurning.OnValueChanged -= playerNetworkManager.OnIsBurningChanged;
             playerNetworkManager.isBleeding.OnValueChanged -= playerNetworkManager.OnIsBleedingChanged;
             playerNetworkManager.isFrostBitten.OnValueChanged -= playerNetworkManager.OnIsFrostBittenChanged;
             playerNetworkManager.isFrozen.OnValueChanged -= playerNetworkManager.OnIsFrozenChanged;
@@ -708,6 +712,7 @@ namespace baodeag
 
             //sync status effects
             playerNetworkManager.OnIsPoisonedChanged(false, playerNetworkManager.isPoisoned.Value);
+            playerNetworkManager.OnIsBurningChanged(false, playerNetworkManager.isBurning.Value);
 
             //sync block status
             playerNetworkManager.OnIsBlockingChanged(false, playerNetworkManager.isBlocking.Value);

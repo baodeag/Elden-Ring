@@ -28,6 +28,7 @@ namespace baodeag
 
         [Header("Status Effect VFX")]
         [HideInInspector] public GameObject poisonedVFX;
+        [HideInInspector] public GameObject burningVFX;
         [HideInInspector] public GameObject frostBiteVFX;
 
         [Header("Static Effects")]
@@ -99,6 +100,9 @@ namespace baodeag
             {
                 case BuildUp.Poison:
                     character.characterNetworkManager.poisonBuildUp.Value += amount;
+                    break;
+                case BuildUp.Fire:
+                    character.characterNetworkManager.fireBuildUp.Value += amount;
                     break;
                 case BuildUp.Bleed:
                     character.characterNetworkManager.bleedBuildUp.Value += amount;
@@ -251,6 +255,7 @@ namespace baodeag
                 character.characterAnimatorManager.PlayTargetActionAnimation("Dead_01", true);
             
             character.characterNetworkManager.isPoisoned.Value = false;
+            character.characterNetworkManager.isBurning.Value = false;
             character.isDead.Value = true;
         }
 

@@ -183,6 +183,10 @@ namespace baodeag
                     character.characterNetworkManager.poisonBuildUp.Value += amount;
                     effect.buildUpRemaining = character.characterNetworkManager.poisonBuildUp.Value;
                     break;
+                case BuildUp.Fire:
+                    character.characterNetworkManager.fireBuildUp.Value += amount;
+                    effect.buildUpRemaining = character.characterNetworkManager.fireBuildUp.Value;
+                    break;
                 case BuildUp.Bleed:
                     character.characterNetworkManager.bleedBuildUp.Value += amount;
                     effect.buildUpRemaining = character.characterNetworkManager.bleedBuildUp.Value;

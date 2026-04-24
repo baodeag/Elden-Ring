@@ -21,6 +21,7 @@ namespace baodeag
         {
             slider = GetComponent<Slider>();
             rectTransform = GetComponent<RectTransform>();
+            EnsureFillImageReference();
         }
 
         protected virtual void Start()
@@ -30,11 +31,20 @@ namespace baodeag
 
         public virtual void SetStat(int newValue)
         {
+            if (slider == null)
+                slider = GetComponent<Slider>();
+
             slider.value = newValue;
         }
 
         public virtual void SetMaxStat(int maxValue)
         {
+            if (slider == null)
+                slider = GetComponent<Slider>();
+
+            if (rectTransform == null)
+                rectTransform = GetComponent<RectTransform>();
+
             slider.maxValue = maxValue;
             slider.value = maxValue;
 
@@ -48,6 +58,8 @@ namespace baodeag
 
         public void ToggleBarFillColor(bool isPoisoned)
         {
+            EnsureFillImageReference();
+
             if (barFillImage == null)
                 return;
 
@@ -60,6 +72,38 @@ namespace baodeag
             {
                 barFillImage.color = barFillColor;
             }
+        }
+
+        public void SetBarFillColor(Color color)
+        {
+            EnsureFillImageReference();
+
+            if (barFillImage == null)
+                return;
+
+            barFillImage.color = color;
+        }
+
+        public void ResetBarFillColor()
+        {
+            EnsureFillImageReference();
+
+            if (barFillImage == null)
+                return;
+
+            barFillImage.color = barFillColor;
+        }
+
+        protected void EnsureFillImageReference()
+        {
+            if (slider == null)
+                slider = GetComponent<Slider>();
+
+            if (barFillImage == null && slider != null && slider.fillRect != null)
+                barFillImage = slider.fillRect.GetComponent<Image>();
+
+            if (barFillImage != null && barFillColor.a <= 0f)
+                barFillColor = barFillImage.color;
         }
     }
 }

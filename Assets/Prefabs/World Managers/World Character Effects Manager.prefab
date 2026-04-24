@@ -49,6 +49,7 @@ MonoBehaviour:
   healingFlaskVFX: {fileID: 4808726079345785700, guid: b1cf3a8c2dfcbb14489bb46476516336, type: 3}
   deadSpotVFX: {fileID: 8731235315667033884, guid: b0babc4d0d44f3d449afd334268d1106, type: 3}
   poisonedVFX: {fileID: 5039827209986734299, guid: fb178729b3a637f44831834cdb7a949c, type: 3}
+  burningVFX: {fileID: 5039827209986734299, guid: 8800c35a47e24ef9855ebf3aef3446d4, type: 3}
   bloodLossVFX: {fileID: 1376161235735178713, guid: dd6ba7f3c683e114fa2fee15eae67594, type: 3}
   frostBiteVFX: {fileID: 8923214917221502383, guid: d576a5e6d2dbd22449be6d5836ac2ecd, type: 3}
   guardianBuffPotionVFX: {fileID: 4808726079345785700, guid: 6fb8ad51b1bb42c4a8ad748654b08d33, type: 3}
@@ -60,12 +61,15 @@ MonoBehaviour:
   takeCriticalDamageEffect: {fileID: 11400000, guid: 58768edb7af18d14095f6edd8e9feb5a, type: 2}
   frostBiteStaminaRegenerationEffect: {fileID: 11400000, guid: 6de3167e17b5b154e81b5a49e37ebb10, type: 2}
   poisonedEffect: {fileID: 11400000, guid: 0df7989047232e449b27f65d3b436abb, type: 2}
+  burningEffect: {fileID: 11400000, guid: bbe54e52f02f491094408d0d6a82f0d1, type: 2}
   bloodLossEffect: {fileID: 11400000, guid: 9a94f3aff49749646837d010f6893ac0, type: 2}
   frostBiteEffect: {fileID: 11400000, guid: 1c3127929e5128e42a9988dbb092901d, type: 2}
   takePoisonBuildUpEffect: {fileID: 11400000, guid: e284d86abed386c4391392129dee4b83, type: 2}
+  takeFireBuildUpEffect: {fileID: 11400000, guid: 4e5f389f7fd4450ebf2744d9242cd54c, type: 2}
   takeBleedBuildUpEffect: {fileID: 11400000, guid: 9fe59fa44892bdf428253983307d4753, type: 2}
   takeFrostBuildUpEffect: {fileID: 11400000, guid: d15fc36e9a760b040b526fbe60fc2f1c, type: 2}
   degradePoisonBuildUpEffect: {fileID: 11400000, guid: 5e7f5c17ac68bb242b65ebd62b4e7802, type: 2}
+  degradeFireBuildUpEffect: {fileID: 11400000, guid: 0ef3ba22825a42fb98ed84a6128ef0ff, type: 2}
   degradeBleedBuildUpEffect: {fileID: 11400000, guid: 64ea623277e67be409d943060195c7f6, type: 2}
   degradeFrostBiteBuildUpEffect: {fileID: 11400000, guid: 28a937f961943ad40a53c1f75c525ab8, type: 2}
   twoHandingEffect: {fileID: 11400000, guid: 1d4fe454986a205438befaa2b75e7435, type: 2}
@@ -75,6 +79,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d61167399a8bea9489344bb776bb4a51, type: 2}
   - {fileID: 11400000, guid: 58768edb7af18d14095f6edd8e9feb5a, type: 2}
   - {fileID: 11400000, guid: e284d86abed386c4391392129dee4b83, type: 2}
+  - {fileID: 11400000, guid: 4e5f389f7fd4450ebf2744d9242cd54c, type: 2}
   - {fileID: 11400000, guid: 9fe59fa44892bdf428253983307d4753, type: 2}
   - {fileID: 11400000, guid: 9a94f3aff49749646837d010f6893ac0, type: 2}
   staticEffects:
@@ -82,6 +87,8 @@ MonoBehaviour:
   timedEffects:
   - {fileID: 11400000, guid: 5e7f5c17ac68bb242b65ebd62b4e7802, type: 2}
   - {fileID: 11400000, guid: 0df7989047232e449b27f65d3b436abb, type: 2}
+  - {fileID: 11400000, guid: 0ef3ba22825a42fb98ed84a6128ef0ff, type: 2}
+  - {fileID: 11400000, guid: bbe54e52f02f491094408d0d6a82f0d1, type: 2}
   - {fileID: 11400000, guid: 64ea623277e67be409d943060195c7f6, type: 2}
   - {fileID: 11400000, guid: 28a937f961943ad40a53c1f75c525ab8, type: 2}
   - {fileID: 11400000, guid: 1c3127929e5128e42a9988dbb092901d, type: 2}

@@ -112,6 +112,10 @@ namespace baodeag
             (false,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isBurning = new NetworkVariable<bool>
+            (false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
         public NetworkVariable<bool> isBleeding = new NetworkVariable<bool>
             (false,
             NetworkVariableReadPermission.Everyone,
@@ -187,6 +191,10 @@ namespace baodeag
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
         public NetworkVariable<float> poisonBuildUp = new NetworkVariable<float>
+            (0,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+        public NetworkVariable<float> fireBuildUp = new NetworkVariable<float>
             (0,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Owner);
@@ -295,6 +303,28 @@ namespace baodeag
 
                 Destroy(character.characterEffectsManager.poisonedVFX);
 
+            }
+        }
+
+        public virtual void OnIsBurningChanged(bool oldStatus, bool newStatus)
+        {
+            if (isBurning.Value)
+            {
+                if (character.characterEffectsManager.burningVFX != null)
+                    return;
+
+                GameObject burningVFX = Instantiate(WorldCharacterEffectsManager.instance.burningVFX);
+                burningVFX.transform.parent = character.characterCombatManager.lockOnTransform;
+                burningVFX.transform.localPosition = Vector3.zero;
+                burningVFX.transform.localRotation = Quaternion.identity;
+                character.characterEffectsManager.burningVFX = burningVFX;
+            }
+            else
+            {
+                if (character.characterEffectsManager.burningVFX == null)
+                    return;
+
+                Destroy(character.characterEffectsManager.burningVFX);
             }
         }
 

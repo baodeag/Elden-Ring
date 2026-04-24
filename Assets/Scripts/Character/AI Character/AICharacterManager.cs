@@ -79,6 +79,7 @@ namespace baodeag
             aiCharacterNetworkManager.currentHealth.OnValueChanged += aiCharacterNetworkManager.OnHPChanged;
             aiCharacterNetworkManager.isBlocking.OnValueChanged += aiCharacterNetworkManager.OnIsBlockingChanged;
             aiCharacterNetworkManager.isPoisoned.OnValueChanged += aiCharacterNetworkManager.OnIsPoisonedChanged;
+            aiCharacterNetworkManager.isBurning.OnValueChanged += aiCharacterNetworkManager.OnIsBurningChanged;
             aiCharacterNetworkManager.isBleeding.OnValueChanged += aiCharacterNetworkManager.OnIsBleedingChanged;
             aiCharacterNetworkManager.isFrostBitten.OnValueChanged += aiCharacterNetworkManager.OnIsFrostBittenChanged;
             aiCharacterNetworkManager.isFrozen.OnValueChanged += aiCharacterNetworkManager.OnIsFrozenChanged;
@@ -92,6 +93,9 @@ namespace baodeag
             CreateActivationBeacon();
 
             if (!IsOwner)
+                aiCharacterNetworkManager.OnIsBurningChanged(false, aiCharacterNetworkManager.isBurning.Value);
+
+            if (!IsOwner)
                 aiCharacterNetworkManager.OnIsPoisonedChanged(false, aiCharacterNetworkManager.isPoisoned.Value);
         }
 
@@ -102,6 +106,7 @@ namespace baodeag
             aiCharacterNetworkManager.currentHealth.OnValueChanged -= aiCharacterNetworkManager.OnHPChanged;
             aiCharacterNetworkManager.isBlocking.OnValueChanged -= aiCharacterNetworkManager.OnIsBlockingChanged;
             aiCharacterNetworkManager.isPoisoned.OnValueChanged -= aiCharacterNetworkManager.OnIsPoisonedChanged;
+            aiCharacterNetworkManager.isBurning.OnValueChanged -= aiCharacterNetworkManager.OnIsBurningChanged;
             aiCharacterNetworkManager.isBleeding.OnValueChanged -= aiCharacterNetworkManager.OnIsBleedingChanged;
             aiCharacterNetworkManager.isFrostBitten.OnValueChanged -= aiCharacterNetworkManager.OnIsFrostBittenChanged;
             aiCharacterNetworkManager.isFrozen.OnValueChanged -= aiCharacterNetworkManager.OnIsFrozenChanged;

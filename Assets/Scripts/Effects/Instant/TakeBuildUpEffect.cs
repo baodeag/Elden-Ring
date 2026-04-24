@@ -20,6 +20,9 @@ namespace baodeag
                 case BuildUp.Poison:
                     CheckForPoisonedStatus(character);
                     break;
+                case BuildUp.Fire:
+                    CheckForBurningStatus(character);
+                    break;
                 case BuildUp.Bleed:
                     CheckForBloodLossStatus(character);
                     break;
@@ -63,6 +66,30 @@ namespace baodeag
                     return;
 
 
+            }
+        }
+
+        private void CheckForBurningStatus(CharacterManager character)
+        {
+            if (character.characterNetworkManager.isBurning.Value)
+                return;
+
+            BuildUpEffect fireBuildUp = character.characterEffectsManager.CheckForTimedEffect(WorldCharacterEffectsManager.instance.degradeFireBuildUpEffect.effectID) as BuildUpEffect;
+
+            if (fireBuildUp == null)
+            {
+                fireBuildUp = Instantiate(WorldCharacterEffectsManager.instance.degradeFireBuildUpEffect);
+                character.characterEffectsManager.AddTimedEffect(fireBuildUp);
+                fireBuildUp.ProcessEffect(character);
+            }
+
+            if (character.characterNetworkManager.fireBuildUp.Value > character.characterNetworkManager.buildUpCapacity.Value)
+            {
+                character.characterNetworkManager.fireBuildUp.Value = 0;
+                character.characterNetworkManager.isBurning.Value = true;
+
+                BurningEffect burning = Instantiate(WorldCharacterEffectsManager.instance.burningEffect);
+                character.characterEffectsManager.AddTimedEffect(burning);
             }
         }
 

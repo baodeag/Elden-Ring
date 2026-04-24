@@ -7,6 +7,7 @@ namespace baodeag
     {
         [Header("Debug delete later")]
         [SerializeField] bool applyPoisonBuildUp = false;
+        [SerializeField] bool applyFireBuildUp = false;
         [SerializeField] bool applyBleedBuildUp = false;
         [SerializeField] bool applyFrostBuildUp = false;
 
@@ -18,6 +19,14 @@ namespace baodeag
             {
                 applyPoisonBuildUp = false;
                 TakeBuildUpEffect buildUp = Instantiate(WorldCharacterEffectsManager.instance.takePoisonBuildUpEffect);
+                buildUp.buildUpAmount = 25;
+                character.characterEffectsManager.ProcessInstantEffect(buildUp);
+            }
+
+            if (applyFireBuildUp)
+            {
+                applyFireBuildUp = false;
+                TakeBuildUpEffect buildUp = Instantiate(WorldCharacterEffectsManager.instance.takeFireBuildUpEffect);
                 buildUp.buildUpAmount = 25;
                 character.characterEffectsManager.ProcessInstantEffect(buildUp);
             }

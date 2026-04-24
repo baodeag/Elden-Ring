@@ -13,6 +13,7 @@ namespace baodeag
 
         [Header("UI Colors")]
         [SerializeField] Color poisonedColor;
+        [SerializeField] Color burningColor = new Color(1f, 0.45f, 0.1f, 1f);
 
         [Header("Materials")]
         [SerializeField] Material frozenMaterial;
@@ -55,6 +56,11 @@ namespace baodeag
         public Color GetPoisonedColor()
         {
             return poisonedColor;
+        }
+
+        public Color GetBurningColor()
+        {
+            return burningColor;
         }
 
         public Material GetFrozenMaterial()

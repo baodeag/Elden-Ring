@@ -19,6 +19,7 @@ namespace baodeag
 
         [Header("Build Up Bars")]
         [SerializeField] UI_BuildUpBar poisonBuildUpBar;
+        [SerializeField] UI_BuildUpBar fireBuildUpBar;
         [SerializeField] UI_BuildUpBar bleedBuildUpBar;
         [SerializeField] UI_BuildUpBar frostBiteBuildUpBar;
 
@@ -178,6 +179,11 @@ namespace baodeag
             poisonBuildUpBar.SetStat(Mathf.RoundToInt(amount));
         }
 
+        public void SetNewFireBuildUpAmount(float oldValue, float amount)
+        {
+            fireBuildUpBar.SetStat(Mathf.RoundToInt(amount));
+        }
+
         public void SetNewBleedBuildUpAmount(float oldValue, float amount)
         {
             bleedBuildUpBar.SetStat(Mathf.RoundToInt(amount));
@@ -191,6 +197,7 @@ namespace baodeag
         public void SetMaxBuildUpValue(int buildUpCapacity)
         {
             poisonBuildUpBar.SetMaxStat(buildUpCapacity);
+            fireBuildUpBar.SetMaxStat(buildUpCapacity);
             bleedBuildUpBar.SetMaxStat(buildUpCapacity);
             frostBiteBuildUpBar.SetMaxStat(buildUpCapacity);
         }
