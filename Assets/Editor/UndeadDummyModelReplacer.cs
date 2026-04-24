@@ -1,7 +1,6 @@
 using UnityEditor;
 using UnityEngine;
 
-[InitializeOnLoad]
 public static class UndeadDummyModelReplacer
 {
     private const string TargetPrefabPath = "Assets/Prefabs/Character/Undead_Dummy_01.prefab";
@@ -12,7 +11,7 @@ public static class UndeadDummyModelReplacer
 
     static UndeadDummyModelReplacer()
     {
-        EditorApplication.delayCall += TryAutoReplaceOnce;
+        // Disabled autorun to avoid mutating editor state on startup.
     }
 
     [MenuItem("Tools/Fix/Replace Undead Dummy Model With Wretch")]

@@ -6,7 +6,6 @@ using UnityEngine.AI;
 
 namespace baodeag.EditorTools
 {
-    [InitializeOnLoad]
     public static class PolygonZombiesUndeadBatchCreator
     {
         private const string TemplatePrefabPath = "Assets/Prefabs/Character/Undead_Dummy_01.prefab";
@@ -18,7 +17,7 @@ namespace baodeag.EditorTools
 
         static PolygonZombiesUndeadBatchCreator()
         {
-            EditorApplication.delayCall += TryAutoCreateOnce;
+            // Disabled autorun to avoid mutating prefabs during editor startup.
         }
 
         [MenuItem("Tools/Fix/Create Undead Dummies From Polygon Zombies")]

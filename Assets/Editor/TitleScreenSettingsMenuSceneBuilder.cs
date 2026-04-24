@@ -8,7 +8,6 @@ using UnityEngine.UI;
 
 namespace baodeag.Editor
 {
-    [InitializeOnLoad]
     public static class TitleScreenSettingsMenuSceneBuilder
     {
         private const string ScenePath = "Assets/Scenes/Main_Menu_01.unity";
@@ -16,7 +15,7 @@ namespace baodeag.Editor
 
         static TitleScreenSettingsMenuSceneBuilder()
         {
-            EditorApplication.delayCall += EnsureSceneAuthoredSettingsMenuOnce;
+            // Disabled autorun to avoid opening/saving scenes during editor startup.
         }
 
         [MenuItem("Tools/UI/Rebuild Title Screen Settings Menu")]

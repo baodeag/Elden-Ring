@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace baodeag.EditorTools
 {
-    [InitializeOnLoad]
     public static class UndeadDummyGameplayFixer
     {
         private const string TargetPrefabPath = "Assets/Prefabs/Character/Undead_Dummy_01.prefab";
@@ -15,7 +14,7 @@ namespace baodeag.EditorTools
 
         static UndeadDummyGameplayFixer()
         {
-            EditorApplication.delayCall += TryAutoFixOnce;
+            // Disabled autorun to avoid mutating editor state on startup.
         }
 
         [MenuItem("Tools/Fix/Repair Undead Dummy Gameplay Hooks")]

@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace baodeag.EditorTools
 {
-    [InitializeOnLoad]
     public static class DurkMaterialFixer
     {
         private const string TargetPrefabPath = "Assets/Prefabs/Character/Durk_Dummy_01.prefab";
@@ -13,7 +12,7 @@ namespace baodeag.EditorTools
 
         static DurkMaterialFixer()
         {
-            EditorApplication.delayCall += TryAutoFixOnce;
+            // Disabled autorun to avoid mutating editor state on startup.
         }
 
         [MenuItem("Tools/Fix/Apply Durk Boss Materials")]
