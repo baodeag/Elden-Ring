@@ -14,12 +14,12 @@ namespace baodeag
         [SerializeField] bool applyFrostBuildUp = false;
 
         [Header("Fire Build-Up")]
-        [SerializeField] float fireBuildUpHitCooldown = 0.5f;   // tránh multi-hit trong 1 swing
-        [SerializeField] float fireBuildUpDegradeRate = 5f;     // điểm/giây giảm khi không bị tấn công
-        [SerializeField] float fireBuildUpDegradeDelay = 3f;    // giây chờ sau hit rồi mới bắt đầu giảm
-        [SerializeField] float burnDamagePerTick = 5f;          // HP mất mỗi tick khi đang burning
-        [SerializeField] float burnTickInterval = 1f;           // giây giữa mỗi tick damage
-        [SerializeField] float burnDuration = 8f;               // tổng thời gian burning kéo dài
+        [SerializeField] float fireBuildUpHitCooldown = 0.5f;
+        [SerializeField] float fireBuildUpDegradeRate = 5f;
+        [SerializeField] float fireBuildUpDegradeDelay = 3f;
+        [SerializeField] float burnDamagePerTick = 5f;
+        [SerializeField] float burnTickInterval = 1f;
+        [SerializeField] float burnDuration = 8f;
 
         float lastFireBuildUpHitTime = -999f;
         float burnDamageTickTimer = 0f;
@@ -29,37 +29,7 @@ namespace baodeag
         {
             base.Update();
 
-            if (applyPoisonBuildUp)
-            {
-                applyPoisonBuildUp = false;
-                TakeBuildUpEffect buildUp = Instantiate(WorldCharacterEffectsManager.instance.takePoisonBuildUpEffect);
-                buildUp.buildUpAmount = 25;
-                character.characterEffectsManager.ProcessInstantEffect(buildUp);
-            }
-
-            if (applyFireBuildUp)
-            {
-                applyFireBuildUp = false;
-                TakeBuildUpEffect buildUp = Instantiate(WorldCharacterEffectsManager.instance.takeFireBuildUpEffect);
-                buildUp.buildUpAmount = DefaultFireBuildUpFromHit;
-                character.characterEffectsManager.ProcessInstantEffect(buildUp);
-            }
-
-            if (applyBleedBuildUp)
-            {
-                applyBleedBuildUp = false;
-                TakeBuildUpEffect buildUp = Instantiate(WorldCharacterEffectsManager.instance.takeBleedBuildUpEffect);
-                buildUp.buildUpAmount = 25;
-                character.characterEffectsManager.ProcessInstantEffect(buildUp);
-            }
-
-            if (applyFrostBuildUp)
-            {
-                applyFrostBuildUp = false;
-                TakeBuildUpEffect buildUp = Instantiate(WorldCharacterEffectsManager.instance.takeFrostBuildUpEffect);
-                buildUp.buildUpAmount = 25;
-                character.characterEffectsManager.ProcessInstantEffect(buildUp);
-            }
+            ProcessDebugBuildUps();
 
             if (!character.IsOwner)
                 return;
@@ -68,7 +38,43 @@ namespace baodeag
             HandleBurningDamage();
         }
 
-        // Giảm dần fire build-up sau khi không bị tấn công
+        private void ProcessDebugBuildUps()
+        {
+            if (applyPoisonBuildUp)
+            {
+                applyPoisonBuildUp = false;
+                ApplyDebugBuildUp(WorldCharacterEffectsManager.instance.takePoisonBuildUpEffect, 25);
+            }
+
+            if (applyFireBuildUp)
+            {
+                applyFireBuildUp = false;
+                ApplyFireBuildUp(DefaultFireBuildUpFromHit);
+            }
+
+            if (applyBleedBuildUp)
+            {
+                applyBleedBuildUp = false;
+                ApplyDebugBuildUp(WorldCharacterEffectsManager.instance.takeBleedBuildUpEffect, 25);
+            }
+
+            if (applyFrostBuildUp)
+            {
+                applyFrostBuildUp = false;
+                ApplyDebugBuildUp(WorldCharacterEffectsManager.instance.takeFrostBuildUpEffect, 25);
+            }
+        }
+
+        private void ApplyDebugBuildUp(TakeBuildUpEffect buildUpTemplate, int buildUpAmount)
+        {
+            if (buildUpTemplate == null)
+                return;
+
+            TakeBuildUpEffect buildUp = Instantiate(buildUpTemplate);
+            buildUp.buildUpAmount = buildUpAmount;
+            character.characterEffectsManager.ProcessInstantEffect(buildUp);
+        }
+
         private void HandleFireBuildUpDegradation()
         {
             if (character.characterNetworkManager.isBurning.Value)
@@ -78,23 +84,13 @@ namespace baodeag
             if (buildUp <= 0)
                 return;
 
-            // Chờ delay rồi mới bắt đầu giảm
-            float timeSinceLastHit = Time.time - lastFireBuildUpHitTime;
-            if (timeSinceLastHit < fireBuildUpDegradeDelay)
+            if (Time.time - lastFireBuildUpHitTime < fireBuildUpDegradeDelay)
                 return;
 
-            float newBuildUp = Mathf.Max(0, buildUp - fireBuildUpDegradeRate * Time.deltaTime);
-            character.characterNetworkManager.fireBuildUp.Value = newBuildUp;
-
-            // Cập nhật UI
-            if (PlayerUIManager.instance != null && PlayerUIManager.instance.localPlayer == character &&
-                PlayerUIManager.instance.playerUIHudManager != null)
-            {
-                PlayerUIManager.instance.playerUIHudManager.SetNewFireBuildUpAmount(buildUp, newBuildUp);
-            }
+            character.characterNetworkManager.fireBuildUp.Value = Mathf.Max(0, buildUp - fireBuildUpDegradeRate * Time.deltaTime);
+            RefreshFireBuildUpBar();
         }
 
-        // Trừ máu player theo tick khi đang burning
         private void HandleBurningDamage()
         {
             if (!character.characterNetworkManager.isBurning.Value)
@@ -110,12 +106,10 @@ namespace baodeag
                 return;
             }
 
-            // Đếm ngược thời gian burning
             burnTimeRemaining -= Time.deltaTime;
             if (burnTimeRemaining <= 0)
             {
                 character.characterNetworkManager.isBurning.Value = false;
-                Debug.Log("[Burning] Burning expired.");
                 return;
             }
 
@@ -125,12 +119,9 @@ namespace baodeag
 
             burnDamageTickTimer = 0f;
 
-            // Trừ máu
             int burnDamage = Mathf.RoundToInt(burnDamagePerTick);
             int newHealth = Mathf.Max(0, character.characterNetworkManager.currentHealth.Value - burnDamage);
             character.characterNetworkManager.currentHealth.Value = newHealth;
-
-            Debug.Log($"[Burning] Burn tick: -{burnDamagePerTick} HP → {newHealth} (còn {burnTimeRemaining:F1}s)");
 
             if (newHealth <= 0)
                 character.characterNetworkManager.isBurning.Value = false;
@@ -138,53 +129,48 @@ namespace baodeag
 
         public void ApplyFireBuildUpFromHit(int buildUpAmount)
         {
+            ApplyFireBuildUp(buildUpAmount, true);
+        }
+
+        public void ApplyFireBuildUp(int buildUpAmount, bool useHitCooldown = false)
+        {
             if (!character.IsOwner)
                 return;
 
-            // Cooldown theo thời gian thực, tránh multi-hit từ cùng 1 swing
-            if (Time.time - lastFireBuildUpHitTime < fireBuildUpHitCooldown)
+            if (useHitCooldown && Time.time - lastFireBuildUpHitTime < fireBuildUpHitCooldown)
                 return;
 
             lastFireBuildUpHitTime = Time.time;
-
             character.characterEffectsManager.AddBuildUps(BuildUp.Fire, buildUpAmount);
-            Debug.Log($"[FireBuildUp] Added {buildUpAmount}. fireBuildUp={character.characterNetworkManager.fireBuildUp.Value}, capacity={character.characterNetworkManager.buildUpCapacity.Value}");
 
-            // Kích hoạt burning nếu build-up đầy
-            if (!character.characterNetworkManager.isBurning.Value &&
-                character.characterNetworkManager.fireBuildUp.Value >= character.characterNetworkManager.buildUpCapacity.Value)
-            {
-                character.characterNetworkManager.fireBuildUp.Value = 0;
-                character.characterNetworkManager.isBurning.Value = true;
-                burnTimeRemaining = burnDuration;
-                burnDamageTickTimer = 0f;
-                Debug.Log($"[Burning] Burning activated! Duration={burnDuration}s");
-            }
-
-            ForceRefreshFireBuildUpBar();
+            TryActivateBurningFromFireBuildUp();
+            RefreshFireBuildUpBar();
         }
 
-        private void ForceRefreshFireBuildUpBar()
+        private void TryActivateBurningFromFireBuildUp()
+        {
+            if (character.characterNetworkManager.isBurning.Value)
+                return;
+
+            if (character.characterNetworkManager.fireBuildUp.Value < character.characterNetworkManager.buildUpCapacity.Value)
+                return;
+
+            character.characterNetworkManager.fireBuildUp.Value = 0;
+            character.characterNetworkManager.isBurning.Value = true;
+            burnTimeRemaining = burnDuration;
+            burnDamageTickTimer = 0f;
+        }
+
+        private void RefreshFireBuildUpBar()
         {
             if (PlayerUIManager.instance == null || PlayerUIManager.instance.localPlayer != character)
-            {
-                Debug.Log("[FireBuildUp] ForceRefresh skipped: PlayerUIManager null or wrong player");
                 return;
-            }
 
             if (PlayerUIManager.instance.playerUIHudManager == null || character.characterNetworkManager == null)
-            {
-                Debug.Log("[FireBuildUp] ForceRefresh skipped: HudManager or networkManager null");
                 return;
-            }
 
-            float currentBuildUp = character.characterNetworkManager.fireBuildUp.Value;
-            float capacity = character.characterNetworkManager.buildUpCapacity.Value;
-            Debug.Log($"[FireBuildUp] ForceRefreshFireBuildUpBar: buildUp={currentBuildUp}, capacity={capacity}");
-
-            // Set max FIRST, then set current value so bar becomes visible correctly
-            PlayerUIManager.instance.playerUIHudManager.SetMaxBuildUpValue(Mathf.RoundToInt(capacity));
-            PlayerUIManager.instance.playerUIHudManager.SetNewFireBuildUpAmount(0, currentBuildUp);
+            PlayerUIManager.instance.playerUIHudManager.SetMaxBuildUpValue(Mathf.RoundToInt(character.characterNetworkManager.buildUpCapacity.Value));
+            PlayerUIManager.instance.playerUIHudManager.SetNewFireBuildUpAmount(0, character.characterNetworkManager.fireBuildUp.Value);
         }
 
         public void SaveActiveBuffs(List<SerializableActiveBuff> activeBuffs)
