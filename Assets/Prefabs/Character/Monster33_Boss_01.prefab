@@ -42,7 +42,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7368463768422459371}
   - component: {fileID: 4789210162266766965}
-  - component: {fileID: 6556112019707956974}
+  - component: {fileID: 313959439023613289}
   m_Layer: 10
   m_Name: Monster33_Weapon_01_Hitbox
   m_TagString: Untagged
@@ -59,7 +59,7 @@ Transform:
   m_GameObject: {fileID: 542293908608294569}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.91, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -84,11 +84,11 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.23
-  m_Height: 2.18
+  m_Radius: 0.28
+  m_Height: 1.72
   m_Direction: 1
-  m_Center: {x: 0, y: 0.75, z: 0}
---- !u!114 &6556112019707956974
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &313959439023613289
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -97,7 +97,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 542293908608294569}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b3530b95dfab0b4ba90cee3305f539e, type: 3}
+  m_Script: {fileID: 11500000, guid: 70765aa4e29d27d448f78212aafc973c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   damageCollider: {fileID: 0}
@@ -108,6 +108,9 @@ MonoBehaviour:
   holyDamage: 0
   poiseDamage: 0
   characterCausingDamage: {fileID: 0}
+  firePhaseActive: 0
+  fireBuildUpAmount: 120
+  burningHitVFXPrefab: {fileID: 6263782476919498309, guid: 1fd2749f2a4056446881dce86ed70c39, type: 3}
 --- !u!1 &599716864564292514
 GameObject:
   m_ObjectHideFlags: 0
@@ -193,9 +196,10 @@ GameObject:
   - component: {fileID: 132985241398207301}
   - component: {fileID: 5491465021274601615}
   - component: {fileID: 4845547109527774853}
-  - component: {fileID: 4419482911081702703}
-  - component: {fileID: 8709695914055510297}
-  - component: {fileID: 2769802236723908553}
+  - component: {fileID: 5867541319057612100}
+  - component: {fileID: 7344850623620157656}
+  - component: {fileID: 6363674498545770622}
+  - component: {fileID: 1461239079167305267}
   m_Layer: 6
   m_Name: Monster33_Boss_01
   m_TagString: Untagged
@@ -233,7 +237,7 @@ Animator:
   m_GameObject: {fileID: 907095673196354164}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: b20a3c10714a6ac439af479e3273de65, type: 3}
-  m_Controller: {fileID: 9100000, guid: 3164e6ac5ebdb1c4599531b4684878aa, type: 2}
+  m_Controller: {fileID: 9100000, guid: a5f46a3a8b8ec1e478f28b4a6210e3f7, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -411,6 +415,7 @@ MonoBehaviour:
   bloodSplatterVFX: {fileID: 0}
   criticalBloodSplatterVFX: {fileID: 0}
   poisonedVFX: {fileID: 0}
+  burningVFX: {fileID: 0}
   frostBiteVFX: {fileID: 0}
   staticEffects: []
   effectTickTimer: 0
@@ -665,6 +670,8 @@ MonoBehaviour:
     m_InternalValue: 0
   isPoisoned:
     m_InternalValue: 0
+  isBurning:
+    m_InternalValue: 0
   isBleeding:
     m_InternalValue: 0
   isFrostBitten:
@@ -700,6 +707,8 @@ MonoBehaviour:
   buildUpCapacity:
     m_InternalValue: 100
   poisonBuildUp:
+    m_InternalValue: 0
+  fireBuildUp:
     m_InternalValue: 0
   bleedBuildUp:
     m_InternalValue: 0
@@ -849,7 +858,31 @@ MonoBehaviour:
         byte0059: 0
         byte0060: 0
         byte0061: 0
---- !u!114 &4419482911081702703
+--- !u!114 &5867541319057612100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 907095673196354164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28fa139575cdf874988c340629d9695c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bodyFireVFXPrefab: {fileID: 5039827209986734299, guid: 8800c35a47e24ef9855ebf3aef3446d4, type: 3}
+  weaponTrailPrefab: {fileID: 3802302459956397560, guid: b3416c8b2e3c7804b8c061dc4a36fc43, type: 3}
+  weaponFireMaterial: {fileID: 2100000, guid: b9a4e56ad7ed4ecfb336d1c8f68fd9b2, type: 2}
+  visualRoot: {fileID: 6833782899267788821}
+  rightWeaponRoot: {fileID: 4199998448941886474}
+  leftWeaponRoot: {fileID: 8919688862115873707}
+  activationDelay: 2.2
+  bodyFireScale: 1.8
+  bodyFireLocalPosition: {x: 0, y: 0.9, z: 0}
+  weaponFireOverlayLocalPosition: {x: 0, y: 0, z: -0.42}
+  weaponFireOverlayLocalRotation: {x: 90, y: 0, z: 0}
+  weaponFireOverlayLocalScale: {x: 0.18, y: 0.7, z: 0.18}
+--- !u!114 &7344850623620157656
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -895,13 +928,14 @@ MonoBehaviour:
   stanceRegenerationTimer: 0
   defaultTimeUntilStanceRegenerationBegins: 15
   playersWithinActivationRange: []
-  rightHandDamageCollider: {fileID: 6556112019707956974}
-  leftHandDamageCollider: {fileID: 4942077374301132175}
+  rightHandDamageCollider: {fileID: 313959439023613289}
+  leftHandDamageCollider: {fileID: 8664525535380772719}
   attack01DamageModifier: 1.2
   attack02DamageModifier: 1.55
   attack03DamageModifier: 1.8
   poweredUpDamageMultiplier: 1.3
---- !u!114 &8709695914055510297
+  poweredUpFireDamageMultiplier: 0.45
+--- !u!114 &6363674498545770622
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -961,8 +995,10 @@ MonoBehaviour:
   phase02CombatStanceState: {fileID: 11400000, guid: a64ad0bc7b08ef34bb41404b3be3449d, type: 2}
   sleepState: {fileID: 11400000, guid: ac7604d23513bcb4f8d06458c46d5055, type: 2}
   monster33CombatManager: {fileID: 0}
+  phase2FireController: {fileID: 0}
   hasActivatedPowerUpPhase: 0
---- !u!114 &2769802236723908553
+  powerUpActionRecoveryDelay: 2.65
+--- !u!114 &1461239079167305267
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3539,7 +3575,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8696518205036744789}
   - component: {fileID: 7763737162649264712}
-  - component: {fileID: 4942077374301132175}
+  - component: {fileID: 8664525535380772719}
   m_Layer: 10
   m_Name: Monster33_Weapon_02_Hitbox
   m_TagString: Untagged
@@ -3581,11 +3617,11 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.28
-  m_Height: 1.52
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4942077374301132175
+  m_Radius: 0.6325663
+  m_Height: 1.2651323
+  m_Direction: 2
+  m_Center: {x: -0.10922145, y: 0.07600464, z: -0.024999943}
+--- !u!114 &8664525535380772719
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3594,7 +3630,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7820431176596010776}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b3530b95dfab0b4ba90cee3305f539e, type: 3}
+  m_Script: {fileID: 11500000, guid: 70765aa4e29d27d448f78212aafc973c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   damageCollider: {fileID: 0}
@@ -3605,6 +3641,9 @@ MonoBehaviour:
   holyDamage: 0
   poiseDamage: 0
   characterCausingDamage: {fileID: 0}
+  firePhaseActive: 0
+  fireBuildUpAmount: 120
+  burningHitVFXPrefab: {fileID: 0}
 --- !u!1 &7822840174369144537
 GameObject:
   m_ObjectHideFlags: 0

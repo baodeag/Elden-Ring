@@ -48,6 +48,7 @@ namespace baodeag
                 return;
 
             CalculateDamage(character);
+            ApplyAttackerBuildUps(character);
             PLayDirectionalBasedDamageAnimation(character);
 
             PlayDamageSFX(character);
@@ -63,6 +64,36 @@ namespace baodeag
 
             if (aiCharacter != null && playerCausingDamage != null)
                 aiCharacter.RegisterLastPlayerWhoDealtDamage(playerCausingDamage);
+        }
+
+        private void ApplyAttackerBuildUps(CharacterManager character)
+        {
+            if (!character.IsOwner)
+                return;
+
+            if (character is not PlayerManager player || player.playerEffectsManager == null)
+                return;
+
+            if (!ShouldApplyMonster33PowerUpFireBuildUp())
+                return;
+
+            player.playerEffectsManager.ApplyFireBuildUpFromHit(PlayerEffectsManager.DefaultFireBuildUpFromHit);
+        }
+
+        private bool ShouldApplyMonster33PowerUpFireBuildUp()
+        {
+            if (fireDamage > 0)
+                return true;
+
+            if (characterCausingDamage == null)
+                return false;
+
+            AIMonster33BossCharacterNetworkManager monster33NetworkManager = characterCausingDamage.GetComponent<AIMonster33BossCharacterNetworkManager>();
+            if (monster33NetworkManager != null)
+                return monster33NetworkManager.isPowerUpPhaseActive.Value;
+
+            AIMonster33CombatManager monster33CombatManager = characterCausingDamage.GetComponent<AIMonster33CombatManager>();
+            return monster33CombatManager != null && monster33CombatManager.IsPoweredUp;
         }
 
         protected virtual void CalculateDamage(CharacterManager character)

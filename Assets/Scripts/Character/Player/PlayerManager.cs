@@ -117,6 +117,7 @@ namespace baodeag
                 playerNetworkManager.SetNewMaxHealthValue(0, playerNetworkManager.vigor.Value); 
                 playerNetworkManager.SetNewMaxStaminaValue(0, playerNetworkManager.endurance.Value);
                 playerNetworkManager.SetNewMaxFocusPointsValue(0, playerNetworkManager.mind.Value);
+                playerNetworkManager.SetNewMaxBuildUpCapacityValue(0, playerNetworkManager.vigor.Value);
 
                 //reset camera rotation to standard when aiming is disabled
                 playerNetworkManager.isAiming.OnValueChanged += playerNetworkManager.OnIsAimingChanged;

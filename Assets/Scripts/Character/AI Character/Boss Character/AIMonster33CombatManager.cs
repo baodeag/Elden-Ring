@@ -13,8 +13,10 @@ namespace baodeag
         [SerializeField] float attack02DamageModifier = 1.65f;
         [SerializeField] float attack03DamageModifier = 1.9f;
         [SerializeField] float poweredUpDamageMultiplier = 1.3f;
+        [SerializeField] float poweredUpFireDamageMultiplier = 0.45f;
 
         bool isPoweredUp;
+        public bool IsPoweredUp => isPoweredUp;
 
         protected override void Awake()
         {
@@ -105,6 +107,8 @@ namespace baodeag
         public void ApplyPowerUpBuff()
         {
             isPoweredUp = true;
+            ImbueFireDamage(rightHandDamageCollider);
+            ImbueFireDamage(leftHandDamageCollider);
         }
 
         private void ApplyDamage(ManualDamageCollider collider, float modifier)
@@ -114,7 +118,23 @@ namespace baodeag
 
             float totalModifier = modifier * (isPoweredUp ? poweredUpDamageMultiplier : 1f);
             collider.physicalDamage = baseDamage * totalModifier;
+            collider.fireDamage = isPoweredUp ? baseDamage * modifier * poweredUpFireDamageMultiplier : 0f;
             collider.poiseDamage = basePoiseDamage * totalModifier;
+        }
+
+        private void SetFirePhaseOnCollider(ManualDamageCollider collider)
+        {
+            if (collider is Monster33FireDamageCollider fireDamageCollider)
+                fireDamageCollider.SetFirePhaseActive(isPoweredUp);
+        }
+
+        private void ImbueFireDamage(ManualDamageCollider collider)
+        {
+            if (collider == null)
+                return;
+
+            SetFirePhaseOnCollider(collider);
+            collider.fireDamage = baseDamage * poweredUpFireDamageMultiplier;
         }
 
         private void ResolveDamageColliders()

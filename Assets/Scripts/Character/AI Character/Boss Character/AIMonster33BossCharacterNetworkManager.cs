@@ -1,9 +1,15 @@
 using UnityEngine;
+using Unity.Netcode;
 
 namespace baodeag
 {
     public class AIMonster33BossCharacterNetworkManager : AICharacterNetworkManager
     {
+        public NetworkVariable<bool> isPowerUpPhaseActive = new NetworkVariable<bool>
+            (false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Owner);
+
         AIMonster33CharacterManager monster33BossCharacter;
 
         protected override void Awake()
@@ -46,6 +52,19 @@ namespace baodeag
             }
 
             base.OnIsActiveChanged(oldStatus, newStatus);
+        }
+
+        [ClientRpc]
+        public void ActivatePowerUpPhaseFXClientRpc()
+        {
+            if (monster33BossCharacter == null)
+                monster33BossCharacter = GetComponent<AIMonster33CharacterManager>();
+
+            if (monster33BossCharacter == null)
+                return;
+
+            monster33BossCharacter.monster33CombatManager?.ApplyPowerUpBuff();
+            monster33BossCharacter.phase2FireController?.ActivateAfterPowerUpAnimation();
         }
     }
 }

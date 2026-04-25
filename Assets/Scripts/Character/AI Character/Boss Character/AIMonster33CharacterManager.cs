@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace baodeag
@@ -5,13 +6,19 @@ namespace baodeag
     public class AIMonster33CharacterManager : AIBossCharacterManager
     {
         [HideInInspector] public AIMonster33CombatManager monster33CombatManager;
+        [HideInInspector] public Monster33Phase2FireController phase2FireController;
         [HideInInspector] public bool hasActivatedPowerUpPhase;
+
+        [SerializeField] float powerUpActionRecoveryDelay = 2.65f;
+
+        Coroutine powerUpRecoveryCoroutine;
 
         protected override void Awake()
         {
             base.Awake();
 
             monster33CombatManager = GetComponent<AIMonster33CombatManager>();
+            phase2FireController = GetComponent<Monster33Phase2FireController>();
         }
 
         public override void OnNetworkSpawn()
@@ -70,9 +77,38 @@ namespace baodeag
                 return false;
 
             hasActivatedPowerUpPhase = true;
+            AIMonster33BossCharacterNetworkManager monster33NetworkManager = aiCharacterNetworkManager as AIMonster33BossCharacterNetworkManager;
+
+            if (monster33NetworkManager != null)
+                monster33NetworkManager.isPowerUpPhaseActive.Value = true;
+
             PhaseShift();
             monster33CombatManager?.ApplyPowerUpBuff();
+            phase2FireController?.ActivateAfterPowerUpAnimation();
+            RecoverFromPowerUpActionAfterAnimation();
+
+            monster33NetworkManager?.ActivatePowerUpPhaseFXClientRpc();
+
             return true;
+        }
+
+        private void RecoverFromPowerUpActionAfterAnimation()
+        {
+            if (powerUpRecoveryCoroutine != null)
+                StopCoroutine(powerUpRecoveryCoroutine);
+
+            powerUpRecoveryCoroutine = StartCoroutine(RecoverFromPowerUpAction());
+        }
+
+        private IEnumerator RecoverFromPowerUpAction()
+        {
+            yield return new WaitForSeconds(powerUpActionRecoveryDelay);
+
+            if (isDead.Value)
+                yield break;
+
+            ForceEndCurrentAction();
+            powerUpRecoveryCoroutine = null;
         }
     }
 }

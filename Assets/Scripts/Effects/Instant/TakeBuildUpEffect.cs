@@ -44,8 +44,8 @@ namespace baodeag
             if (poisonBuildUp == null)
             {
                 poisonBuildUp = Instantiate(WorldCharacterEffectsManager.instance.degradePoisonBuildUpEffect);
+                poisonBuildUp.buildUpRemaining = character.characterNetworkManager.poisonBuildUp.Value;
                 character.characterEffectsManager.AddTimedEffect(poisonBuildUp);
-                poisonBuildUp.ProcessEffect(character);
             }
 
             if (character.characterNetworkManager.poisonBuildUp.Value > character.characterNetworkManager.buildUpCapacity.Value)
@@ -79,11 +79,11 @@ namespace baodeag
             if (fireBuildUp == null)
             {
                 fireBuildUp = Instantiate(WorldCharacterEffectsManager.instance.degradeFireBuildUpEffect);
+                fireBuildUp.buildUpRemaining = character.characterNetworkManager.fireBuildUp.Value;
                 character.characterEffectsManager.AddTimedEffect(fireBuildUp);
-                fireBuildUp.ProcessEffect(character);
             }
 
-            if (character.characterNetworkManager.fireBuildUp.Value > character.characterNetworkManager.buildUpCapacity.Value)
+            if (character.characterNetworkManager.fireBuildUp.Value >= character.characterNetworkManager.buildUpCapacity.Value)
             {
                 character.characterNetworkManager.fireBuildUp.Value = 0;
                 character.characterNetworkManager.isBurning.Value = true;
@@ -100,8 +100,8 @@ namespace baodeag
             if (bleedBuildUp == null)
             {
                 bleedBuildUp = Instantiate(WorldCharacterEffectsManager.instance.degradeBleedBuildUpEffect);
+                bleedBuildUp.buildUpRemaining = character.characterNetworkManager.bleedBuildUp.Value;
                 character.characterEffectsManager.AddTimedEffect(bleedBuildUp);
-                bleedBuildUp.ProcessEffect(character);
             }
 
             if (character.characterNetworkManager.bleedBuildUp.Value > character.characterNetworkManager.buildUpCapacity.Value)
@@ -136,8 +136,8 @@ namespace baodeag
             if (frostBuildUp == null)
             {
                 frostBuildUp = Instantiate(WorldCharacterEffectsManager.instance.degradeFrostBiteBuildUpEffect);
+                frostBuildUp.buildUpRemaining = character.characterNetworkManager.frostBiteBuildUp.Value;
                 character.characterEffectsManager.AddTimedEffect(frostBuildUp);
-                frostBuildUp.ProcessEffect(character);
             }
 
             if (character.characterNetworkManager.frostBiteBuildUp.Value > character.characterNetworkManager.buildUpCapacity.Value)

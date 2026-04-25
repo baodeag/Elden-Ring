@@ -24,6 +24,9 @@ namespace baodeag
                 return;
             }
 
+            if (!character.IsOwner)
+                return;
+
             character.characterEffectsManager.ProcessEffectDamage(burnDamage);
         }
 

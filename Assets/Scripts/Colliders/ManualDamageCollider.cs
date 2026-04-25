@@ -28,6 +28,7 @@ namespace baodeag
             characterCausingDamage.aiCharacterCombatManager.hasHitTargetDuringCombo = true;
 
             charactersDamaged.Add(damageTarget);
+            ApplyMonster33PowerUpFireBuildUp(damageTarget);
 
             TakeDamageEffect damageEffect = Instantiate(WorldCharacterEffectsManager.instance.takeDamageEffect);
             damageEffect.physicalDamage = physicalDamage;
@@ -56,6 +57,40 @@ namespace baodeag
                     damageEffect.contactPoint.y,
                     damageEffect.contactPoint.z);
             }
+        }
+
+        private void ApplyMonster33PowerUpFireBuildUp(CharacterManager damageTarget)
+        {
+            if (!damageTarget.IsOwner)
+            {
+                Debug.Log("[FireBuildUp] Collider: damageTarget is not owner");
+                return;
+            }
+
+            if (damageTarget is not PlayerManager player || player.playerEffectsManager == null)
+            {
+                Debug.Log("[FireBuildUp] Collider: damageTarget is not PlayerManager or has no effectsManager");
+                return;
+            }
+
+            var monster33CombatManager = characterCausingDamage != null
+                ? characterCausingDamage.GetComponent<AIMonster33CombatManager>()
+                : null;
+
+            if (monster33CombatManager == null)
+            {
+                Debug.Log("[FireBuildUp] Collider: monster33CombatManager not found on attacker");
+                return;
+            }
+
+            if (!monster33CombatManager.IsPoweredUp)
+            {
+                Debug.Log("[FireBuildUp] Collider: Monster33 is NOT powered up yet");
+                return;
+            }
+
+            Debug.Log("[FireBuildUp] Collider: Applying fire build-up from Monster33 powered-up hit!");
+            player.playerEffectsManager.ApplyFireBuildUpFromHit(PlayerEffectsManager.DefaultFireBuildUpFromHit);
         }
 
         protected override void CheckForParry(CharacterManager damageTarget)

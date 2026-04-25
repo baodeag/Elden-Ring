@@ -17,6 +17,10 @@ namespace baodeag.EditorTools
         private const string MonsterVisualPath = "Assets/Stylized3DMonster/Monster33_FreeTrial/Prefab/Monster33_01.prefab";
         private const string MonsterModelPath = "Assets/Stylized3DMonster/Monster33_FreeTrial/Monster33_FreeTrial.fbx";
         private const string MonsterPrimaryMaterialPath = "Assets/Stylized3DMonster/Monster33_FreeTrial/ShaderTexture/Texture/Materials/Monster33_Color06.mat";
+        private const string MonsterBurningBodyVFXPath = "Assets/Prefabs/Visual FX/VFX_Burning_01.prefab";
+        private const string MonsterFireWeaponTrailPath = "Assets/Addons/JMO Assets/Cartoon FX Remaster/CFXR Prefabs/Sword Trails/Fire/CFXR4 Sword Trail FIRE (360 Thin Spiral).prefab";
+        private const string MonsterFireWeaponMaterialPath = "Assets/Materials/Monster33_Weapon_Fire_Orange.mat";
+        private const string MonsterFireHitVFXPath = "Assets/Addons/JMO Assets/Cartoon FX Remaster/CFXR Prefabs/Sword Trails/Fire/CFXR4 Sword Hit FIRE (Cross).prefab";
         private const string DurkAnimatorControllerPath = "Assets/Data/Animator Controllers/Durk.controller";
         private const string MonsterIdleAnimationPath = "Assets/Stylized3DMonster/Monster33_FreeTrial/Anim/Monster33_Idle.anim";
         private const string MonsterWalkAnimationPath = "Assets/Stylized3DMonster/Monster33_FreeTrial/Anim/Monster33_Walk_InPlace.anim";
@@ -139,6 +143,7 @@ namespace baodeag.EditorTools
 
                 AssignMonster33Animator(rootAnimator);
                 EnsureMonster33Materials(visualInstance);
+                EnsurePhase2FireHooks(prefabRoot, visualInstance.transform, rootAnimator);
 
                 if (rootAnimator.avatar == null)
                 {
@@ -426,6 +431,30 @@ namespace baodeag.EditorTools
             EnsureBodyColliders(sourceAnimator);
             EnsureWeaponConstraints(sourceAnimator);
             EnsureWeaponDamageColliders(prefabRoot, sourceAnimator);
+        }
+
+        private static void EnsurePhase2FireHooks(GameObject prefabRoot, Transform visualRoot, Animator sourceAnimator)
+        {
+            if (prefabRoot == null || visualRoot == null || sourceAnimator == null)
+                return;
+
+            var rightWeapon = FindTransformByName(sourceAnimator.transform, "root_dupli_001.x");
+            var leftWeapon = FindTransformByName(sourceAnimator.transform, "root_dupli_002.x");
+            EnsureWeaponDamageColliders(prefabRoot, sourceAnimator);
+
+            var fireController = prefabRoot.GetComponent<Monster33Phase2FireController>();
+            if (fireController == null)
+                fireController = prefabRoot.AddComponent<Monster33Phase2FireController>();
+
+            fireController.Configure(
+                AssetDatabase.LoadAssetAtPath<GameObject>(MonsterBurningBodyVFXPath),
+                AssetDatabase.LoadAssetAtPath<GameObject>(MonsterFireWeaponTrailPath),
+                AssetDatabase.LoadAssetAtPath<Material>(MonsterFireWeaponMaterialPath),
+                visualRoot,
+                rightWeapon,
+                leftWeapon);
+
+            EditorUtility.SetDirty(fireController);
         }
 
         private static GameObject CreateEmbeddedMonster33Visual(Scene targetScene)
@@ -1641,13 +1670,20 @@ namespace baodeag.EditorTools
             capsuleCollider.direction = 2;
             capsuleCollider.center = new Vector3(0f, 0f, -0.42f);
 
-            var damageCollider = hitbox.GetComponent<ManualDamageCollider>();
-            if (damageCollider == null)
+            var fireDamageCollider = hitbox.GetComponent<Monster33FireDamageCollider>();
+            if (fireDamageCollider == null)
             {
-                damageCollider = hitbox.gameObject.AddComponent<ManualDamageCollider>();
+                var oldManualCollider = hitbox.GetComponent<ManualDamageCollider>();
+                if (oldManualCollider != null)
+                    UnityEngine.Object.DestroyImmediate(oldManualCollider, true);
+
+                fireDamageCollider = hitbox.gameObject.AddComponent<Monster33FireDamageCollider>();
             }
 
-            return damageCollider;
+            fireDamageCollider.ConfigureFireHit(AssetDatabase.LoadAssetAtPath<GameObject>(MonsterFireHitVFXPath), 25);
+            EditorUtility.SetDirty(fireDamageCollider);
+
+            return fireDamageCollider;
         }
 
 
