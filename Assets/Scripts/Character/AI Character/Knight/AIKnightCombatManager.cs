@@ -34,6 +34,21 @@ namespace baodeag
             swordDamageCollider.DisableDamageCollider();
         }
 
+        public void DrainStaminaBasedOnAttack()
+        {
+        }
+
+        public void OpenDamageCollider()
+        {
+            SetAttack01Damage();
+            OpenSwordDamageCollider();
+        }
+
+        public void CloseDamageCollider()
+        {
+            CloseSwordDamageCollider();
+        }
+
         public override void CloseAllDamageColliders()
         {
             base.CloseAllDamageColliders();
