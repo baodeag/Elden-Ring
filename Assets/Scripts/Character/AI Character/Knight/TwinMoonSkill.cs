@@ -364,8 +364,23 @@ namespace baodeag
 
         public void ApplyShockwaveHit(CharacterManager target, float damage, float poiseDamage, float knockbackForce)
         {
+            ApplyShockwaveFrostBuildUp(target);
             ApplyDamageToTarget(target, damage, poiseDamage);
             ApplyKnockback(target, knockbackForce);
+        }
+
+        void ApplyShockwaveFrostBuildUp(CharacterManager target)
+        {
+            if (!isPoweredUp || target == null || !target.IsOwner)
+                return;
+
+            if (target is not PlayerManager player || player.playerEffectsManager == null)
+                return;
+
+            if (knightCombatManager == null)
+                return;
+
+            player.playerEffectsManager.ApplyFrostBuildUpFromHit(knightCombatManager.PoweredUpFrostBuildUpAmount);
         }
 
         void ApplyDamageToTarget(CharacterManager target, float damage, float poiseDamage)
