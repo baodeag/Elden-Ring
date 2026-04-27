@@ -47,6 +47,8 @@ namespace baodeag
         [SerializeField] float secondWaveDamage = 44f;
         [SerializeField] float firstWavePoiseDamage = 20f;
         [SerializeField] float secondWavePoiseDamage = 28f;
+        [SerializeField] float shockwaveHitThickness = 1.1f;
+        [SerializeField] float shockwaveVerticalHitTolerance = 1.25f;
         [SerializeField] float firstWaveKnockbackForce = 8f;
         [SerializeField] float secondWaveKnockbackForce = 12f;
         [SerializeField] float upwardKnockbackForce = 2.25f;
@@ -314,10 +316,14 @@ namespace baodeag
         IEnumerator ExpandShockwave(int waveIndex, float maxRadius, float damage, float poiseDamage, float knockbackForce, float visualDelay)
         {
             GameObject waveVFX = SpawnShockwaveVFX(maxRadius);
-            HashSet<ulong> hitTargets = new HashSet<ulong>();
             float elapsed = 0f;
             float scaledDamage = damage * GetCurrentSkillDamageMultiplier();
             float scaledPoiseDamage = poiseDamage * GetCurrentSkillDamageMultiplier();
+
+            if (IsOwner)
+            {
+                SpawnShockwaveHitbox(maxRadius, scaledDamage, scaledPoiseDamage, knockbackForce);
+            }
 
             while (elapsed < shockwaveDuration)
             {
@@ -330,8 +336,6 @@ namespace baodeag
                     float scale = Mathf.Max(0.1f, currentRadius * 2f);
                     waveVFX.transform.localScale = new Vector3(scale, 1f, scale);
                 }
-
-                ApplyShockwaveDamage(currentRadius, scaledDamage, scaledPoiseDamage, knockbackForce, hitTargets);
                 yield return null;
             }
 
@@ -339,26 +343,29 @@ namespace baodeag
                 Destroy(waveVFX, 1f);
         }
 
-        void ApplyShockwaveDamage(float currentRadius, float damage, float poiseDamage, float knockbackForce, HashSet<ulong> hitTargets)
+        void SpawnShockwaveHitbox(float radius, float damage, float poiseDamage, float knockbackForce)
         {
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position, currentRadius, WorldUtilityManager.Instance.GetCharacterLayers(), QueryTriggerInteraction.Ignore);
+            GameObject hitboxObject = new GameObject("TwinMoonShockwaveHitbox");
+            hitboxObject.transform.position = transform.position + Vector3.up * 0.05f;
+            hitboxObject.layer = gameObject.layer;
 
-            for (int i = 0; i < hitColliders.Length; i++)
-            {
-                CharacterManager target = hitColliders[i].GetComponentInParent<CharacterManager>();
+            TwinMoonShockwaveHitbox hitbox = hitboxObject.AddComponent<TwinMoonShockwaveHitbox>();
+            hitbox.Initialize(
+                this,
+                aiCharacter,
+                radius,
+                shockwaveDuration,
+                damage,
+                poiseDamage,
+                knockbackForce,
+                shockwaveHitThickness,
+                shockwaveVerticalHitTolerance);
+        }
 
-                if (target == null || target == aiCharacter || target.isDead.Value)
-                    continue;
-
-                if (!WorldUtilityManager.Instance.CanIDamageThisTarget(aiCharacter.characterGroup, target.characterGroup))
-                    continue;
-
-                if (!hitTargets.Add(target.NetworkObjectId))
-                    continue;
-
-                ApplyDamageToTarget(target, damage, poiseDamage);
-                ApplyKnockback(target, knockbackForce);
-            }
+        public void ApplyShockwaveHit(CharacterManager target, float damage, float poiseDamage, float knockbackForce)
+        {
+            ApplyDamageToTarget(target, damage, poiseDamage);
+            ApplyKnockback(target, knockbackForce);
         }
 
         void ApplyDamageToTarget(CharacterManager target, float damage, float poiseDamage)
