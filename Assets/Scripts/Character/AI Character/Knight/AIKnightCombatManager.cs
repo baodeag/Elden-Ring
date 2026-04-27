@@ -12,11 +12,15 @@ namespace baodeag
         [SerializeField] float attack02DamageModifier = 1.4f;
         [SerializeField] float poweredUpDamageMultiplier = 1.25f;
 
+        [Header("Power Up Frost")]
+        [SerializeField] int poweredUpFrostBuildUpAmount = 35;
+
         TwinMoonSkill twinMoonSkill;
         bool isPoweredUp;
 
         public ManualDamageCollider SwordDamageCollider => swordDamageCollider;
         public bool IsPoweredUp => isPoweredUp;
+        public int PoweredUpFrostBuildUpAmount => poweredUpFrostBuildUpAmount;
 
         protected override void Awake()
         {

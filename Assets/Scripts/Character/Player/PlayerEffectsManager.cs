@@ -6,6 +6,7 @@ namespace baodeag
     public class PlayerEffectsManager : CharacterEffectsManager
     {
         public const int DefaultFireBuildUpFromHit = 25;
+        public const int DefaultFrostBuildUpFromHit = 35;
 
         [Header("Debug delete later")]
         [SerializeField] bool applyPoisonBuildUp = false;
@@ -130,6 +131,14 @@ namespace baodeag
         public void ApplyFireBuildUpFromHit(int buildUpAmount)
         {
             ApplyFireBuildUp(buildUpAmount, true);
+        }
+
+        public void ApplyFrostBuildUpFromHit(int buildUpAmount)
+        {
+            if (!character.IsOwner)
+                return;
+
+            ApplyDebugBuildUp(WorldCharacterEffectsManager.instance.takeFrostBuildUpEffect, buildUpAmount);
         }
 
         public void ApplyFireBuildUp(int buildUpAmount, bool useHitCooldown = false)

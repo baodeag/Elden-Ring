@@ -29,6 +29,7 @@ namespace baodeag
 
             charactersDamaged.Add(damageTarget);
             ApplyMonster33PowerUpFireBuildUp(damageTarget);
+            ApplyKnightPowerUpFrostBuildUp(damageTarget);
 
             TakeDamageEffect damageEffect = Instantiate(WorldCharacterEffectsManager.instance.takeDamageEffect);
             damageEffect.physicalDamage = physicalDamage;
@@ -75,6 +76,24 @@ namespace baodeag
                 return;
 
             player.playerEffectsManager.ApplyFireBuildUpFromHit(PlayerEffectsManager.DefaultFireBuildUpFromHit);
+        }
+
+        private void ApplyKnightPowerUpFrostBuildUp(CharacterManager damageTarget)
+        {
+            if (!damageTarget.IsOwner)
+                return;
+
+            if (damageTarget is not PlayerManager player || player.playerEffectsManager == null)
+                return;
+
+            var knightCombatManager = characterCausingDamage != null
+                ? characterCausingDamage.GetComponent<AIKnightCombatManager>()
+                : null;
+
+            if (knightCombatManager == null || !knightCombatManager.IsPoweredUp)
+                return;
+
+            player.playerEffectsManager.ApplyFrostBuildUpFromHit(knightCombatManager.PoweredUpFrostBuildUpAmount);
         }
 
         protected override void CheckForParry(CharacterManager damageTarget)
