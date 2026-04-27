@@ -100,6 +100,9 @@ namespace baodeag
                 aiCharacter.aiCharacterCombatManager.PerformEvasion();
             }
 
+            if (aiCharacter.aiCharacterCombatManager.TryStartSpecialSkill())
+                return this;
+
             //if we dont have an attack, get one
             if (!hasAttack)
             {

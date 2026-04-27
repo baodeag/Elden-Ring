@@ -41,12 +41,19 @@ namespace baodeag
             PlayerManager player = other.GetComponent<PlayerManager>();
 
             if (player == null)
+                player = other.GetComponentInParent<PlayerManager>();
+
+            if (player == null)
                 return;
 
             AIBossCharacterManager boss = WorldAIManager.instance.GetBossCharacterByID(bossID);
 
             if (boss == null)
+            {
+                Debug.LogWarning($"Boss trigger on '{gameObject.name}' could not find a spawned boss with bossID {bossID}. Make sure the boss is spawned and registered in WorldAIManager.");
+                StartCoroutine(TryWakeBossWhenAvailable());
                 return;
+            }
 
             if (boss.hasBeenDefeated.Value)
             {
@@ -74,6 +81,23 @@ namespace baodeag
             {
                 DisableTrigger();
             }
+        }
+
+        private IEnumerator TryWakeBossWhenAvailable()
+        {
+            AIBossCharacterManager boss = null;
+            float timeout = Time.time + 2f;
+
+            while (boss == null && Time.time < timeout)
+            {
+                boss = WorldAIManager.instance.GetBossCharacterByID(bossID);
+                yield return null;
+            }
+
+            if (boss == null || boss.hasBeenDefeated.Value || boss.bossFightIsActive.Value)
+                yield break;
+
+            boss.WakeBoss();
         }
 
         private void DisableTrigger()

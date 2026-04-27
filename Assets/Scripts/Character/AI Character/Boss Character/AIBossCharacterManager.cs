@@ -114,11 +114,19 @@ namespace baodeag
             while (WorldObjectManager.instance.fogWalls.Count == 0)
                 yield return new WaitForEndOfFrame();
 
+            RefreshFogWallsFromWorldObjectManager();
+        }
+
+        private void RefreshFogWallsFromWorldObjectManager()
+        {
+            if (WorldObjectManager.instance == null || WorldObjectManager.instance.fogWalls == null)
+                return;
+
             fogWalls = new List<FogWallInteractable>();
 
             foreach (var fogWall in WorldObjectManager.instance.fogWalls)
             {
-                if (fogWall.fogWallID == bossID)
+                if (fogWall != null && fogWall.fogWallID == bossID)
                     fogWalls.Add(fogWall);
             }
         }
@@ -144,6 +152,9 @@ namespace baodeag
 
         private void ApplyBossWorldState()
         {
+            if (fogWalls == null || fogWalls.Count == 0)
+                RefreshFogWallsFromWorldObjectManager();
+
             if (fogWalls == null)
                 return;
 
@@ -238,6 +249,9 @@ namespace baodeag
         {
             if (IsOwner)
             {
+                if (fogWalls == null || fogWalls.Count == 0)
+                    RefreshFogWallsFromWorldObjectManager();
+
                 if (!hasBeenAwakened.Value)
                 {
                     characterAnimatorManager.PlayTargetActionAnimation(awakenAnimation, true);

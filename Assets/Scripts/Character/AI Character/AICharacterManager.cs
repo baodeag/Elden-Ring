@@ -65,6 +65,9 @@ namespace baodeag
         {
             base.OnNetworkSpawn();
 
+            if (WorldAIManager.instance != null)
+                WorldAIManager.instance.AddCharacterToSpawnedCharacterList(this);
+
             if (IsOwner)
             {
                 idle = Instantiate(idle);
@@ -102,6 +105,9 @@ namespace baodeag
         public override void OnNetworkDespawn()
         {
             base.OnNetworkDespawn();
+
+            if (WorldAIManager.instance != null)
+                WorldAIManager.instance.RemoveCharacterFromSpawnedCharacterList(this);
 
             aiCharacterNetworkManager.currentHealth.OnValueChanged -= aiCharacterNetworkManager.OnHPChanged;
             aiCharacterNetworkManager.isBlocking.OnValueChanged -= aiCharacterNetworkManager.OnIsBlockingChanged;

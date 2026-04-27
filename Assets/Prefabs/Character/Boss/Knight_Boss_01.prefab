@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 3353614490458533190}
   - component: {fileID: 1964164482178332564}
   m_Layer: 6
-  m_Name: Knight_Dummy_01
+  m_Name: Knight_Boss_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -186,7 +186,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3337088047118750431}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fbe27b87ad8add14da61546c606161cd, type: 3}
+  m_Script: {fileID: 11500000, guid: 6bfa66e2f0584834a0d1fb7a6c67bda6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
@@ -436,7 +436,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3337088047118750431}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d140505b5c083a48b7b0e53b2228af7, type: 3}
+  m_Script: {fileID: 11500000, guid: e9b4fc2ae26747249d8a3db0c3e7ff27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
@@ -454,7 +454,7 @@ MonoBehaviour:
   characterStatsManager: {fileID: 0}
   characterGroup: 1
   isPerformingAction: 0
-  characterName: 
+  characterName: Twin Moon Knight
   aiCharacterCombatManager: {fileID: 0}
   aiCharacterNetworkManager: {fileID: 0}
   aiCharacterLocomotionManager: {fileID: 0}
@@ -469,6 +469,23 @@ MonoBehaviour:
   combatStance: {fileID: 11400000, guid: 423a3b4331113a84aad421d7632aa649, type: 2}
   attack: {fileID: 11400000, guid: c29317ed79b13114b91d43a22fb544c5, type: 2}
   investigateSound: {fileID: 11400000, guid: 62293090a4667164086109bf89878777, type: 2}
+  bossID: 0
+  bossIntroClip: {fileID: 8300000, guid: 2cb017acd7587e547b508854354b3471, type: 3}
+  bossBattleLoopClip: {fileID: 8300000, guid: e55c426f2c73cee43993a9c5d89e8a9b, type: 3}
+  autoWakeOnSpawn: 0
+  bossFightIsActive:
+    m_InternalValue: 0
+  hasBeenAwakened:
+    m_InternalValue: 0
+  hasBeenDefeated:
+    m_InternalValue: 0
+  fogWalls: []
+  sleepAnimation: Sleep_01
+  awakenAnimation: Awaken_01
+  minimumHealthPercentageToShift: 0
+  phaseShiftAnimation: 
+  phase02CombatStanceState: {fileID: 0}
+  sleepState: {fileID: 11400000, guid: ac7604d23513bcb4f8d06458c46d5055, type: 2}
 --- !u!114 &5233277060864179573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -643,7 +660,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77eddea6ec0f1344b8b5ae20ffd6d1a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runesDroppedOnDeath: 50
+  runesDroppedOnDeath: 1200
   baseStaminaRegenerationAmount: 2
   blockingPhysicalAbsorption: 99
   blockingFireAbsorption: 78

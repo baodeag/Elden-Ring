@@ -6,6 +6,11 @@ namespace baodeag
     {
         [SerializeField] float timeUntilDestroyed = 5;
 
+        public void SetLifetime(float lifetime)
+        {
+            timeUntilDestroyed = lifetime;
+        }
+
         private void Awake()
         {
             Destroy(gameObject, timeUntilDestroyed);

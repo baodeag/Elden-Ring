@@ -383,5 +383,10 @@ namespace baodeag
 
             aiCharacter.transform.rotation = Quaternion.LookRotation(directionToDodge);
         }
+
+        public virtual bool TryStartSpecialSkill()
+        {
+            return false;
+        }
     }
 }
