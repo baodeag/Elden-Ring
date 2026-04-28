@@ -187,7 +187,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3337088047118750431}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bfa66e2f0584834a0d1fb7a6c67bda6, type: 3}
+  m_Script: {fileID: 11500000, guid: c8446122fa524f1cbecbc5afc7d7c4cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
@@ -437,7 +437,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3337088047118750431}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9b4fc2ae26747249d8a3db0c3e7ff27, type: 3}
+  m_Script: {fileID: 11500000, guid: 114d372f0707450aa0cb0db30e62c034, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
@@ -487,8 +487,8 @@ MonoBehaviour:
   phaseShiftAnimation: 
   phase02CombatStanceState: {fileID: 0}
   sleepState: {fileID: 11400000, guid: ac7604d23513bcb4f8d06458c46d5055, type: 2}
-  knightCombatManager: {fileID: 0}
-  twinMoonSkill: {fileID: 0}
+  tormentedSoulCombatManager: {fileID: 0}
+  deathMoonSlash: {fileID: 0}
 --- !u!114 &5233277060864179573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -498,7 +498,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3337088047118750431}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5a0ee623678b794f8a01dc6441acd65, type: 3}
+  m_Script: {fileID: 11500000, guid: 9f4ee5f4552f438ebecb56f39e056d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
@@ -535,11 +535,10 @@ MonoBehaviour:
   stanceRegenerationTimer: 0
   defaultTimeUntilStanceRegenerationBegins: 15
   playersWithinActivationRange: []
-  swordDamageCollider: {fileID: 8560634861738066317}
+  scytheDamageCollider: {fileID: 8560634861738066317}
   attack01DamageModifier: 1
   attack02DamageModifier: 1.4
-  poweredUpDamageMultiplier: 1.25
-  poweredUpFrostBuildUpAmount: 35
+  poweredUpDamageMultiplier: 1.2
 --- !u!114 &2019970657614237878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -907,58 +906,51 @@ MonoBehaviour:
   m_GameObject: {fileID: 3337088047118750431}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ca8019bdf064414ea061afd7463df1a, type: 3}
+  m_Script: {fileID: 11500000, guid: 1dcea0561a6ead240a32ed74d7c3fc2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   onlyAvailableWhenPoweredUp: 1
   activatePowerUpAtHalfHealth: 1
   powerUpHealthThreshold: 0.5
-  skillCooldown: 16
-  minimumActivationDistance: 1.75
-  maximumActivationDistance: 8
+  minimumActivationDistance: 2.5
+  maximumActivationDistance: 14
   activationChance: 100
-  skillDecisionLockout: 1.25
-  jumpAnimation: Main_Jump_01
-  hoverAnimation: Main_Jump_01
-  slamAnimation: Main_Heavy_Jump_Attack_01
-  jumpDuration: 0.55
-  jumpHeight: 4.5
-  forwardTravelDuringJump: 1.35
-  hoverDuration: 0.75
+  cooldown: 10
+  decisionLockout: 1
+  poweredUpDamageMultiplier: 1.2
+  minChargeTime: 0.3
+  maxChargeTime: 0.6
+  chargeAnimation: Main_Charge_01
+  slashAnimation: TH_Light_Attack_01
+  chargeAnimatorTrigger: 
+  slashAnimatorTrigger: 
+  slashReleaseDelay: 0.18
+  projectilePrefab: {fileID: 4829436182736451203, guid: aae5091ac8a04a3ea8514cd82d7f349b, type: 3}
+  projectileSpawnPoint: {fileID: 7394667487210834440}
   chargeVFXPrefab: {fileID: 0}
-  chargeVFXLocalOffset: {x: 0, y: 1.25, z: 0}
-  slamSpeed: 18
-  impactVFXPrefab: {fileID: 0}
-  postImpactRecovery: 0.4
-  shockwaveVFXPrefab: {fileID: 0}
-  shockwaveDuration: 0.8
-  secondWaveDelay: 0.4
-  firstWaveRadius: 4
-  secondWaveRadius: 6.25
-  firstWaveDamage: 32
-  secondWaveDamage: 44
-  firstWavePoiseDamage: 20
-  secondWavePoiseDamage: 28
-  shockwaveHitThickness: 1.1
-  shockwaveVerticalHitTolerance: 1.25
-  firstWaveKnockbackForce: 8
-  secondWaveKnockbackForce: 12
-  upwardKnockbackForce: 2.25
-  powerUpColor: {r: 0.15, g: 0.9, b: 1, a: 1}
-  powerUpEmissionColor: {r: 0.2, g: 2.8, b: 4, a: 1}
-  poweredUpDamageMultiplier: 1.25
-  poweredUpSkillDamageMultiplier: 1.2
-  recolorSwordMesh: 1
-  recolorSwordTrails: 1
+  slashCastVFXPrefab: {fileID: 0}
+  auraVFXPrefab: {fileID: 0}
+  projectileImpactVFXPrefab: {fileID: 0}
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 512
+  damage: 38
+  speed: 19
+  numberOfSlashes: 1
+  spreadAngle: 12
+  projectileLifetime: 3
+  projectilePoiseDamage: 16
+  phaseTwoNumberOfSlashes: 3
+  phaseTwoSpreadAngle: 16
+  comboDelay: 0.28
   enableCameraShake: 1
-  cameraShakeDuration: 0.2
-  cameraShakeStrength: 0.18
-  cameraShakeRange: 16
-  enableSlowMotion: 1
-  slowMotionScale: 0.35
-  slowMotionDuration: 0.12
-  drawDebugGizmos: 1
+  cameraShakeDuration: 0.12
+  cameraShakeStrength: 0.12
+  cameraShakeRange: 14
+  soulAuraColor: {r: 0.48, g: 0.15, b: 0.78, a: 1}
+  soulCoreColor: {r: 0.2, g: 0.36, b: 0.78, a: 1}
+  auraLocalOffset: {x: 0, y: 0.95, z: 0}
 --- !u!114 &908070605040302010
 MonoBehaviour:
   m_ObjectHideFlags: 0
