@@ -13,6 +13,7 @@ namespace baodeag
         [SerializeField] float poweredUpDamageMultiplier = 1.2f;
 
         DeathMoonSlash deathMoonSlash;
+        DeathCycloneSkill deathCycloneSkill;
         bool isPoweredUp;
 
         public ManualDamageCollider ScytheDamageCollider => scytheDamageCollider;
@@ -22,6 +23,7 @@ namespace baodeag
         {
             base.Awake();
             deathMoonSlash = GetComponent<DeathMoonSlash>();
+            deathCycloneSkill = GetComponent<DeathCycloneSkill>();
         }
 
         public void SetAttack01Damage()
@@ -75,6 +77,27 @@ namespace baodeag
 
         public override bool TryStartSpecialSkill()
         {
+            if (isPoweredUp)
+            {
+                bool tryCycloneFirst = Random.value < 0.5f;
+
+                if (tryCycloneFirst)
+                {
+                    if (deathCycloneSkill != null && deathCycloneSkill.TryActivateSkill())
+                        return true;
+
+                    return deathMoonSlash != null && deathMoonSlash.TryActivateSkill();
+                }
+
+                if (deathMoonSlash != null && deathMoonSlash.TryActivateSkill())
+                    return true;
+
+                return deathCycloneSkill != null && deathCycloneSkill.TryActivateSkill();
+            }
+
+            if (deathCycloneSkill != null && deathCycloneSkill.TryActivateSkill())
+                return true;
+
             return deathMoonSlash != null && deathMoonSlash.TryActivateSkill();
         }
 

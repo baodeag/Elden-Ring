@@ -105,6 +105,7 @@ GameObject:
   - component: {fileID: 8399507197096549034}
   - component: {fileID: 3353614490458533190}
   - component: {fileID: 1964164482178332564}
+  - component: {fileID: 8142569301742235801}
   - component: {fileID: 908070605040302010}
   m_Layer: 6
   m_Name: Character_Tormented_Soul
@@ -951,6 +952,47 @@ MonoBehaviour:
   soulAuraColor: {r: 0.48, g: 0.15, b: 0.78, a: 1}
   soulCoreColor: {r: 0.2, g: 0.36, b: 0.78, a: 1}
   auraLocalOffset: {x: 0, y: 0.95, z: 0}
+--- !u!114 &8142569301742235801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3337088047118750431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1170f62128674b6081739620d10f2551, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damagePerTick: 12
+  radius: 4.5
+  duration: 3
+  tickInterval: 0.3
+  pullForce: 6
+  cooldown: 12
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 192
+  allowUseWhenPoweredUp: 1
+  allowUseWhenPlayerStaysClose: 1
+  closeRangeDistance: 2.75
+  closeRangeDurationBeforeUse: 2
+  minimumActivationDistance: 1
+  maximumActivationDistance: 6
+  activationChance: 100
+  decisionLockout: 1
+  animator: {fileID: 5129915018126085460}
+  animatorTrigger: DeathCyclone
+  faceTargetDuration: 0.2
+  cycloneVFX: {fileID: 9012449173362901011, guid: a5012029749e4c35b4dd2bdab066f9e8, type: 3}
+  audioSource: {fileID: 0}
+  cycloneLoopSFX: {fileID: 0}
+  enableCameraShake: 1
+  cameraShakeDuration: 0.18
+  cameraShakeStrength: 0.12
+  cameraShakeRange: 14
+  poiseDamagePerTick: 8
+  drawDebugGizmos: 1
 --- !u!114 &908070605040302010
 MonoBehaviour:
   m_ObjectHideFlags: 0
