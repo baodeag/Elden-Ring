@@ -3880,6 +3880,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2076382501041996191, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: health
+      value: 2400
+      objectReference: {fileID: 0}
+    - target: {fileID: 2076382501041996191, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
+      propertyPath: stamina
+      value: 220
+      objectReference: {fileID: 0}
+    - target: {fileID: 2076382501041996191, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
       propertyPath: isSleeping
       value: 1
       objectReference: {fileID: 0}
@@ -3888,17 +3896,9 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2076382501041996191, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
-      propertyPath: stamina
-      value: 220
-      objectReference: {fileID: 0}
-    - target: {fileID: 2076382501041996191, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
-      propertyPath: health
-      value: 2400
-      objectReference: {fileID: 0}
-    - target: {fileID: 2076382501041996191, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
       propertyPath: characterGameObject
       value: 
-      objectReference: {fileID: 3337088047118750431, guid: f4aa1dbb4df24b309f4ae4b16b6f9721, type: 3}
+      objectReference: {fileID: 3337088047118750431, guid: 458583ec6fe6468baa93d90ea62d9c61, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4925,6 +4925,67 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1440376498556462441, guid: 95fcde0b2ceef3544aefe2717dbb7025, type: 3}
   m_PrefabInstance: {fileID: 4460458160480965630}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &4567890123456789012
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4898171927911466611, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
+      propertyPath: m_Name
+      value: Knight Boss Fog Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 8285844945573997591, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
+      propertyPath: fogWallID
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
 --- !u!1001 &5002981933204784472
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5350,72 +5411,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5480560675636108213, guid: c9eff6d5aa92694458500d37afad36da, type: 3}
   m_PrefabInstance: {fileID: 8728803972578006783}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &4567890123456789012
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 14
-      objectReference: {fileID: 0}
-    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4898171927911466611, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
-      propertyPath: m_Name
-      value: Knight Boss Fog Wall
-      objectReference: {fileID: 0}
-    - target: {fileID: 8285844945573997591, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
-      propertyPath: fogWallID
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
---- !u!4 &4567890123456789013 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1861359495127014025, guid: 86e20d39dfacd504b8da75519e45d1af, type: 3}
-  m_PrefabInstance: {fileID: 4567890123456789012}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -5437,7 +5432,7 @@ SceneRoots:
   - {fileID: 1744527827}
   - {fileID: 1648096650}
   - {fileID: 2079625396}
-  - {fileID: 4567890123456789013}
+  - {fileID: 4567890123456789012}
   - {fileID: 2186433940279942698}
   - {fileID: 2614435104286378698}
   - {fileID: 5002981933204784472}

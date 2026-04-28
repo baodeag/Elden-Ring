@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbb175f14de930e47a6884cdff55fd73, type: 3}
   m_Name: Frost Bite Effect
   m_EditorClassIdentifier: 
-  effectID: 0
-  defaultLengthOfEffect: 60
-  timeRemainingOnEffect: 60
+  effectID: 6
+  defaultLengthOfEffect: 10
+  timeRemainingOnEffect: 10
+  percentageOfLifeLost: 10
