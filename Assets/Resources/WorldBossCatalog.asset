@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24d6ebfd90864e749847f0d74da2a79b, type: 3}
+  m_Name: WorldBossCatalog
+  m_EditorClassIdentifier: 
+  bosses:
+  - worldName: World_01
+    sceneBuildIndex: 1
+    bossID: 0
+    bossPrefab: {fileID: 6870958607174294266, guid: 71660283a8077644386818a27dbadc13, type: 3}
+  - worldName: World_02
+    sceneBuildIndex: 2
+    bossID: 1
+    bossPrefab: {fileID: 8897954906100663348, guid: f35dd13c2f3effd4b86d858ca35bb647, type: 3}
+  - worldName: World_03
+    sceneBuildIndex: 3
+    bossID: 2
+    bossPrefab: {fileID: 907095673196354164, guid: 21cd8df8f7e9dbc40b2784844cb01956, type: 3}
+  - worldName: World_04
+    sceneBuildIndex: 4
+    bossID: 3
+    bossPrefab: {fileID: 3337088047118750431, guid: f4aa1dbb4df24b309f4ae4b16b6f9721, type: 3}
+  - worldName: World_05
+    sceneBuildIndex: 5
+    bossID: 4
+    bossPrefab: {fileID: 3337088047118750431, guid: 458583ec6fe6468baa93d90ea62d9c61, type: 3}

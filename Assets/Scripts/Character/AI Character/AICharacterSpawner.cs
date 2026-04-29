@@ -1,6 +1,9 @@
 using UnityEngine;
 using Unity.Netcode;
 using Unity.VisualScripting;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace baodeag
 {
@@ -10,6 +13,9 @@ namespace baodeag
         [SerializeField] GameObject characterGameObject;
         [SerializeField] GameObject instantiateGameObject;
         private AICharacterManager aiCharacter;
+
+        [Header("Boss Auto Assignment")]
+        [SerializeField] bool autoAssignBossByScene = true;
 
         [Header("Patrol")]
         [SerializeField] bool hasPatrolPath = false;
@@ -25,6 +31,7 @@ namespace baodeag
 
         private void Awake()
         {
+            AutoAssignBossPrefabForCurrentScene();
             HideSpawnerVisuals();
         }
         private void Start()
@@ -33,6 +40,16 @@ namespace baodeag
             HideSpawnerVisuals();
             gameObject.SetActive(false);
         }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (Application.isPlaying)
+                return;
+
+            AutoAssignBossPrefabForCurrentScene();
+        }
+#endif
 
         private void HideSpawnerVisuals()
         {
@@ -49,6 +66,41 @@ namespace baodeag
             {
                 canvases[i].enabled = false;
             }
+        }
+
+        private void AutoAssignBossPrefabForCurrentScene()
+        {
+            if (!autoAssignBossByScene || !ShouldResolveBossPrefabFromScene())
+                return;
+
+            WorldBossCatalog catalog = WorldBossCatalog.LoadDefault();
+            if (catalog == null)
+                return;
+
+            GameObject resolvedBossPrefab = catalog.GetBossPrefabForScene(gameObject.scene.buildIndex);
+            if (resolvedBossPrefab == null || resolvedBossPrefab == characterGameObject)
+                return;
+
+            characterGameObject = resolvedBossPrefab;
+
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                EditorUtility.SetDirty(this);
+#endif
+        }
+
+        private bool ShouldResolveBossPrefabFromScene()
+        {
+            if (characterGameObject != null && characterGameObject.GetComponent<AIBossCharacterManager>() != null)
+                return true;
+
+            string spawnerName = gameObject.name.ToLowerInvariant();
+            return spawnerName.Contains("boss")
+                || spawnerName.Contains("durk")
+                || spawnerName.Contains("golem")
+                || spawnerName.Contains("barbarian")
+                || spawnerName.Contains("knight")
+                || spawnerName.Contains("reaper");
         }
 
         public void AttemptToSpawnCharacter()
