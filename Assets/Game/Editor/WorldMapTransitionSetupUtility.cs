@@ -11,7 +11,7 @@ namespace baodeag.Editor
         [MenuItem("Tools/Random Map/Create World_01 To World_02 Connector")]
         public static void CreateWorld01ToWorld02Connector()
         {
-            Scene scene = EditorSceneManager.OpenScene("Assets/Scenes/World_01.unity", OpenSceneMode.Single);
+            Scene scene = EditorSceneManager.OpenScene(GameAssetPaths.ScenesRoot + "/World_01.unity", OpenSceneMode.Single);
             CreateConnectorInScene(scene);
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();

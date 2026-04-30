@@ -3,8 +3,8 @@ using UnityEngine;
 
 public static class UndeadDummyModelReplacer
 {
-    private const string TargetPrefabPath = "Assets/Prefabs/Character/Undead_Dummy_01.prefab";
-    private const string ReplacementPrefabPath = "Assets/PolygonBossZombies/Prefabs/SM_Chr_ZombieBoss_Wretch_01.prefab";
+    private const string TargetPrefabPath = GameAssetPaths.PrefabsRoot + "/Character/Undead/Undead_Dummy_01.prefab";
+    private const string ReplacementPrefabPath = GameAssetPaths.PolygonBossZombiesRoot + "/Prefabs/SM_Chr_ZombieBoss_Wretch_01.prefab";
     private const string OldMeshObjectName = "Md_Char_Low_Poly_Man";
     private const string OldRigRootName = "Root";
     private const string AutoRunSessionKey = "UndeadDummyModelReplacer.AutoRunAttempted";

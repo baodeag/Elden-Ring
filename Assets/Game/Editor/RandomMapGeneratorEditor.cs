@@ -10,7 +10,7 @@ namespace baodeag
     [CustomEditor(typeof(RandomMapGenerator))]
     public class RandomMapGeneratorEditor : UnityEditor.Editor
     {
-        private const string WorldLocationRendererPrefabPath = "Assets/Prefabs/World Managers/World Location Renderer.prefab";
+        private const string WorldLocationRendererPrefabPath = GameAssetPaths.PrefabsRoot + "/World Managers/World Location Renderer.prefab";
         private const int RoomPreloadPreviousRadius = 2;
         private const int RoomPreloadNextRadius = 4;
         private const int LoadAllRoomsWhenRoomCountAtMost = 6;
@@ -201,7 +201,7 @@ namespace baodeag
                     EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("chandelierLightRange"), new GUIContent("Chandelier Light Range", "Generated chandelier point light range"));
                     EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("chandelierLightIntensity"), new GUIContent("Chandelier Light Intensity", "Generated chandelier point light intensity"));
                     EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("chandelierLightColor"), new GUIContent("Chandelier Light Color", "Generated chandelier point light color"));
-                    EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("useWorld01LightingMode"), new GUIContent("Use World_01 Lighting Mode", "Apply Assets/System/World Lighting Settings.lighting after generating"));
+                    EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("useWorld01LightingMode"), new GUIContent("Use World_01 Lighting Mode", "Apply Game/System World Lighting Settings after generating"));
                     EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("markGeneratedMapForBake"), new GUIContent("Mark Generated Map For Bake", "Set generated renderers to Contribute GI and generated lights to Mixed"));
                     EditorGUILayout.PropertyField(propConfig.FindPropertyRelative("autoBakeNavMeshAfterGenerate"), new GUIContent("Auto Bake NavMesh", "Bake NavMesh on generated Structure/Floors after generating"));
                 });
@@ -371,7 +371,7 @@ namespace baodeag
             if (!PrepareEditorForSubSceneExport())
                 return;
 
-            string scenesRoot = "Assets/Scenes";
+            string scenesRoot = GameAssetPaths.ScenesRoot;
             string areaFolder = $"{scenesRoot}/{gen.areaName}";
 
             if (!AssetDatabase.IsValidFolder(areaFolder))
@@ -909,12 +909,12 @@ namespace baodeag
 
         private Dictionary<string, WorldLocationSceneSet> CreateWorldLocationSceneSets(RandomMapGenerator gen)
         {
-            const string dataRoot = "Assets/Data";
-            const string locationFolder = "Assets/Data/World Locations";
+            const string dataRoot = GameAssetPaths.DataRoot;
+            const string locationFolder = GameAssetPaths.DataRoot + "/World Locations";
             Dictionary<string, WorldLocationSceneSet> sceneSetsByZone = new Dictionary<string, WorldLocationSceneSet>();
 
             if (!AssetDatabase.IsValidFolder(dataRoot))
-                AssetDatabase.CreateFolder("Assets", "Data");
+                    AssetDatabase.CreateFolder(GameAssetPaths.GameRoot, "Data");
 
             if (!AssetDatabase.IsValidFolder(locationFolder))
                 AssetDatabase.CreateFolder(dataRoot, "World Locations");
@@ -1127,7 +1127,7 @@ namespace baodeag
         [MenuItem("Tools/Random Map Generator/Normalize Area_02 Sub Scenes")]
         public static void NormalizeArea02SubScenes()
         {
-            NormalizeSubScenesInFolder("Assets/Scenes/Area_02");
+            NormalizeSubScenesInFolder(GameAssetPaths.ScenesRoot + "/Area_02");
         }
 
         private static void NormalizeSubScenesInFolder(string folderPath)

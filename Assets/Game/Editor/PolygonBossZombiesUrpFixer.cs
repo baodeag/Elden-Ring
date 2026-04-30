@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class PolygonBossZombiesUrpFixer
 {
-    private const string MaterialsFolder = "Assets/PolygonBossZombies/Materials";
+    private const string MaterialsFolder = GameAssetPaths.PolygonBossZombiesRoot + "/Materials";
     private const string UrpLitShaderName = "Universal Render Pipeline/Lit";
 
     [MenuItem("Tools/Fix/Convert Polygon Boss Zombies Materials To URP")]

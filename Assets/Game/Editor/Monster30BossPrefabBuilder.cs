@@ -10,54 +10,46 @@ using UnityEngine.SceneManagement;
 
 namespace baodeag.EditorTools
 {
-    public static class Monster33BossPrefabBuilder
+    public static class Monster30BossPrefabBuilder
     {
-        private const string SourceTemplatePath = "Assets/Prefabs/Character/Undead/Undead_Dummy_33.prefab";
-        private const string BossReferencePath = "Assets/Prefabs/Character/Durk_Dummy_01.prefab";
-        private const string MonsterVisualPath = "Assets/Stylized3DMonster/Monster33_FreeTrial/Prefab/Monster33_01.prefab";
-        private const string MonsterModelPath = "Assets/Stylized3DMonster/Monster33_FreeTrial/Monster33_FreeTrial.fbx";
-        private const string MonsterPrimaryMaterialPath = "Assets/Stylized3DMonster/Monster33_FreeTrial/ShaderTexture/Texture/Materials/Monster33_Color06.mat";
-        private const string MonsterBurningBodyVFXPath = "Assets/Prefabs/Visual FX/VFX_Burning_01.prefab";
-        private const string MonsterFireWeaponTrailPath = "Assets/Addons/JMO Assets/Cartoon FX Remaster/CFXR Prefabs/Sword Trails/Fire/CFXR4 Sword Trail FIRE (360 Thin Spiral).prefab";
-        private const string MonsterFireWeaponMaterialPath = "Assets/Materials/Monster33_Weapon_Fire_Orange.mat";
-        private const string MonsterFireHitVFXPath = "Assets/Addons/JMO Assets/Cartoon FX Remaster/CFXR Prefabs/Sword Trails/Fire/CFXR4 Sword Hit FIRE (Cross).prefab";
-        private const string DurkAnimatorControllerPath = "Assets/Data/Animator Controllers/Durk.controller";
-        private const string MonsterIdleAnimationPath = "Assets/Stylized3DMonster/Monster33_FreeTrial/Anim/Monster33_Idle.anim";
-        private const string MonsterWalkAnimationPath = "Assets/Stylized3DMonster/Monster33_FreeTrial/Anim/Monster33_Walk_InPlace.anim";
-        private const string MonsterRebasedIdleAnimationPath = "Assets/Stylized3DMonster/Monster33_FreeTrial/Anim/Monster33_Boss_Idle_Rebased.anim";
-        private const string MonsterRebasedWalkAnimationPath = "Assets/Stylized3DMonster/Monster33_FreeTrial/Anim/Monster33_Boss_Walk_Rebased.anim";
-        private const string TargetAnimatorControllerPath = "Assets/Data/Animator Controllers/Monster33_Boss_Clean.controller";
-        private const string LegacyAnimatorControllerPath = "Assets/Data/Animator Controllers/Monster33_Boss.controller";
-        private const string AttackStateTemplatePath = "Assets/Data/AI States/Undead/Undead Attack State.asset";
-        private const string CombatStanceTemplatePath = "Assets/Data/AI States/Undead/Undead Combat Stance State.asset";
-        private const string TargetAttackStatePath = "Assets/Data/AI States/Monster33/Monster33 Attack State.asset";
-        private const string TargetCombatStanceStatePath = "Assets/Data/AI States/Monster33/Monster33 Combat Stance State.asset";
-        private const string TargetPhase02CombatStanceStatePath = "Assets/Data/AI States/Monster33/Monster33 Combat Stance State Phase02.asset";
-        private const string Attack01TemplatePath = "Assets/Data/AI Attack Actions/Undead/Attack 01.asset";
-        private const string Attack01ComboTemplatePath = "Assets/Data/AI Attack Actions/Undead/Attack 01 Combo.asset";
-        private const string Attack02TemplatePath = "Assets/Data/AI Attack Actions/Undead/Attack 02.asset";
-        private const string TargetAttack01Path = "Assets/Data/AI Attack Actions/Monster33/Monster33 Attack 01.asset";
-        private const string TargetAttack01ComboPath = "Assets/Data/AI Attack Actions/Monster33/Monster33 Attack 01 Combo.asset";
-        private const string TargetAttack02Path = "Assets/Data/AI Attack Actions/Monster33/Monster33 Attack 02 Charged.asset";
-        private const string TargetAttack03Path = "Assets/Data/AI Attack Actions/Monster33/Monster33 Attack 03 Charged.asset";
-        private const string HellFireKnightAttackPath = "Assets/Art/Animations/Humanoid/Hell Fire Knight/Sword And Shield Attack.fbx";
-        private const string HellFireKnightAttackRebasedPath = "Assets/Art/Animations/Humanoid/Hell Fire Knight/Monster33_Sword And Shield Attack.anim";
-        private const string HellFireKnightSlashPath = "Assets/Art/Animations/Humanoid/Hell Fire Knight/Sword And Shield Slash.fbx";
-        private const string HellFireKnightSlashRebasedPath = "Assets/Art/Animations/Humanoid/Hell Fire Knight/Monster33_Sword And Shield Slash.anim";
-        private const string HellFireKnightSlashAltPath = "Assets/Art/Animations/Humanoid/Hell Fire Knight/Sword And Shield Slash (1).fbx";
-        private const string HellFireKnightSlashAltRebasedPath = "Assets/Art/Animations/Humanoid/Hell Fire Knight/Monster33_Sword And Shield Slash (1).anim";
-        private const string HellFireKnightComboPath = "Assets/Art/Animations/Humanoid/Hell Fire Knight/Sword And Shield Slash (1).fbx";
-        private const string HellFireKnightComboRebasedPath = "Assets/Art/Animations/Humanoid/Hell Fire Knight/Monster33_Sword And Shield Combo.anim";
-        private const string HellFireKnightPowerUpPath = "Assets/Art/Animations/Humanoid/Hell Fire Knight/Sword And Shield Power Up.fbx";
-        private const string HellFireKnightPowerUpRebasedPath = "Assets/Art/Animations/Humanoid/Hell Fire Knight/Monster33_Sword And Shield Power Up.anim";
-        private const string TargetPrefabPath = "Assets/Prefabs/Character/Monster33_Boss_01.prefab";
+        private const string SourceTemplatePath = GameAssetPaths.PrefabsRoot + "/Character/Undead/Undead_Dummy_30.prefab";
+        private const string BossReferencePath = GameAssetPaths.PrefabsRoot + "/Character/Boss/Durk_Boss_01.prefab";
+        private const string MonsterVisualPath = GameAssetPaths.Stylized3DMonsterRoot + "/Monster30_FreeTrial/Prefab/Monster30_01.prefab";
+        private const string MonsterModelPath = GameAssetPaths.Stylized3DMonsterRoot + "/Monster30_FreeTrial/Monster30_FreeTrial.fbx";
+        private const string DurkAnimatorControllerPath = GameAssetPaths.DataRoot + "/Animator Controllers/Durk.controller";
+        private const string MonsterIdleAnimationPath = GameAssetPaths.Stylized3DMonsterRoot + "/Monster30_FreeTrial/Anim/Monster30_Idle.anim";
+        private const string MonsterWalkAnimationPath = GameAssetPaths.Stylized3DMonsterRoot + "/Monster30_FreeTrial/Anim/Monster30_Walk_InPlace.anim";
+        private const string MonsterRebasedIdleAnimationPath = GameAssetPaths.Stylized3DMonsterRoot + "/Monster30_FreeTrial/Anim/Monster30_Boss_Idle_Rebased.anim";
+        private const string MonsterRebasedWalkAnimationPath = GameAssetPaths.Stylized3DMonsterRoot + "/Monster30_FreeTrial/Anim/Monster30_Boss_Walk_Rebased.anim";
+        private const string TargetAnimatorControllerPath = GameAssetPaths.DataRoot + "/Animator Controllers/Monster30_Boss_Clean.controller";
+        private const string LegacyAnimatorControllerPath = GameAssetPaths.DataRoot + "/Animator Controllers/Monster30_Boss.controller";
+        private const string AttackStateTemplatePath = GameAssetPaths.DataRoot + "/AI States/Undead/Undead Attack State.asset";
+        private const string CombatStanceTemplatePath = GameAssetPaths.DataRoot + "/AI States/Undead/Undead Combat Stance State.asset";
+        private const string TargetAttackStatePath = GameAssetPaths.DataRoot + "/AI States/Monster30/Monster30 Attack State.asset";
+        private const string TargetCombatStanceStatePath = GameAssetPaths.DataRoot + "/AI States/Monster30/Monster30 Combat Stance State.asset";
+        private const string Attack01TemplatePath = GameAssetPaths.DataRoot + "/AI Attack Actions/Undead/Attack 01.asset";
+        private const string Attack01ComboTemplatePath = GameAssetPaths.DataRoot + "/AI Attack Actions/Undead/Attack 01 Combo.asset";
+        private const string Attack02TemplatePath = GameAssetPaths.DataRoot + "/AI Attack Actions/Undead/Attack 02.asset";
+        private const string TargetAttack01Path = GameAssetPaths.DataRoot + "/AI Attack Actions/Monster30/Monster30 Attack 01.asset";
+        private const string TargetAttack01ComboPath = GameAssetPaths.DataRoot + "/AI Attack Actions/Monster30/Monster30 Attack 01 Combo.asset";
+        private const string TargetAttack02Path = GameAssetPaths.DataRoot + "/AI Attack Actions/Monster30/Monster30 Attack 02 Charged.asset";
+        private const string TargetAttack03Path = GameAssetPaths.DataRoot + "/AI Attack Actions/Monster30/Monster30 Attack 03 Charged.asset";
+        private const string GolemMutantPunchPath = GameAssetPaths.ArtRoot + "/Animations/Humanoid/Golem/Mutant Punch.fbx";
+        private const string GolemMutantPunchRebasedPath = GameAssetPaths.ArtRoot + "/Animations/Humanoid/Golem/Monster30_Mutant Punch.anim";
+        private const string GolemChargeSlash01Path = GameAssetPaths.ArtRoot + "/Animations/Humanoid/Golem/Stable Sword Outward Slash.fbx";
+        private const string GolemChargeSlash01RebasedPath = GameAssetPaths.ArtRoot + "/Animations/Humanoid/Golem/Monster30_Stable Sword Outward Slash.anim";
+        private const string GolemChargeSlash02Path = GameAssetPaths.ArtRoot + "/Animations/Humanoid/Golem/Standing Melee Attack Horizontal.fbx";
+        private const string GolemChargeSlash02RebasedPath = GameAssetPaths.ArtRoot + "/Animations/Humanoid/Golem/Monster30_Standing Melee Attack Horizontal.anim";
+        private const string GolemComboPath = GameAssetPaths.ArtRoot + "/Animations/Humanoid/Golem/Standing Melee Combo Attack Ver. 1.fbx";
+        private const string GolemComboRebasedPath = GameAssetPaths.ArtRoot + "/Animations/Humanoid/Golem/Monster30_Standing Melee Combo Attack Ver. 1.anim";
+        private const string TargetPrefabPath = GameAssetPaths.PrefabsRoot + "/Character/Boss/Monster30_Boss_01.prefab";
         private const int CharacterLayer = 6;
         private const int DamageableCharacterLayer = 7;
         private const int DamageColliderLayer = 10;
-        private const string MonsterAnimationRootPrefix = "Monster33_VisualRoot/Monster33_FreeTrial/";
+        private const string MonsterAnimationRootPrefix = "Monster30_VisualRoot/Monster30_FreeTrial/";
 
-        [MenuItem("Tools/Bosses/Create Monster33 Boss")]
-        public static void CreateMonster33Boss()
+        [MenuItem("Tools/Bosses/Create Monster30 Boss")]
+        public static void CreateMonster30Boss()
         {
             var sourceTemplate = AssetDatabase.LoadAssetAtPath<GameObject>(SourceTemplatePath);
             var bossReference = AssetDatabase.LoadAssetAtPath<GameObject>(BossReferencePath);
@@ -65,7 +57,7 @@ namespace baodeag.EditorTools
 
             if (sourceTemplate == null || bossReference == null)
             {
-                Debug.LogError("Monster33 boss builder is missing one of the required prefab assets.");
+                Debug.LogError("Monster30 boss builder is missing one of the required prefab assets.");
                 return;
             }
 
@@ -80,14 +72,14 @@ namespace baodeag.EditorTools
 
             try
             {
-                prefabRoot.name = "Monster33_Boss_01";
+                prefabRoot.name = "Monster30_Boss_01";
                 prefabRoot.layer = CharacterLayer;
 
                 ReplaceCharacterManager(prefabRoot, bossReferenceManager);
                 ReplaceSoundFXManager(prefabRoot, bossReference);
                 PrepareBossStats(prefabRoot);
 
-                var visualTransform = prefabRoot.transform.Find("Monster33_VisualRoot");
+                var visualTransform = prefabRoot.transform.Find("Monster30_VisualRoot");
                 bool createdVisualThisRun = false;
                 GameObject visualInstance;
 
@@ -99,14 +91,14 @@ namespace baodeag.EditorTools
                 {
                     RemoveOldVisualChildren(prefabRoot.transform);
 
-                    visualInstance = CreateEmbeddedMonster33Visual(prefabRoot.scene);
+                    visualInstance = CreateEmbeddedMonster30Visual(prefabRoot.scene);
                     if (visualInstance == null)
                     {
-                        Debug.LogError("Failed to instantiate Monster33 visual prefab.");
+                        Debug.LogError("Failed to instantiate Monster30 visual prefab.");
                         return;
                     }
 
-                    visualInstance.name = "Monster33_VisualRoot";
+                    visualInstance.name = "Monster30_VisualRoot";
                     visualInstance.transform.SetParent(prefabRoot.transform, false);
                     visualInstance.transform.localPosition = Vector3.zero;
                     visualInstance.transform.localRotation = Quaternion.identity;
@@ -128,7 +120,7 @@ namespace baodeag.EditorTools
 
                 if (rootAnimator == null)
                 {
-                    Debug.LogError($"Monster33 boss builder could not find required animator components. rootAnimatorNull={rootAnimator == null}, monsterAvatarNull={monsterAvatar == null}");
+                    Debug.LogError($"Monster30 boss builder could not find required animator components. rootAnimatorNull={rootAnimator == null}, monsterAvatarNull={monsterAvatar == null}");
                     return;
                 }
 
@@ -141,13 +133,11 @@ namespace baodeag.EditorTools
                     rootAnimator.avatar = sourceAnimator.avatar;
                 }
 
-                AssignMonster33Animator(rootAnimator);
-                EnsureMonster33Materials(visualInstance);
-                EnsurePhase2FireHooks(prefabRoot, visualInstance.transform, rootAnimator);
+                AssignMonster30Animator(rootAnimator);
 
                 if (rootAnimator.avatar == null)
                 {
-                    Debug.LogError("Monster33 boss builder could not resolve a humanoid avatar for the boss.");
+                    Debug.LogError("Monster30 boss builder could not resolve a humanoid avatar for the boss.");
                     return;
                 }
 
@@ -168,8 +158,8 @@ namespace baodeag.EditorTools
                 AssetDatabase.Refresh();
 
                 Debug.Log(targetPrefabExists
-                    ? "Updated Monster33_Boss_01 root logic/components only. Existing visual hierarchy/model edits were left untouched."
-                    : "Created Monster33_Boss_01 prefab with boss gameplay hooks.");
+                    ? "Updated Monster30_Boss_01 root logic/components only. Existing visual hierarchy/model edits were left untouched."
+                    : "Created Monster30_Boss_01 prefab with boss gameplay hooks.");
             }
             finally
             {
@@ -177,16 +167,16 @@ namespace baodeag.EditorTools
             }
         }
 
-        [MenuItem("Tools/Bosses/Make Monster33 Boss Prefab Editable")]
-        public static void MakeMonster33BossPrefabEditable()
+        [MenuItem("Tools/Bosses/Make Monster30 Boss Prefab Editable")]
+        public static void MakeMonster30BossPrefabEditable()
         {
             var prefabRoot = PrefabUtility.LoadPrefabContents(TargetPrefabPath);
             try
             {
-                var visualRoot = prefabRoot.transform.Find("Monster33_VisualRoot");
+                var visualRoot = prefabRoot.transform.Find("Monster30_VisualRoot");
                 if (visualRoot == null)
                 {
-                    Debug.LogWarning("Monster33_Boss_01 does not contain Monster33_VisualRoot.");
+                    Debug.LogWarning("Monster30_Boss_01 does not contain Monster30_VisualRoot.");
                     return;
                 }
 
@@ -194,7 +184,7 @@ namespace baodeag.EditorTools
                 PrefabUtility.SaveAsPrefabAsset(prefabRoot, TargetPrefabPath);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
-                Debug.Log("Monster33_Boss_01 visual hierarchy was unpacked for editing.");
+                Debug.Log("Monster30_Boss_01 visual hierarchy was unpacked for editing.");
             }
             finally
             {
@@ -205,7 +195,7 @@ namespace baodeag.EditorTools
         private static void ReplaceCharacterManager(GameObject prefabRoot, AIBossCharacterManager bossReferenceManager)
         {
             ReplaceNetworkManager(prefabRoot);
-            var aiAssets = CreateOrUpdateMonster33AIAssets();
+            var aiAssets = CreateOrUpdateMonster30AIAssets();
 
             ReplaceCombatManager(prefabRoot);
 
@@ -215,15 +205,15 @@ namespace baodeag.EditorTools
                 UnityEngine.Object.DestroyImmediate(oldManager, true);
             }
 
-            var bossManager = prefabRoot.GetComponent<AIMonster33CharacterManager>();
+            var bossManager = prefabRoot.GetComponent<AIMonster30CharacterManager>();
             if (bossManager == null)
             {
-                bossManager = prefabRoot.AddComponent<AIMonster33CharacterManager>();
+                bossManager = prefabRoot.AddComponent<AIMonster30CharacterManager>();
             }
 
             var serializedObject = new SerializedObject(bossManager);
             serializedObject.FindProperty("characterGroup").enumValueIndex = (int)CharacterGroup.Team02;
-            serializedObject.FindProperty("characterName").stringValue = "Monster33, Hell Fire Knight";
+            serializedObject.FindProperty("characterName").stringValue = "Monster30, The Ravager";
             serializedObject.FindProperty("idle").objectReferenceValue = LoadStateAsset<IdleState>("t:IdleState", "18e987916d2ef1a44b5a64ea20b40e25");
             serializedObject.FindProperty("pursueTarget").objectReferenceValue = LoadStateAsset<PursueTargetState>("t:PursueTargetState", "858bd4aaa1b8cc54cbe09f1fe39629f3");
             serializedObject.FindProperty("combatStance").objectReferenceValue = aiAssets.CombatStanceState;
@@ -235,9 +225,9 @@ namespace baodeag.EditorTools
             serializedObject.FindProperty("useNavMeshTranslationForInPlaceAnimations").boolValue = true;
             serializedObject.FindProperty("sleepAnimation").stringValue = "Sleep_01";
             serializedObject.FindProperty("awakenAnimation").stringValue = "Awaken_01";
-            serializedObject.FindProperty("minimumHealthPercentageToShift").floatValue = 50f;
-            serializedObject.FindProperty("phaseShiftAnimation").stringValue = "Phase_Change_01";
-            serializedObject.FindProperty("phase02CombatStanceState").objectReferenceValue = aiAssets.Phase02CombatStanceState;
+            serializedObject.FindProperty("minimumHealthPercentageToShift").floatValue = 0f;
+            serializedObject.FindProperty("phaseShiftAnimation").stringValue = "Attack_02";
+            serializedObject.FindProperty("phase02CombatStanceState").objectReferenceValue = aiAssets.CombatStanceState;
             serializedObject.FindProperty("sleepState").objectReferenceValue = GetSerializedReference(bossReferenceManager, "sleepState");
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(bossManager);
@@ -251,23 +241,23 @@ namespace baodeag.EditorTools
                 UnityEngine.Object.DestroyImmediate(oldCombatManager, true);
             }
 
-            if (prefabRoot.GetComponent<AIMonster33CombatManager>() == null)
+            if (prefabRoot.GetComponent<AIMonster30CombatManager>() == null)
             {
-                prefabRoot.AddComponent<AIMonster33CombatManager>();
+                prefabRoot.AddComponent<AIMonster30CombatManager>();
             }
         }
 
         private static void ReplaceNetworkManager(GameObject prefabRoot)
         {
             var oldNetworkManager = prefabRoot.GetComponent<AICharacterNetworkManager>();
-            if (oldNetworkManager != null && oldNetworkManager.GetType() != typeof(AIMonster33BossCharacterNetworkManager))
+            if (oldNetworkManager != null && oldNetworkManager.GetType() != typeof(AIBossCharacterNetworkManager))
             {
                 UnityEngine.Object.DestroyImmediate(oldNetworkManager, true);
             }
 
-            if (prefabRoot.GetComponent<AIMonster33BossCharacterNetworkManager>() == null)
+            if (prefabRoot.GetComponent<AIBossCharacterNetworkManager>() == null)
             {
-                prefabRoot.AddComponent<AIMonster33BossCharacterNetworkManager>();
+                prefabRoot.AddComponent<AIBossCharacterNetworkManager>();
             }
         }
 
@@ -284,11 +274,11 @@ namespace baodeag.EditorTools
                 }
             }
 
-            var Monster33SoundFX = prefabRoot.AddComponent<AICharacterSoundFXManager>();
+            var monster30SoundFX = prefabRoot.AddComponent<AICharacterSoundFXManager>();
             if (referenceSoundFX != null)
             {
                 var sourceSerializedObject = new SerializedObject(referenceSoundFX);
-                var targetSerializedObject = new SerializedObject(Monster33SoundFX);
+                var targetSerializedObject = new SerializedObject(monster30SoundFX);
 
                 CopyObjectArrayProperty(sourceSerializedObject.FindProperty("damageGrunts"), targetSerializedObject.FindProperty("damageGrunts"));
                 CopyObjectArrayProperty(sourceSerializedObject.FindProperty("attackGrunts"), targetSerializedObject.FindProperty("attackGrunts"));
@@ -296,7 +286,7 @@ namespace baodeag.EditorTools
                 targetSerializedObject.ApplyModifiedPropertiesWithoutUndo();
             }
 
-            EditorUtility.SetDirty(Monster33SoundFX);
+            EditorUtility.SetDirty(monster30SoundFX);
         }
 
         private static void PrepareBossStats(GameObject prefabRoot)
@@ -305,10 +295,10 @@ namespace baodeag.EditorTools
             if (networkManager != null)
             {
                 var serializedObject = new SerializedObject(networkManager);
-                SetIntPropertyIfPresent(serializedObject, "currentHealth.m_InternalValue", 1800);
-                SetIntPropertyIfPresent(serializedObject, "maxHealth.m_InternalValue", 1800);
-                SetIntPropertyIfPresent(serializedObject, "currentStamina.m_InternalValue", 260);
-                SetIntPropertyIfPresent(serializedObject, "maxStamina.m_InternalValue", 260);
+                SetIntPropertyIfPresent(serializedObject, "currentHealth.m_InternalValue", 1600);
+                SetIntPropertyIfPresent(serializedObject, "maxHealth.m_InternalValue", 1600);
+                SetIntPropertyIfPresent(serializedObject, "currentStamina.m_InternalValue", 240);
+                SetIntPropertyIfPresent(serializedObject, "maxStamina.m_InternalValue", 240);
                 SetBoolPropertyIfPresent(serializedObject, "isAwake.m_InternalValue", true);
                 serializedObject.ApplyModifiedPropertiesWithoutUndo();
                 EditorUtility.SetDirty(networkManager);
@@ -321,16 +311,16 @@ namespace baodeag.EditorTools
                 EditorUtility.SetDirty(animator);
             }
 
-            var combatManager = prefabRoot.GetComponent<AIMonster33CombatManager>();
+            var combatManager = prefabRoot.GetComponent<AIMonster30CombatManager>();
             if (combatManager != null)
             {
                 var serializedObject = new SerializedObject(combatManager);
-                serializedObject.FindProperty("baseDamage").intValue = 46;
-                serializedObject.FindProperty("basePoiseDamage").intValue = 34;
-                serializedObject.FindProperty("maxStance").floatValue = 165f;
+                serializedObject.FindProperty("baseDamage").intValue = 48;
+                serializedObject.FindProperty("basePoiseDamage").intValue = 36;
+                serializedObject.FindProperty("maxStance").floatValue = 180f;
                 serializedObject.FindProperty("attack01DamageModifier").floatValue = 1.2f;
-                serializedObject.FindProperty("attack02DamageModifier").floatValue = 1.55f;
-                serializedObject.FindProperty("attack03DamageModifier").floatValue = 1.8f;
+                serializedObject.FindProperty("attack02DamageModifier").floatValue = 1.65f;
+                serializedObject.FindProperty("attack03DamageModifier").floatValue = 1.9f;
                 serializedObject.ApplyModifiedPropertiesWithoutUndo();
                 EditorUtility.SetDirty(combatManager);
             }
@@ -379,51 +369,6 @@ namespace baodeag.EditorTools
             }
         }
 
-        private static void EnsureMonster33Materials(GameObject visualRoot)
-        {
-            if (visualRoot == null)
-            {
-                return;
-            }
-
-            var primaryMaterial = AssetDatabase.LoadAssetAtPath<Material>(MonsterPrimaryMaterialPath);
-            if (primaryMaterial == null)
-            {
-                Debug.LogWarning("Monster33 builder could not load the primary color material.");
-                return;
-            }
-
-            foreach (var renderer in visualRoot.GetComponentsInChildren<SkinnedMeshRenderer>(true))
-            {
-                if (renderer == null || renderer.sharedMaterials == null || renderer.sharedMaterials.Length == 0)
-                {
-                    continue;
-                }
-
-                var materials = renderer.sharedMaterials;
-                var changed = false;
-
-                for (var i = 0; i < materials.Length; i++)
-                {
-                    if (materials[i] == primaryMaterial)
-                    {
-                        continue;
-                    }
-
-                    materials[i] = primaryMaterial;
-                    changed = true;
-                }
-
-                if (!changed)
-                {
-                    continue;
-                }
-
-                renderer.sharedMaterials = materials;
-                EditorUtility.SetDirty(renderer);
-            }
-        }
-
         private static void RebuildGameplayHooks(GameObject prefabRoot, Transform visualRoot, Animator sourceAnimator)
         {
             EnsureLockOnTarget(sourceAnimator);
@@ -433,31 +378,7 @@ namespace baodeag.EditorTools
             EnsureWeaponDamageColliders(prefabRoot, sourceAnimator);
         }
 
-        private static void EnsurePhase2FireHooks(GameObject prefabRoot, Transform visualRoot, Animator sourceAnimator)
-        {
-            if (prefabRoot == null || visualRoot == null || sourceAnimator == null)
-                return;
-
-            var rightWeapon = FindTransformByName(sourceAnimator.transform, "root_dupli_001.x");
-            var leftWeapon = FindTransformByName(sourceAnimator.transform, "root_dupli_002.x");
-            EnsureWeaponDamageColliders(prefabRoot, sourceAnimator);
-
-            var fireController = prefabRoot.GetComponent<Monster33Phase2FireController>();
-            if (fireController == null)
-                fireController = prefabRoot.AddComponent<Monster33Phase2FireController>();
-
-            fireController.Configure(
-                AssetDatabase.LoadAssetAtPath<GameObject>(MonsterBurningBodyVFXPath),
-                AssetDatabase.LoadAssetAtPath<GameObject>(MonsterFireWeaponTrailPath),
-                AssetDatabase.LoadAssetAtPath<Material>(MonsterFireWeaponMaterialPath),
-                visualRoot,
-                rightWeapon,
-                leftWeapon);
-
-            EditorUtility.SetDirty(fireController);
-        }
-
-        private static GameObject CreateEmbeddedMonster33Visual(Scene targetScene)
+        private static GameObject CreateEmbeddedMonster30Visual(Scene targetScene)
         {
             var visualRoot = PrefabUtility.LoadPrefabContents(MonsterVisualPath);
             try
@@ -465,7 +386,7 @@ namespace baodeag.EditorTools
                 UnpackVisualHierarchyForEditing(visualRoot);
 
                 var embeddedVisual = UnityEngine.Object.Instantiate(visualRoot);
-                embeddedVisual.name = "Monster33_VisualRoot";
+                embeddedVisual.name = "Monster30_VisualRoot";
                 SceneManager.MoveGameObjectToScene(embeddedVisual, targetScene);
                 return embeddedVisual;
             }
@@ -499,9 +420,9 @@ namespace baodeag.EditorTools
             }
         }
 
-        private static void AssignMonster33Animator(Animator rootAnimator)
+        private static void AssignMonster30Animator(Animator rootAnimator)
         {
-            var controller = CreateOrUpdateMonster33AnimatorController();
+            var controller = CreateOrUpdateMonster30AnimatorController();
             if (controller == null)
             {
                 return;
@@ -511,44 +432,37 @@ namespace baodeag.EditorTools
             EditorUtility.SetDirty(rootAnimator);
         }
 
-        private static AnimatorController CreateOrUpdateMonster33AnimatorController()
+        private static AnimatorController CreateOrUpdateMonster30AnimatorController()
         {
             var monsterIdleClip = CreateOrUpdateRebasedAnimationClip(MonsterIdleAnimationPath, MonsterRebasedIdleAnimationPath);
             var monsterWalkClip = CreateOrUpdateRebasedAnimationClip(MonsterWalkAnimationPath, MonsterRebasedWalkAnimationPath);
             var attack01Clip = CreateOrUpdateMappedAttackClip(
-                HellFireKnightAttackPath,
-                HellFireKnightAttackRebasedPath,
+                GolemMutantPunchPath,
+                GolemMutantPunchRebasedPath,
                 "SetAttack01Damage",
                 0.30f,
-                0.56f,
+                0.58f,
                 true);
             var attack01ComboClip = CreateOrUpdateMappedAttackClip(
-                HellFireKnightComboPath,
-                HellFireKnightComboRebasedPath,
+                GolemComboPath,
+                GolemComboRebasedPath,
                 "SetAttack01Damage",
-                0.26f,
-                0.66f,
+                0.18f,
+                0.74f,
                 false);
             var attack02Clip = CreateOrUpdateMappedAttackClip(
-                HellFireKnightSlashPath,
-                HellFireKnightSlashRebasedPath,
+                GolemChargeSlash01Path,
+                GolemChargeSlash01RebasedPath,
                 "SetAttack02Damage",
-                0.28f,
-                0.62f,
+                0.42f,
+                0.72f,
                 false);
             var attack03Clip = CreateOrUpdateMappedAttackClip(
-                HellFireKnightSlashAltPath,
-                HellFireKnightSlashAltRebasedPath,
+                GolemChargeSlash02Path,
+                GolemChargeSlash02RebasedPath,
                 "SetAttack03Damage",
-                0.34f,
-                0.7f,
-                false);
-            var phaseChangeClip = CreateOrUpdateMappedAttackClip(
-                HellFireKnightPowerUpPath,
-                HellFireKnightPowerUpRebasedPath,
-                null,
-                0f,
-                0f,
+                0.38f,
+                0.68f,
                 false);
 
             if (monsterIdleClip == null
@@ -556,10 +470,9 @@ namespace baodeag.EditorTools
                 || attack01Clip == null
                 || attack01ComboClip == null
                 || attack02Clip == null
-                || attack03Clip == null
-                || phaseChangeClip == null)
+                || attack03Clip == null)
             {
-                Debug.LogError("Monster33 boss builder could not create the Monster33 boss animation clips.");
+                Debug.LogError("Monster30 boss builder could not create the Monster30 boss animation clips.");
                 return null;
             }
 
@@ -575,7 +488,7 @@ namespace baodeag.EditorTools
             {
                 if (!AssetDatabase.CopyAsset(DurkAnimatorControllerPath, TargetAnimatorControllerPath))
                 {
-                    Debug.LogError("Monster33 boss builder could not duplicate Durk.controller.");
+                    Debug.LogError("Monster30 boss builder could not duplicate Durk.controller.");
                     return null;
                 }
             }
@@ -583,17 +496,16 @@ namespace baodeag.EditorTools
             var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(TargetAnimatorControllerPath);
             if (controller == null)
             {
-                Debug.LogError("Monster33 boss builder could not load Monster33_Boss.controller after duplication.");
+                Debug.LogError("Monster30 boss builder could not load Monster30_Boss.controller after duplication.");
                 return null;
             }
 
-            controller.name = "Monster33_Boss";
+            controller.name = "Monster30_Boss";
             ApplyStateMotion(controller, "Idle", monsterIdleClip);
             ApplyStateMotion(controller, "Locomotion", monsterWalkClip);
             ApplyStateMotion(controller, "Attack_01", attack01Clip);
             ApplyStateMotion(controller, "Attack_02", attack02Clip);
             ApplyStateMotion(controller, "Attack_03", attack03Clip);
-            ApplyStateMotion(controller, "Phase_Change_01", phaseChangeClip);
             EnsureComboState(controller, attack01ComboClip);
 
             EditorUtility.SetDirty(controller);
@@ -609,7 +521,7 @@ namespace baodeag.EditorTools
             var sourceClip = AssetDatabase.LoadAssetAtPath<AnimationClip>(sourceClipPath);
             if (sourceClip == null)
             {
-                Debug.LogError($"Monster33 boss builder could not load source clip at {sourceClipPath}.");
+                Debug.LogError($"Monster30 boss builder could not load source clip at {sourceClipPath}.");
                 return null;
             }
 
@@ -652,7 +564,7 @@ namespace baodeag.EditorTools
             var sourceClip = LoadPrimaryAnimationClip(sourceAssetPath);
             if (sourceClip == null)
             {
-                Debug.LogError($"Monster33 boss builder could not load source clip at {sourceAssetPath}.");
+                Debug.LogError($"Monster30 boss builder could not load source clip at {sourceAssetPath}.");
                 return null;
             }
 
@@ -664,14 +576,14 @@ namespace baodeag.EditorTools
                 sourceAssetPath);
             var targetBonePaths = BuildHumanoidBonePathMapWithFallback(
                 MonsterVisualPath,
-                "Monster33_VisualRoot",
+                "Monster30_VisualRoot",
                 MonsterVisualPath,
                 MonsterModelPath);
 
             if (sourceBonePaths.Count == 0 || targetBonePaths.Count == 0)
             {
                 Debug.LogWarning(
-                    $"Monster33 boss builder could not build humanoid bone path maps for attack retargeting. " +
+                    $"Monster30 boss builder could not build humanoid bone path maps for attack retargeting. " +
                     $"source='{sourceAssetPath}' ({sourceBonePaths.Count} bones), target='{MonsterVisualPath}'/'{MonsterModelPath}' ({targetBonePaths.Count} bones). " +
                     "Falling back to direct skeleton path remapping.");
             }
@@ -721,18 +633,14 @@ namespace baodeag.EditorTools
             if (mappedFloatCurveCount == 0 && mappedObjectCurveCount == 0)
             {
                 Debug.LogError(
-                    $"Monster33 boss builder mapped 0 curves for '{sourceClip.name}' into '{targetClipPath}'. " +
+                    $"Monster30 boss builder mapped 0 curves for '{sourceClip.name}' into '{targetClipPath}'. " +
                     "This usually means the source skeleton paths do not match the humanoid bone map.");
                 return null;
             }
 
             targetClip.name = System.IO.Path.GetFileNameWithoutExtension(targetClipPath);
             ConfigureLoopingForOneShotClip(targetClip);
-            AnimationUtility.SetAnimationEvents(
-                targetClip,
-                string.IsNullOrEmpty(setDamageFunctionName)
-                    ? Array.Empty<AnimationEvent>()
-                    : BuildAttackEvents(sourceClip.length, setDamageFunctionName, openNormalizedTime, closeNormalizedTime, enablesCombo));
+            AnimationUtility.SetAnimationEvents(targetClip, BuildAttackEvents(sourceClip.length, setDamageFunctionName, openNormalizedTime, closeNormalizedTime, enablesCombo));
             EditorUtility.SetDirty(targetClip);
             AssetDatabase.SaveAssets();
 
@@ -769,7 +677,7 @@ namespace baodeag.EditorTools
             var instance = InstantiateHumanoidAsset(asset);
             if (instance == null)
             {
-                Debug.LogWarning($"Monster33 boss builder could not instantiate humanoid asset at {assetPath}.");
+                Debug.LogWarning($"Monster30 boss builder could not instantiate humanoid asset at {assetPath}.");
                 return result;
             }
 
@@ -778,7 +686,7 @@ namespace baodeag.EditorTools
                 var animator = instance.GetComponent<Animator>() ?? instance.GetComponentInChildren<Animator>();
                 if (animator == null || animator.avatar == null || !animator.avatar.isHuman)
                 {
-                    Debug.LogWarning($"Monster33 boss builder found no humanoid animator/avatar at {assetPath}.");
+                    Debug.LogWarning($"Monster30 boss builder found no humanoid animator/avatar at {assetPath}.");
                     return result;
                 }
 
@@ -891,12 +799,12 @@ namespace baodeag.EditorTools
                 return true;
             }
 
-            return TryMapMonster33BindingPath(sourcePath, out mappedPath);
+            return TryMapMonster30BindingPath(sourcePath, out mappedPath);
         }
 
-        private static bool TryMapMonster33BindingPath(string sourcePath, out string mappedPath)
+        private static bool TryMapMonster30BindingPath(string sourcePath, out string mappedPath)
         {
-            foreach (var pair in GetMonster33SourceToTargetPathMap().OrderByDescending(entry => entry.Key.Length))
+            foreach (var pair in GetMonster30SourceToTargetPathMap().OrderByDescending(entry => entry.Key.Length))
             {
                 if (!string.Equals(sourcePath, pair.Key, StringComparison.Ordinal)
                     && !sourcePath.StartsWith(pair.Key + "/", StringComparison.Ordinal))
@@ -918,7 +826,7 @@ namespace baodeag.EditorTools
             return false;
         }
 
-        private static Dictionary<string, string> GetMonster33SourceToTargetPathMap()
+        private static Dictionary<string, string> GetMonster30SourceToTargetPathMap()
         {
             string prefix = MonsterAnimationRootPrefix.TrimEnd('/');
             return new Dictionary<string, string>
@@ -1077,7 +985,7 @@ namespace baodeag.EditorTools
             var clipSettings = serializedClip.FindProperty("m_AnimationClipSettings");
             if (clipSettings == null)
             {
-                Debug.LogWarning($"Monster33 boss builder could not locate animation clip settings for {clip.name}.");
+                Debug.LogWarning($"Monster30 boss builder could not locate animation clip settings for {clip.name}.");
                 return;
             }
 
@@ -1112,25 +1020,24 @@ namespace baodeag.EditorTools
             }
         }
 
-        private static Monster33AIAssetSet CreateOrUpdateMonster33AIAssets()
+        private static Monster30AIAssetSet CreateOrUpdateMonster30AIAssets()
         {
             var attackState = EnsureCopiedAsset<AttackState>(AttackStateTemplatePath, TargetAttackStatePath);
             var combatStanceState = EnsureCopiedAsset<CombatStanceState>(CombatStanceTemplatePath, TargetCombatStanceStatePath);
-            var phase02CombatStanceState = EnsureCopiedAsset<CombatStanceState>(CombatStanceTemplatePath, TargetPhase02CombatStanceStatePath);
             var attack01 = EnsureCopiedAsset<AICharacterAttackAction>(Attack01TemplatePath, TargetAttack01Path);
             var attack01Combo = EnsureCopiedAsset<AICharacterAttackAction>(Attack01ComboTemplatePath, TargetAttack01ComboPath);
             var attack02 = EnsureCopiedAsset<AICharacterAttackAction>(Attack02TemplatePath, TargetAttack02Path);
             var attack03 = EnsureCopiedAsset<AICharacterAttackAction>(Attack02TemplatePath, TargetAttack03Path);
 
-            if (attackState == null || combatStanceState == null || phase02CombatStanceState == null || attack01 == null || attack01Combo == null || attack02 == null || attack03 == null)
+            if (attackState == null || combatStanceState == null || attack01 == null || attack01Combo == null || attack02 == null || attack03 == null)
             {
-                throw new InvalidOperationException("Monster33 boss builder could not create the Monster33 AI assets.");
+                throw new InvalidOperationException("Monster30 boss builder could not create the Monster30 AI assets.");
             }
 
-            attackState.name = "Monster33 Attack State";
+            attackState.name = "Monster30 Attack State";
             ConfigureAttackAction(
                 attack01,
-                "Monster33 Attack 01",
+                "Monster30 Attack 01",
                 "Attack_01",
                 true,
                 AttackType.LightAttack01,
@@ -1140,7 +1047,7 @@ namespace baodeag.EditorTools
                 3.25f);
             ConfigureAttackAction(
                 attack01Combo,
-                "Monster33 Attack 01 Combo",
+                "Monster30 Attack 01 Combo",
                 "Attack_01_Combo",
                 true,
                 AttackType.LightAttack02,
@@ -1150,34 +1057,32 @@ namespace baodeag.EditorTools
                 3.5f);
             ConfigureAttackAction(
                 attack02,
-                "Monster33 Attack 02 Slash",
+                "Monster30 Attack 02 Charged",
                 "Attack_02",
                 false,
                 AttackType.ChargedAttack01,
                 null,
-                30,
-                0.75f,
+                25,
+                1.25f,
                 5.5f);
             ConfigureAttackAction(
                 attack03,
-                "Monster33 Attack 03 Slash Alt",
+                "Monster30 Attack 03 Charged",
                 "Attack_03",
                 false,
                 AttackType.ChargedAttack02,
                 null,
-                30,
-                1.1f,
+                25,
+                1.5f,
                 5.75f);
 
-            ConfigureCombatStance(combatStanceState, attack01, attack02, attack03, false, 70, 5.75f);
-            ConfigureCombatStance(phase02CombatStanceState, attack01, attack02, attack03, true, 100, 6.5f);
+            ConfigureCombatStance(combatStanceState, attack01, attack02, attack03);
             EditorUtility.SetDirty(attackState);
             EditorUtility.SetDirty(combatStanceState);
-            EditorUtility.SetDirty(phase02CombatStanceState);
 
             AssetDatabase.SaveAssets();
 
-            return new Monster33AIAssetSet(attackState, combatStanceState, phase02CombatStanceState);
+            return new Monster30AIAssetSet(attackState, combatStanceState);
         }
 
         private static T EnsureCopiedAsset<T>(string templatePath, string targetPath) where T : UnityEngine.Object
@@ -1192,7 +1097,7 @@ namespace baodeag.EditorTools
 
             if (!AssetDatabase.CopyAsset(templatePath, targetPath))
             {
-                Debug.LogError($"Monster33 boss builder could not copy asset from {templatePath} to {targetPath}.");
+                Debug.LogError($"Monster30 boss builder could not copy asset from {templatePath} to {targetPath}.");
                 return null;
             }
 
@@ -1231,14 +1136,9 @@ namespace baodeag.EditorTools
             CombatStanceState combatStanceState,
             AICharacterAttackAction attack01,
             AICharacterAttackAction attack02,
-            AICharacterAttackAction attack03,
-            bool isPhase02,
-            int comboChance,
-            float maximumEngagementDistance)
+            AICharacterAttackAction attack03)
         {
-            combatStanceState.name = isPhase02
-                ? "Monster33 Combat Stance State Phase02"
-                : "Monster33 Combat Stance State";
+            combatStanceState.name = "Monster30 Combat Stance State";
 
             var serializedObject = new SerializedObject(combatStanceState);
             SetObjectArrayProperty(serializedObject.FindProperty("aiCharacterAttacks"), attack01, attack02, attack03);
@@ -1246,9 +1146,9 @@ namespace baodeag.EditorTools
             serializedObject.FindProperty("chosenAttack").objectReferenceValue = null;
             serializedObject.FindProperty("previousAttack").objectReferenceValue = null;
             serializedObject.FindProperty("canPerformCombo").boolValue = true;
-            serializedObject.FindProperty("percentageOfTimeWillPerformCombo").intValue = comboChance;
+            serializedObject.FindProperty("percentageOfTimeWillPerformCombo").intValue = 100;
             serializedObject.FindProperty("onlyPerformComboIfInitialAttackHits").boolValue = true;
-            serializedObject.FindProperty("maximumEngagementDistance").floatValue = maximumEngagementDistance;
+            serializedObject.FindProperty("maximumEngagementDistance").floatValue = 5.75f;
             serializedObject.FindProperty("willCircleTarget").boolValue = false;
             serializedObject.FindProperty("canBlock").boolValue = false;
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
@@ -1274,7 +1174,7 @@ namespace baodeag.EditorTools
             var state = FindState(controller, stateName);
             if (state == null)
             {
-                Debug.LogWarning($"Monster33 boss builder could not find animator state '{stateName}' inside {controller.name}.");
+                Debug.LogWarning($"Monster30 boss builder could not find animator state '{stateName}' inside {controller.name}.");
                 return;
             }
 
@@ -1309,7 +1209,7 @@ namespace baodeag.EditorTools
 
             if (destinationState == null)
             {
-                Debug.LogWarning("Monster33 boss builder could not find a destination state for Attack_01_Combo.");
+                Debug.LogWarning("Monster30 boss builder could not find a destination state for Attack_01_Combo.");
                 return;
             }
 
@@ -1481,7 +1381,7 @@ namespace baodeag.EditorTools
         private static void EnsureMainHurtbox(Animator animator)
         {
             var hips = FindBone(animator, HumanBodyBones.Hips, "Hips", "hips", "Pelvis", "pelvis") ?? animator.transform;
-            var hurtbox = FindOrCreateDirectChild(hips, "Monster33_Main_Hurtbox", DamageableCharacterLayer);
+            var hurtbox = FindOrCreateDirectChild(hips, "Monster30_Main_Hurtbox", DamageableCharacterLayer);
             var collider = hurtbox.GetComponent<CapsuleCollider>();
             if (collider == null)
             {
@@ -1497,7 +1397,7 @@ namespace baodeag.EditorTools
 
         private static void EnsureWeaponDamageColliders(GameObject prefabRoot, Animator animator)
         {
-            var combatManager = prefabRoot.GetComponent<AIMonster33CombatManager>();
+            var combatManager = prefabRoot.GetComponent<AIMonster30CombatManager>();
             if (combatManager == null)
             {
                 return;
@@ -1508,12 +1408,12 @@ namespace baodeag.EditorTools
 
             if (rightWeapon == null || leftWeapon == null)
             {
-                Debug.LogWarning("Monster33 rig does not expose root_dupli_001.x/root_dupli_002.x weapon bones, damage colliders were skipped.");
+                Debug.LogWarning("Monster30 rig does not expose root_dupli_001.x/root_dupli_002.x weapon bones, damage colliders were skipped.");
                 return;
             }
 
-            var rightCollider = EnsureWeaponDamageCollider(rightWeapon, "Monster33_Weapon_01_Hitbox");
-            var leftCollider = EnsureWeaponDamageCollider(leftWeapon, "Monster33_Weapon_02_Hitbox");
+            var rightCollider = EnsureWeaponDamageCollider(rightWeapon, "Monster30_Weapon_01_Hitbox");
+            var leftCollider = EnsureWeaponDamageCollider(leftWeapon, "Monster30_Weapon_02_Hitbox");
 
             var serializedObject = new SerializedObject(combatManager);
             serializedObject.FindProperty("rightHandDamageCollider").objectReferenceValue = rightCollider;
@@ -1531,7 +1431,7 @@ namespace baodeag.EditorTools
 
             if (rightHand == null || leftHand == null || rightWeapon == null || leftWeapon == null)
             {
-                Debug.LogWarning("Monster33 builder could not constrain weapon roots to hands because one or more transforms are missing.");
+                Debug.LogWarning("Monster30 builder could not constrain weapon roots to hands because one or more transforms are missing.");
                 return;
             }
 
@@ -1583,11 +1483,11 @@ namespace baodeag.EditorTools
 
             var bootstrapType = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes())
-                .FirstOrDefault(type => type.Name == "Monster33WeaponConstraintBootstrap" && typeof(MonoBehaviour).IsAssignableFrom(type));
+                .FirstOrDefault(type => type.Name == "Monster30WeaponConstraintBootstrap" && typeof(MonoBehaviour).IsAssignableFrom(type));
 
             if (bootstrapType == null)
             {
-                Debug.LogWarning("Monster33 builder could not find Monster33WeaponConstraintBootstrap type.");
+                Debug.LogWarning("Monster30 builder could not find Monster30WeaponConstraintBootstrap type.");
                 return;
             }
 
@@ -1670,20 +1570,13 @@ namespace baodeag.EditorTools
             capsuleCollider.direction = 2;
             capsuleCollider.center = new Vector3(0f, 0f, -0.42f);
 
-            var fireDamageCollider = hitbox.GetComponent<Monster33FireDamageCollider>();
-            if (fireDamageCollider == null)
+            var damageCollider = hitbox.GetComponent<ManualDamageCollider>();
+            if (damageCollider == null)
             {
-                var oldManualCollider = hitbox.GetComponent<ManualDamageCollider>();
-                if (oldManualCollider != null)
-                    UnityEngine.Object.DestroyImmediate(oldManualCollider, true);
-
-                fireDamageCollider = hitbox.gameObject.AddComponent<Monster33FireDamageCollider>();
+                damageCollider = hitbox.gameObject.AddComponent<ManualDamageCollider>();
             }
 
-            fireDamageCollider.ConfigureFireHit(AssetDatabase.LoadAssetAtPath<GameObject>(MonsterFireHitVFXPath), 25);
-            EditorUtility.SetDirty(fireDamageCollider);
-
-            return fireDamageCollider;
+            return damageCollider;
         }
 
 
@@ -1817,18 +1710,16 @@ namespace baodeag.EditorTools
             Charged
         }
 
-        private readonly struct Monster33AIAssetSet
+        private readonly struct Monster30AIAssetSet
         {
-            public Monster33AIAssetSet(AttackState attackState, CombatStanceState combatStanceState, CombatStanceState phase02CombatStanceState)
+            public Monster30AIAssetSet(AttackState attackState, CombatStanceState combatStanceState)
             {
                 AttackState = attackState;
                 CombatStanceState = combatStanceState;
-                Phase02CombatStanceState = phase02CombatStanceState;
             }
 
             public AttackState AttackState { get; }
             public CombatStanceState CombatStanceState { get; }
-            public CombatStanceState Phase02CombatStanceState { get; }
         }
 
         private readonly struct BoneCapsuleDefinition
@@ -1852,4 +1743,3 @@ namespace baodeag.EditorTools
         }
     }
 }
-

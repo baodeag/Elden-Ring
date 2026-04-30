@@ -10,7 +10,7 @@ namespace baodeag.Editor
 {
     public static class GeneratedWorldCleanupUtility
     {
-        private const string TargetScenePath = "Assets/Scenes/World_02.unity";
+        private const string TargetScenePath = GameAssetPaths.ScenesRoot + "/World_02.unity";
 
         [MenuItem("Tools/Random Map/List World_02 Roots")]
         public static void ListWorld02Roots()

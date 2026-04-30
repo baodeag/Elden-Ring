@@ -7,7 +7,7 @@ namespace baodeag.Editor
 {
     public static class WeaponDamageColliderAlignmentUtility
     {
-        private const string WeaponsFolder = "Assets/Prefabs/Items/Weapons";
+        private const string WeaponsFolder = GameAssetPaths.PrefabsRoot + "/Items/Weapons";
 
         [MenuItem("Tools/Weapons/Align Damage Colliders To Weapon Pivot")]
         public static void AlignDamageCollidersToWeaponPivot()

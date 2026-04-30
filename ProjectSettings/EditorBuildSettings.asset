@@ -6,97 +6,97 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Main_Menu_01.unity
+    path: Assets/Game/Scenes/Main_Menu_01.unity
     guid: 17c4f7c4dcc8d844da597afcef2e691b
   - enabled: 1
-    path: Assets/Scenes/World_01.unity
+    path: Assets/Game/Scenes/World_01.unity
     guid: ad6da0d535067d443aa973a7c1eadb31
   - enabled: 1
-    path: Assets/Scenes/World_02.unity
+    path: Assets/Game/Scenes/World_02.unity
     guid: 1319693964c947379c151e7799c39bd2
   - enabled: 1
-    path: Assets/Scenes/World_03.unity
+    path: Assets/Game/Scenes/World_03.unity
     guid: b51f3a22a8bc4aa0a0f5f968ca6dfd5c
   - enabled: 1
-    path: Assets/Scenes/World_04.unity
+    path: Assets/Game/Scenes/World_04.unity
     guid: 2effc558c2d64b14a0a2af29da2f0b80
   - enabled: 1
-    path: Assets/Scenes/World_05.unity
+    path: Assets/Game/Scenes/World_05.unity
     guid: 92b35031514a4adba243fd80999e0ddd
   - enabled: 0
     path: Assets/Scenes/Area_01_Subarea_00.unity
     guid: 230dd8e52fca5c849811f9a378778a64
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Entrance_Hall_Structure.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Entrance_Hall_Structure.unity
     guid: 6bf78c41bec91cb4da290b4b2183b026
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Forge_Structure.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Forge_Structure.unity
     guid: 40df05036f4794648bd4d90fcda9f076
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Upstairs_Corridor_Structure.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Upstairs_Corridor_Structure.unity
     guid: 5b0c2bb9929937f42830968f3a35ee2c
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Atrium_Structure.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Atrium_Structure.unity
     guid: 436bf56b86fc29741920d83a131b54e9
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Throne_Room_Structure.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Throne_Room_Structure.unity
     guid: 5a0e222b3a8b82946bfd593158263aa7
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Main_Hall_Structure.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Main_Hall_Structure.unity
     guid: 2bdb0bd6876472b4982d26376b03c662
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Main_Hall_Effects.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Main_Hall_Effects.unity
     guid: 6b21cb84b674eeb42b0f2ca4a84eab07
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Main_Hall_Props.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Main_Hall_Props.unity
     guid: 246d7c8fee0957d4894e4592fcec08f9
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Main_Hall_Spawners.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Main_Hall_Spawners.unity
     guid: d3885a48240400a4d8f39b4bc1345a04
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Entrance_Hall_Effects.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Entrance_Hall_Effects.unity
     guid: f9becf4251521c64798f411fb4c23e58
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Entrance_Hall_Props.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Entrance_Hall_Props.unity
     guid: 51ddf9a6abdc5474a8c225f28c662ba6
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Entrance_Hall_Spawners.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Entrance_Hall_Spawners.unity
     guid: a3b2333f6adcdcf46ac61df24091fd3e
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Forge_Effects.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Forge_Effects.unity
     guid: db6e5c4d655a7de4e90899a6c57a3fa1
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Forge_Props.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Forge_Props.unity
     guid: 8b55203c0a8f98442afcba7ace6d5074
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Forge_Spawners.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Forge_Spawners.unity
     guid: 4eb9998cff6ed2a4a867ed9023c80abc
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Upstairs_Corridor_Effects.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Upstairs_Corridor_Effects.unity
     guid: 85cce3b398e30fa42b291a3ca9f7e535
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Upstairs_Corridor_Props.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Upstairs_Corridor_Props.unity
     guid: 3e45c7c7da8a01b47af3f87f4f89f25f
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Upstairs_Corridor_Spawners.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Upstairs_Corridor_Spawners.unity
     guid: 4f48fcad3d07f8b4d9b905ca2ebcea13
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Atrium_Effects.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Atrium_Effects.unity
     guid: f55ec030eb286664f99ecd65bfffaf5c
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Atrium_Props.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Atrium_Props.unity
     guid: 2e347804ba8437e4e89084d38b261207
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Atrium_Spawners.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Atrium_Spawners.unity
     guid: fa220262be432a7498aab5ec12211bbd
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Throne_Room_Effects.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Throne_Room_Effects.unity
     guid: 784cef2505fd0c348884383683819e59
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Throne_Room_Props.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Throne_Room_Props.unity
     guid: df5ac4b8e8059db43af70126f45a0129
   - enabled: 1
-    path: Assets/Scenes/Area_01/Area_01_Dungeon_Throne_Room_Spawners.unity
+    path: Assets/Game/Scenes/Area_01/Area_01_Dungeon_Throne_Room_Spawners.unity
     guid: caeb321670073e74bb863fa916c0cacd
   - enabled: 1
     path: Assets/Scenes/Area_02/Area_02_Zone_0_0_Structure.unity

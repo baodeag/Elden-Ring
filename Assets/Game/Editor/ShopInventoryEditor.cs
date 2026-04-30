@@ -52,7 +52,7 @@ namespace baodeag
 
             if (GUILayout.Button("Open Merchant Setup Checklist"))
             {
-                Selection.activeObject = AssetDatabase.LoadAssetAtPath<Object>("Assets/Docs/MERCHANT_SETUP_CHECKLIST.md");
+                Selection.activeObject = AssetDatabase.LoadAssetAtPath<Object>(GameAssetPaths.DocsRoot + "/MERCHANT_SETUP_CHECKLIST.md");
             }
 
             if (GUILayout.Button("Generate Merchant Setup Checklist"))

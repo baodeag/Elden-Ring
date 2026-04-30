@@ -1,18 +1,18 @@
 using UnityEditor;
 using UnityEngine;
 
-public static class Stylized3DMonsterUrpFixer
+public static class PolygonZombiesUrpFixer
 {
-    private const string MaterialsFolder = "Assets/Stylized3DMonster";
+    private const string MaterialsFolder = GameAssetPaths.PolygonZombiesRoot + "/Materials";
     private const string UrpLitShaderName = "Universal Render Pipeline/Lit";
-    private const string AutoRunSessionKey = "Stylized3DMonsterUrpFixer.AutoRunAttempted.V1";
+    private const string AutoRunSessionKey = "PolygonZombiesUrpFixer.AutoRunAttempted.V1";
 
-    static Stylized3DMonsterUrpFixer()
+    static PolygonZombiesUrpFixer()
     {
         EditorApplication.delayCall += TryAutoFixOnce;
     }
 
-    [MenuItem("Tools/Fix/Convert Stylized3DMonster Materials To URP")]
+    [MenuItem("Tools/Fix/Convert Polygon Zombies Materials To URP")]
     public static void ConvertMaterialsToUrp()
     {
         var shader = Shader.Find(UrpLitShaderName);
@@ -34,29 +34,28 @@ public static class Stylized3DMonsterUrpFixer
                 continue;
             }
 
-            var baseMap = GetFirstTexture(material, "_MainTex", "_BaseMap", "_BASE_COLOR_MAP");
-            var emissionMap = GetFirstTexture(material, "_EmissionMap", "_EMISSION_COLOR_MAP");
-            var baseColor = GetFirstColor(material, "_BaseColor", "_Color", "_BASE_COLOR");
-            var emissionColor = GetFirstColor(material, "_EmissionColor", "_EMISSION_COLOR");
+            var baseMap = GetFirstTexture(material, "_Texture", "_MainTex");
+            var emissionMap = GetFirstTexture(material, "_Emissive", "_EmissionMap");
+            var baseColor = GetFirstColor(material, "_Color");
+            var emissionColor = GetFirstColor(material, "_EmissiveColor", "_EmissionColor");
+            var smoothness = GetFirstFloat(material, "_Smoothness", "_Glossiness");
 
             material.shader = shader;
             material.SetColor("_BaseColor", baseColor);
-            material.SetFloat("_Surface", 0f);
-            material.SetFloat("_AlphaClip", 0f);
-            material.SetFloat("_Cull", 2f);
-            material.SetFloat("_Smoothness", 0f);
 
             if (baseMap != null)
             {
                 material.SetTexture("_BaseMap", baseMap);
             }
 
+            material.SetFloat("_Smoothness", smoothness);
+
             if (emissionMap != null)
             {
                 material.EnableKeyword("_EMISSION");
                 material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
                 material.SetTexture("_EmissionMap", emissionMap);
-                material.SetColor("_EmissionColor", emissionColor.maxColorComponent > 0f ? emissionColor : Color.white * 0.25f);
+                material.SetColor("_EmissionColor", emissionColor.maxColorComponent > 0f ? emissionColor : Color.black);
             }
             else
             {
@@ -70,7 +69,7 @@ public static class Stylized3DMonsterUrpFixer
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log($"Converted {updatedCount} Stylized3DMonster materials to URP/Lit.");
+        Debug.Log($"Converted {updatedCount} Polygon Zombies materials to URP/Lit.");
     }
 
     private static void TryAutoFixOnce()
@@ -116,5 +115,18 @@ public static class Stylized3DMonsterUrpFixer
         }
 
         return Color.white;
+    }
+
+    private static float GetFirstFloat(Material material, params string[] propertyNames)
+    {
+        foreach (var propertyName in propertyNames)
+        {
+            if (material.HasProperty(propertyName))
+            {
+                return material.GetFloat(propertyName);
+            }
+        }
+
+        return 0f;
     }
 }

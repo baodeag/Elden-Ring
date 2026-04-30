@@ -1814,7 +1814,7 @@ namespace baodeag
 #if UNITY_EDITOR
         public void ApplyWorld01LightingMode()
         {
-            LightingSettings settings = AssetDatabase.LoadAssetAtPath<LightingSettings>("Assets/System/World Lighting Settings.lighting");
+            LightingSettings settings = AssetDatabase.LoadAssetAtPath<LightingSettings>(GameAssetPaths.SystemRoot + "/World Lighting Settings.lighting");
             if (settings != null)
                 Lightmapping.lightingSettings = settings;
 
@@ -1846,7 +1846,7 @@ namespace baodeag
 
         private void ApplyWorld01PostProcessing()
         {
-            PostProcessProfile profile = AssetDatabase.LoadAssetAtPath<PostProcessProfile>("Assets/Scenes/Scene_World_01/Post Processing Profile.asset");
+            PostProcessProfile profile = AssetDatabase.LoadAssetAtPath<PostProcessProfile>(GameAssetPaths.ScenesRoot + "/Scene_World_01/Post Processing Profile.asset");
             if (profile == null) return;
 
             PostProcessVolume volume = FindFirstObjectByType<PostProcessVolume>();

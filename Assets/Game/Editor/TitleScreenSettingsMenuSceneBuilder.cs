@@ -10,7 +10,7 @@ namespace baodeag.Editor
 {
     public static class TitleScreenSettingsMenuSceneBuilder
     {
-        private const string ScenePath = "Assets/Scenes/Main_Menu_01.unity";
+        private const string ScenePath = GameAssetPaths.ScenesRoot + "/Main_Menu_01.unity";
         private const string SessionKey = "baodeag.TitleScreenSettingsMenuSceneBuilder.Ran";
 
         static TitleScreenSettingsMenuSceneBuilder()

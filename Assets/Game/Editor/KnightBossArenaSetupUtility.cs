@@ -6,9 +6,9 @@ namespace baodeag.EditorTools
 {
     public static class KnightBossArenaSetupUtility
     {
-        const string KnightBossSpawnerPrefabPath = "Assets/Prefabs/Boss/Knight Boss Spawner.prefab";
-        const string BossFightTriggerPrefabPath = "Assets/Prefabs/Boss/Boss Fight Trigger.prefab";
-        const string FogWallPrefabPath = "Assets/Prefabs/Interactable Objects/Fog Wall Interactable.prefab";
+        const string KnightBossSpawnerPrefabPath = GameAssetPaths.PrefabsRoot + "/Boss/Knight Boss Spawner.prefab";
+        const string BossFightTriggerPrefabPath = GameAssetPaths.PrefabsRoot + "/Boss/Boss Fight Trigger.prefab";
+        const string FogWallPrefabPath = GameAssetPaths.PrefabsRoot + "/Interactable Objects/Fog Wall Interactable.prefab";
 
         const float DefaultTriggerForwardOffset = -8f;
         const float DefaultFogWallForwardOffset = -6f;

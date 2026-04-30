@@ -5,9 +5,9 @@ namespace baodeag.EditorTools
 {
     public static class DurkMaterialFixer
     {
-        private const string TargetPrefabPath = "Assets/Prefabs/Character/Durk_Dummy_01.prefab";
-        private const string BodyMaterialPath = "Assets/Addons/PolygonDungeon/Materials/Dungeons_Material_Characters_01.mat";
-        private const string ClubMaterialPath = "Assets/Addons/PolygonDungeon/Materials/Dungeon_Material_01.mat";
+        private const string TargetPrefabPath = GameAssetPaths.PrefabsRoot + "/Character/Boss/Durk_Boss_01.prefab";
+        private const string BodyMaterialPath = GameAssetPaths.PolygonDungeonRoot + "/Materials/Dungeons_Material_Characters_01.mat";
+        private const string ClubMaterialPath = GameAssetPaths.PolygonDungeonRoot + "/Materials/Dungeon_Material_01.mat";
         private const string AutoRunSessionKey = "DurkMaterialFixer.AutoRunAttempted.V2";
 
         static DurkMaterialFixer()

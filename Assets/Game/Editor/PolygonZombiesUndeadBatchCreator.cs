@@ -8,9 +8,9 @@ namespace baodeag.EditorTools
 {
     public static class PolygonZombiesUndeadBatchCreator
     {
-        private const string TemplatePrefabPath = "Assets/Prefabs/Character/Undead_Dummy_01.prefab";
-        private const string SourcePrefabsFolder = "Assets/PolygonZombies/Prefabs";
-        private const string TargetPrefabsFolder = "Assets/Prefabs/Character";
+        private const string TemplatePrefabPath = GameAssetPaths.PrefabsRoot + "/Character/Undead/Undead_Dummy_01.prefab";
+        private const string SourcePrefabsFolder = GameAssetPaths.PolygonZombiesRoot + "/Prefabs";
+        private const string TargetPrefabsFolder = GameAssetPaths.PrefabsRoot + "/Character/Undead";
         private const string AutoRunSessionKey = "PolygonZombiesUndeadBatchCreator.AutoRunAttempted.V2";
         private const int DamageableCharacterLayer = 7;
         private const int DamageColliderLayer = 10;

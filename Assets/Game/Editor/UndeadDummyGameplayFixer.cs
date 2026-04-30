@@ -6,7 +6,7 @@ namespace baodeag.EditorTools
 {
     public static class UndeadDummyGameplayFixer
     {
-        private const string TargetPrefabPath = "Assets/Prefabs/Character/Undead_Dummy_01.prefab";
+        private const string TargetPrefabPath = GameAssetPaths.PrefabsRoot + "/Character/Undead/Undead_Dummy_01.prefab";
         private const string VisualRootName = "SM_Chr_ZombieBoss_Wretch_01";
         private const string AutoRunSessionKey = "UndeadDummyGameplayFixer.AutoRunAttempted";
         private const int DamageableCharacterLayer = 7;

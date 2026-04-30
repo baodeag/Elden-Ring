@@ -10,7 +10,7 @@ namespace baodeag
 {
     public static class MerchantSetupChecklistGenerator
     {
-        private const string ChecklistPath = "Assets/Docs/MERCHANT_SETUP_CHECKLIST.md";
+        private const string ChecklistPath = GameAssetPaths.DocsRoot + "/MERCHANT_SETUP_CHECKLIST.md";
 
         private struct MerchantRecord
         {
