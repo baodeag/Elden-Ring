@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.Netcode;
 
 namespace baodeag
 {
@@ -26,13 +27,14 @@ namespace baodeag
             if (player == null || !player.IsOwner)
                 return;
 
-            base.Interact(player);
-
             if (!GameProgressionManager.Instance.PrepareTransitionToMap(targetMapIndex, out int sceneBuildIndex))
             {
                 Debug.LogWarning($"WorldMapTransitionInteractable: Cannot resolve scene for map index {targetMapIndex}.");
                 return;
             }
+
+            player.playerInteractionManager.RemoveInteractionFromList(this);
+            PlayerUIManager.instance.playerUIPopUpManager.CloseAllPopUpWindows();
 
             if (WorldSaveGameManager.instance != null && WorldSaveGameManager.instance.currentCharacterData != null)
             {
@@ -41,6 +43,27 @@ namespace baodeag
                 WorldSaveGameManager.instance.SaveGame();
             }
 
+            if (NetworkManager.Singleton != null &&
+                NetworkManager.Singleton.IsClient &&
+                !NetworkManager.Singleton.IsServer)
+            {
+                RequestWorldSceneTransitionServerRpc(sceneBuildIndex);
+                return;
+            }
+
+            if (WorldSceneManager.instance != null)
+            {
+                WorldSceneManager.instance.LoadWorldScene(sceneBuildIndex);
+            }
+            else
+            {
+                SceneManager.LoadScene(sceneBuildIndex, LoadSceneMode.Single);
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void RequestWorldSceneTransitionServerRpc(int sceneBuildIndex)
+        {
             if (WorldSceneManager.instance != null)
             {
                 WorldSceneManager.instance.LoadWorldScene(sceneBuildIndex);

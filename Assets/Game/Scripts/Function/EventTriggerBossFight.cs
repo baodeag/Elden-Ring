@@ -63,7 +63,10 @@ namespace baodeag
 
             if (!boss.bossFightIsActive.Value)
             {
-                boss.WakeBoss();
+                if (boss.IsServer || boss.IsOwner)
+                    boss.WakeBoss();
+                else
+                    boss.RequestWakeBossServerRpc();
             }
         }
 
@@ -97,7 +100,10 @@ namespace baodeag
             if (boss == null || boss.hasBeenDefeated.Value || boss.bossFightIsActive.Value)
                 yield break;
 
-            boss.WakeBoss();
+            if (boss.IsServer || boss.IsOwner)
+                boss.WakeBoss();
+            else
+                boss.RequestWakeBossServerRpc();
         }
 
         private void DisableTrigger()

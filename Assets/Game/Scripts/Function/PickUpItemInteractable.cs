@@ -17,6 +17,7 @@ namespace baodeag
         public NetworkVariable<ulong> droppingCreatureID = new NetworkVariable<ulong>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public NetworkVariable<ulong> allowedLooterClientId = new NetworkVariable<ulong>(ulong.MaxValue, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public NetworkVariable<bool> isSharedLoot = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> isLooted = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public bool trackDroppingCreaturesPosition = true;
 
         [Header("World Spawn Pick Up")]
@@ -38,8 +39,8 @@ namespace baodeag
         {
             base.Start();
 
-            if (pickUpType == ItemPickUpType.WorldSpawn)
-                CheckIfWorldItemWasAlreadyLooted();
+            if (pickUpType == ItemPickUpType.WorldSpawn && IsServer)
+                InitializeWorldSpawnLootState();
         }
 
         public override void OnNetworkSpawn()
@@ -49,6 +50,7 @@ namespace baodeag
             itemID.OnValueChanged += OnItemIDChanged;
             networkPosition.OnValueChanged += OnNetworkPositionChanged;
             droppingCreatureID.OnValueChanged += OnDroppingCreaturesIDChanged;
+            isLooted.OnValueChanged += OnIsLootedChanged;
 
             if (pickUpType == ItemPickUpType.CharacterDrop)
                 audioSource.PlayOneShot(itemDropSFX);
@@ -59,6 +61,8 @@ namespace baodeag
                 OnNetworkPositionChanged(Vector3.zero, networkPosition.Value);
                 OnDroppingCreaturesIDChanged(0, droppingCreatureID.Value);
             }
+
+            OnIsLootedChanged(false, isLooted.Value);
         }
 
         public override void OnNetworkDespawn()
@@ -68,27 +72,21 @@ namespace baodeag
             itemID.OnValueChanged -= OnItemIDChanged;
             networkPosition.OnValueChanged -= OnNetworkPositionChanged;
             droppingCreatureID.OnValueChanged -= OnDroppingCreaturesIDChanged;
+            isLooted.OnValueChanged -= OnIsLootedChanged;
         }
 
-        private void CheckIfWorldItemWasAlreadyLooted()
+        private void InitializeWorldSpawnLootState()
         {
-            if (!NetworkManager.Singleton.IsHost)
-            {
-                gameObject.SetActive(false);
+            if (WorldSaveGameManager.instance == null || WorldSaveGameManager.instance.currentCharacterData == null)
                 return;
-            }
 
-            //compare itemID to the list of looted items in the current character data
             if (!WorldSaveGameManager.instance.currentCharacterData.worldItemsLooted.ContainsKey(worldSpawnInteractableID))
             {
                 WorldSaveGameManager.instance.currentCharacterData.worldItemsLooted.Add(worldSpawnInteractableID, false);
             }
 
             hasBeenLooted = WorldSaveGameManager.instance.currentCharacterData.worldItemsLooted[worldSpawnInteractableID];
-
-            //if it has been looted, disable the game object
-            if (hasBeenLooted)
-                gameObject.SetActive(false);
+            isLooted.Value = hasBeenLooted;
         }
 
         public override void Interact(PlayerManager player)
@@ -102,29 +100,17 @@ namespace baodeag
             if (player.playerCombatManager.isUsingItem)
                 return;
 
-            base.Interact(player);
+            player.playerInteractionManager.RemoveInteractionFromList(this);
+            PlayerUIManager.instance.playerUIPopUpManager.CloseAllPopUpWindows();
 
-            player.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.pickUpItemSFX);
-
-            player.playerAnimatorManager.PlayTargetActionAnimation("Pick_Up_Item_01", true);
-
-            player.playerInventoryManager.AddItemToInventory(item);
-
-            //display a ui pop up 
-            PlayerUIManager.instance.playerUIPopUpManager.SendItemPopUp(item, 1);
-
-            //save loot status if its a world spawn
-            if (pickUpType == ItemPickUpType.WorldSpawn)
+            if (IsServer)
             {
-                if (WorldSaveGameManager.instance.currentCharacterData.worldItemsLooted.ContainsKey(worldSpawnInteractableID))
-                {
-                    WorldSaveGameManager.instance.currentCharacterData.worldItemsLooted.Remove(worldSpawnInteractableID);
-                }
-
-                WorldSaveGameManager.instance.currentCharacterData.worldItemsLooted.Add(worldSpawnInteractableID, true);
+                CompletePickupOnServer(player.OwnerClientId);
             }
-
-            DestroyThisNetworkObjectServerRpc();
+            else
+            {
+                RequestPickupServerRpc();
+            }
         }
 
         public override void OnTriggerEnter(Collider other)
@@ -208,6 +194,95 @@ namespace baodeag
                 return true;
 
             return player.OwnerClientId == allowedLooterClientId.Value;
+        }
+
+        private void OnIsLootedChanged(bool oldValue, bool newValue)
+        {
+            if (pickUpType != ItemPickUpType.WorldSpawn)
+                return;
+
+            gameObject.SetActive(!newValue);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void RequestPickupServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            CompletePickupOnServer(serverRpcParams.Receive.SenderClientId);
+        }
+
+        private void CompletePickupOnServer(ulong looterClientId)
+        {
+            if (!IsServer)
+                return;
+
+            PlayerManager player = WorldGameSessionManager.instance != null
+                ? WorldGameSessionManager.instance.GetPlayerByClientId(looterClientId)
+                : null;
+
+            if (player == null || !CanBeLootedBy(player))
+                return;
+
+            if (pickUpType == ItemPickUpType.WorldSpawn)
+            {
+                isLooted.Value = true;
+
+                if (WorldSaveGameManager.instance != null && WorldSaveGameManager.instance.currentCharacterData != null)
+                {
+                    WorldSaveGameManager.instance.currentCharacterData.worldItemsLooted[worldSpawnInteractableID] = true;
+                    WorldSaveGameManager.instance.SaveGame();
+                }
+            }
+
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new[] { looterClientId }
+                }
+            };
+
+            GrantPickedUpItemClientRpc(itemID.Value != 0 ? itemID.Value : (item != null ? item.itemID : -1), clientRpcParams);
+
+            GetComponent<NetworkObject>().Despawn();
+        }
+
+        [ClientRpc]
+        private void GrantPickedUpItemClientRpc(int grantedItemID, ClientRpcParams clientRpcParams = default)
+        {
+            if (NetworkManager.Singleton == null || NetworkManager.Singleton.LocalClient == null || NetworkManager.Singleton.LocalClient.PlayerObject == null)
+                return;
+
+            PlayerManager localPlayer = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>();
+
+            if (localPlayer == null || !localPlayer.IsOwner)
+                return;
+
+            Item grantedItem = WorldItemDatabase.Instance.CreateItemInstance(grantedItemID);
+
+            if (grantedItem == null)
+                grantedItem = WorldItemDatabase.Instance.GetItemByID(grantedItemID);
+
+            if (grantedItem == null)
+                return;
+
+            localPlayer.characterSoundFXManager.PlaySoundFX(WorldSoundFXManager.instance.pickUpItemSFX);
+            localPlayer.playerAnimatorManager.PlayTargetActionAnimation("Pick_Up_Item_01", true);
+            localPlayer.playerInventoryManager.AddItemToInventory(grantedItem);
+            PlayerUIManager.instance.playerUIPopUpManager.SendItemPopUp(grantedItem, 1);
+
+            if (pickUpType == ItemPickUpType.WorldSpawn &&
+                WorldSaveGameManager.instance != null &&
+                WorldSaveGameManager.instance.currentCharacterData != null)
+            {
+                WorldSaveGameManager.instance.currentCharacterData.worldItemsLooted[worldSpawnInteractableID] = true;
+            }
+
+            if (WorldSaveGameManager.instance != null &&
+                WorldSaveGameManager.instance.currentCharacterData != null &&
+                WorldSaveGameManager.instance.currentCharacterSlotBeingUsed != CharacterSlot.NO_SLOT)
+            {
+                WorldSaveGameManager.instance.SaveGame();
+            }
         }
 
         [ServerRpc(RequireOwnership = false)]

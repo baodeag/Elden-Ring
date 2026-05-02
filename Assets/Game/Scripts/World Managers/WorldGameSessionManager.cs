@@ -992,5 +992,24 @@ namespace baodeag
         {
             return GetActivePlayerCount() > 1;
         }
+
+        public PlayerManager GetPlayerByClientId(ulong clientId)
+        {
+            if (NetworkManager.Singleton != null &&
+                NetworkManager.Singleton.ConnectedClients != null &&
+                NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out NetworkClient connectedClient) &&
+                connectedClient.PlayerObject != null)
+            {
+                return connectedClient.PlayerObject.GetComponent<PlayerManager>();
+            }
+
+            for (int i = 0; i < players.Count; i++)
+            {
+                if (players[i] != null && players[i].OwnerClientId == clientId)
+                    return players[i];
+            }
+
+            return null;
+        }
     }
 }

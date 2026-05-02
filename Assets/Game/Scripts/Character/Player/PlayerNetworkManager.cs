@@ -976,5 +976,56 @@ namespace baodeag
                 item.AttemptToUseItem(player);
             }
         }
+
+        [ServerRpc]
+        public void SyncWeaponUpgradeServerRpc(int equipmentSlot, int upgradedItemID, int newUpgradeLevel)
+        {
+            ApplyWeaponUpgradeState((EquipmentType)equipmentSlot, upgradedItemID, newUpgradeLevel);
+        }
+
+        private void ApplyWeaponUpgradeState(EquipmentType equipmentSlot, int upgradedItemID, int newUpgradeLevel)
+        {
+            UpgradeLevel upgradedLevel = (UpgradeLevel)newUpgradeLevel;
+
+            switch (equipmentSlot)
+            {
+                case EquipmentType.RightWeapon01:
+                    UpdateWeaponUpgradeLevel(player.playerInventoryManager.weaponsInRightHandSlots[0], upgradedItemID, upgradedLevel);
+                    break;
+                case EquipmentType.RightWeapon02:
+                    UpdateWeaponUpgradeLevel(player.playerInventoryManager.weaponsInRightHandSlots[1], upgradedItemID, upgradedLevel);
+                    break;
+                case EquipmentType.RightWeapon03:
+                    UpdateWeaponUpgradeLevel(player.playerInventoryManager.weaponsInRightHandSlots[2], upgradedItemID, upgradedLevel);
+                    break;
+                case EquipmentType.LeftWeapon01:
+                    UpdateWeaponUpgradeLevel(player.playerInventoryManager.weaponsInLeftHandSlots[0], upgradedItemID, upgradedLevel);
+                    break;
+                case EquipmentType.LeftWeapon02:
+                    UpdateWeaponUpgradeLevel(player.playerInventoryManager.weaponsInLeftHandSlots[1], upgradedItemID, upgradedLevel);
+                    break;
+                case EquipmentType.LeftWeapon03:
+                    UpdateWeaponUpgradeLevel(player.playerInventoryManager.weaponsInLeftHandSlots[2], upgradedItemID, upgradedLevel);
+                    break;
+                default:
+                    break;
+            }
+
+            UpdateWeaponUpgradeLevel(player.playerInventoryManager.currentRightHandWeapon, upgradedItemID, upgradedLevel);
+            UpdateWeaponUpgradeLevel(player.playerInventoryManager.currentLeftHandWeapon, upgradedItemID, upgradedLevel);
+            UpdateWeaponUpgradeLevel(player.playerInventoryManager.currentTwoHandWeapon, upgradedItemID, upgradedLevel);
+            UpdateWeaponUpgradeLevel(player.playerCombatManager.currentWeaponBeingUsed, upgradedItemID, upgradedLevel);
+
+            if (player.playerEquipmentManager != null)
+                player.playerEquipmentManager.RefreshWeaponDamage();
+        }
+
+        private void UpdateWeaponUpgradeLevel(WeaponItem weapon, int upgradedItemID, UpgradeLevel upgradedLevel)
+        {
+            if (weapon == null || weapon.itemID != upgradedItemID)
+                return;
+
+            weapon.upgradeLevel = upgradedLevel;
+        }
     }
 }

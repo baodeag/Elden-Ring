@@ -181,7 +181,7 @@ namespace baodeag
 
             if (NetworkManager.Singleton != null &&
                 NetworkManager.Singleton.SceneManager != null &&
-                (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient))
+                (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer))
             {
                 string worldSceneName = Path.GetFileNameWithoutExtension(worldScenePath);
                 var loadSceneStatus = NetworkManager.Singleton.SceneManager.LoadScene(worldSceneName, LoadSceneMode.Single);

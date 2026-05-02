@@ -11,7 +11,7 @@ namespace baodeag
         public NetworkVariable<bool> isActivated = new NetworkVariable<bool>
             (false,
             NetworkVariableReadPermission.Everyone,
-            NetworkVariableWritePermission.Owner);
+            NetworkVariableWritePermission.Server);
 
         [Header("VFX")]
         [SerializeField] GameObject activatedParticles;
@@ -27,7 +27,7 @@ namespace baodeag
         {
             base.Start();
 
-            if (IsOwner)
+            if (IsServer && WorldSaveGameManager.instance != null && WorldSaveGameManager.instance.currentCharacterData != null)
             {
                 if (WorldSaveGameManager.instance.currentCharacterData.sitesOfGrace.ContainsKey(siteOfGraceID))
                 {
@@ -73,35 +73,74 @@ namespace baodeag
         {
             isActivated.Value = true;
 
-            //if our save file contains this site of grace, we remove
-            if (WorldSaveGameManager.instance.currentCharacterData.sitesOfGrace.ContainsKey(siteOfGraceID))
-                WorldSaveGameManager.instance.currentCharacterData.sitesOfGrace.Remove(siteOfGraceID);
+            if (WorldSaveGameManager.instance != null && WorldSaveGameManager.instance.currentCharacterData != null)
+            {
+                WorldSaveGameManager.instance.currentCharacterData.sitesOfGrace[siteOfGraceID] = true;
+                WorldSaveGameManager.instance.SaveGame();
+            }
 
-            //then re-add it with the value of true
-            WorldSaveGameManager.instance.currentCharacterData.sitesOfGrace.Add(siteOfGraceID, true);
-
-            player.playerAnimatorManager.PlayTargetActionAnimation("Activate_Site_Of_Grace_01", true);
-
-            PlayerUIManager.instance.playerUIPopUpManager.SendGraceRestoredPopUp("Site Of Grace Restored");
-
-            StartCoroutine(WaitForAnimationAndPopUpThenRestoreCollider());
+            CompleteGraceActivationLocally(player);
         }
 
         private void RestAtSiteOfGrace(PlayerManager player)
         {
-            PlayerUIManager.instance.OpenMenuAsRoot(PlayerUIManager.instance.playerUISiteOfGraceManager);
+            if (WorldAIManager.instance != null)
+                WorldAIManager.instance.ResetAllCharacters();
 
-            interactableCollider.enabled = true; //temporarily re-enabling the collider here until we add the menu so you can respawn monsters indefinitely
-            player.playerNetworkManager.currentHealth.Value = player.playerNetworkManager.maxHealth.Value;
-            player.playerNetworkManager.currentStamina.Value = player.playerNetworkManager.maxStamina.Value;
+            CompleteRestAtSiteOfGraceLocally(player);
+        }
 
-            WorldAIManager.instance.ResetAllCharacters();
+        private void CompleteGraceActivationLocally(PlayerManager player)
+        {
+            if (player == null || !player.IsOwner)
+                return;
+
+            if (WorldSaveGameManager.instance != null && WorldSaveGameManager.instance.currentCharacterData != null)
+            {
+                WorldSaveGameManager.instance.currentCharacterData.sitesOfGrace[siteOfGraceID] = true;
+                WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = siteOfGraceID;
+            }
+
+            player.playerAnimatorManager.PlayTargetActionAnimation("Activate_Site_Of_Grace_01", true);
+            PlayerUIManager.instance.playerUIPopUpManager.SendGraceRestoredPopUp("Site Of Grace Restored");
+            StartCoroutine(WaitForAnimationAndPopUpThenRestoreCollider());
+
+            if (WorldSaveGameManager.instance != null &&
+                WorldSaveGameManager.instance.currentCharacterData != null &&
+                WorldSaveGameManager.instance.currentCharacterSlotBeingUsed != CharacterSlot.NO_SLOT)
+            {
+                WorldSaveGameManager.instance.SaveGame();
+            }
         }
 
         private IEnumerator WaitForAnimationAndPopUpThenRestoreCollider()
         {
             yield return new WaitForSeconds(2);
             interactableCollider.enabled = true;
+        }
+
+        private void CompleteRestAtSiteOfGraceLocally(PlayerManager player)
+        {
+            if (player == null || !player.IsOwner)
+                return;
+
+            if (WorldSaveGameManager.instance != null && WorldSaveGameManager.instance.currentCharacterData != null)
+            {
+                WorldSaveGameManager.instance.currentCharacterData.sitesOfGrace[siteOfGraceID] = true;
+                WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = siteOfGraceID;
+            }
+
+            PlayerUIManager.instance.OpenMenuAsRoot(PlayerUIManager.instance.playerUISiteOfGraceManager);
+            interactableCollider.enabled = true;
+            player.playerNetworkManager.currentHealth.Value = player.playerNetworkManager.maxHealth.Value;
+            player.playerNetworkManager.currentStamina.Value = player.playerNetworkManager.maxStamina.Value;
+
+            if (WorldSaveGameManager.instance != null &&
+                WorldSaveGameManager.instance.currentCharacterData != null &&
+                WorldSaveGameManager.instance.currentCharacterSlotBeingUsed != CharacterSlot.NO_SLOT)
+            {
+                WorldSaveGameManager.instance.SaveGame();
+            }
         }
 
         private void OnIsActivatedChanged(bool oldStatus, bool newStatus)
@@ -120,26 +159,114 @@ namespace baodeag
 
         public override void Interact(PlayerManager player)
         {
-            base.Interact(player);
-
             if (player.isPerformingAction)
                 return;
 
             if (player.playerCombatManager.isUsingItem)
                 return;
 
-            WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = siteOfGraceID;
-
+            player.playerInteractionManager.RemoveInteractionFromList(this);
+            PlayerUIManager.instance.playerUIPopUpManager.CloseAllPopUpWindows();
             player.playerNetworkManager.lastSiteOfGraceUsed.Value = siteOfGraceID;
+            
+            if (WorldSaveGameManager.instance != null && WorldSaveGameManager.instance.currentCharacterData != null)
+                WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = siteOfGraceID;
 
-            if (!isActivated.Value)
+            if (IsServer)
             {
-                RestoreSiteOfGrace(player);
+                ProcessGraceInteractionOnServer(player.OwnerClientId);
             }
             else
             {
-                RestAtSiteOfGrace(player);
+                ProcessGraceInteractionServerRpc();
             }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void ProcessGraceInteractionServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            ProcessGraceInteractionOnServer(serverRpcParams.Receive.SenderClientId);
+        }
+
+        private void ProcessGraceInteractionOnServer(ulong playerClientId)
+        {
+            if (!IsServer)
+                return;
+
+            PlayerManager player = WorldGameSessionManager.instance != null
+                ? WorldGameSessionManager.instance.GetPlayerByClientId(playerClientId)
+                : null;
+
+            if (player == null)
+                return;
+
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new[] { playerClientId }
+                }
+            };
+
+            if (!isActivated.Value)
+            {
+                isActivated.Value = true;
+
+                if (WorldSaveGameManager.instance != null && WorldSaveGameManager.instance.currentCharacterData != null)
+                {
+                    WorldSaveGameManager.instance.currentCharacterData.sitesOfGrace[siteOfGraceID] = true;
+                    WorldSaveGameManager.instance.SaveGame();
+                }
+
+                CompleteGraceActivationClientRpc(siteOfGraceID, clientRpcParams);
+            }
+            else
+            {
+                if (WorldAIManager.instance != null)
+                    WorldAIManager.instance.ResetAllCharacters();
+
+                CompleteGraceRestClientRpc(siteOfGraceID, clientRpcParams);
+            }
+        }
+
+        [ClientRpc]
+        private void CompleteGraceActivationClientRpc(int activatedSiteOfGraceID, ClientRpcParams clientRpcParams = default)
+        {
+            PlayerManager localPlayer = NetworkManager.Singleton != null &&
+                NetworkManager.Singleton.LocalClient != null &&
+                NetworkManager.Singleton.LocalClient.PlayerObject != null
+                ? NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>()
+                : null;
+
+            if (localPlayer == null)
+                return;
+
+            playerNetworkManagerLastGrace(localPlayer, activatedSiteOfGraceID);
+            CompleteGraceActivationLocally(localPlayer);
+        }
+
+        [ClientRpc]
+        private void CompleteGraceRestClientRpc(int targetSiteOfGraceID, ClientRpcParams clientRpcParams = default)
+        {
+            PlayerManager localPlayer = NetworkManager.Singleton != null &&
+                NetworkManager.Singleton.LocalClient != null &&
+                NetworkManager.Singleton.LocalClient.PlayerObject != null
+                ? NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerManager>()
+                : null;
+
+            if (localPlayer == null)
+                return;
+
+            playerNetworkManagerLastGrace(localPlayer, targetSiteOfGraceID);
+            CompleteRestAtSiteOfGraceLocally(localPlayer);
+        }
+
+        private void playerNetworkManagerLastGrace(PlayerManager player, int targetSiteOfGraceID)
+        {
+            player.playerNetworkManager.lastSiteOfGraceUsed.Value = targetSiteOfGraceID;
+
+            if (WorldSaveGameManager.instance != null && WorldSaveGameManager.instance.currentCharacterData != null)
+                WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = targetSiteOfGraceID;
         }
 
         public void TeleportToSiteOfGrace()

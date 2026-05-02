@@ -281,6 +281,13 @@ namespace baodeag
             }
         }
 
+        [ServerRpc(RequireOwnership = false)]
+        public void RequestWakeBossServerRpc()
+        {
+            if (IsServer)
+                WakeBoss();
+        }
+
         private void OnBossFightIsActiveChanged(bool oldStatus, bool newStatus)
         {
             if (bossFightIsActive.Value)

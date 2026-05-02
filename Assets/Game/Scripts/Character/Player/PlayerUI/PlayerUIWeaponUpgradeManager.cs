@@ -194,9 +194,34 @@ namespace baodeag
             int currentUpgradeLevel = (int)currentSelectedWeapon.upgradeLevel;
             currentUpgradeLevel += 1;
             currentSelectedWeapon.upgradeLevel = (UpgradeLevel)currentUpgradeLevel;
+
+            PlayerManager localPlayer = PlayerUIManager.instance.localPlayer;
+
+            if (localPlayer == null)
+                return;
+
+            if (localPlayer.playerEquipmentManager != null)
+                localPlayer.playerEquipmentManager.RefreshWeaponDamage();
+
             ToggleEquipmentButtons(true);
             confirmUpgradePopUp.SetActive(false);
-            PlayerUIManager.instance.localPlayer.playerInventoryManager.RemoveItemFromInventory(upgradeCost);
+            localPlayer.playerInventoryManager.RemoveItemFromInventory(upgradeCost);
+
+            if (localPlayer.playerNetworkManager != null && !localPlayer.IsServer)
+            {
+                localPlayer.playerNetworkManager.SyncWeaponUpgradeServerRpc(
+                    (int)currentSelectedEquipmentSlot,
+                    currentSelectedWeapon.itemID,
+                    (int)currentSelectedWeapon.upgradeLevel);
+            }
+
+            if (WorldSaveGameManager.instance != null &&
+                WorldSaveGameManager.instance.currentCharacterData != null &&
+                WorldSaveGameManager.instance.currentCharacterSlotBeingUsed != CharacterSlot.NO_SLOT)
+            {
+                WorldSaveGameManager.instance.SaveGame();
+            }
+
             SelectLastSelectedEquipmentSlot();
         }
 
