@@ -1,5 +1,6 @@
 using TMPro;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -361,81 +362,53 @@ namespace baodeag
                 return;
 
             GameSettingsManager settings = GameSettingsManager.Instance;
+            SetSliderWithoutNotify(masterVolumeSlider, settings.masterVolume);
+            SetSliderWithoutNotify(musicVolumeSlider, settings.musicVolume);
+            SetSliderWithoutNotify(sfxVolumeSlider, settings.sfxVolume);
+            SetSliderWithoutNotify(cameraSensitivitySlider, settings.cameraSensitivity);
 
-            if (masterVolumeSlider != null)
-                masterVolumeSlider.SetValueWithoutNotify(settings.masterVolume);
-
-            if (musicVolumeSlider != null)
-                musicVolumeSlider.SetValueWithoutNotify(settings.musicVolume);
-
-            if (sfxVolumeSlider != null)
-                sfxVolumeSlider.SetValueWithoutNotify(settings.sfxVolume);
-
-            if (cameraSensitivitySlider != null)
-                cameraSensitivitySlider.SetValueWithoutNotify(settings.cameraSensitivity);
-
-            if (masterVolumeValueText != null)
-                masterVolumeValueText.text = $"{Mathf.RoundToInt(settings.masterVolume * 100f)}%";
-
-            if (musicVolumeValueText != null)
-                musicVolumeValueText.text = $"{Mathf.RoundToInt(settings.musicVolume * 100f)}%";
-
-            if (sfxVolumeValueText != null)
-                sfxVolumeValueText.text = $"{Mathf.RoundToInt(settings.sfxVolume * 100f)}%";
-
-            if (cameraSensitivityValueText != null)
-                cameraSensitivityValueText.text = $"x{settings.cameraSensitivity:0.00}";
-
-            if (fullscreenValueText != null)
-                fullscreenValueText.text = settings.isFullscreen ? "ON" : "OFF";
-
-            if (resolutionValueText != null)
-                resolutionValueText.text = settings.GetCurrentResolutionLabel();
-
-            if (qualityValueText != null)
-                qualityValueText.text = settings.GetCurrentQualityLabel();
+            SetText(masterVolumeValueText, GetPercentLabel(settings.masterVolume));
+            SetText(musicVolumeValueText, GetPercentLabel(settings.musicVolume));
+            SetText(sfxVolumeValueText, GetPercentLabel(settings.sfxVolume));
+            SetText(cameraSensitivityValueText, $"x{settings.cameraSensitivity:0.00}");
+            SetText(fullscreenValueText, settings.isFullscreen ? "ON" : "OFF");
+            SetText(resolutionValueText, settings.GetCurrentResolutionLabel());
+            SetText(qualityValueText, settings.GetCurrentQualityLabel());
         }
 
         private void OnMasterVolumeChanged(float value)
         {
-            GameSettingsManager.Instance.SetMasterVolume(value);
-            RefreshSettingsDisplay();
+            ApplySettingsAndRefresh(settings => settings.SetMasterVolume(value));
         }
 
         private void OnMusicVolumeChanged(float value)
         {
-            GameSettingsManager.Instance.SetMusicVolume(value);
-            RefreshSettingsDisplay();
+            ApplySettingsAndRefresh(settings => settings.SetMusicVolume(value));
         }
 
         private void OnSFXVolumeChanged(float value)
         {
-            GameSettingsManager.Instance.SetSFXVolume(value);
-            RefreshSettingsDisplay();
+            ApplySettingsAndRefresh(settings => settings.SetSFXVolume(value));
         }
 
         private void OnCameraSensitivityChanged(float value)
         {
-            GameSettingsManager.Instance.SetCameraSensitivity(value);
-            RefreshSettingsDisplay();
+            ApplySettingsAndRefresh(settings => settings.SetCameraSensitivity(value));
         }
 
         private void ToggleFullscreen()
         {
-            GameSettingsManager.Instance.ToggleFullscreen();
-            RefreshSettingsDisplay();
+            ApplySettingsAndRefresh(settings => settings.ToggleFullscreen());
         }
 
         private void CycleResolution(int direction)
         {
-            GameSettingsManager.Instance.CycleResolution(direction);
-            RefreshSettingsDisplay();
+            ApplySettingsAndRefresh(settings => settings.CycleResolution(direction));
         }
 
         private void CycleQuality(int direction)
         {
-            GameSettingsManager.Instance.CycleQuality(direction);
-            RefreshSettingsDisplay();
+            ApplySettingsAndRefresh(settings => settings.CycleQuality(direction));
         }
 
         private void CopyTextStyle(TextMeshProUGUI source, TextMeshProUGUI destination)
@@ -445,6 +418,32 @@ namespace baodeag
             destination.color = source.color;
             destination.richText = source.richText;
             destination.textWrappingMode = source.textWrappingMode;
+        }
+
+        private void SetSliderWithoutNotify(Slider slider, float value)
+        {
+            if (slider != null)
+                slider.SetValueWithoutNotify(value);
+        }
+
+        private void SetText(TextMeshProUGUI text, string value)
+        {
+            if (text != null)
+                text.text = value;
+        }
+
+        private string GetPercentLabel(float value)
+        {
+            return $"{Mathf.RoundToInt(value * 100f)}%";
+        }
+
+        private void ApplySettingsAndRefresh(Action<GameSettingsManager> applyAction)
+        {
+            if (!GameSettingsManager.HasInstance)
+                return;
+
+            applyAction(GameSettingsManager.Instance);
+            RefreshSettingsDisplay();
         }
     }
 }

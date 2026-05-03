@@ -1,4 +1,5 @@
 using TMPro;
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -40,39 +41,18 @@ namespace baodeag
                 return;
 
             GameSettingsManager settings = GameSettingsManager.Instance;
+            SetSliderWithoutNotify(masterVolumeSlider, settings.masterVolume);
+            SetSliderWithoutNotify(musicVolumeSlider, settings.musicVolume);
+            SetSliderWithoutNotify(sfxVolumeSlider, settings.sfxVolume);
+            SetSliderWithoutNotify(cameraSensitivitySlider, settings.cameraSensitivity);
 
-            if (masterVolumeSlider != null)
-                masterVolumeSlider.SetValueWithoutNotify(settings.masterVolume);
-
-            if (musicVolumeSlider != null)
-                musicVolumeSlider.SetValueWithoutNotify(settings.musicVolume);
-
-            if (sfxVolumeSlider != null)
-                sfxVolumeSlider.SetValueWithoutNotify(settings.sfxVolume);
-
-            if (cameraSensitivitySlider != null)
-                cameraSensitivitySlider.SetValueWithoutNotify(settings.cameraSensitivity);
-
-            if (masterVolumeValueText != null)
-                masterVolumeValueText.text = $"{Mathf.RoundToInt(settings.masterVolume * 100f)}%";
-
-            if (musicVolumeValueText != null)
-                musicVolumeValueText.text = $"{Mathf.RoundToInt(settings.musicVolume * 100f)}%";
-
-            if (sfxVolumeValueText != null)
-                sfxVolumeValueText.text = $"{Mathf.RoundToInt(settings.sfxVolume * 100f)}%";
-
-            if (cameraSensitivityValueText != null)
-                cameraSensitivityValueText.text = $"x{settings.cameraSensitivity:0.00}";
-
-            if (fullscreenValueText != null)
-                fullscreenValueText.text = settings.isFullscreen ? "ON" : "OFF";
-
-            if (resolutionValueText != null)
-                resolutionValueText.text = settings.GetCurrentResolutionLabel();
-
-            if (qualityValueText != null)
-                qualityValueText.text = settings.GetCurrentQualityLabel();
+            SetText(masterVolumeValueText, GetPercentLabel(settings.masterVolume));
+            SetText(musicVolumeValueText, GetPercentLabel(settings.musicVolume));
+            SetText(sfxVolumeValueText, GetPercentLabel(settings.sfxVolume));
+            SetText(cameraSensitivityValueText, $"x{settings.cameraSensitivity:0.00}");
+            SetText(fullscreenValueText, settings.isFullscreen ? "ON" : "OFF");
+            SetText(resolutionValueText, settings.GetCurrentResolutionLabel());
+            SetText(qualityValueText, settings.GetCurrentQualityLabel());
         }
 
         public void CloseMenu()
@@ -163,9 +143,7 @@ namespace baodeag
             RectTransform rowRect = CreateRowRoot($"{label} Row", anchoredY);
 
             TextMeshProUGUI labelText = CreateText($"{label} Label", label, rowRect, new Vector2(260f, 42f), new Vector2(-360f, -12f), TextAlignmentOptions.Left, 24f);
-            labelText.rectTransform.anchorMin = new Vector2(0f, 1f);
-            labelText.rectTransform.anchorMax = new Vector2(0f, 1f);
-            labelText.rectTransform.pivot = new Vector2(0f, 1f);
+            SetTopLeftLayout(labelText.rectTransform);
 
             slider = CreateSlider($"{label} Slider", rowRect, new Vector2(420f, 30f), new Vector2(-80f, -8f));
             slider.minValue = minValue;
@@ -174,9 +152,7 @@ namespace baodeag
             slider.onValueChanged.AddListener(callback);
 
             valueText = CreateText($"{label} Value", string.Empty, rowRect, new Vector2(120f, 42f), new Vector2(370f, -12f), TextAlignmentOptions.Center, 22f);
-            valueText.rectTransform.anchorMin = new Vector2(0f, 1f);
-            valueText.rectTransform.anchorMax = new Vector2(0f, 1f);
-            valueText.rectTransform.pivot = new Vector2(0f, 1f);
+            SetTopLeftLayout(valueText.rectTransform);
         }
 
         private void CreateSelectionRow(
@@ -189,25 +165,19 @@ namespace baodeag
             RectTransform rowRect = CreateRowRoot($"{label} Row", anchoredY);
 
             TextMeshProUGUI labelText = CreateText($"{label} Label", label, rowRect, new Vector2(260f, 42f), new Vector2(-360f, -12f), TextAlignmentOptions.Left, 24f);
-            labelText.rectTransform.anchorMin = new Vector2(0f, 1f);
-            labelText.rectTransform.anchorMax = new Vector2(0f, 1f);
-            labelText.rectTransform.pivot = new Vector2(0f, 1f);
+            SetTopLeftLayout(labelText.rectTransform);
 
             if (secondaryAction == null)
             {
                 valueText = CreateText($"{label} Value", string.Empty, rowRect, new Vector2(120f, 42f), new Vector2(-150f, -12f), TextAlignmentOptions.Center, 22f);
-                valueText.rectTransform.anchorMin = new Vector2(0f, 1f);
-                valueText.rectTransform.anchorMax = new Vector2(0f, 1f);
-                valueText.rectTransform.pivot = new Vector2(0f, 1f);
+                SetTopLeftLayout(valueText.rectTransform);
 
                 CreateButton("Toggle Button", "TOGGLE", rowRect, new Vector2(180f, 52f), new Vector2(40f, -4f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), primaryAction);
                 return;
             }
 
             valueText = CreateText($"{label} Value", string.Empty, rowRect, new Vector2(170f, 42f), new Vector2(30f, -12f), TextAlignmentOptions.Center, 22f);
-            valueText.rectTransform.anchorMin = new Vector2(0f, 1f);
-            valueText.rectTransform.anchorMax = new Vector2(0f, 1f);
-            valueText.rectTransform.pivot = new Vector2(0f, 1f);
+            SetTopLeftLayout(valueText.rectTransform);
 
             CreateButton("Previous Button", "<", rowRect, new Vector2(82f, 52f), new Vector2(-70f, -4f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), primaryAction);
             CreateButton("Next Button", ">", rowRect, new Vector2(82f, 52f), new Vector2(210f, -4f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), secondaryAction);
@@ -389,46 +359,72 @@ namespace baodeag
                 targetImages[0].color = templateBackground.color;
         }
 
+        private void SetTopLeftLayout(RectTransform rectTransform)
+        {
+            rectTransform.anchorMin = new Vector2(0f, 1f);
+            rectTransform.anchorMax = new Vector2(0f, 1f);
+            rectTransform.pivot = new Vector2(0f, 1f);
+        }
+
+        private void SetSliderWithoutNotify(Slider slider, float value)
+        {
+            if (slider != null)
+                slider.SetValueWithoutNotify(value);
+        }
+
+        private void SetText(TextMeshProUGUI text, string value)
+        {
+            if (text != null)
+                text.text = value;
+        }
+
+        private string GetPercentLabel(float value)
+        {
+            return $"{Mathf.RoundToInt(value * 100f)}%";
+        }
+
+        private void ApplySettingsAndRefresh(Action<GameSettingsManager> applyAction)
+        {
+            if (!GameSettingsManager.HasInstance)
+                return;
+
+            applyAction(GameSettingsManager.Instance);
+            Refresh();
+        }
+
         private void OnMasterVolumeChanged(float value)
         {
-            GameSettingsManager.Instance.SetMasterVolume(value);
-            Refresh();
+            ApplySettingsAndRefresh(settings => settings.SetMasterVolume(value));
         }
 
         private void OnMusicVolumeChanged(float value)
         {
-            GameSettingsManager.Instance.SetMusicVolume(value);
-            Refresh();
+            ApplySettingsAndRefresh(settings => settings.SetMusicVolume(value));
         }
 
         private void OnSFXVolumeChanged(float value)
         {
-            GameSettingsManager.Instance.SetSFXVolume(value);
-            Refresh();
+            ApplySettingsAndRefresh(settings => settings.SetSFXVolume(value));
         }
 
         private void OnCameraSensitivityChanged(float value)
         {
-            GameSettingsManager.Instance.SetCameraSensitivity(value);
-            Refresh();
+            ApplySettingsAndRefresh(settings => settings.SetCameraSensitivity(value));
         }
 
         private void ToggleFullscreen()
         {
-            GameSettingsManager.Instance.ToggleFullscreen();
-            Refresh();
+            ApplySettingsAndRefresh(settings => settings.ToggleFullscreen());
         }
 
         private void CycleResolution(int direction)
         {
-            GameSettingsManager.Instance.CycleResolution(direction);
-            Refresh();
+            ApplySettingsAndRefresh(settings => settings.CycleResolution(direction));
         }
 
         private void CycleQuality(int direction)
         {
-            GameSettingsManager.Instance.CycleQuality(direction);
-            Refresh();
+            ApplySettingsAndRefresh(settings => settings.CycleQuality(direction));
         }
     }
 }

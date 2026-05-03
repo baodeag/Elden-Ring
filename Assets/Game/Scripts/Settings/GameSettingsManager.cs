@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -117,30 +118,22 @@ namespace baodeag
 
         public void SetMasterVolume(float value)
         {
-            masterVolume = Mathf.Clamp01(value);
-            ApplyAudioAndGameplaySettings();
-            SaveSettings();
+            UpdateAudioSetting(value, Mathf.Clamp01, clampedValue => masterVolume = clampedValue);
         }
 
         public void SetMusicVolume(float value)
         {
-            musicVolume = Mathf.Clamp01(value);
-            ApplyAudioAndGameplaySettings();
-            SaveSettings();
+            UpdateAudioSetting(value, Mathf.Clamp01, clampedValue => musicVolume = clampedValue);
         }
 
         public void SetSFXVolume(float value)
         {
-            sfxVolume = Mathf.Clamp01(value);
-            ApplyAudioAndGameplaySettings();
-            SaveSettings();
+            UpdateAudioSetting(value, Mathf.Clamp01, clampedValue => sfxVolume = clampedValue);
         }
 
         public void SetCameraSensitivity(float value)
         {
-            cameraSensitivity = Mathf.Clamp(value, 0.3f, 2f);
-            ApplyAudioAndGameplaySettings();
-            SaveSettings();
+            UpdateAudioSetting(value, clampedValue => Mathf.Clamp(clampedValue, 0.3f, 2f), clampedValue => cameraSensitivity = clampedValue);
         }
 
         public void ToggleFullscreen()
@@ -155,13 +148,7 @@ namespace baodeag
             if (availableResolutions.Count == 0)
                 return;
 
-            resolutionIndex += direction;
-
-            if (resolutionIndex < 0)
-                resolutionIndex = availableResolutions.Count - 1;
-            else if (resolutionIndex >= availableResolutions.Count)
-                resolutionIndex = 0;
-
+            resolutionIndex = CycleIndex(resolutionIndex, direction, availableResolutions.Count);
             ApplyDisplaySettings();
             SaveSettings();
         }
@@ -173,15 +160,29 @@ namespace baodeag
             if (qualityNames == null || qualityNames.Length == 0)
                 return;
 
-            qualityIndex += direction;
-
-            if (qualityIndex < 0)
-                qualityIndex = qualityNames.Length - 1;
-            else if (qualityIndex >= qualityNames.Length)
-                qualityIndex = 0;
-
+            qualityIndex = CycleIndex(qualityIndex, direction, qualityNames.Length);
             ApplyDisplaySettings();
             SaveSettings();
+        }
+
+        private void UpdateAudioSetting(float value, Func<float, float> clampFunc, Action<float> assignAction)
+        {
+            assignAction(clampFunc(value));
+            ApplyAudioAndGameplaySettings();
+            SaveSettings();
+        }
+
+        private int CycleIndex(int currentIndex, int direction, int itemCount)
+        {
+            int nextIndex = currentIndex + direction;
+
+            if (nextIndex < 0)
+                return itemCount - 1;
+
+            if (nextIndex >= itemCount)
+                return 0;
+
+            return nextIndex;
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
