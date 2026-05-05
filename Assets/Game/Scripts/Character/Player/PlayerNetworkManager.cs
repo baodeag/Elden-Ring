@@ -183,6 +183,27 @@ namespace baodeag
             }
         }
 
+        [ServerRpc]
+        public void ReportDeathForLoseConditionServerRpc(int mapIndex)
+        {
+            if (!IsServer || WorldGameSessionManager.instance == null)
+                return;
+
+            if (!WorldGameSessionManager.instance.TryRegisterPlayerDeathForLose(player.OwnerClientId, mapIndex, out int deathCount))
+                return;
+
+            BroadcastSessionLoseClientRpc(player.OwnerClientId, deathCount, mapIndex);
+        }
+
+        [ClientRpc]
+        private void BroadcastSessionLoseClientRpc(ulong failedPlayerClientId, int deathCount, int mapIndex)
+        {
+            if (WorldGameSessionManager.instance == null)
+                return;
+
+            WorldGameSessionManager.instance.HandleSessionLose(mapIndex, failedPlayerClientId, deathCount);
+        }
+
         public override void OnIsBleedingChanged(bool oldStatus, bool newStatus)
         {
             if (isBleeding.Value)

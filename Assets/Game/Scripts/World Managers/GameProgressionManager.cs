@@ -176,11 +176,17 @@ namespace baodeag
 
             UnlockMap(defeatedMapIndex);
 
-            if (defeatedMapIndex >= TotalMapCount - 1)
+            if (HaveAllConfiguredBossesBeenDefeated())
             {
                 currentMapIndex = defeatedMapIndex;
                 gameWon = true;
                 hasWonGame = true;
+                return false;
+            }
+
+            if (defeatedMapIndex >= TotalMapCount - 1)
+            {
+                currentMapIndex = defeatedMapIndex;
                 return false;
             }
 
@@ -295,6 +301,34 @@ namespace baodeag
                 return;
 
             mapsUnlocked[mapIndex] = true;
+        }
+
+        private bool HaveAllConfiguredBossesBeenDefeated()
+        {
+            if (WorldSaveGameManager.instance == null ||
+                WorldSaveGameManager.instance.currentCharacterData == null)
+            {
+                return false;
+            }
+
+            SerializableDictionary<int, bool> defeatedBosses =
+                WorldSaveGameManager.instance.currentCharacterData.bossesDefeated;
+
+            if (defeatedBosses == null || defeatedBosses.Count == 0)
+                return false;
+
+            for (int i = 0; i < mapDefinitions.Length; i++)
+            {
+                MapProgressionDefinition definition = mapDefinitions[i];
+
+                if (definition == null)
+                    continue;
+
+                if (!defeatedBosses.TryGetValue(definition.bossID, out bool isDefeated) || !isDefeated)
+                    return false;
+            }
+
+            return true;
         }
 
         private int GetMapIndexForBossID(int bossID)

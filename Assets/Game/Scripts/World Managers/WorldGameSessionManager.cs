@@ -25,6 +25,7 @@ namespace baodeag
     public class WorldGameSessionManager : MonoBehaviour
     {
         public static WorldGameSessionManager instance;
+        private const int MaxDeathsPerMapBeforeLose = 5;
 
         [Header("Active Players In Session")]
         public List<PlayerManager> players = new List<PlayerManager>();
@@ -32,7 +33,6 @@ namespace baodeag
         private Coroutine revivalCoroutine;
         private Coroutine pendingMapEntryCoroutine;
         private Coroutine returnToTitleCoroutine;
-        private Coroutine mapTransitionCoroutine;
 
         private UnityTransport unityTransport;
         private const ushort DefaultUnityTransportPort = 7777;
@@ -44,6 +44,13 @@ namespace baodeag
         private JoinAllocation checkedRelayJoinAllocation;
         private bool isStartingRelaySession;
         private SessionLaunchMode currentLaunchMode = SessionLaunchMode.Singleplayer;
+        private readonly Dictionary<ulong, int> playerDeathsThisMap = new Dictionary<ulong, int>();
+        private int trackedDeathMapIndex = -1;
+        private bool sessionLoseTriggered;
+        private bool sessionWinTriggered;
+        private bool pendingVictoryShouldLoadNextScene;
+        private int pendingVictoryNextSceneBuildIndex = -1;
+        private int pendingVictoryUnlockedMapIndex = -1;
 
         private void Awake()
         {
@@ -86,6 +93,8 @@ namespace baodeag
             if (newScene.buildIndex <= 0)
                 return;
 
+            ResetTransientSessionStateForCurrentMap();
+
             if (!GameProgressionManager.Instance.HasPendingTransitionSiteOfGrace())
                 return;
 
@@ -114,35 +123,127 @@ namespace baodeag
             returnToTitleCoroutine = StartCoroutine(ReturnToTitleAfterVictoryCoroutine(delay));
         }
 
-        public void ScheduleMapTransition(bool shouldLoadNextScene, int nextSceneBuildIndex, bool gameWon, int unlockedMapIndex)
+        public void ReturnToTitleAfterDefeat(float delay = 6f)
         {
-            if (mapTransitionCoroutine != null)
-                StopCoroutine(mapTransitionCoroutine);
+            if (returnToTitleCoroutine != null)
+                StopCoroutine(returnToTitleCoroutine);
 
-            mapTransitionCoroutine = StartCoroutine(ScheduleMapTransitionCoroutine(shouldLoadNextScene, nextSceneBuildIndex, gameWon, unlockedMapIndex));
+            returnToTitleCoroutine = StartCoroutine(ReturnToTitleAfterVictoryCoroutine(delay));
         }
 
-        private IEnumerator ScheduleMapTransitionCoroutine(bool shouldLoadNextScene, int nextSceneBuildIndex, bool gameWon, int unlockedMapIndex)
+        public void ScheduleMapTransition(bool shouldLoadNextScene, int nextSceneBuildIndex, bool gameWon, int unlockedMapIndex)
         {
-            yield return new WaitForSeconds(5f);
+            pendingVictoryShouldLoadNextScene = shouldLoadNextScene;
+            pendingVictoryNextSceneBuildIndex = nextSceneBuildIndex;
+            pendingVictoryUnlockedMapIndex = unlockedMapIndex;
+        }
 
-            if (gameWon)
+        public bool TryRegisterPlayerDeathForLose(ulong playerClientId, int mapIndex, out int deathCount)
+        {
+            deathCount = 0;
+
+            if (sessionLoseTriggered || sessionWinTriggered)
+                return false;
+
+            SyncDeathTrackingMap(mapIndex);
+
+            playerDeathsThisMap.TryGetValue(playerClientId, out int previousDeaths);
+            deathCount = previousDeaths + 1;
+            playerDeathsThisMap[playerClientId] = deathCount;
+
+            if (deathCount < MaxDeathsPerMapBeforeLose)
+                return false;
+
+            sessionLoseTriggered = true;
+            sessionWinTriggered = false;
+            CancelPendingRevival();
+            ClearPendingVictoryTransition();
+
+            return true;
+        }
+
+        public void HandleSessionLose(int mapIndex, ulong failedPlayerClientId, int deathCount)
+        {
+            if (sessionWinTriggered)
+                return;
+
+            SyncDeathTrackingMap(mapIndex);
+            sessionLoseTriggered = true;
+            CancelPendingRevival();
+            ClearPendingVictoryTransition();
+
+            if (PlayerUIManager.instance != null && PlayerUIManager.instance.playerUIPopUpManager != null)
             {
-                ReturnToTitleAfterVictory();
-                mapTransitionCoroutine = null;
-                yield break;
+                PlayerUIManager.instance.playerUIPopUpManager.ShowLoseEndGameOverlay();
             }
 
-            if (shouldLoadNextScene && nextSceneBuildIndex >= 0 && nextSceneBuildIndex != SceneManager.GetActiveScene().buildIndex)
+            if (WorldAIManager.instance != null)
+                WorldAIManager.instance.DisableAllBossFights();
+        }
+
+        public void HandleSessionVictory(float popupDelay = 0f)
+        {
+            if (sessionLoseTriggered || sessionWinTriggered)
+                return;
+
+            sessionWinTriggered = true;
+            CancelPendingRevival();
+
+            if (PlayerUIManager.instance != null && PlayerUIManager.instance.playerUIPopUpManager != null)
             {
-                LoadSceneForProgression(nextSceneBuildIndex);
+                bool canContinueProgression = pendingVictoryShouldLoadNextScene || pendingVictoryUnlockedMapIndex >= 0;
+                PlayerUIManager.instance.playerUIPopUpManager.ShowVictoryEndGameOverlayDelayed(canContinueProgression, popupDelay);
             }
-            else if (unlockedMapIndex >= 0)
+        }
+
+        public void RetryCurrentMapFromStart()
+        {
+            int currentMapIndex = GameProgressionManager.Instance.CurrentMapIndex;
+            int sceneBuildIndex;
+
+            if (!GameProgressionManager.Instance.PrepareTransitionToMap(currentMapIndex, out sceneBuildIndex))
+                sceneBuildIndex = GameProgressionManager.Instance.GetSceneBuildIndexForCurrentMap();
+
+            int entrySiteOfGraceID = GameProgressionManager.Instance.GetEntrySiteOfGraceIDForCurrentMap();
+
+            if (entrySiteOfGraceID >= 0)
+                SetLastRestedSiteOfGrace(entrySiteOfGraceID);
+
+            ClearPendingVictoryTransition();
+            ResetTransientSessionStateForCurrentMap();
+            LoadSceneForProgression(sceneBuildIndex);
+        }
+
+        public void ContinuePendingVictoryFlow()
+        {
+            if (pendingVictoryShouldLoadNextScene &&
+                pendingVictoryNextSceneBuildIndex >= 0 &&
+                pendingVictoryNextSceneBuildIndex != SceneManager.GetActiveScene().buildIndex)
             {
+                LoadSceneForProgression(pendingVictoryNextSceneBuildIndex);
+                ClearPendingVictoryTransition();
+                return;
+            }
+
+            if (pendingVictoryUnlockedMapIndex >= 0)
+            {
+                ResetTransientSessionStateForCurrentMap();
                 ProcessPendingMapEntryWithoutSceneReload();
+                ClearPendingVictoryTransition();
+                return;
             }
 
-            mapTransitionCoroutine = null;
+            RetryCurrentMapFromStart();
+        }
+
+        public void ReturnToTitleFromEndGame()
+        {
+            ReturnToTitleAfterVictory(0f);
+        }
+
+        public bool CanRevivePlayers()
+        {
+            return !sessionLoseTriggered && !sessionWinTriggered;
         }
 
         private void LoadSceneForProgression(int nextSceneBuildIndex)
@@ -459,6 +560,18 @@ namespace baodeag
 
             SceneManager.LoadScene(0);
             returnToTitleCoroutine = null;
+        }
+
+        private void SetLastRestedSiteOfGrace(int siteOfGraceID)
+        {
+            if (siteOfGraceID < 0)
+                return;
+
+            if (PlayerUIManager.instance != null && PlayerUIManager.instance.localPlayer != null)
+                PlayerUIManager.instance.localPlayer.playerNetworkManager.lastSiteOfGraceUsed.Value = siteOfGraceID;
+
+            if (WorldSaveGameManager.instance != null && WorldSaveGameManager.instance.currentCharacterData != null)
+                WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = siteOfGraceID;
         }
 
         public bool StartGameAsHost()
@@ -889,6 +1002,9 @@ namespace baodeag
             if (player == null || !player.IsOwner)
                 return;
 
+            if (!CanRevivePlayers())
+                return;
+
             if (revivalCoroutine != null)
                 StopCoroutine(revivalCoroutine);
 
@@ -899,7 +1015,7 @@ namespace baodeag
         {
             yield return new WaitForSeconds(delay);
 
-            if (player == null || !player.IsOwner)
+            if (player == null || !player.IsOwner || !CanRevivePlayers())
                 yield break;
 
             PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
@@ -942,6 +1058,48 @@ namespace baodeag
             else
             {
                 PlayerUIManager.instance.playerUILoadingScreenManager.DeactivateLoadingScreen(0.5f);
+            }
+        }
+
+        private void ResetTransientSessionStateForCurrentMap()
+        {
+            trackedDeathMapIndex = GameProgressionManager.Instance.CurrentMapIndex;
+            playerDeathsThisMap.Clear();
+            sessionLoseTriggered = false;
+            sessionWinTriggered = false;
+            CancelPendingRevival();
+            ClearPendingVictoryTransition();
+        }
+
+        private void ClearPendingVictoryTransition()
+        {
+            pendingVictoryShouldLoadNextScene = false;
+            pendingVictoryNextSceneBuildIndex = -1;
+            pendingVictoryUnlockedMapIndex = -1;
+        }
+
+        private void SyncDeathTrackingMap(int mapIndex)
+        {
+            int resolvedMapIndex = mapIndex >= 0
+                ? mapIndex
+                : GameProgressionManager.Instance.CurrentMapIndex;
+
+            if (trackedDeathMapIndex == resolvedMapIndex)
+                return;
+
+            trackedDeathMapIndex = resolvedMapIndex;
+            playerDeathsThisMap.Clear();
+            sessionLoseTriggered = false;
+            sessionWinTriggered = false;
+            ClearPendingVictoryTransition();
+        }
+
+        private void CancelPendingRevival()
+        {
+            if (revivalCoroutine != null)
+            {
+                StopCoroutine(revivalCoroutine);
+                revivalCoroutine = null;
             }
         }
 

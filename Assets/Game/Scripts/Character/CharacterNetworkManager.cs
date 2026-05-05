@@ -225,7 +225,10 @@ namespace baodeag
 
         public virtual void OnHPChanged(int oldValue, int newValue)
         {
-            if(currentHealth.Value <= 0)
+            // Only start a death event when health crosses from alive to dead once.
+            // This prevents duplicate death coroutines from being started when other
+            // code writes 0 to currentHealth again during the death flow.
+            if (oldValue > 0 && newValue <= 0 && !character.isDead.Value)
             {
                 StartCoroutine(character.ProcessDeathEvent());
             }

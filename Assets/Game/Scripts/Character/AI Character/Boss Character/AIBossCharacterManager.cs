@@ -224,22 +224,22 @@ namespace baodeag
                     PlayerUIManager.instance.localPlayer.playerNetworkManager.lastSiteOfGraceUsed.Value = entrySiteOfGraceID;
                 }
 
+                if (WorldGameSessionManager.instance != null)
+                {
+                    WorldGameSessionManager.instance.ScheduleMapTransition(
+                        shouldLoadNextScene,
+                        nextSceneBuildIndex,
+                        gameWon,
+                        unlockedMapIndex);
+                }
+
                 if (gameWon)
                 {
-                    PlayerUIManager.instance.playerUIPopUpManager.SendVictoryPopUpDelayed("Victory Achieved", 5f);
+                    BroadcastVictoryAchievedClientRpc(0f);
                 }
 
                 WorldSaveGameManager.instance.SaveGame();
                 ApplyBossWorldState();
-            }
-
-            if (IsOwner && WorldGameSessionManager.instance != null)
-            {
-                WorldGameSessionManager.instance.ScheduleMapTransition(
-                    shouldLoadNextScene,
-                    nextSceneBuildIndex,
-                    gameWon,
-                    unlockedMapIndex);
             }
 
             yield break;
@@ -286,6 +286,19 @@ namespace baodeag
         {
             if (IsServer)
                 WakeBoss();
+        }
+
+        [ClientRpc]
+        private void BroadcastVictoryAchievedClientRpc(float delay)
+        {
+            if (WorldGameSessionManager.instance != null)
+            {
+                WorldGameSessionManager.instance.HandleSessionVictory(delay);
+            }
+            else if (PlayerUIManager.instance != null)
+            {
+                PlayerUIManager.instance.playerUIPopUpManager.SendVictoryPopUpDelayed("Victory Achieved", delay);
+            }
         }
 
         private void OnBossFightIsActiveChanged(bool oldStatus, bool newStatus)

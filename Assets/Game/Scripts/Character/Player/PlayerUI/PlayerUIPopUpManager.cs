@@ -2,11 +2,18 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEngine.UI;
-
 namespace baodeag
 {
     public class PlayerUIPopUpManager : MonoBehaviour
     {
+        private enum EndGameActionType
+        {
+            None = 0,
+            RetryCurrentMap = 1,
+            ContinueProgression = 2,
+            ReturnToTitle = 3
+        }
+
         [Header("Pop Up Parent")]
         [SerializeField] Transform popUpTransformParent; 
 
@@ -50,16 +57,69 @@ namespace baodeag
         [SerializeField] TextMeshProUGUI dialoguePopUpText;
         [SerializeField] CharacterDialogue currentDialogue;
         private Coroutine dialogueCoroutine;
+        private Coroutine delayedEndGameOverlayCoroutine;
+
+        [Header("End Game Overlay")]
+        [SerializeField] GameObject endGameOverlayGameObject;
+        [SerializeField] CanvasGroup endGameOverlayCanvasGroup;
+        [SerializeField] TextMeshProUGUI endGameTitleText;
+        [SerializeField] TextMeshProUGUI endGameSubtitleText;
+        [SerializeField] Button endGamePrimaryButton;
+        [SerializeField] TextMeshProUGUI endGamePrimaryButtonText;
+        [SerializeField] Button endGameSecondaryButton;
+        [SerializeField] TextMeshProUGUI endGameSecondaryButtonText;
+
         private static readonly Color buffPopUpColor = new Color(0.96f, 0.84f, 0.42f, 1f);
+        private EndGameActionType pendingPrimaryEndGameAction;
+        private EndGameActionType pendingSecondaryEndGameAction;
+
+        public bool IsEndGameOverlayOpen()
+        {
+            return endGameOverlayGameObject != null && endGameOverlayGameObject.activeInHierarchy;
+        }
 
         public void CloseAllPopUpWindows()
         {
             popUpMessageGameObject.SetActive(false);
             itemPopUpGameObject.SetActive(false);
+            youDiedPopUpGameObject.SetActive(false);
+            bossDefeatedPopUpGameObject.SetActive(false);
+            graceRestoredPopUpGameObject.SetActive(false);
+            dialoguePopUpGameObject.SetActive(false);
+
             if (buffStatusPopUpGameObject != null)
                 buffStatusPopUpGameObject.SetActive(false);
 
-            PlayerUIManager.instance.popUpWindowIsOpen = false;
+            if (youDiedStylePopUpCoroutine != null)
+            {
+                StopCoroutine(youDiedStylePopUpCoroutine);
+                youDiedStylePopUpCoroutine = null;
+            }
+
+            if (bossDefeatedPopUpCoroutine != null)
+            {
+                StopCoroutine(bossDefeatedPopUpCoroutine);
+                bossDefeatedPopUpCoroutine = null;
+            }
+
+            if (graceRestoredStylePopUpCoroutine != null)
+            {
+                StopCoroutine(graceRestoredStylePopUpCoroutine);
+                graceRestoredStylePopUpCoroutine = null;
+            }
+
+            if (dialogueCoroutine != null)
+            {
+                StopCoroutine(dialogueCoroutine);
+                dialogueCoroutine = null;
+            }
+
+            bool endGameOverlayOpen = IsEndGameOverlayOpen();
+
+            PlayerUIManager.instance.popUpWindowIsOpen = endGameOverlayOpen;
+
+            if (!endGameOverlayOpen && !PlayerUIManager.instance.menuWindowIsOpen)
+                PlayerUIManager.instance.playerUIHudManager?.ToggleHUDWithOutPopUps(true);
         }
 
         public void SendPlayerMessagePopUp(string messageText)
@@ -99,6 +159,50 @@ namespace baodeag
         public void SendVictoryPopUp(string victoryMessage)
             => PlayYouDiedStylePopUp(victoryMessage);
 
+        public void SendLosePopUp(string loseMessage)
+            => PlayYouDiedStylePopUp(loseMessage);
+
+        public void ShowLoseEndGameOverlay()
+        {
+            ForceShowEndGameOverlay(
+                "DEFEAT",
+                "Your run ends here. Retry the map or return to the title screen.",
+                "RETRY MAP",
+                EndGameActionType.RetryCurrentMap,
+                "HOME",
+                EndGameActionType.ReturnToTitle);
+        }
+
+        public void ShowVictoryEndGameOverlay(bool canContinueProgression)
+        {
+            ForceShowEndGameOverlay(
+                "VICTORY",
+                canContinueProgression
+                    ? "The path forward is open. Continue to the next stage or return to the title screen."
+                    : "You cleared the encounter. Play again from the map start or return to the title screen.",
+                canContinueProgression ? "CONTINUE" : "PLAY AGAIN",
+                canContinueProgression ? EndGameActionType.ContinueProgression : EndGameActionType.RetryCurrentMap,
+                "HOME",
+                EndGameActionType.ReturnToTitle);
+        }
+
+        public void ShowVictoryEndGameOverlayDelayed(bool canContinueProgression, float delay)
+        {
+            if (delay <= 0f)
+            {
+                ShowVictoryEndGameOverlay(canContinueProgression);
+                return;
+            }
+
+            if (delayedEndGameOverlayCoroutine != null)
+            {
+                StopCoroutine(delayedEndGameOverlayCoroutine);
+                delayedEndGameOverlayCoroutine = null;
+            }
+
+            delayedEndGameOverlayCoroutine = StartCoroutine(ShowVictoryEndGameOverlayDelayedCoroutine(canContinueProgression, delay));
+        }
+
         public void SendMapUnlockedPopUpDelayed(string mapUnlockedMessage, float delay)
         {
             StartCoroutine(SendMapUnlockedPopUpDelayedCoroutine(mapUnlockedMessage, delay));
@@ -119,6 +223,15 @@ namespace baodeag
         {
             yield return new WaitForSeconds(delay);
             PlayYouDiedStylePopUp(message);
+        }
+
+        private IEnumerator ShowVictoryEndGameOverlayDelayedCoroutine(bool canContinueProgression, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+
+            ShowVictoryEndGameOverlay(canContinueProgression);
+
+            delayedEndGameOverlayCoroutine = null;
         }
 
         private void PlayBossStylePopUp(string message)
@@ -431,6 +544,152 @@ namespace baodeag
             canvas.alpha = 1f;
             popUpObject.SetActive(false);
             buffStatusPopUpCoroutine = null;
+        }
+
+        private void ForceShowEndGameOverlay(
+            string title,
+            string subtitle,
+            string primaryButtonLabel,
+            EndGameActionType primaryAction,
+            string secondaryButtonLabel,
+            EndGameActionType secondaryAction)
+        {
+            if (endGameOverlayGameObject == null ||
+                endGameOverlayCanvasGroup == null ||
+                endGameTitleText == null ||
+                endGameSubtitleText == null ||
+                endGamePrimaryButtonText == null ||
+                endGameSecondaryButtonText == null)
+            {
+                Debug.LogWarning("PlayerUIPopUpManager: End game overlay references are missing.");
+                return;
+            }
+
+            if (delayedEndGameOverlayCoroutine != null)
+            {
+                StopCoroutine(delayedEndGameOverlayCoroutine);
+                delayedEndGameOverlayCoroutine = null;
+            }
+
+            pendingPrimaryEndGameAction = primaryAction;
+            pendingSecondaryEndGameAction = secondaryAction;
+
+            // Clear transient popups so the end-game board behaves like a full menu state.
+            popUpMessageGameObject.SetActive(false);
+            itemPopUpGameObject.SetActive(false);
+            dialoguePopUpGameObject.SetActive(false);
+            youDiedPopUpGameObject.SetActive(false);
+            bossDefeatedPopUpGameObject.SetActive(false);
+            graceRestoredPopUpGameObject.SetActive(false);
+
+            if (youDiedStylePopUpCoroutine != null)
+            {
+                StopCoroutine(youDiedStylePopUpCoroutine);
+                youDiedStylePopUpCoroutine = null;
+            }
+
+            if (bossDefeatedPopUpCoroutine != null)
+            {
+                StopCoroutine(bossDefeatedPopUpCoroutine);
+                bossDefeatedPopUpCoroutine = null;
+            }
+
+            if (graceRestoredStylePopUpCoroutine != null)
+            {
+                StopCoroutine(graceRestoredStylePopUpCoroutine);
+                graceRestoredStylePopUpCoroutine = null;
+            }
+
+            if (buffStatusPopUpGameObject != null)
+                buffStatusPopUpGameObject.SetActive(false);
+
+            endGameTitleText.text = title;
+            endGameSubtitleText.text = subtitle;
+            endGamePrimaryButtonText.text = primaryButtonLabel;
+            endGameSecondaryButtonText.text = secondaryButtonLabel;
+
+            endGameOverlayCanvasGroup.alpha = 1f;
+            endGameOverlayCanvasGroup.interactable = true;
+            endGameOverlayCanvasGroup.blocksRaycasts = true;
+
+            Transform currentTransform = endGameOverlayGameObject.transform;
+            while (currentTransform != null)
+            {
+                currentTransform.gameObject.SetActive(true);
+                currentTransform = currentTransform.parent;
+            }
+
+            endGameOverlayGameObject.SetActive(true);
+
+            PlayerUIManager.instance.CloseAllMenuWindows();
+            PlayerUIManager.instance.popUpWindowIsOpen = true;
+            PlayerUIManager.instance.menuWindowIsOpen = true;
+
+            if (PlayerInputManager.instance != null)
+                PlayerInputManager.instance.SuppressGameplayInputs(true);
+
+            if (PlayerUIManager.instance.playerUIHudManager != null)
+                PlayerUIManager.instance.playerUIHudManager.ToggleHUDWithOutPopUps(false);
+
+            if (endGamePrimaryButton != null)
+                endGamePrimaryButton.Select();
+        }
+
+        private void HideEndGameOverlay()
+        {
+            if (endGameOverlayGameObject == null)
+                return;
+
+            endGameOverlayCanvasGroup.alpha = 0f;
+            endGameOverlayCanvasGroup.interactable = false;
+            endGameOverlayCanvasGroup.blocksRaycasts = false;
+            endGameOverlayGameObject.SetActive(false);
+
+            pendingPrimaryEndGameAction = EndGameActionType.None;
+            pendingSecondaryEndGameAction = EndGameActionType.None;
+
+            if (PlayerUIManager.instance != null)
+            {
+                PlayerUIManager.instance.popUpWindowIsOpen = false;
+                PlayerUIManager.instance.menuWindowIsOpen = false;
+
+                if (PlayerUIManager.instance.playerUIHudManager != null)
+                    PlayerUIManager.instance.playerUIHudManager.ToggleHUDWithOutPopUps(true);
+            }
+
+            if (PlayerInputManager.instance != null)
+                PlayerInputManager.instance.SuppressGameplayInputs(false);
+        }
+
+        public void HandlePrimaryEndGameButtonPressed()
+        {
+            ExecuteEndGameAction(pendingPrimaryEndGameAction);
+        }
+
+        public void HandleSecondaryEndGameButtonPressed()
+        {
+            ExecuteEndGameAction(pendingSecondaryEndGameAction);
+        }
+
+        private void ExecuteEndGameAction(EndGameActionType action)
+        {
+            HideEndGameOverlay();
+
+            if (WorldGameSessionManager.instance == null)
+                return;
+
+            switch (action)
+            {
+                case EndGameActionType.RetryCurrentMap:
+                    WorldGameSessionManager.instance.RetryCurrentMapFromStart();
+                    break;
+                case EndGameActionType.ContinueProgression:
+                    WorldGameSessionManager.instance.ContinuePendingVictoryFlow();
+                    break;
+                case EndGameActionType.ReturnToTitle:
+                    WorldGameSessionManager.instance.ReturnToTitleFromEndGame();
+                    break;
+            }
         }
     }
 }

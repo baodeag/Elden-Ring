@@ -349,14 +349,36 @@ namespace baodeag
 
         public override IEnumerator ProcessDeathEvent(bool manuallySelectDeathAnimation = false)
         {
+            if (isDead.Value)
+                yield break;
+
             if (IsOwner)
             {
                 playerInteractionManager.ClearInteractionList();
-                PlayerUIManager.instance.playerUIPopUpManager.SendYouDiedPopUp();
-                WorldGameSessionManager.instance.WaitThenRevivePlayer(this);
+                int currentMapIndex = GameProgressionManager.Instance.CurrentMapIndex;
+                bool loseTriggered = false;
+
+                if (IsServer && WorldGameSessionManager.instance != null)
+                {
+                    if (WorldGameSessionManager.instance.TryRegisterPlayerDeathForLose(OwnerClientId, currentMapIndex, out int deathCount))
+                    {
+                        WorldGameSessionManager.instance.HandleSessionLose(currentMapIndex, OwnerClientId, deathCount);
+                        loseTriggered = true;
+                    }
+                }
+                else
+                {
+                    playerNetworkManager.ReportDeathForLoseConditionServerRpc(currentMapIndex);
+                }
+
+                if (!loseTriggered)
+                {
+                    PlayerUIManager.instance.playerUIPopUpManager.SendYouDiedPopUp();
+                    WorldGameSessionManager.instance.WaitThenRevivePlayer(this);
+                }
             }
 
-            return base.ProcessDeathEvent(manuallySelectDeathAnimation);
+            yield return StartCoroutine(base.ProcessDeathEvent(manuallySelectDeathAnimation));
         }
 
         public override void ReviveCharacter()
