@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEngine.UI;
+using Unity.Netcode;
 namespace baodeag
 {
     public class PlayerUIPopUpManager : MonoBehaviour
@@ -72,6 +73,7 @@ namespace baodeag
         private static readonly Color buffPopUpColor = new Color(0.96f, 0.84f, 0.42f, 1f);
         private EndGameActionType pendingPrimaryEndGameAction;
         private EndGameActionType pendingSecondaryEndGameAction;
+        private const string WaitingForHostMessage = "Waiting for host to choose the next action...";
 
         public bool IsEndGameOverlayOpen()
         {
@@ -604,7 +606,7 @@ namespace baodeag
                 buffStatusPopUpGameObject.SetActive(false);
 
             endGameTitleText.text = title;
-            endGameSubtitleText.text = subtitle;
+            endGameSubtitleText.text = BuildEndGameSubtitle(subtitle);
             endGamePrimaryButtonText.text = primaryButtonLabel;
             endGameSecondaryButtonText.text = secondaryButtonLabel;
 
@@ -631,7 +633,9 @@ namespace baodeag
             if (PlayerUIManager.instance.playerUIHudManager != null)
                 PlayerUIManager.instance.playerUIHudManager.ToggleHUDWithOutPopUps(false);
 
-            if (endGamePrimaryButton != null)
+            ApplyEndGameActionAvailability();
+
+            if (CanLocalPlayerControlEndGameActions() && endGamePrimaryButton != null)
                 endGamePrimaryButton.Select();
         }
 
@@ -671,25 +675,93 @@ namespace baodeag
             ExecuteEndGameAction(pendingSecondaryEndGameAction);
         }
 
+        public void DismissEndGameOverlayForTransition(bool showLoadingScreen)
+        {
+            if (IsEndGameOverlayOpen())
+                HideEndGameOverlay();
+
+            if (showLoadingScreen &&
+                PlayerUIManager.instance != null &&
+                PlayerUIManager.instance.playerUILoadingScreenManager != null)
+            {
+                PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
+            }
+        }
+
+        private string BuildEndGameSubtitle(string hostSubtitle)
+        {
+            if (!CanLocalPlayerControlEndGameActions())
+                return WaitingForHostMessage;
+
+            return hostSubtitle;
+        }
+
+        private void ApplyEndGameActionAvailability()
+        {
+            bool canControlActions = CanLocalPlayerControlEndGameActions();
+
+            if (endGamePrimaryButton != null)
+                endGamePrimaryButton.interactable = canControlActions;
+
+            if (endGameSecondaryButton != null)
+                endGameSecondaryButton.interactable = canControlActions;
+        }
+
+        private bool CanLocalPlayerControlEndGameActions()
+        {
+            if (WorldGameSessionManager.instance == null ||
+                !WorldGameSessionManager.instance.IsMultiplayerSessionActive())
+            {
+                return true;
+            }
+
+            if (PlayerUIManager.instance == null || PlayerUIManager.instance.localPlayer == null)
+                return false;
+
+            return PlayerUIManager.instance.localPlayer.IsHost;
+        }
+
         private void ExecuteEndGameAction(EndGameActionType action)
         {
+            if (!CanLocalPlayerControlEndGameActions())
+                return;
+
             HideEndGameOverlay();
 
             if (WorldGameSessionManager.instance == null)
                 return;
 
-            switch (action)
+            SessionEndGameActionType sessionAction = action switch
             {
-                case EndGameActionType.RetryCurrentMap:
-                    WorldGameSessionManager.instance.RetryCurrentMapFromStart();
-                    break;
-                case EndGameActionType.ContinueProgression:
-                    WorldGameSessionManager.instance.ContinuePendingVictoryFlow();
-                    break;
-                case EndGameActionType.ReturnToTitle:
-                    WorldGameSessionManager.instance.ReturnToTitleFromEndGame();
-                    break;
+                EndGameActionType.RetryCurrentMap => SessionEndGameActionType.RetryCurrentMap,
+                EndGameActionType.ContinueProgression => SessionEndGameActionType.ContinueProgression,
+                EndGameActionType.ReturnToTitle => SessionEndGameActionType.ReturnToTitle,
+                _ => SessionEndGameActionType.None
+            };
+
+            if (sessionAction == SessionEndGameActionType.None)
+                return;
+
+            if (NetworkManager.Singleton != null &&
+                NetworkManager.Singleton.IsClient &&
+                WorldGameSessionManager.instance.IsMultiplayerSessionActive() &&
+                PlayerUIManager.instance != null &&
+                PlayerUIManager.instance.localPlayer != null &&
+                PlayerUIManager.instance.localPlayer.playerNetworkManager != null)
+            {
+                bool showLoadingScreen = sessionAction != SessionEndGameActionType.ReturnToTitle;
+
+                if (showLoadingScreen &&
+                    PlayerUIManager.instance.playerUILoadingScreenManager != null)
+                {
+                    PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
+                }
+
+                PlayerUIManager.instance.localPlayer.playerNetworkManager.RequestSynchronizedEndGameActionServerRpc((int)sessionAction);
+                return;
             }
+
+            WorldGameSessionManager.instance.ExecuteSynchronizedEndGameAction(sessionAction, true);
         }
     }
 }

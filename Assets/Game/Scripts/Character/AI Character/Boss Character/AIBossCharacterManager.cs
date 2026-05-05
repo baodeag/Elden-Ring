@@ -215,6 +215,7 @@ namespace baodeag
                 }
 
                 shouldLoadNextScene = GameProgressionManager.Instance.RegisterBossDefeat(bossID, out nextSceneBuildIndex, out unlockedMapIndex, out gameWon);
+                bool canContinueProgression = shouldLoadNextScene || unlockedMapIndex >= 0;
 
                 int entrySiteOfGraceID = GameProgressionManager.Instance.GetEntrySiteOfGraceIDForCurrentMap();
 
@@ -235,7 +236,7 @@ namespace baodeag
 
                 if (gameWon)
                 {
-                    BroadcastVictoryAchievedClientRpc(0f);
+                    BroadcastVictoryAchievedClientRpc(canContinueProgression, 0f);
                 }
 
                 WorldSaveGameManager.instance.SaveGame();
@@ -289,11 +290,11 @@ namespace baodeag
         }
 
         [ClientRpc]
-        private void BroadcastVictoryAchievedClientRpc(float delay)
+        private void BroadcastVictoryAchievedClientRpc(bool canContinueProgression, float delay)
         {
             if (WorldGameSessionManager.instance != null)
             {
-                WorldGameSessionManager.instance.HandleSessionVictory(delay);
+                WorldGameSessionManager.instance.HandleSessionVictory(canContinueProgression, delay);
             }
             else if (PlayerUIManager.instance != null)
             {

@@ -22,6 +22,14 @@ namespace baodeag
         Multiplayer = 2
     }
 
+    public enum SessionEndGameActionType
+    {
+        None = 0,
+        RetryCurrentMap = 1,
+        ContinueProgression = 2,
+        ReturnToTitle = 3
+    }
+
     public class WorldGameSessionManager : MonoBehaviour
     {
         public static WorldGameSessionManager instance;
@@ -181,7 +189,7 @@ namespace baodeag
                 WorldAIManager.instance.DisableAllBossFights();
         }
 
-        public void HandleSessionVictory(float popupDelay = 0f)
+        public void HandleSessionVictory(bool canContinueProgression, float popupDelay = 0f)
         {
             if (sessionLoseTriggered || sessionWinTriggered)
                 return;
@@ -191,8 +199,25 @@ namespace baodeag
 
             if (PlayerUIManager.instance != null && PlayerUIManager.instance.playerUIPopUpManager != null)
             {
-                bool canContinueProgression = pendingVictoryShouldLoadNextScene || pendingVictoryUnlockedMapIndex >= 0;
                 PlayerUIManager.instance.playerUIPopUpManager.ShowVictoryEndGameOverlayDelayed(canContinueProgression, popupDelay);
+            }
+        }
+
+        public void ExecuteSynchronizedEndGameAction(SessionEndGameActionType action, bool performWorldTransition)
+        {
+            switch (action)
+            {
+                case SessionEndGameActionType.RetryCurrentMap:
+                    if (performWorldTransition)
+                        RetryCurrentMapFromStart();
+                    break;
+                case SessionEndGameActionType.ContinueProgression:
+                    if (performWorldTransition)
+                        ContinuePendingVictoryFlow();
+                    break;
+                case SessionEndGameActionType.ReturnToTitle:
+                    ReturnToTitleFromEndGame();
+                    break;
             }
         }
 

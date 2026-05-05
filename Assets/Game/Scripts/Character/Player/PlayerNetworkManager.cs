@@ -204,6 +204,33 @@ namespace baodeag
             WorldGameSessionManager.instance.HandleSessionLose(mapIndex, failedPlayerClientId, deathCount);
         }
 
+        [ServerRpc]
+        public void RequestSynchronizedEndGameActionServerRpc(int actionID)
+        {
+            if (!IsServer || WorldGameSessionManager.instance == null)
+                return;
+
+            SessionEndGameActionType action = (SessionEndGameActionType)actionID;
+            bool shouldShowLoadingScreen = action != SessionEndGameActionType.ReturnToTitle;
+
+            ExecuteSynchronizedEndGameActionClientRpc(actionID, shouldShowLoadingScreen);
+
+            if (action != SessionEndGameActionType.ReturnToTitle)
+                WorldGameSessionManager.instance.ExecuteSynchronizedEndGameAction(action, true);
+        }
+
+        [ClientRpc]
+        private void ExecuteSynchronizedEndGameActionClientRpc(int actionID, bool shouldShowLoadingScreen)
+        {
+            SessionEndGameActionType action = (SessionEndGameActionType)actionID;
+
+            if (PlayerUIManager.instance != null && PlayerUIManager.instance.playerUIPopUpManager != null)
+                PlayerUIManager.instance.playerUIPopUpManager.DismissEndGameOverlayForTransition(shouldShowLoadingScreen);
+
+            if (action == SessionEndGameActionType.ReturnToTitle && WorldGameSessionManager.instance != null)
+                WorldGameSessionManager.instance.ExecuteSynchronizedEndGameAction(action, false);
+        }
+
         public override void OnIsBleedingChanged(bool oldStatus, bool newStatus)
         {
             if (isBleeding.Value)
