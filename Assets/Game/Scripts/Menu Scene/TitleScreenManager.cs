@@ -83,12 +83,26 @@ namespace baodeag {
         [SerializeField] private GameObject classReviewPanel;
         [SerializeField] private TextMeshProUGUI classReviewTitleText;
         [SerializeField] private TextMeshProUGUI classReviewSubtitleText;
-        [SerializeField] private TextMeshProUGUI classReviewDescriptionText;
+        [SerializeField] private GameObject classReviewStatsInfoPanel;
+        [SerializeField] private GameObject classReviewItemsInfoPanel;
+        [SerializeField] private TextMeshProUGUI classReviewStatsInfoText;
+        [SerializeField] private TextMeshProUGUI classReviewItemsInfoText;
         [SerializeField] private TextMeshProUGUI classReviewStatsText;
         [SerializeField] private TextMeshProUGUI classReviewLoadoutText;
         [SerializeField] private TextMeshProUGUI classReviewHintText;
+        [SerializeField] private Button classReviewStatsTabButton;
+        [SerializeField] private Button classReviewItemsTabButton;
 
         private bool launchModeMenuInitialized;
+        private enum ClassReviewTab
+        {
+            Stats,
+            Items
+        }
+
+        private ClassReviewTab currentClassReviewTab = ClassReviewTab.Stats;
+        private string currentClassReviewStatsContent = string.Empty;
+        private string currentClassReviewItemsContent = string.Empty;
 
         private void Awake()
         {
@@ -866,12 +880,92 @@ namespace baodeag {
 
             classReviewTitleText.text = characterClass.className.ToUpperInvariant();
             classReviewSubtitleText.text = GetClassSubtitle(characterClass);
-            classReviewDescriptionText.text = GetClassDescription(characterClass);
-            classReviewStatsText.text = GetFormattedClassStats(characterClass);
-            classReviewLoadoutText.text = GetFormattedClassLoadout(characterClass);
-            classReviewHintText.text = isSelectedClass
-                ? "Selected. Press START."
-                : "Preview. Click to select.";
+            currentClassReviewStatsContent = GetFormattedClassStats(characterClass);
+            currentClassReviewItemsContent = GetFormattedClassLoadout(characterClass);
+            currentClassReviewTab = ClassReviewTab.Stats;
+
+            if (classReviewStatsText != null)
+                classReviewStatsText.text = "STATS";
+
+            if (classReviewLoadoutText != null)
+                classReviewLoadoutText.text = "ITEMS";
+
+            RefreshClassReviewInfoPanel();
+            if (classReviewHintText != null)
+            {
+                classReviewHintText.text = isSelectedClass
+                    ? "Selected. Press START."
+                    : "Preview. Click to select.";
+            }
+        }
+
+        public void ShowClassReviewStats()
+        {
+            currentClassReviewTab = ClassReviewTab.Stats;
+            RefreshClassReviewInfoPanel();
+        }
+
+        public void ShowClassReviewItems()
+        {
+            currentClassReviewTab = ClassReviewTab.Items;
+            RefreshClassReviewInfoPanel();
+        }
+
+        private void RefreshClassReviewInfoPanel()
+        {
+            if (classReviewStatsInfoText != null)
+                classReviewStatsInfoText.text = currentClassReviewStatsContent;
+
+            if (classReviewItemsInfoText != null)
+                classReviewItemsInfoText.text = currentClassReviewItemsContent;
+
+            bool showStats = currentClassReviewTab == ClassReviewTab.Stats;
+
+            if (classReviewStatsInfoPanel != null)
+                classReviewStatsInfoPanel.SetActive(showStats);
+
+            if (classReviewItemsInfoPanel != null)
+                classReviewItemsInfoPanel.SetActive(!showStats);
+
+            if (showStats && classReviewStatsInfoText != null)
+                PrepareClassReviewInfoText(classReviewStatsInfoText);
+            else if (!showStats && classReviewItemsInfoText != null)
+                PrepareClassReviewInfoText(classReviewItemsInfoText);
+
+            UpdateClassReviewTabVisual(classReviewStatsTabButton, classReviewStatsText, currentClassReviewTab == ClassReviewTab.Stats);
+            UpdateClassReviewTabVisual(classReviewItemsTabButton, classReviewLoadoutText, currentClassReviewTab == ClassReviewTab.Items);
+        }
+
+        private void PrepareClassReviewInfoText(TextMeshProUGUI infoText)
+        {
+            infoText.ForceMeshUpdate();
+
+            if (infoText.transform is RectTransform infoRect)
+            {
+                float preferredHeight = Mathf.Max(infoText.preferredHeight + 16f, 150f);
+                infoRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, preferredHeight);
+                infoRect.anchoredPosition = Vector2.zero;
+                LayoutRebuilder.ForceRebuildLayoutImmediate(infoRect);
+            }
+
+            ScrollRect infoScrollRect = infoText.GetComponentInParent<ScrollRect>();
+            if (infoScrollRect != null)
+                infoScrollRect.verticalNormalizedPosition = 1f;
+
+            Canvas.ForceUpdateCanvases();
+        }
+
+        private void UpdateClassReviewTabVisual(Button button, TextMeshProUGUI label, bool isActive)
+        {
+            if (label != null)
+                label.color = isActive ? new Color(1f, 0.85f, 0.35f, 1f) : Color.white;
+
+            if (button?.targetGraphic is Image image)
+            {
+                image.color = isActive
+                    ? new Color(1f, 1f, 1f, 0.16f)
+                    : new Color(1f, 1f, 1f, 0.08f);
+            }
         }
 
         private void UpdateCharacterClassPrimaryButtonLabel()
