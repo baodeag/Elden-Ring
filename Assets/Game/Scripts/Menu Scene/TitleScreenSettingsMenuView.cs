@@ -102,9 +102,38 @@ namespace baodeag
             cameraSensitivityValueText ??= FindText("Camera Sensitivity Row/Value");
         }
 
-        private Slider FindSlider(string path) => contentRoot?.Find(path)?.GetComponent<Slider>();
-        private Button FindButton(string path) => contentRoot?.Find(path)?.GetComponent<Button>();
-        private TextMeshProUGUI FindText(string path) => contentRoot?.Find(path)?.GetComponent<TextMeshProUGUI>();
+        private Slider FindSlider(string path) => FindComponentByPath<Slider>(path);
+        private Button FindButton(string path) => FindComponentByPath<Button>(path);
+        private TextMeshProUGUI FindText(string path) => FindComponentByPath<TextMeshProUGUI>(path);
+
+        private T FindComponentByPath<T>(string path) where T : Component
+        {
+            if (contentRoot == null || string.IsNullOrWhiteSpace(path))
+                return null;
+
+            Transform direct = contentRoot.Find(path);
+            if (direct != null)
+                return direct.GetComponent<T>();
+
+            string[] segments = path.Split('/');
+            if (segments.Length == 0)
+                return null;
+
+            foreach (Transform candidate in contentRoot.GetComponentsInChildren<Transform>(true))
+            {
+                if (candidate.name != segments[0])
+                    continue;
+
+                Transform current = candidate;
+                for (int i = 1; i < segments.Length && current != null; i++)
+                    current = current.Find(segments[i]);
+
+                if (current != null)
+                    return current.GetComponent<T>();
+            }
+
+            return null;
+        }
 
         private void BindListeners()
         {
