@@ -1,46 +1,58 @@
-using TMPro;
 using System;
+using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace baodeag
 {
     public class TitleScreenSettingsMenuView : MonoBehaviour
     {
+        [Header("Root")]
         [SerializeField] private RectTransform contentRoot;
 
+        [Header("Sliders")]
+        [SerializeField] private Slider masterVolumeSlider;
+        [SerializeField] private Slider musicVolumeSlider;
+        [SerializeField] private Slider sfxVolumeSlider;
+        [SerializeField] private Slider cameraSensitivitySlider;
+
+        [Header("Buttons")]
+        [SerializeField] private Button fullscreenToggleButton;
+        [SerializeField] private Button resolutionPreviousButton;
+        [SerializeField] private Button resolutionNextButton;
+        [SerializeField] private Button qualityPreviousButton;
+        [SerializeField] private Button qualityNextButton;
+        [SerializeField] private Button closeButton;
+
+        [Header("Texts")]
+        [SerializeField] private TextMeshProUGUI fullscreenValueText;
+        [SerializeField] private TextMeshProUGUI resolutionValueText;
+        [SerializeField] private TextMeshProUGUI qualityValueText;
+        [SerializeField] private TextMeshProUGUI masterVolumeValueText;
+        [SerializeField] private TextMeshProUGUI musicVolumeValueText;
+        [SerializeField] private TextMeshProUGUI sfxVolumeValueText;
+        [SerializeField] private TextMeshProUGUI cameraSensitivityValueText;
+
         private TitleScreenManager owner;
-        private bool hasBuiltLayout;
-
-        private Slider masterVolumeSlider;
-        private Slider musicVolumeSlider;
-        private Slider sfxVolumeSlider;
-        private Slider cameraSensitivitySlider;
-
-        private TextMeshProUGUI fullscreenValueText;
-        private TextMeshProUGUI resolutionValueText;
-        private TextMeshProUGUI qualityValueText;
-        private TextMeshProUGUI masterVolumeValueText;
-        private TextMeshProUGUI musicVolumeValueText;
-        private TextMeshProUGUI sfxVolumeValueText;
-        private TextMeshProUGUI cameraSensitivityValueText;
+        private bool listenersBound;
 
         public void Initialize(TitleScreenManager manager)
         {
             owner = manager;
-            EnsureLayout();
+            AutoBindSceneReferences();
+            BindListeners();
             Refresh();
         }
 
         public void Refresh()
         {
-            EnsureLayout();
+            AutoBindSceneReferences();
 
             if (!GameSettingsManager.HasInstance)
                 return;
 
             GameSettingsManager settings = GameSettingsManager.Instance;
+
             SetSliderWithoutNotify(masterVolumeSlider, settings.masterVolume);
             SetSliderWithoutNotify(musicVolumeSlider, settings.musicVolume);
             SetSliderWithoutNotify(sfxVolumeSlider, settings.sfxVolume);
@@ -49,7 +61,7 @@ namespace baodeag
             SetText(masterVolumeValueText, GetPercentLabel(settings.masterVolume));
             SetText(musicVolumeValueText, GetPercentLabel(settings.musicVolume));
             SetText(sfxVolumeValueText, GetPercentLabel(settings.sfxVolume));
-            SetText(cameraSensitivityValueText, $"x{settings.cameraSensitivity:0.00}");
+            SetText(cameraSensitivityValueText, GetPercentLabel(NormalizeCameraSensitivity(settings.cameraSensitivity)));
             SetText(fullscreenValueText, settings.isFullscreen ? "ON" : "OFF");
             SetText(resolutionValueText, settings.GetCurrentResolutionLabel());
             SetText(qualityValueText, settings.GetCurrentQualityLabel());
@@ -61,309 +73,78 @@ namespace baodeag
                 owner.CloseSettingsMenu();
         }
 
-        private void EnsureLayout()
+        private void AutoBindSceneReferences()
         {
-            if (hasBuiltLayout || contentRoot == null)
+            if (contentRoot == null)
+                contentRoot = transform.Find("Content Panel") as RectTransform;
+
+            if (contentRoot == null)
                 return;
 
-            ClearChildren(contentRoot);
+            masterVolumeSlider ??= FindSlider("Master Volume Row/Slider");
+            musicVolumeSlider ??= FindSlider("Music Volume Row/Slider");
+            sfxVolumeSlider ??= FindSlider("SFX Volume Row/Slider");
+            cameraSensitivitySlider ??= FindSlider("Camera Sensitivity Row/Slider");
 
-            Button buttonTemplate = FindFirstObjectByType<Button>(FindObjectsInactive.Include);
-            Slider sliderTemplate = FindFirstObjectByType<Slider>(FindObjectsInactive.Include);
-            CreateContentBackground();
+            fullscreenToggleButton ??= FindButton("Fullscreen Row/Primary Button");
+            resolutionPreviousButton ??= FindButton("Resolution Row/Previous Button");
+            resolutionNextButton ??= FindButton("Resolution Row/Next Button");
+            qualityPreviousButton ??= FindButton("Quality Row/Previous Button");
+            qualityNextButton ??= FindButton("Quality Row/Next Button");
+            closeButton ??= FindButton("Close Button");
 
-            CreateHeader("SETTINGS", new Vector2(0f, -55f), 40f);
-
-            float rowStartY = -150f;
-            float rowSpacing = 92f;
-
-            CreateSliderRow("MASTER VOLUME", rowStartY, out masterVolumeSlider, out masterVolumeValueText, OnMasterVolumeChanged);
-            CreateSliderRow("MUSIC VOLUME", rowStartY - rowSpacing, out musicVolumeSlider, out musicVolumeValueText, OnMusicVolumeChanged);
-            CreateSliderRow("SFX VOLUME", rowStartY - (rowSpacing * 2f), out sfxVolumeSlider, out sfxVolumeValueText, OnSFXVolumeChanged);
-            CreateSliderRow("CAMERA SENSITIVITY", rowStartY - (rowSpacing * 3f), out cameraSensitivitySlider, out cameraSensitivityValueText, OnCameraSensitivityChanged, 0.3f, 2f);
-
-            CreateSelectionRow("FULLSCREEN", rowStartY - (rowSpacing * 4f), out fullscreenValueText, ToggleFullscreen, null);
-            CreateSelectionRow("RESOLUTION", rowStartY - (rowSpacing * 5f), out resolutionValueText, () => CycleResolution(-1), () => CycleResolution(1));
-            CreateSelectionRow("QUALITY", rowStartY - (rowSpacing * 6f), out qualityValueText, () => CycleQuality(-1), () => CycleQuality(1));
-
-            CreateActionButton("CLOSE", new Vector2(0f, 70f), CloseMenu);
-
-            // If the scene has a hidden slider template, use its look; otherwise use our generated fallback.
-            if (sliderTemplate != null)
-            {
-                CopySliderVisuals(sliderTemplate, masterVolumeSlider);
-                CopySliderVisuals(sliderTemplate, musicVolumeSlider);
-                CopySliderVisuals(sliderTemplate, sfxVolumeSlider);
-                CopySliderVisuals(sliderTemplate, cameraSensitivitySlider);
-            }
-
-            // If the scene has an existing button, borrow its colors.
-            if (buttonTemplate != null)
-            {
-                ApplyButtonColorsToChildren(contentRoot, buttonTemplate.colors);
-            }
-
-            hasBuiltLayout = true;
+            fullscreenValueText ??= FindText("Fullscreen Row/Value");
+            resolutionValueText ??= FindText("Resolution Row/Value");
+            qualityValueText ??= FindText("Quality Row/Value");
+            masterVolumeValueText ??= FindText("Master Volume Row/Value");
+            musicVolumeValueText ??= FindText("Music Volume Row/Value");
+            sfxVolumeValueText ??= FindText("SFX Volume Row/Value");
+            cameraSensitivityValueText ??= FindText("Camera Sensitivity Row/Value");
         }
 
-        private void CreateHeader(string label, Vector2 anchoredPosition, float fontSize)
+        private Slider FindSlider(string path) => contentRoot?.Find(path)?.GetComponent<Slider>();
+        private Button FindButton(string path) => contentRoot?.Find(path)?.GetComponent<Button>();
+        private TextMeshProUGUI FindText(string path) => contentRoot?.Find(path)?.GetComponent<TextMeshProUGUI>();
+
+        private void BindListeners()
         {
-            TextMeshProUGUI headerText = CreateText("Settings Title", label, contentRoot, new Vector2(840f, 60f), anchoredPosition, TextAlignmentOptions.Center, fontSize);
-            headerText.rectTransform.anchorMin = new Vector2(0.5f, 1f);
-            headerText.rectTransform.anchorMax = new Vector2(0.5f, 1f);
-            headerText.rectTransform.pivot = new Vector2(0.5f, 1f);
+            if (listenersBound)
+                return;
+
+            BindSlider(masterVolumeSlider, OnMasterVolumeChanged, 0f, 1f);
+            BindSlider(musicVolumeSlider, OnMusicVolumeChanged, 0f, 1f);
+            BindSlider(sfxVolumeSlider, OnSFXVolumeChanged, 0f, 1f);
+            BindSlider(cameraSensitivitySlider, OnCameraSensitivityChanged, 0.3f, 2f);
+
+            BindButton(fullscreenToggleButton, ToggleFullscreen);
+            BindButton(resolutionPreviousButton, () => CycleResolution(-1));
+            BindButton(resolutionNextButton, () => CycleResolution(1));
+            BindButton(qualityPreviousButton, () => CycleQuality(-1));
+            BindButton(qualityNextButton, () => CycleQuality(1));
+            BindButton(closeButton, CloseMenu);
+
+            listenersBound = true;
         }
 
-        private void CreateContentBackground()
+        private void BindSlider(Slider slider, UnityEngine.Events.UnityAction<float> callback, float minValue, float maxValue)
         {
-            GameObject panelObject = new GameObject("Settings Content Background", typeof(RectTransform), typeof(Image));
-            RectTransform panelRect = panelObject.GetComponent<RectTransform>();
-            Image panelImage = panelObject.GetComponent<Image>();
+            if (slider == null)
+                return;
 
-            panelRect.SetParent(contentRoot, false);
-            panelRect.anchorMin = new Vector2(0.5f, 0.5f);
-            panelRect.anchorMax = new Vector2(0.5f, 0.5f);
-            panelRect.pivot = new Vector2(0.5f, 0.5f);
-            panelRect.anchoredPosition = new Vector2(0f, -20f);
-            panelRect.sizeDelta = new Vector2(1120f, 820f);
-
-            panelImage.color = new Color(0f, 0f, 0f, 0.82f);
-            panelImage.raycastTarget = false;
-        }
-
-        private void CreateSliderRow(
-            string label,
-            float anchoredY,
-            out Slider slider,
-            out TextMeshProUGUI valueText,
-            UnityAction<float> callback,
-            float minValue = 0f,
-            float maxValue = 1f)
-        {
-            RectTransform rowRect = CreateRowRoot($"{label} Row", anchoredY);
-
-            TextMeshProUGUI labelText = CreateText($"{label} Label", label, rowRect, new Vector2(260f, 42f), new Vector2(-360f, -12f), TextAlignmentOptions.Left, 24f);
-            SetTopLeftLayout(labelText.rectTransform);
-
-            slider = CreateSlider($"{label} Slider", rowRect, new Vector2(420f, 30f), new Vector2(-80f, -8f));
             slider.minValue = minValue;
             slider.maxValue = maxValue;
             slider.wholeNumbers = false;
+            slider.onValueChanged.RemoveAllListeners();
             slider.onValueChanged.AddListener(callback);
-
-            valueText = CreateText($"{label} Value", string.Empty, rowRect, new Vector2(120f, 42f), new Vector2(370f, -12f), TextAlignmentOptions.Center, 22f);
-            SetTopLeftLayout(valueText.rectTransform);
         }
 
-        private void CreateSelectionRow(
-            string label,
-            float anchoredY,
-            out TextMeshProUGUI valueText,
-            UnityAction primaryAction,
-            UnityAction secondaryAction)
+        private void BindButton(Button button, UnityEngine.Events.UnityAction callback)
         {
-            RectTransform rowRect = CreateRowRoot($"{label} Row", anchoredY);
-
-            TextMeshProUGUI labelText = CreateText($"{label} Label", label, rowRect, new Vector2(260f, 42f), new Vector2(-360f, -12f), TextAlignmentOptions.Left, 24f);
-            SetTopLeftLayout(labelText.rectTransform);
-
-            if (secondaryAction == null)
-            {
-                valueText = CreateText($"{label} Value", string.Empty, rowRect, new Vector2(120f, 42f), new Vector2(-150f, -12f), TextAlignmentOptions.Center, 22f);
-                SetTopLeftLayout(valueText.rectTransform);
-
-                CreateButton("Toggle Button", "TOGGLE", rowRect, new Vector2(180f, 52f), new Vector2(40f, -4f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), primaryAction);
-                return;
-            }
-
-            valueText = CreateText($"{label} Value", string.Empty, rowRect, new Vector2(170f, 42f), new Vector2(30f, -12f), TextAlignmentOptions.Center, 22f);
-            SetTopLeftLayout(valueText.rectTransform);
-
-            CreateButton("Previous Button", "<", rowRect, new Vector2(82f, 52f), new Vector2(-70f, -4f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), primaryAction);
-            CreateButton("Next Button", ">", rowRect, new Vector2(82f, 52f), new Vector2(210f, -4f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), secondaryAction);
-        }
-
-        private void CreateActionButton(string label, Vector2 anchoredPosition, UnityAction action)
-        {
-            CreateButton($"{label} Button", label, contentRoot, new Vector2(340f, 62f), anchoredPosition, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), action);
-        }
-
-        private RectTransform CreateRowRoot(string name, float anchoredY)
-        {
-            GameObject rowObject = new GameObject(name, typeof(RectTransform));
-            RectTransform rowRect = rowObject.GetComponent<RectTransform>();
-            rowRect.SetParent(contentRoot, false);
-            rowRect.anchorMin = new Vector2(0.5f, 1f);
-            rowRect.anchorMax = new Vector2(0.5f, 1f);
-            rowRect.pivot = new Vector2(0.5f, 1f);
-            rowRect.anchoredPosition = new Vector2(0f, anchoredY);
-            rowRect.sizeDelta = new Vector2(920f, 78f);
-            return rowRect;
-        }
-
-        private Button CreateButton(
-            string name,
-            string label,
-            RectTransform parent,
-            Vector2 size,
-            Vector2 anchoredPosition,
-            Vector2 anchorMin,
-            Vector2 anchorMax,
-            Vector2 pivot,
-            UnityAction action)
-        {
-            GameObject buttonObject = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
-            RectTransform buttonRect = buttonObject.GetComponent<RectTransform>();
-            Image image = buttonObject.GetComponent<Image>();
-            Button button = buttonObject.GetComponent<Button>();
-
-            buttonRect.SetParent(parent, false);
-            buttonRect.anchorMin = anchorMin;
-            buttonRect.anchorMax = anchorMax;
-            buttonRect.pivot = pivot;
-            buttonRect.anchoredPosition = anchoredPosition;
-            buttonRect.sizeDelta = size;
-
-            image.color = new Color(0.22f, 0.22f, 0.22f, 1f);
-            button.targetGraphic = image;
-            button.onClick.AddListener(action);
-
-            TextMeshProUGUI buttonText = CreateText("Text (TMP)", label, buttonRect, new Vector2(-20f, -10f), Vector2.zero, TextAlignmentOptions.Center, 24f);
-            buttonText.rectTransform.anchorMin = Vector2.zero;
-            buttonText.rectTransform.anchorMax = Vector2.one;
-            buttonText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            buttonText.rectTransform.sizeDelta = new Vector2(-20f, -10f);
-
-            return button;
-        }
-
-        private Slider CreateSlider(string name, RectTransform parent, Vector2 size, Vector2 anchoredPosition)
-        {
-            GameObject sliderObject = new GameObject(name, typeof(RectTransform), typeof(Slider));
-            RectTransform sliderRect = sliderObject.GetComponent<RectTransform>();
-            Slider slider = sliderObject.GetComponent<Slider>();
-
-            sliderRect.SetParent(parent, false);
-            sliderRect.anchorMin = new Vector2(0f, 1f);
-            sliderRect.anchorMax = new Vector2(0f, 1f);
-            sliderRect.pivot = new Vector2(0f, 1f);
-            sliderRect.anchoredPosition = anchoredPosition;
-            sliderRect.sizeDelta = size;
-
-            GameObject background = new GameObject("Background", typeof(RectTransform), typeof(Image));
-            RectTransform backgroundRect = background.GetComponent<RectTransform>();
-            Image backgroundImage = background.GetComponent<Image>();
-            backgroundRect.SetParent(sliderRect, false);
-            backgroundRect.anchorMin = new Vector2(0f, 0.25f);
-            backgroundRect.anchorMax = new Vector2(1f, 0.75f);
-            backgroundRect.offsetMin = Vector2.zero;
-            backgroundRect.offsetMax = Vector2.zero;
-            backgroundImage.color = new Color(0.22f, 0.22f, 0.22f, 1f);
-
-            GameObject fillArea = new GameObject("Fill Area", typeof(RectTransform));
-            RectTransform fillAreaRect = fillArea.GetComponent<RectTransform>();
-            fillAreaRect.SetParent(sliderRect, false);
-            fillAreaRect.anchorMin = Vector2.zero;
-            fillAreaRect.anchorMax = Vector2.one;
-            fillAreaRect.offsetMin = new Vector2(10f, 0f);
-            fillAreaRect.offsetMax = new Vector2(-10f, 0f);
-
-            GameObject fill = new GameObject("Fill", typeof(RectTransform), typeof(Image));
-            RectTransform fillRect = fill.GetComponent<RectTransform>();
-            Image fillImage = fill.GetComponent<Image>();
-            fillRect.SetParent(fillAreaRect, false);
-            fillRect.anchorMin = new Vector2(0f, 0f);
-            fillRect.anchorMax = new Vector2(1f, 1f);
-            fillRect.offsetMin = Vector2.zero;
-            fillRect.offsetMax = Vector2.zero;
-            fillImage.color = Color.red;
-
-            GameObject handleArea = new GameObject("Handle Slide Area", typeof(RectTransform));
-            RectTransform handleAreaRect = handleArea.GetComponent<RectTransform>();
-            handleAreaRect.SetParent(sliderRect, false);
-            handleAreaRect.anchorMin = Vector2.zero;
-            handleAreaRect.anchorMax = Vector2.one;
-            handleAreaRect.offsetMin = new Vector2(10f, 0f);
-            handleAreaRect.offsetMax = new Vector2(-10f, 0f);
-
-            GameObject handle = new GameObject("Handle", typeof(RectTransform), typeof(Image));
-            RectTransform handleRect = handle.GetComponent<RectTransform>();
-            Image handleImage = handle.GetComponent<Image>();
-            handleRect.SetParent(handleAreaRect, false);
-            handleRect.sizeDelta = new Vector2(20f, 40f);
-            handleImage.color = Color.red;
-
-            slider.fillRect = fillRect;
-            slider.handleRect = handleRect;
-            slider.targetGraphic = handleImage;
-            slider.direction = Slider.Direction.LeftToRight;
-
-            return slider;
-        }
-
-        private TextMeshProUGUI CreateText(
-            string name,
-            string value,
-            RectTransform parent,
-            Vector2 size,
-            Vector2 anchoredPosition,
-            TextAlignmentOptions alignment,
-            float fontSize)
-        {
-            GameObject textObject = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
-            RectTransform textRect = textObject.GetComponent<RectTransform>();
-            TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
-
-            textRect.SetParent(parent, false);
-            textRect.sizeDelta = size;
-            textRect.anchoredPosition = anchoredPosition;
-
-            text.font = TMP_Settings.defaultFontAsset;
-            text.fontSharedMaterial = text.font != null ? text.font.material : null;
-            text.text = value;
-            text.fontSize = fontSize;
-            text.color = new Color(1f, 0.8272578f, 0f, 1f);
-            text.alignment = alignment;
-            text.textWrappingMode = TextWrappingModes.NoWrap;
-
-            return text;
-        }
-
-        private void ClearChildren(RectTransform parent)
-        {
-            for (int i = parent.childCount - 1; i >= 0; i--)
-            {
-                Destroy(parent.GetChild(i).gameObject);
-            }
-        }
-
-        private void ApplyButtonColorsToChildren(RectTransform parent, ColorBlock colors)
-        {
-            Button[] buttons = parent.GetComponentsInChildren<Button>(true);
-
-            for (int i = 0; i < buttons.Length; i++)
-            {
-                buttons[i].colors = colors;
-            }
-        }
-
-        private void CopySliderVisuals(Slider template, Slider target)
-        {
-            if (template == null || target == null)
+            if (button == null)
                 return;
 
-            Image templateBackground = template.GetComponentInChildren<Image>(true);
-            Image[] targetImages = target.GetComponentsInChildren<Image>(true);
-
-            if (templateBackground != null && targetImages.Length > 0)
-                targetImages[0].color = templateBackground.color;
-        }
-
-        private void SetTopLeftLayout(RectTransform rectTransform)
-        {
-            rectTransform.anchorMin = new Vector2(0f, 1f);
-            rectTransform.anchorMax = new Vector2(0f, 1f);
-            rectTransform.pivot = new Vector2(0f, 1f);
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(callback);
         }
 
         private void SetSliderWithoutNotify(Slider slider, float value)
@@ -380,7 +161,12 @@ namespace baodeag
 
         private string GetPercentLabel(float value)
         {
-            return $"{Mathf.RoundToInt(value * 100f)}%";
+            return $"{Mathf.RoundToInt(Mathf.Clamp01(value) * 100f)}%";
+        }
+
+        private float NormalizeCameraSensitivity(float value)
+        {
+            return Mathf.InverseLerp(0.3f, 2f, value);
         }
 
         private void ApplySettingsAndRefresh(Action<GameSettingsManager> applyAction)
