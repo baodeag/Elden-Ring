@@ -61,7 +61,7 @@ namespace baodeag
             SetText(masterVolumeValueText, GetPercentLabel(settings.masterVolume));
             SetText(musicVolumeValueText, GetPercentLabel(settings.musicVolume));
             SetText(sfxVolumeValueText, GetPercentLabel(settings.sfxVolume));
-            SetText(cameraSensitivityValueText, GetPercentLabel(NormalizeCameraSensitivity(settings.cameraSensitivity)));
+            SetText(cameraSensitivityValueText, $"x{settings.cameraSensitivity:0.00}");
             SetText(fullscreenValueText, settings.isFullscreen ? "ON" : "OFF");
             SetText(resolutionValueText, settings.GetCurrentResolutionLabel());
             SetText(qualityValueText, settings.GetCurrentQualityLabel());
@@ -191,11 +191,6 @@ namespace baodeag
         private string GetPercentLabel(float value)
         {
             return $"{Mathf.RoundToInt(Mathf.Clamp01(value) * 100f)}%";
-        }
-
-        private float NormalizeCameraSensitivity(float value)
-        {
-            return Mathf.InverseLerp(0.3f, 2f, value);
         }
 
         private void ApplySettingsAndRefresh(Action<GameSettingsManager> applyAction)

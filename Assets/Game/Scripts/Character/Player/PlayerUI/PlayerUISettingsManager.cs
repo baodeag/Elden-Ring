@@ -130,25 +130,25 @@ namespace baodeag
             if (listenersBound)
                 return;
 
-            BindSlider(masterVolumeSlider, value =>
+            BindSlider(masterVolumeSlider, 0f, 1f, value =>
             {
                 GameSettingsManager.Instance.SetMasterVolume(value);
                 Refresh();
             });
 
-            BindSlider(musicVolumeSlider, value =>
+            BindSlider(musicVolumeSlider, 0f, 1f, value =>
             {
                 GameSettingsManager.Instance.SetMusicVolume(value);
                 Refresh();
             });
 
-            BindSlider(sfxVolumeSlider, value =>
+            BindSlider(sfxVolumeSlider, 0f, 1f, value =>
             {
                 GameSettingsManager.Instance.SetSFXVolume(value);
                 Refresh();
             });
 
-            BindSlider(cameraSensitivitySlider, value =>
+            BindSlider(cameraSensitivitySlider, 0.3f, 2f, value =>
             {
                 GameSettingsManager.Instance.SetCameraSensitivity(value);
                 Refresh();
@@ -195,11 +195,14 @@ namespace baodeag
             listenersBound = true;
         }
 
-        private void BindSlider(Slider slider, UnityEngine.Events.UnityAction<float> callback)
+        private void BindSlider(Slider slider, float minValue, float maxValue, UnityEngine.Events.UnityAction<float> callback)
         {
             if (slider == null)
                 return;
 
+            slider.minValue = minValue;
+            slider.maxValue = maxValue;
+            slider.wholeNumbers = false;
             slider.onValueChanged.RemoveAllListeners();
             slider.onValueChanged.AddListener(callback);
         }
