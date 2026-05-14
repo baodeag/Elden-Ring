@@ -13,14 +13,22 @@ namespace baodeag
             Sell
         }
 
+        private static readonly Color EntryNormalColor = new Color(0.08f, 0.08f, 0.08f, 1f);
+        private static readonly Color EntrySelectedColor = new Color(0.28f, 0.18f, 0.08f, 1f);
+
         private ShopInventory currentShopInventory;
         private ShopInventory runtimeGlobalShopInventory;
         private ShopViewMode currentViewMode = ShopViewMode.Buy;
         private Item currentSelectedItem;
         private readonly List<Button> shopEntryButtons = new List<Button>();
+        private readonly Dictionary<Button, Item> shopEntryItems = new Dictionary<Button, Item>();
+        private readonly Dictionary<Button, Image[]> shopEntryColumnImages = new Dictionary<Button, Image[]>();
+        private readonly List<GameObject> spawnedColumnEntries = new List<GameObject>();
 
         [Header("Shop UI")]
         [SerializeField] private RectTransform listContentRoot;
+        [SerializeField] private RectTransform stockContentRoot;
+        [SerializeField] private RectTransform priceContentRoot;
         [SerializeField] private ScrollRect listScrollRect;
         [SerializeField] private TextMeshProUGUI titleText;
         [SerializeField] private TextMeshProUGUI runeText;
@@ -30,14 +38,9 @@ namespace baodeag
         [SerializeField] private Button actionButton;
         [SerializeField] private Button closeButton;
         [SerializeField] private Button entryButtonTemplate;
-
-        private TextMeshProUGUI itemColumnHeaderText;
-        private TextMeshProUGUI descriptionColumnHeaderText;
-        private Image headerBottomLineImage;
-        private RectTransform headerContainer;
-        private RectTransform itemColumnContainer;
-        private RectTransform descriptionColumnContainer;
-        private RectTransform actionPanelContainer;
+        [SerializeField] private Image stockEntryTemplate;
+        [SerializeField] private Image priceEntryTemplate;
+        [SerializeField] private TextMeshProUGUI stockHeaderText;
 
         private void Awake()
         {
@@ -80,9 +83,18 @@ namespace baodeag
             if (currentShopInventory == null || PlayerUIManager.instance == null || PlayerUIManager.instance.localPlayer == null)
                 return;
 
-            titleText.text = currentShopInventory.shopName.ToUpper();
-            runeText.text = "RUNES: " + PlayerUIManager.instance.localPlayer.playerShopManager.GetCurrentRunes()
-                + " | TIER: " + currentShopInventory.GetEffectiveShopProgressionTier();
+            if (titleText != null)
+                titleText.text = currentShopInventory.shopName.ToUpper();
+
+            if (runeText != null)
+            {
+                runeText.text = "RUNES: " + PlayerUIManager.instance.localPlayer.playerShopManager.GetCurrentRunes()
+                    + " | TIER: " + currentShopInventory.GetEffectiveShopProgressionTier();
+            }
+
+            if (stockHeaderText != null)
+                stockHeaderText.text = currentViewMode == ShopViewMode.Buy ? "STOCK" : "OWNED";
+
             SetButtonLabel(modeButton, currentViewMode == ShopViewMode.Buy ? "VIEW: BUY" : "VIEW: SELL");
             SetButtonLabel(actionButton, currentViewMode == ShopViewMode.Buy ? "BUY" : "SELL");
 
@@ -107,6 +119,7 @@ namespace baodeag
 
                 Button entryButton = CreateEntryButton(item);
                 shopEntryButtons.Add(entryButton);
+                shopEntryItems[entryButton] = item;
 
                 if (currentSelectedItem == null)
                     currentSelectedItem = item;
@@ -115,6 +128,7 @@ namespace baodeag
             if (shopEntryButtons.Count == 0)
                 currentSelectedItem = null;
 
+            UpdateEntrySelectionVisuals();
             ResetScrollPosition();
         }
 
@@ -139,36 +153,68 @@ namespace baodeag
             GameObject buttonObject = Instantiate(entryButtonTemplate.gameObject, listContentRoot);
             buttonObject.name = item.itemName + " Shop Button";
             buttonObject.SetActive(true);
+            spawnedColumnEntries.Add(buttonObject);
 
             RectTransform rect = buttonObject.GetComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(0f, 64f);
-
-            SetButtonLabel(buttonObject.GetComponent<Button>(), BuildEntryLabel(item));
+            rect.sizeDelta = new Vector2(0f, 72f);
 
             Button button = buttonObject.GetComponent<Button>();
+            Image itemPanelImage = FindEntryImage(buttonObject.transform, "Item Panel");
+            GameObject stockObject = CreatePassiveEntry(stockEntryTemplate, stockContentRoot, item.itemName + " Stock");
+            GameObject priceObject = CreatePassiveEntry(priceEntryTemplate, priceContentRoot, item.itemName + " Price");
+
+            BindEntryButton(buttonObject.transform, stockObject != null ? stockObject.transform : null, priceObject != null ? priceObject.transform : null, item);
+            shopEntryColumnImages[button] = new[]
+            {
+                itemPanelImage,
+                stockObject != null ? stockObject.GetComponent<Image>() : null,
+                priceObject != null ? priceObject.GetComponent<Image>() : null
+            };
+
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() =>
             {
                 currentSelectedItem = item;
                 RefreshSelectionDetails();
+                UpdateEntrySelectionVisuals();
             });
 
             return button;
         }
 
-        private string BuildEntryLabel(Item item)
+        private void BindEntryButton(Transform buttonTransform, Transform stockTransform, Transform priceTransform, Item item)
         {
+            TextMeshProUGUI nameText = FindEntryText(buttonTransform, "Item Name Text");
+            TextMeshProUGUI priceText = FindEntryText(priceTransform, "Item Price Text");
+            TextMeshProUGUI stateText = FindEntryText(stockTransform, "Item State Text");
+
+            if (nameText != null)
+                nameText.text = item.itemName;
+
             if (currentViewMode == ShopViewMode.Buy)
             {
                 int price = GetBuyPrice(item);
-                int owned = PlayerUIManager.instance.localPlayer.playerShopManager.GetOwnedAmount(item);
                 int remainingStock = currentShopInventory != null ? currentShopInventory.GetRemainingQuantity(item) : -1;
-                string stockText = remainingStock >= 0 ? $" | stock {remainingStock}" : string.Empty;
-                return $"{item.itemName} | {price} runes | owned {owned}{stockText}";
+
+                if (priceText != null)
+                    priceText.text = price + " runes";
+
+                if (stateText != null)
+                    stateText.text = remainingStock >= 0 ? remainingStock.ToString() : "--";
+
+                return;
             }
 
             int sellPrice = currentShopInventory != null ? currentShopInventory.GetSellPrice(item) : Mathf.Max(0, item.sellPrice);
-            return $"{item.itemName} | {sellPrice} runes";
+
+            if (priceText != null)
+                priceText.text = sellPrice + " runes";
+
+            if (stateText != null)
+            {
+                int owned = PlayerUIManager.instance.localPlayer.playerShopManager.GetOwnedAmount(item);
+                stateText.text = owned.ToString();
+            }
         }
 
         private int GetBuyPrice(Item item)
@@ -183,8 +229,12 @@ namespace baodeag
         {
             if (currentSelectedItem == null)
             {
-                itemDescriptionText.text = "No item selected.";
-                itemMetaText.text = string.Empty;
+                if (itemDescriptionText != null)
+                    itemDescriptionText.text = "No item selected.";
+
+                if (itemMetaText != null)
+                    itemMetaText.text = string.Empty;
+
                 return;
             }
 
@@ -196,12 +246,18 @@ namespace baodeag
                 ? currentShopInventory.GetRemainingQuantity(currentSelectedItem)
                 : -1;
 
-            itemDescriptionText.text = string.IsNullOrWhiteSpace(currentSelectedItem.itemDescription)
-                ? currentSelectedItem.itemName
-                : currentSelectedItem.itemDescription;
+            if (itemDescriptionText != null)
+            {
+                itemDescriptionText.text = string.IsNullOrWhiteSpace(currentSelectedItem.itemDescription)
+                    ? currentSelectedItem.itemName
+                    : currentSelectedItem.itemDescription;
+            }
 
-            string stockLine = remainingStock >= 0 ? $"\nStock: {remainingStock}" : string.Empty;
-            itemMetaText.text = $"Item: {currentSelectedItem.itemName}\nPrice: {price}\nOwned: {owned}{stockLine}";
+            if (itemMetaText != null)
+            {
+                string stockLine = remainingStock >= 0 ? $"\nStock: {remainingStock}" : string.Empty;
+                itemMetaText.text = $"Item: {currentSelectedItem.itemName}\nPrice: {price}\nOwned: {owned}{stockLine}";
+            }
         }
 
         private void ToggleViewMode()
@@ -240,42 +296,22 @@ namespace baodeag
                 PlayerUIManager.instance.PlayUnableToContinueSFX();
             }
         }
+
         private void ConfigureStaticUI()
         {
-            EnsureInfoTexts();
-            ApplyShopLayout();
+            ResolveRuntimeReferences();
 
-            if (listContentRoot != null)
-            {
-                VerticalLayoutGroup layoutGroup = listContentRoot.GetComponent<VerticalLayoutGroup>();
-
-                if (layoutGroup == null)
-                    layoutGroup = listContentRoot.gameObject.AddComponent<VerticalLayoutGroup>();
-
-                layoutGroup.spacing = 10f;
-                layoutGroup.padding = new RectOffset(12, 12, 12, 12);
-                layoutGroup.childAlignment = TextAnchor.UpperCenter;
-                layoutGroup.childControlWidth = true;
-                layoutGroup.childControlHeight = false;
-                layoutGroup.childForceExpandWidth = true;
-                layoutGroup.childForceExpandHeight = false;
-
-                ContentSizeFitter fitter = listContentRoot.GetComponent<ContentSizeFitter>();
-
-                if (fitter == null)
-                    fitter = listContentRoot.gameObject.AddComponent<ContentSizeFitter>();
-
-                fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-                fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            }
+            ConfigureColumnContentRoot(listContentRoot, 12, 12);
+            ConfigureColumnContentRoot(stockContentRoot, 8, 8);
+            ConfigureColumnContentRoot(priceContentRoot, 8, 8);
 
             if (listScrollRect != null)
             {
                 listScrollRect.horizontal = false;
                 listScrollRect.vertical = true;
                 listScrollRect.scrollSensitivity = 24f;
-                listScrollRect.verticalScrollbar = null;
-                listScrollRect.verticalScrollbarSpacing = 0f;
+                listScrollRect.onValueChanged.RemoveListener(SyncAuxiliaryColumnScrolls);
+                listScrollRect.onValueChanged.AddListener(SyncAuxiliaryColumnScrolls);
             }
 
             if (modeButton != null)
@@ -296,20 +332,7 @@ namespace baodeag
                 closeButton.onClick.AddListener(() => CloseMenuAfterFixedFrame());
             }
 
-            if (entryButtonTemplate != null)
-            {
-                entryButtonTemplate.gameObject.SetActive(false);
-                TextMeshProUGUI buttonText = entryButtonTemplate.GetComponentInChildren<TextMeshProUGUI>(true);
-
-                if (buttonText != null)
-                {
-                    buttonText.enableAutoSizing = true;
-                    buttonText.fontSizeMin = 16f;
-                    buttonText.fontSizeMax = 24f;
-                    buttonText.textWrappingMode = TextWrappingModes.NoWrap;
-                    buttonText.overflowMode = TextOverflowModes.Ellipsis;
-                }
-            }
+            ConfigureEntryTemplate();
 
             if (itemDescriptionText != null)
             {
@@ -318,223 +341,165 @@ namespace baodeag
             }
 
             if (itemMetaText != null)
-            {
                 itemMetaText.textWrappingMode = TextWrappingModes.Normal;
-            }
         }
 
-        private void EnsureInfoTexts()
+        private void ResolveRuntimeReferences()
         {
-            RectTransform menuRoot = menu != null ? menu.transform as RectTransform : null;
-
-            if (menuRoot == null)
+            if (menu == null)
                 return;
 
-            TextMeshProUGUI template = entryButtonTemplate != null
-                ? entryButtonTemplate.GetComponentInChildren<TextMeshProUGUI>(true)
-                : GetComponentInChildren<TextMeshProUGUI>(true);
+            Transform root = menu.transform;
 
-            if (template == null)
-                return;
-
-            if (titleText == null)
-                titleText = CreateInfoText("Shop Title Text", menuRoot, template, new Vector2(0f, -44f), new Vector2(980f, 50f), new Vector2(0.5f, 1f), 34f, TextAlignmentOptions.Center);
-
-            if (runeText == null)
-                runeText = CreateInfoText("Shop Rune Text", menuRoot, template, new Vector2(40f, -104f), new Vector2(380f, 42f), new Vector2(0f, 1f), 24f, TextAlignmentOptions.Left);
-
-            if (itemMetaText == null)
-                itemMetaText = CreateInfoText("Shop Item Meta Text", menuRoot, template, new Vector2(-40f, -124f), new Vector2(380f, 110f), new Vector2(1f, 1f), 22f, TextAlignmentOptions.TopLeft);
-
-            if (itemDescriptionText == null)
-                itemDescriptionText = CreateInfoText("Shop Description Text", menuRoot, template, new Vector2(-40f, -252f), new Vector2(380f, 212f), new Vector2(1f, 1f), 20f, TextAlignmentOptions.TopLeft);
+            titleText = titleText != null ? titleText : FindText(root, "Shop Title Text");
+            runeText = runeText != null ? runeText : FindText(root, "Shop Rune Text");
+            itemMetaText = itemMetaText != null ? itemMetaText : FindText(root, "Shop Item Meta Text");
+            itemDescriptionText = itemDescriptionText != null ? itemDescriptionText : FindText(root, "Shop Description Text");
+            stockHeaderText = stockHeaderText != null ? stockHeaderText : FindText(root, "Shop Stock Header Text");
+            listContentRoot = listContentRoot != null ? listContentRoot : FindRect(root, "Shop List Content");
+            stockContentRoot = stockContentRoot != null ? stockContentRoot : FindRect(root, "Shop Stock Content");
+            priceContentRoot = priceContentRoot != null ? priceContentRoot : FindRect(root, "Shop Price Content");
+            stockEntryTemplate = stockEntryTemplate != null ? stockEntryTemplate : FindImage(root, "Stock Panel");
+            priceEntryTemplate = priceEntryTemplate != null ? priceEntryTemplate : FindImage(root, "Price Panel");
         }
 
-        private void ApplyShopLayout()
+        private void ConfigureEntryTemplate()
         {
-            RectTransform menuRoot = menu != null ? menu.transform as RectTransform : null;
-
-            if (menuRoot == null)
+            if (entryButtonTemplate == null)
                 return;
 
-            menuRoot.sizeDelta = new Vector2(900f, 900f);
+            entryButtonTemplate.gameObject.SetActive(false);
 
-            EnsureLayoutContainers(menuRoot);
-            EnsureColumnDecor(menuRoot);
+            Image buttonImage = entryButtonTemplate.GetComponent<Image>();
 
-            if (titleText != null)
-                ConfigureTextRect(titleText.rectTransform, headerContainer, new Vector2(0f, -10f), new Vector2(700f, 52f), new Vector2(0.5f, 1f), TextAlignmentOptions.Center, 34f);
+            if (buttonImage != null)
+                buttonImage.color = new Color(0f, 0f, 0f, 0f);
 
-            if (runeText != null)
-                ConfigureTextRect(runeText.rectTransform, headerContainer, new Vector2(-10f, -54f), new Vector2(280f, 42f), new Vector2(1f, 1f), TextAlignmentOptions.Right, 28f);
+            Transform stockPanel = FindChild(entryButtonTemplate.transform, "Stock Panel");
+            Transform pricePanel = FindChild(entryButtonTemplate.transform, "Price Panel");
+            RectTransform itemPanelRect = FindRect(entryButtonTemplate.transform, "Item Panel");
 
-            if (itemMetaText != null)
-                ConfigureTextRect(itemMetaText.rectTransform, descriptionColumnContainer, new Vector2(0f, -40f), new Vector2(230f, 110f), new Vector2(0f, 1f), TextAlignmentOptions.TopLeft, 21f);
+            if (stockPanel != null)
+                stockPanel.gameObject.SetActive(false);
 
-            if (itemDescriptionText != null)
-                ConfigureTextRect(itemDescriptionText.rectTransform, descriptionColumnContainer, new Vector2(0f, -150f), new Vector2(230f, 250f), new Vector2(0f, 1f), TextAlignmentOptions.TopLeft, 19f);
+            if (pricePanel != null)
+                pricePanel.gameObject.SetActive(false);
 
-            RectTransform viewportRect = listScrollRect != null ? listScrollRect.viewport : null;
-
-            if (viewportRect != null)
+            if (itemPanelRect != null)
             {
-                viewportRect.SetParent(itemColumnContainer, false);
-                viewportRect.anchorMin = new Vector2(0f, 0f);
-                viewportRect.anchorMax = new Vector2(1f, 1f);
-                viewportRect.pivot = new Vector2(0.5f, 0.5f);
-                viewportRect.anchoredPosition = Vector2.zero;
-                viewportRect.sizeDelta = new Vector2(-22f, 0f);
+                itemPanelRect.anchorMin = new Vector2(0f, 0f);
+                itemPanelRect.anchorMax = new Vector2(1f, 1f);
+                itemPanelRect.anchoredPosition = Vector2.zero;
+                itemPanelRect.sizeDelta = new Vector2(-8f, -8f);
+                itemPanelRect.pivot = new Vector2(0.5f, 0.5f);
             }
 
-            if (listContentRoot != null)
+            ConfigureEntryText(FindEntryText(entryButtonTemplate.transform, "Item Name Text"), 24f, TextAlignmentOptions.Left);
+
+            Image itemPanelImage = FindEntryImage(entryButtonTemplate.transform, "Item Panel");
+
+            if (itemPanelImage != null)
+                itemPanelImage.color = EntryNormalColor;
+
+            if (stockEntryTemplate != null)
             {
-                listContentRoot.anchorMin = new Vector2(0f, 1f);
-                listContentRoot.anchorMax = new Vector2(1f, 1f);
-                listContentRoot.pivot = new Vector2(0.5f, 1f);
-                listContentRoot.anchoredPosition = Vector2.zero;
-                listContentRoot.sizeDelta = new Vector2(0f, 0f);
+                stockEntryTemplate.gameObject.SetActive(false);
+                ConfigureEntryText(FindEntryText(stockEntryTemplate.transform, "Item State Text"), 18f, TextAlignmentOptions.Center);
             }
 
-            ConfigureButtonRect(modeButton, actionPanelContainer, new Vector2(0f, -8f), "VIEW: BUY");
-            ConfigureButtonRect(actionButton, actionPanelContainer, new Vector2(0f, -78f), "BUY");
-            ConfigureButtonRect(closeButton, actionPanelContainer, new Vector2(0f, -148f), "CLOSE");
-            DisableShopScrollbarVisual();
-        }
-
-        private void EnsureLayoutContainers(RectTransform menuRoot)
-        {
-            headerContainer = EnsureContainer(menuRoot, headerContainer, "Shop Header Container", new Vector2(40f, -20f), new Vector2(820f, 100f), new Vector2(0f, 1f));
-            itemColumnContainer = EnsureContainer(menuRoot, itemColumnContainer, "Shop Item Column Container", new Vector2(40f, -160f), new Vector2(520f, 700f), new Vector2(0f, 1f));
-            descriptionColumnContainer = EnsureContainer(menuRoot, descriptionColumnContainer, "Shop Description Column Container", new Vector2(590f, -160f), new Vector2(240f, 460f), new Vector2(0f, 1f));
-            actionPanelContainer = EnsureContainer(menuRoot, actionPanelContainer, "Shop Action Panel Container", new Vector2(590f, -630f), new Vector2(240f, 190f), new Vector2(0f, 1f));
-        }
-
-        private RectTransform EnsureContainer(RectTransform parent, RectTransform currentContainer, string objectName, Vector2 anchoredPosition, Vector2 sizeDelta, Vector2 anchor)
-        {
-            if (currentContainer == null)
+            if (priceEntryTemplate != null)
             {
-                GameObject containerObject = new GameObject(objectName, typeof(RectTransform));
-                currentContainer = containerObject.GetComponent<RectTransform>();
-                currentContainer.SetParent(parent, false);
+                priceEntryTemplate.gameObject.SetActive(false);
+                ConfigureEntryText(FindEntryText(priceEntryTemplate.transform, "Item Price Text"), 22f, TextAlignmentOptions.Right);
             }
-
-            currentContainer.anchorMin = anchor;
-            currentContainer.anchorMax = anchor;
-            currentContainer.pivot = anchor;
-            currentContainer.anchoredPosition = anchoredPosition;
-            currentContainer.sizeDelta = sizeDelta;
-            return currentContainer;
         }
 
-        private void DisableShopScrollbarVisual()
+        private void ConfigureEntryText(TextMeshProUGUI text, float fontSize, TextAlignmentOptions alignment)
         {
-            Transform scrollbarTransform = menu != null ? menu.transform.Find("Shop Scrollbar Vertical") : null;
-
-            if (scrollbarTransform != null)
-                scrollbarTransform.gameObject.SetActive(false);
-        }
-
-        private void EnsureColumnDecor(RectTransform menuRoot)
-        {
-            TextMeshProUGUI template = entryButtonTemplate != null
-                ? entryButtonTemplate.GetComponentInChildren<TextMeshProUGUI>(true)
-                : GetComponentInChildren<TextMeshProUGUI>(true);
-
-            if (template == null)
+            if (text == null)
                 return;
 
-            if (itemColumnHeaderText == null)
-                itemColumnHeaderText = CreateInfoText("Shop Item Header Text", menuRoot, template, new Vector2(34f, -100f), new Vector2(520f, 34f), new Vector2(0f, 1f), 24f, TextAlignmentOptions.Left);
-
-            if (descriptionColumnHeaderText == null)
-                descriptionColumnHeaderText = CreateInfoText("Shop Description Header Text", menuRoot, template, new Vector2(-34f, -100f), new Vector2(250f, 34f), new Vector2(1f, 1f), 24f, TextAlignmentOptions.Left);
-
-            itemColumnHeaderText.text = "ITEM";
-            descriptionColumnHeaderText.text = "DESCRIPTION";
-
-            itemColumnHeaderText.rectTransform.SetParent(itemColumnContainer, false);
-            descriptionColumnHeaderText.rectTransform.SetParent(descriptionColumnContainer, false);
-            ConfigureTextRect(itemColumnHeaderText.rectTransform, headerContainer, new Vector2(140f, -82f), new Vector2(220f, 32f), new Vector2(0f, 1f), TextAlignmentOptions.Center, 24f);
-            ConfigureTextRect(descriptionColumnHeaderText.rectTransform, headerContainer, new Vector2(-120f, -82f), new Vector2(220f, 32f), new Vector2(1f, 1f), TextAlignmentOptions.Center, 24f);
-
-            headerBottomLineImage = EnsureLineImage(menuRoot, headerBottomLineImage, "Shop Header Bottom Line");
-            RectTransform headerBottomRect = headerBottomLineImage.rectTransform;
-            headerBottomRect.anchorMin = new Vector2(0f, 1f);
-            headerBottomRect.anchorMax = new Vector2(0f, 1f);
-            headerBottomRect.pivot = new Vector2(0f, 1f);
-            headerBottomRect.anchoredPosition = new Vector2(40f, -130f);
-            headerBottomRect.sizeDelta = new Vector2(820f, 4f);
-
-        }
-
-        private Image EnsureLineImage(RectTransform parent, Image currentImage, string objectName)
-        {
-            if (currentImage != null)
-                return currentImage;
-
-            GameObject lineObject = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-            RectTransform lineRect = lineObject.GetComponent<RectTransform>();
-            lineRect.SetParent(parent, false);
-
-            Image lineImage = lineObject.GetComponent<Image>();
-            lineImage.color = new Color(1f, 1f, 1f, 0.22f);
-            return lineImage;
-        }
-
-        private void ConfigureTextRect(RectTransform rectTransform, RectTransform parent, Vector2 anchoredPosition, Vector2 sizeDelta, Vector2 anchor, TextAlignmentOptions alignment, float fontSize)
-        {
-            rectTransform.SetParent(parent, false);
-            rectTransform.anchorMin = anchor;
-            rectTransform.anchorMax = anchor;
-            rectTransform.pivot = anchor;
-            rectTransform.anchoredPosition = anchoredPosition;
-            rectTransform.sizeDelta = sizeDelta;
-
-            TextMeshProUGUI text = rectTransform.GetComponent<TextMeshProUGUI>();
-
-            if (text != null)
-            {
-                text.alignment = alignment;
-                text.fontSize = fontSize;
-            }
-        }
-
-        private void ConfigureButtonRect(Button button, RectTransform parent, Vector2 anchoredPosition, string label)
-        {
-            if (button == null)
-                return;
-
-            RectTransform rectTransform = button.GetComponent<RectTransform>();
-            rectTransform.SetParent(parent, false);
-            rectTransform.anchorMin = new Vector2(0f, 1f);
-            rectTransform.anchorMax = new Vector2(0f, 1f);
-            rectTransform.pivot = new Vector2(0f, 1f);
-            rectTransform.anchoredPosition = anchoredPosition;
-            rectTransform.sizeDelta = new Vector2(240f, 54f);
-
-            SetButtonLabel(button, label);
-        }
-
-        private TextMeshProUGUI CreateInfoText(string objectName, RectTransform parent, TextMeshProUGUI template, Vector2 anchoredPosition, Vector2 sizeDelta, Vector2 anchor, float fontSize, TextAlignmentOptions alignment)
-        {
-            GameObject textObject = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
-            RectTransform rectTransform = textObject.GetComponent<RectTransform>();
-            rectTransform.SetParent(parent, false);
-            rectTransform.anchorMin = anchor;
-            rectTransform.anchorMax = anchor;
-            rectTransform.pivot = anchor;
-            rectTransform.anchoredPosition = anchoredPosition;
-            rectTransform.sizeDelta = sizeDelta;
-
-            TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
-            text.font = template.font;
-            text.fontSharedMaterial = template.fontSharedMaterial;
-            text.fontSize = fontSize;
-            text.color = template.color;
             text.alignment = alignment;
-            text.textWrappingMode = TextWrappingModes.Normal;
-            text.text = string.Empty;
-            return text;
+            text.fontSize = fontSize;
+            text.enableAutoSizing = false;
+            text.textWrappingMode = TextWrappingModes.NoWrap;
+            text.overflowMode = TextOverflowModes.Ellipsis;
+        }
+
+        private static TextMeshProUGUI FindText(Transform root, string childName)
+        {
+            if (root == null)
+                return null;
+
+            Transform[] children = root.GetComponentsInChildren<Transform>(true);
+
+            for (int i = 0; i < children.Length; i++)
+            {
+                if (children[i] != null && children[i].name == childName)
+                    return children[i].GetComponent<TextMeshProUGUI>();
+            }
+
+            return null;
+        }
+
+        private static RectTransform FindRect(Transform root, string childName)
+        {
+            Transform child = FindChild(root, childName);
+            return child != null ? child.GetComponent<RectTransform>() : null;
+        }
+
+        private static Image FindImage(Transform root, string childName)
+        {
+            Transform child = FindChild(root, childName);
+            return child != null ? child.GetComponent<Image>() : null;
+        }
+
+        private static TextMeshProUGUI FindEntryText(Transform root, string childName)
+        {
+            return FindText(root, childName);
+        }
+
+        private static Image FindEntryImage(Transform root, string childName)
+        {
+            return FindImage(root, childName);
+        }
+
+        private static Transform FindChild(Transform root, string childName)
+        {
+            if (root == null)
+                return null;
+
+            Transform[] children = root.GetComponentsInChildren<Transform>(true);
+
+            for (int i = 0; i < children.Length; i++)
+            {
+                if (children[i] != null && children[i].name == childName)
+                    return children[i];
+            }
+
+            return null;
+        }
+
+        private void UpdateEntrySelectionVisuals()
+        {
+            for (int i = 0; i < shopEntryButtons.Count; i++)
+            {
+                Button button = shopEntryButtons[i];
+
+                if (button == null)
+                    continue;
+
+                bool isSelected = shopEntryItems.TryGetValue(button, out Item item) && item == currentSelectedItem;
+
+                if (!shopEntryColumnImages.TryGetValue(button, out Image[] columnImages))
+                    continue;
+
+                for (int imageIndex = 0; imageIndex < columnImages.Length; imageIndex++)
+                {
+                    if (columnImages[imageIndex] != null)
+                        columnImages[imageIndex].color = isSelected ? EntrySelectedColor : EntryNormalColor;
+                }
+            }
         }
 
         private void ResetScrollPosition()
@@ -544,6 +509,7 @@ namespace baodeag
 
             Canvas.ForceUpdateCanvases();
             listScrollRect.verticalNormalizedPosition = 1f;
+            SyncAuxiliaryColumnScrolls(Vector2.zero);
         }
 
         private void SetButtonLabel(Button button, string label)
@@ -559,14 +525,84 @@ namespace baodeag
 
         private void ClearEntryButtons()
         {
-            for (int i = 0; i < shopEntryButtons.Count; i++)
+            for (int i = 0; i < spawnedColumnEntries.Count; i++)
             {
-                if (shopEntryButtons[i] != null && shopEntryButtons[i] != entryButtonTemplate)
-                    Destroy(shopEntryButtons[i].gameObject);
+                if (spawnedColumnEntries[i] != null
+                    && spawnedColumnEntries[i] != entryButtonTemplate.gameObject
+                    && (stockEntryTemplate == null || spawnedColumnEntries[i] != stockEntryTemplate.gameObject)
+                    && (priceEntryTemplate == null || spawnedColumnEntries[i] != priceEntryTemplate.gameObject))
+                {
+                    Destroy(spawnedColumnEntries[i]);
+                }
             }
 
+            spawnedColumnEntries.Clear();
             shopEntryButtons.Clear();
+            shopEntryItems.Clear();
+            shopEntryColumnImages.Clear();
             ResetScrollPosition();
+        }
+
+        private void ConfigureColumnContentRoot(RectTransform contentRoot, int leftPadding, int rightPadding)
+        {
+            if (contentRoot == null)
+                return;
+
+            VerticalLayoutGroup layoutGroup = contentRoot.GetComponent<VerticalLayoutGroup>();
+
+            if (layoutGroup == null)
+                layoutGroup = contentRoot.gameObject.AddComponent<VerticalLayoutGroup>();
+
+            layoutGroup.spacing = 10f;
+            layoutGroup.padding = new RectOffset(leftPadding, rightPadding, 12, 12);
+            layoutGroup.childAlignment = TextAnchor.UpperCenter;
+            layoutGroup.childControlWidth = true;
+            layoutGroup.childControlHeight = false;
+            layoutGroup.childForceExpandWidth = true;
+            layoutGroup.childForceExpandHeight = false;
+
+            ContentSizeFitter fitter = contentRoot.GetComponent<ContentSizeFitter>();
+
+            if (fitter == null)
+                fitter = contentRoot.gameObject.AddComponent<ContentSizeFitter>();
+
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        }
+
+        private GameObject CreatePassiveEntry(Image template, RectTransform parent, string objectName)
+        {
+            if (template == null || parent == null)
+                return null;
+
+            GameObject entryObject = Instantiate(template.gameObject, parent);
+            entryObject.name = objectName;
+            entryObject.SetActive(true);
+            spawnedColumnEntries.Add(entryObject);
+
+            RectTransform rect = entryObject.GetComponent<RectTransform>();
+
+            if (rect != null)
+                rect.sizeDelta = new Vector2(0f, 72f);
+
+            return entryObject;
+        }
+
+        private void SyncAuxiliaryColumnScrolls(Vector2 _)
+        {
+            if (listContentRoot == null)
+                return;
+
+            SyncContentPosition(stockContentRoot);
+            SyncContentPosition(priceContentRoot);
+        }
+
+        private void SyncContentPosition(RectTransform contentRoot)
+        {
+            if (contentRoot == null)
+                return;
+
+            contentRoot.anchoredPosition = listContentRoot.anchoredPosition;
         }
     }
 }

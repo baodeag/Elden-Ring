@@ -44,15 +44,15 @@ namespace baodeag
 
             audioSource = GetComponent<AudioSource>();
 
-            playerUIHudManager = GetComponentInChildren<PlayerUIHudManager>();
-            playerUIPopUpManager = GetComponentInChildren<PlayerUIPopUpManager>();
-            playerUICharacterMenuManager = GetComponentInChildren<PlayerUICharacterMenuManager>();
-            playerUIEquipmentManager = GetComponentInChildren<PlayerUIEquipmentManager>();
-            playerUISiteOfGraceManager = GetComponentInChildren<PlayerUISiteOfGraceManager>();
-            playerUITeleportLocationManager = GetComponentInChildren<PlayerUITeleportLocationManager>();
-            playerUILoadingScreenManager = GetComponentInChildren<PlayerUILoadingScreenManager>();
-            playerUILevelUpManager = GetComponentInChildren<PlayerUILevelUpManager>();
-            playerUIWeaponUpgradeManager = GetComponentInChildren<PlayerUIWeaponUpgradeManager>();
+            playerUIHudManager = GetComponentInChildren<PlayerUIHudManager>(true);
+            playerUIPopUpManager = GetComponentInChildren<PlayerUIPopUpManager>(true);
+            playerUICharacterMenuManager = GetComponentInChildren<PlayerUICharacterMenuManager>(true);
+            playerUIEquipmentManager = GetComponentInChildren<PlayerUIEquipmentManager>(true);
+            playerUISiteOfGraceManager = GetComponentInChildren<PlayerUISiteOfGraceManager>(true);
+            playerUITeleportLocationManager = GetComponentInChildren<PlayerUITeleportLocationManager>(true);
+            playerUILoadingScreenManager = GetComponentInChildren<PlayerUILoadingScreenManager>(true);
+            playerUILevelUpManager = GetComponentInChildren<PlayerUILevelUpManager>(true);
+            playerUIWeaponUpgradeManager = GetComponentInChildren<PlayerUIWeaponUpgradeManager>(true);
             playerUIShopManager = GetComponentInChildren<PlayerUIShopManager>(true);
             playerUISettingsManager = GetComponentInChildren<PlayerUISettingsManager>(true);
 
