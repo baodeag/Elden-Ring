@@ -37,6 +37,16 @@ namespace baodeag
             base.OpenMenu();
         }
 
+        private void OnEnable()
+        {
+            GameSettingsManager.SettingsChanged += HandleSettingsChanged;
+        }
+
+        private void OnDisable()
+        {
+            GameSettingsManager.SettingsChanged -= HandleSettingsChanged;
+        }
+
         public void OpenFromCharacterMenu()
         {
             EnsureInitialized();
@@ -218,20 +228,23 @@ namespace baodeag
 
         private Slider FindSlider(string relativePath)
         {
-            Transform target = contentRoot != null ? contentRoot.Find(relativePath) : null;
-            return target != null ? target.GetComponent<Slider>() : null;
+            return GameSettingsMenuViewUtility.FindSlider(contentRoot, relativePath);
         }
 
         private Button FindButton(string relativePath)
         {
-            Transform target = contentRoot != null ? contentRoot.Find(relativePath) : null;
-            return target != null ? target.GetComponent<Button>() : null;
+            return GameSettingsMenuViewUtility.FindButton(contentRoot, relativePath);
         }
 
         private TextMeshProUGUI FindText(string relativePath)
         {
-            Transform target = contentRoot != null ? contentRoot.Find(relativePath) : null;
-            return target != null ? target.GetComponent<TextMeshProUGUI>() : null;
+            return GameSettingsMenuViewUtility.FindText(contentRoot, relativePath);
+        }
+
+        private void HandleSettingsChanged()
+        {
+            if (isActiveAndEnabled)
+                Refresh();
         }
     }
 }

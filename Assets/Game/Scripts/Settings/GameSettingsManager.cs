@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace baodeag
 {
@@ -18,6 +20,7 @@ namespace baodeag
 
         public static GameSettingsManager Instance { get; private set; }
         public static bool HasInstance => Instance != null;
+        public static event Action SettingsChanged;
 
         public float masterVolume { get; private set; } = 1f;
         public float musicVolume { get; private set; } = 1f;
@@ -76,6 +79,7 @@ namespace baodeag
             LoadSettings();
             ApplyAllSettings(false);
             hasInitialized = true;
+            NotifySettingsChanged();
         }
 
         public IReadOnlyList<Resolution> GetAvailableResolutions()
@@ -141,6 +145,7 @@ namespace baodeag
             isFullscreen = !isFullscreen;
             ApplyDisplaySettings();
             SaveSettings();
+            NotifySettingsChanged();
         }
 
         public void CycleResolution(int direction)
@@ -151,6 +156,7 @@ namespace baodeag
             resolutionIndex = CycleIndex(resolutionIndex, direction, availableResolutions.Count);
             ApplyDisplaySettings();
             SaveSettings();
+            NotifySettingsChanged();
         }
 
         public void CycleQuality(int direction)
@@ -163,6 +169,7 @@ namespace baodeag
             qualityIndex = CycleIndex(qualityIndex, direction, qualityNames.Length);
             ApplyDisplaySettings();
             SaveSettings();
+            NotifySettingsChanged();
         }
 
         private void UpdateAudioSetting(float value, Func<float, float> clampFunc, Action<float> assignAction)
@@ -170,6 +177,7 @@ namespace baodeag
             assignAction(clampFunc(value));
             ApplyAudioAndGameplaySettings();
             SaveSettings();
+            NotifySettingsChanged();
         }
 
         private int CycleIndex(int currentIndex, int direction, int itemCount)
@@ -188,6 +196,7 @@ namespace baodeag
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             ApplyAllSettings(false);
+            NotifySettingsChanged();
         }
 
         private void CacheAvailableResolutions()
@@ -295,5 +304,47 @@ namespace baodeag
                 characterSoundManagers[i].RefreshAudioSettings();
             }
         }
+
+        private void NotifySettingsChanged()
+        {
+            SettingsChanged?.Invoke();
+        }
     }
+
+    public static class GameSettingsMenuViewUtility
+    {
+        public static Slider FindSlider(RectTransform contentRoot, string path) => FindComponentByPath<Slider>(contentRoot, path);
+        public static Button FindButton(RectTransform contentRoot, string path) => FindComponentByPath<Button>(contentRoot, path);
+        public static TextMeshProUGUI FindText(RectTransform contentRoot, string path) => FindComponentByPath<TextMeshProUGUI>(contentRoot, path);
+
+        public static T FindComponentByPath<T>(RectTransform contentRoot, string path) where T : Component
+        {
+            if (contentRoot == null || string.IsNullOrWhiteSpace(path))
+                return null;
+
+            Transform direct = contentRoot.Find(path);
+            if (direct != null)
+                return direct.GetComponent<T>();
+
+            string[] segments = path.Split('/');
+            if (segments.Length == 0)
+                return null;
+
+            foreach (Transform candidate in contentRoot.GetComponentsInChildren<Transform>(true))
+            {
+                if (candidate.name != segments[0])
+                    continue;
+
+                Transform current = candidate;
+                for (int i = 1; i < segments.Length && current != null; i++)
+                    current = current.Find(segments[i]);
+
+                if (current != null)
+                    return current.GetComponent<T>();
+            }
+
+            return null;
+        }
+    }
+
 }

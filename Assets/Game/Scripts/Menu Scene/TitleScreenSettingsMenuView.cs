@@ -44,6 +44,16 @@ namespace baodeag
             Refresh();
         }
 
+        private void OnEnable()
+        {
+            GameSettingsManager.SettingsChanged += HandleSettingsChanged;
+        }
+
+        private void OnDisable()
+        {
+            GameSettingsManager.SettingsChanged -= HandleSettingsChanged;
+        }
+
         public void Refresh()
         {
             AutoBindSceneReferences();
@@ -51,6 +61,7 @@ namespace baodeag
             if (!GameSettingsManager.HasInstance)
                 return;
 
+            GameSettingsManager.Instance.InitializeIfNeeded();
             GameSettingsManager settings = GameSettingsManager.Instance;
 
             SetSliderWithoutNotify(masterVolumeSlider, settings.masterVolume);
@@ -102,38 +113,9 @@ namespace baodeag
             cameraSensitivityValueText ??= FindText("Camera Sensitivity Row/Value");
         }
 
-        private Slider FindSlider(string path) => FindComponentByPath<Slider>(path);
-        private Button FindButton(string path) => FindComponentByPath<Button>(path);
-        private TextMeshProUGUI FindText(string path) => FindComponentByPath<TextMeshProUGUI>(path);
-
-        private T FindComponentByPath<T>(string path) where T : Component
-        {
-            if (contentRoot == null || string.IsNullOrWhiteSpace(path))
-                return null;
-
-            Transform direct = contentRoot.Find(path);
-            if (direct != null)
-                return direct.GetComponent<T>();
-
-            string[] segments = path.Split('/');
-            if (segments.Length == 0)
-                return null;
-
-            foreach (Transform candidate in contentRoot.GetComponentsInChildren<Transform>(true))
-            {
-                if (candidate.name != segments[0])
-                    continue;
-
-                Transform current = candidate;
-                for (int i = 1; i < segments.Length && current != null; i++)
-                    current = current.Find(segments[i]);
-
-                if (current != null)
-                    return current.GetComponent<T>();
-            }
-
-            return null;
-        }
+        private Slider FindSlider(string path) => GameSettingsMenuViewUtility.FindSlider(contentRoot, path);
+        private Button FindButton(string path) => GameSettingsMenuViewUtility.FindButton(contentRoot, path);
+        private TextMeshProUGUI FindText(string path) => GameSettingsMenuViewUtility.FindText(contentRoot, path);
 
         private void BindListeners()
         {
@@ -235,6 +217,12 @@ namespace baodeag
         private void CycleQuality(int direction)
         {
             ApplySettingsAndRefresh(settings => settings.CycleQuality(direction));
+        }
+
+        private void HandleSettingsChanged()
+        {
+            if (isActiveAndEnabled)
+                Refresh();
         }
     }
 }
