@@ -122,6 +122,7 @@ namespace baodeag {
             EnsureSettingsMenu();
             EnsureCharacterClassSelectionUI();
             EnsureLaunchModeMenu();
+            RefreshSaveMenuButtons();
         }
 
         private void Update()
@@ -322,8 +323,17 @@ namespace baodeag {
             //open main menu
             titleScreenMainMenu.SetActive(true);
 
-            //select the load button
-            mainMenuLoadGameButton.Select();
+            RefreshSaveMenuButtons();
+
+            //select the appropriate button
+            if (mainMenuLoadGameButton != null && mainMenuLoadGameButton.gameObject.activeSelf)
+            {
+                mainMenuLoadGameButton.Select();
+            }
+            else if (mainMenuNewGameButton != null)
+            {
+                mainMenuNewGameButton.Select();
+            }
         }
 
         public void ToggleBodyType()
@@ -346,6 +356,7 @@ namespace baodeag {
         {
             CloseLaunchModeMenu();
             titleScreenMainMenu.SetActive(true);
+            RefreshSaveMenuButtons();
         }
 
         public void CloseTitleScreenMainMenu()
@@ -435,6 +446,19 @@ namespace baodeag {
         {
             if (WorldGameSessionManager.instance != null)
                 WorldGameSessionManager.instance.SetLaunchMode(launchMode);
+
+            RefreshSaveMenuButtons();
+        }
+
+        private void RefreshSaveMenuButtons()
+        {
+            if (mainMenuLoadGameButton == null)
+                return;
+
+            bool allowLoadGame = WorldGameSessionManager.instance == null ||
+                                 !WorldGameSessionManager.instance.RequiresRelayForCurrentMode();
+
+            mainMenuLoadGameButton.gameObject.SetActive(allowLoadGame);
         }
 
         private void CloseLoadGameMenuIfOpen()
