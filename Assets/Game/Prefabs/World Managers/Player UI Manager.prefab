@@ -19949,6 +19949,7 @@ GameObject:
   - component: {fileID: 5055242192325980931}
   - component: {fileID: 1285524680068521808}
   - component: {fileID: 3784566300981754896}
+  - component: {fileID: 3784566300981754897}
   m_Layer: 0
   m_Name: Player UI Manager
   m_TagString: Untagged
@@ -20076,6 +20077,20 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &3784566300981754897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4697889654752928946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ec7c7679c0e4c4db730d4d5825963c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetSpriteNames:
+  - Button_long2
 --- !u!1 &4793543143804965199
 GameObject:
   m_ObjectHideFlags: 0
