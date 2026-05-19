@@ -31,7 +31,8 @@ namespace baodeag
 
         protected virtual void Awake()
         {
-
+            if (damageCollider == null)
+                damageCollider = GetComponent<Collider>();
         }
 
         protected virtual void OnTriggerEnter(Collider other)
@@ -112,12 +113,27 @@ namespace baodeag
 
         public virtual void EnableDamageCollider()
         {
+            if (damageCollider == null)
+                damageCollider = GetComponent<Collider>();
+
+            if (damageCollider == null)
+                return;
+
             damageCollider.enabled = true;
             //open a trail
         }
 
         public virtual void DisableDamageCollider()
         {
+            if (damageCollider == null)
+                damageCollider = GetComponent<Collider>();
+
+            if (damageCollider == null)
+            {
+                charactersDamaged.Clear();
+                return;
+            }
+
             damageCollider.enabled = false;
             charactersDamaged.Clear(); //reset the character that have been hit when reset the collider
             //close a trail

@@ -41,6 +41,7 @@ namespace baodeag
         private Coroutine revivalCoroutine;
         private Coroutine pendingMapEntryCoroutine;
         private Coroutine returnToTitleCoroutine;
+        private Coroutine autoContinueVictoryCoroutine;
 
         private UnityTransport unityTransport;
         private const ushort DefaultUnityTransportPort = 7777;
@@ -261,6 +262,14 @@ namespace baodeag
             RetryCurrentMapFromStart();
         }
 
+        public void AutoContinuePendingVictoryFlow(float delay = 3f)
+        {
+            if (autoContinueVictoryCoroutine != null)
+                StopCoroutine(autoContinueVictoryCoroutine);
+
+            autoContinueVictoryCoroutine = StartCoroutine(AutoContinuePendingVictoryFlowCoroutine(delay));
+        }
+
         public void ReturnToTitleFromEndGame()
         {
             ReturnToTitleAfterVictory(0f);
@@ -404,6 +413,24 @@ namespace baodeag
             }
 
             pendingMapEntryCoroutine = null;
+        }
+
+        private IEnumerator AutoContinuePendingVictoryFlowCoroutine(float delay)
+        {
+            while (delay > 0f)
+            {
+                if (sessionLoseTriggered || sessionWinTriggered)
+                {
+                    autoContinueVictoryCoroutine = null;
+                    yield break;
+                }
+
+                delay -= Time.deltaTime;
+                yield return null;
+            }
+
+            ContinuePendingVictoryFlow();
+            autoContinueVictoryCoroutine = null;
         }
 
         /// <summary>
@@ -1098,6 +1125,12 @@ namespace baodeag
 
         private void ClearPendingVictoryTransition()
         {
+            if (autoContinueVictoryCoroutine != null)
+            {
+                StopCoroutine(autoContinueVictoryCoroutine);
+                autoContinueVictoryCoroutine = null;
+            }
+
             pendingVictoryShouldLoadNextScene = false;
             pendingVictoryNextSceneBuildIndex = -1;
             pendingVictoryUnlockedMapIndex = -1;

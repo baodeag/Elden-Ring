@@ -12,6 +12,9 @@ namespace baodeag
             base.Awake();
 
             durkCharacterManager = GetComponentInParent<AIDurkCharacterManager>();
+
+            if (damageCollider == null)
+                damageCollider = GetComponent<Collider>();
         }
         public void StompAttack()
         {

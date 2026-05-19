@@ -22,6 +22,9 @@ namespace baodeag
             if (!aiCharacter.IsOwner)
                 return;
 
+            if (droppableItems == null || droppableItems.Length == 0)
+                return;
+
             //the status of if this character will drop an item
             bool willDropItem = false;
 

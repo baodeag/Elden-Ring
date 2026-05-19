@@ -39,6 +39,8 @@ namespace baodeag
 
         [Header("States")]
         public BossSleepState sleepState;
+        private Coroutine bossDefeatCleanupCoroutine;
+        private bool bossDefeatFlowStarted;
 
         protected override void Awake()
         {
@@ -173,77 +175,227 @@ namespace baodeag
 
         public override IEnumerator ProcessDeathEvent(bool manuallySelectDeathAnimation = false)
         {
-            PlayerUIManager.instance.playerUIPopUpManager.SendBossDefeatedPopUp("Great Foe Felled");
+            if (bossDefeatFlowStarted)
+            {
+                Debug.Log($"[BossFlow] Ignored duplicate death flow for '{name}'.");
+                yield break;
+            }
+
+            if (!IsServer)
+            {
+                Debug.Log($"[BossFlow] Forwarding death flow for '{name}' to server. isOwner={IsOwner}");
+                RequestProcessBossDeathServerRpc(manuallySelectDeathAnimation);
+                yield break;
+            }
+
+            bossDefeatFlowStarted = true;
+            string deathStage = "start";
+            Debug.Log($"[BossFlow] Starting server death flow for '{name}' bossID={bossID} currentMap={GameProgressionManager.Instance.CurrentMapIndex}");
+
+            if (PlayerUIManager.instance != null && PlayerUIManager.instance.playerUIPopUpManager != null)
+                PlayerUIManager.instance.playerUIPopUpManager.SendBossDefeatedPopUp("Great Foe Felled");
+
             bool shouldLoadNextScene = false;
             int nextSceneBuildIndex = -1;
             int unlockedMapIndex = -1;
             bool gameWon = false;
+            bool canContinueProgression = false;
 
-            if (IsOwner)
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
             {
-                characterNetworkManager.currentHealth.Value = 0;
-                isDead.Value = true;
-                bossFightIsActive.Value = false;
-
-                foreach (var fogWall in fogWalls)
+                try
                 {
-                    fogWall.isActive.Value = false;
+                    deathStage = "apply-dead-flags";
+                    characterNetworkManager.currentHealth.Value = 0;
+                    isDead.Value = true;
+                    bossFightIsActive.Value = false;
+                    Debug.Log($"[BossFlow] '{name}' marked dead. isServer={IsServer} isOwner={IsOwner}");
+
+                    deathStage = "refresh-fogwalls";
+                    if (fogWalls == null || fogWalls.Count == 0)
+                        RefreshFogWallsFromWorldObjectManager();
+
+                    deathStage = "disable-fogwalls";
+                    if (fogWalls != null)
+                    {
+                        foreach (var fogWall in fogWalls)
+                        {
+                            if (fogWall != null)
+                                fogWall.isActive.Value = false;
+                        }
+                    }
+
+                    //reset any flags here that need to be reset on death
+
+                    deathStage = "play-death-animation";
+                    if (!manuallySelectDeathAnimation)
+                    {
+                        characterAnimatorManager.PlayTargetActionAnimation("Dead_01", true);
+                    }
+
+                    deathStage = "mark-defeated";
+                    hasBeenDefeated.Value = true;
+                    Debug.Log($"[BossFlow] '{name}' hasBeenDefeated set true.");
+
+                    deathStage = "resolve-reward-player";
+                    PlayerManager rewardPlayer = null;
+
+                    if (WorldGameSessionManager.instance != null)
+                    {
+                        ulong lastDamageDealerClientId = GetLastPlayerWhoDealtDamageClientId();
+
+                        if (lastDamageDealerClientId != ulong.MaxValue)
+                            rewardPlayer = WorldGameSessionManager.instance.GetPlayerByClientId(lastDamageDealerClientId);
+                    }
+
+                    if (rewardPlayer == null && PlayerUIManager.instance != null)
+                        rewardPlayer = PlayerUIManager.instance.localPlayer;
+
+                    deathStage = "award-runes";
+                    if (rewardPlayer != null)
+                    {
+                        aiCharacterCombatManager.AwardRunesOnDeath(rewardPlayer);
+                        Debug.Log($"[BossFlow] Awarded runes for '{name}' to player '{rewardPlayer.name}'.");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[BossFlow] No reward player resolved for '{name}'.");
+                    }
+
+                    deathStage = "save-boss-state";
+                    if (WorldSaveGameManager.instance != null && WorldSaveGameManager.instance.currentCharacterData != null)
+                    {
+                        if (!WorldSaveGameManager.instance.currentCharacterData.bossesAwakened.ContainsKey(bossID))
+                        {
+                            WorldSaveGameManager.instance.currentCharacterData.bossesAwakened.Add(bossID, true);
+                            WorldSaveGameManager.instance.currentCharacterData.bossesDefeated.Add(bossID, true);
+                        }
+                        else
+                        {
+                            WorldSaveGameManager.instance.currentCharacterData.bossesAwakened.Remove(bossID);
+                            WorldSaveGameManager.instance.currentCharacterData.bossesDefeated.Remove(bossID);
+                            WorldSaveGameManager.instance.currentCharacterData.bossesAwakened.Add(bossID, true);
+                            WorldSaveGameManager.instance.currentCharacterData.bossesDefeated.Add(bossID, true);
+                        }
+                    }
+
+                    deathStage = "register-boss-defeat";
+                    if (GameProgressionManager.instance != null)
+                    {
+                        shouldLoadNextScene = GameProgressionManager.Instance.RegisterBossDefeat(bossID, out nextSceneBuildIndex, out unlockedMapIndex, out gameWon);
+                        canContinueProgression = shouldLoadNextScene || unlockedMapIndex >= 0;
+                        Debug.Log($"[BossFlow] RegisterBossDefeat for '{name}' => shouldLoadNextScene={shouldLoadNextScene}, nextSceneBuildIndex={nextSceneBuildIndex}, unlockedMapIndex={unlockedMapIndex}, gameWon={gameWon}");
+                    }
+
+                    deathStage = "resolve-entry-grace";
+                    int entrySiteOfGraceID = GameProgressionManager.instance != null
+                        ? GameProgressionManager.Instance.GetEntrySiteOfGraceIDForCurrentMap()
+                        : -1;
+
+                    if (entrySiteOfGraceID >= 0)
+                    {
+                        if (WorldSaveGameManager.instance != null && WorldSaveGameManager.instance.currentCharacterData != null)
+                            WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = entrySiteOfGraceID;
+
+                        if (PlayerUIManager.instance != null && PlayerUIManager.instance.localPlayer != null)
+                            PlayerUIManager.instance.localPlayer.playerNetworkManager.lastSiteOfGraceUsed.Value = entrySiteOfGraceID;
+                    }
+
+                    deathStage = "schedule-transition";
+                    if (WorldGameSessionManager.instance != null)
+                    {
+                        WorldGameSessionManager.instance.ScheduleMapTransition(
+                            shouldLoadNextScene,
+                            nextSceneBuildIndex,
+                            gameWon,
+                            unlockedMapIndex);
+                    }
+
+                    if (gameWon)
+                    {
+                        deathStage = "broadcast-final-victory";
+                        BroadcastVictoryAchievedClientRpc(canContinueProgression, 0f);
+                    }
+
+                    deathStage = "save-game";
+                    if (WorldSaveGameManager.instance != null &&
+                        WorldSaveGameManager.instance.currentCharacterData != null)
+                    {
+                        WorldSaveGameManager.instance.SaveGame();
+                    }
+
+                    Debug.Log($"[BossFlow] Server death flow completed for '{name}'. canContinueProgression={canContinueProgression}");
                 }
-
-                //reset any flags here that need to be reset on death
-
-                if (!manuallySelectDeathAnimation)
+                catch (System.Exception exception)
                 {
-                    characterAnimatorManager.PlayTargetActionAnimation("Dead_01", true);
+                    Debug.LogError($"[BossFlow] Death flow failed for '{name}' at stage '{deathStage}': {exception}");
+                    throw;
                 }
+            }
 
-                hasBeenDefeated.Value = true;
-
-                aiCharacterCombatManager.AwardRunesOnDeath(PlayerUIManager.instance.localPlayer);
-
-                if (!WorldSaveGameManager.instance.currentCharacterData.bossesAwakened.ContainsKey(bossID))
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                if (gameWon)
                 {
-                    WorldSaveGameManager.instance.currentCharacterData.bossesAwakened.Add(bossID, true);
-                    WorldSaveGameManager.instance.currentCharacterData.bossesDefeated.Add(bossID, true);
+                    BeginBossDefeatCleanup(1.5f);
+                }
+                else if (canContinueProgression)
+                {
+                    BeginBossDefeatCleanup(1.5f);
+                    WorldGameSessionManager.instance?.AutoContinuePendingVictoryFlow(3f);
                 }
                 else
                 {
-                    WorldSaveGameManager.instance.currentCharacterData.bossesAwakened.Remove(bossID);
-                    WorldSaveGameManager.instance.currentCharacterData.bossesDefeated.Remove(bossID);
-                    WorldSaveGameManager.instance.currentCharacterData.bossesAwakened.Add(bossID, true);
-                    WorldSaveGameManager.instance.currentCharacterData.bossesDefeated.Add(bossID, true);
+                    BeginBossDefeatCleanup(1.5f);
                 }
-
-                shouldLoadNextScene = GameProgressionManager.Instance.RegisterBossDefeat(bossID, out nextSceneBuildIndex, out unlockedMapIndex, out gameWon);
-                bool canContinueProgression = shouldLoadNextScene || unlockedMapIndex >= 0;
-
-                int entrySiteOfGraceID = GameProgressionManager.Instance.GetEntrySiteOfGraceIDForCurrentMap();
-
-                if (entrySiteOfGraceID >= 0)
-                {
-                    WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = entrySiteOfGraceID;
-                    PlayerUIManager.instance.localPlayer.playerNetworkManager.lastSiteOfGraceUsed.Value = entrySiteOfGraceID;
-                }
-
-                if (WorldGameSessionManager.instance != null)
-                {
-                    WorldGameSessionManager.instance.ScheduleMapTransition(
-                        shouldLoadNextScene,
-                        nextSceneBuildIndex,
-                        gameWon,
-                        unlockedMapIndex);
-                }
-
-                if (gameWon)
-                {
-                    BroadcastVictoryAchievedClientRpc(canContinueProgression, 0f);
-                }
-
-                WorldSaveGameManager.instance.SaveGame();
-                ApplyBossWorldState();
             }
 
             yield break;
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void RequestProcessBossDeathServerRpc(bool manuallySelectDeathAnimation)
+        {
+            if (!IsServer || bossDefeatFlowStarted)
+                return;
+
+            Debug.Log($"[BossFlow] Server RPC received for '{name}', starting death flow.");
+            StartCoroutine(ProcessDeathEvent(manuallySelectDeathAnimation));
+        }
+
+        private void BeginBossDefeatCleanup(float delay = 1.5f)
+        {
+            if (!IsServer)
+                return;
+
+            if (bossDefeatCleanupCoroutine != null)
+                StopCoroutine(bossDefeatCleanupCoroutine);
+
+            bossDefeatCleanupCoroutine = StartCoroutine(BossDefeatCleanupCoroutine(delay));
+        }
+
+        private IEnumerator BossDefeatCleanupCoroutine(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+
+            bossDefeatCleanupCoroutine = null;
+
+            if (this == null)
+                yield break;
+
+            if (beacon != null)
+                beacon.gameObject.SetActive(false);
+
+            WorldAIManager.instance?.RemoveCharacterFromSpawnedCharacterList(this);
+            Debug.Log($"[BossFlow] Cleaning up '{name}'. networkSpawned={NetworkObject != null && NetworkObject.IsSpawned}");
+
+            if (NetworkObject != null && NetworkObject.IsSpawned)
+            {
+                NetworkObject.Despawn();
+                yield break;
+            }
+
+            gameObject.SetActive(false);
         }
 
         public void WakeBoss()

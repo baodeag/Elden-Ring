@@ -17,6 +17,18 @@ namespace baodeag
         {
             base.OnHPChanged(oldValue, newValue);
 
+            if (aiBossCharacter != null &&
+                currentHealth.Value <= 0 &&
+                !aiBossCharacter.isDead.Value)
+            {
+                Debug.Log($"[BossFlow] HP reached zero for '{aiBossCharacter.name}' old={oldValue} new={newValue} isServer={IsServer} isOwner={aiBossCharacter.IsOwner}");
+
+                if (IsServer)
+                    aiBossCharacter.StartCoroutine(aiBossCharacter.ProcessDeathEvent());
+
+                return;
+            }
+
             if (aiBossCharacter.IsOwner)
             {
                 if (currentHealth.Value <= 0)

@@ -150,8 +150,6 @@ namespace baodeag
 
             staminaTickTimer += Time.deltaTime;
 
-            Debug.Log("Stamina Regen Amount: " + staminaRegenerationAmount);
-
             //if player is blocking, recover stamina slower than usual
             if (character.characterNetworkManager.isBlocking.Value)
                 staminaRegenerationAmount *= 0.2f;
