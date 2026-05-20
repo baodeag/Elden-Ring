@@ -282,6 +282,11 @@ namespace baodeag
             UnlockMap(currentMapIndex);
         }
 
+        public void SetPendingTransitionSiteOfGraceID(int siteOfGraceID)
+        {
+            pendingTransitionSiteOfGraceID = siteOfGraceID;
+        }
+
         public bool PrepareTransitionToMap(int mapIndex, out int sceneBuildIndex)
         {
             EnsureConfigurationIsValid();

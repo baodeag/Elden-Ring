@@ -329,21 +329,34 @@ namespace baodeag {
             saveFileDataWriter.saveFilename = saveFileName;
             currentCharacterData = saveFileDataWriter.LoadSaveFile();
 
-            if (currentCharacterData != null)
-                currentCharacterData.EnsureCollectionsInitialized();
+            if (currentCharacterData == null)
+            {
+                Debug.LogWarning($"WorldSaveGameManager: Could not load save data for slot '{currentCharacterSlotBeingUsed}'.");
+                return;
+            }
+
+            currentCharacterData.EnsureCollectionsInitialized();
 
             GameProgressionManager.Instance.LoadFromCharacterData(currentCharacterData);
 
-            int mapIndexFromScene = currentCharacterData != null
-                ? GameProgressionManager.Instance.GetMapIndexForSceneBuildIndex(currentCharacterData.sceneIndex)
-                : -1;
+            int savedSceneBuildIndex = currentCharacterData.sceneIndex > 0
+                ? currentCharacterData.sceneIndex
+                : worldSceneIndex;
+            int mapIndexFromScene = GameProgressionManager.Instance.GetMapIndexForSceneBuildIndex(savedSceneBuildIndex);
 
             if (mapIndexFromScene >= 0)
                 GameProgressionManager.Instance.SetCurrentMapIndex(mapIndexFromScene);
 
+            int pendingSiteOfGraceId = currentCharacterData.lastSiteOfGraceRestedAt;
+
+            if (pendingSiteOfGraceId < 0)
+                pendingSiteOfGraceId = GameProgressionManager.Instance.GetEntrySiteOfGraceIDForCurrentMap();
+
+            GameProgressionManager.Instance.SetPendingTransitionSiteOfGraceID(pendingSiteOfGraceId);
+
             GetStageIDsOnLoad();
 
-            WorldSceneManager.instance.LoadWorldScene(GameProgressionManager.Instance.GetSceneBuildIndexForCurrentMap(currentCharacterData != null ? currentCharacterData.sceneIndex : worldSceneIndex));
+            WorldSceneManager.instance.LoadWorldScene(savedSceneBuildIndex);
         }
 
         public void SaveGame()
