@@ -9,6 +9,8 @@ namespace baodeag
 {
     public class AICharacterSpawner : MonoBehaviour
     {
+        private const int BossHealthOverride = 400;
+
         [Header("Character")]
         [SerializeField] GameObject characterGameObject;
         [SerializeField] GameObject instantiateGameObject;
@@ -126,8 +128,12 @@ namespace baodeag
 
                 if (manuallySetStats)
                 {
-                    aiCharacter.aiCharacterNetworkManager.maxHealth.Value = health;
-                    aiCharacter.aiCharacterNetworkManager.currentHealth.Value = health;
+                    int resolvedHealth = aiCharacter is AIBossCharacterManager
+                        ? BossHealthOverride
+                        : health;
+
+                    aiCharacter.aiCharacterNetworkManager.maxHealth.Value = resolvedHealth;
+                    aiCharacter.aiCharacterNetworkManager.currentHealth.Value = resolvedHealth;
                     aiCharacter.aiCharacterNetworkManager.maxStamina.Value = stamina;
                     aiCharacter.aiCharacterNetworkManager.currentStamina.Value = stamina;
                 }

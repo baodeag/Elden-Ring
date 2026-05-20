@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a29f1419b0784834a84bdcb6648a279e, type: 3}
+  m_Name: Nomad Gloves
+  m_EditorClassIdentifier: 
+  itemName: Nomad Gloves
+  itemIcon: {fileID: 21300000, guid: a8104549ab8218a4fb97ad07c9217609, type: 3}
+  itemDescription: 
+  itemID: -1
+  itemWeight: 3
+  physicalDamageAbsorption: 3
+  magicDamageAbsorption: 2.55
+  fireDamageAbsorption: 2.55
+  lightningDamageAbsorption: 2.25
+  holyDamageAbsorption: 2.25
+  immunity: 8
+  robustness: 14
+  focus: 4
+  vitality: 4
+  poise: 5
+  equipmentModels:
+  - {fileID: 11400000, guid: 00aa2faffc4945b1812e384728809ebf, type: 2}
+  - {fileID: 11400000, guid: 1f20fee381f94a4f9606c2b9805572fa, type: 2}
+  - {fileID: 11400000, guid: 4abd80dd4d2a4f0d8582ce3435577db5, type: 2}
+  - {fileID: 11400000, guid: f02b924b27404e549134e698af6664dc, type: 2}

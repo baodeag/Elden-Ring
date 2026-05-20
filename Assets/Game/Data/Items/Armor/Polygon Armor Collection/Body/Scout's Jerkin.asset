@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 264bcc99cbfd10941b38e98b17f23827, type: 3}
+  m_Name: Scout's Jerkin
+  m_EditorClassIdentifier: 
+  itemName: Scout's Jerkin
+  itemIcon: {fileID: 21300000, guid: b2e3770e6c09eff4080afa88acb94b17, type: 3}
+  itemDescription: 
+  itemID: -1
+  itemWeight: 8
+  physicalDamageAbsorption: 8
+  magicDamageAbsorption: 6.8
+  fireDamageAbsorption: 6.8
+  lightningDamageAbsorption: 6
+  holyDamageAbsorption: 6
+  immunity: 20
+  robustness: 36
+  focus: 12
+  vitality: 12
+  poise: 16
+  equipmentModels:
+  - {fileID: 11400000, guid: 7d3fc1a807ee4039b052cd5824d5ccf9, type: 2}
+  - {fileID: 11400000, guid: 8ca1b08ae3484a4d900163e68b165b57, type: 2}
+  - {fileID: 11400000, guid: f51fd4427c334909b304684c73c24316, type: 2}

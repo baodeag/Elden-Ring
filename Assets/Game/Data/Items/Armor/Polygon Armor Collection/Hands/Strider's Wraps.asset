@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a29f1419b0784834a84bdcb6648a279e, type: 3}
+  m_Name: Strider's Wraps
+  m_EditorClassIdentifier: 
+  itemName: Strider's Wraps
+  itemIcon: {fileID: 21300000, guid: a8104549ab8218a4fb97ad07c9217609, type: 3}
+  itemDescription: 
+  itemID: -1
+  itemWeight: 3
+  physicalDamageAbsorption: 3
+  magicDamageAbsorption: 2.55
+  fireDamageAbsorption: 2.55
+  lightningDamageAbsorption: 2.25
+  holyDamageAbsorption: 2.25
+  immunity: 8
+  robustness: 14
+  focus: 4
+  vitality: 4
+  poise: 5
+  equipmentModels:
+  - {fileID: 11400000, guid: 997c43aaff8742cbb6c8cf31a5c36b87, type: 2}
+  - {fileID: 11400000, guid: 03cef8e8bee54aa7aa06057cf038ba55, type: 2}
+  - {fileID: 11400000, guid: 5c3b0e134468499fbb84733b791fb32d, type: 2}
+  - {fileID: 11400000, guid: d79c43d0b1434044a21494f88beae8f2, type: 2}

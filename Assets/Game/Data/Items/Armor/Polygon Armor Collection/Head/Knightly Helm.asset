@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 217c17ecd7b347442b8422de26793538, type: 3}
+  m_Name: Knightly Helm
+  m_EditorClassIdentifier: 
+  itemName: Knightly Helm
+  itemIcon: {fileID: 21300000, guid: aa401913696fdd143942ff297b3dd1c4, type: 3}
+  itemDescription: 
+  itemID: -1
+  itemWeight: 4
+  physicalDamageAbsorption: 4
+  magicDamageAbsorption: 3.4
+  fireDamageAbsorption: 3.4
+  lightningDamageAbsorption: 3
+  holyDamageAbsorption: 3
+  immunity: 10
+  robustness: 18
+  focus: 6
+  vitality: 6
+  poise: 7
+  equipmentModels:
+  - {fileID: 11400000, guid: 831e76e7379b4e3bbb26a73a53f3a94d, type: 2}
+  headEquipmentType: 0

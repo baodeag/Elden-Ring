@@ -7,6 +7,8 @@ namespace baodeag
 {
     public class AICharacterManager : CharacterManager
     {
+        protected const int BossHealthCap = 400;
+
         [Header("Character Name")]
         public string characterName = "";
 
@@ -416,7 +418,9 @@ namespace baodeag
 
             aiCharacterCombatManager?.ApplyProgressionDifficultyScaling(damageMultiplier);
 
-            int scaledMaxHealth = Mathf.Max(1, Mathf.RoundToInt(aiCharacterNetworkManager.maxHealth.Value * healthMultiplier));
+            int scaledMaxHealth = this is AIBossCharacterManager
+                ? BossHealthCap
+                : Mathf.Max(1, Mathf.RoundToInt(aiCharacterNetworkManager.maxHealth.Value * healthMultiplier));
             aiCharacterNetworkManager.maxHealth.Value = scaledMaxHealth;
             aiCharacterNetworkManager.currentHealth.Value = scaledMaxHealth;
 

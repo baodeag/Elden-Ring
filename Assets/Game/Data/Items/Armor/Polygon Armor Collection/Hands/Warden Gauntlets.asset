@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a29f1419b0784834a84bdcb6648a279e, type: 3}
+  m_Name: Warden Gauntlets
+  m_EditorClassIdentifier: 
+  itemName: Warden Gauntlets
+  itemIcon: {fileID: 21300000, guid: a8104549ab8218a4fb97ad07c9217609, type: 3}
+  itemDescription: 
+  itemID: -1
+  itemWeight: 3
+  physicalDamageAbsorption: 3
+  magicDamageAbsorption: 2.55
+  fireDamageAbsorption: 2.55
+  lightningDamageAbsorption: 2.25
+  holyDamageAbsorption: 2.25
+  immunity: 8
+  robustness: 14
+  focus: 4
+  vitality: 4
+  poise: 5
+  equipmentModels:
+  - {fileID: 11400000, guid: 852c82ea588d43fb9bd4b6feaf3b09f9, type: 2}
+  - {fileID: 11400000, guid: 974da8fb1960471e9cc940a4af926e28, type: 2}
+  - {fileID: 11400000, guid: d9b83c35f40b418ab9af63d1a6de4b2c, type: 2}
+  - {fileID: 11400000, guid: cc146bfde04046f493951870c3ab83fc, type: 2}
