@@ -1,0 +1,65 @@
+﻿%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f22ca86dceab59341ab431d08e9277ab, type: 3}
+  m_Name: Hunting Bow
+  m_EditorClassIdentifier: 
+  itemName: Hunting Bow
+  itemIcon: {fileID: 21300000, guid: bd4df3b723fe69b4a8ce772945dcd8c6, type: 3}
+  itemDescription: 
+  itemID: 4
+  itemWeight: 0
+  weaponAnimator: {fileID: 22100000, guid: 7a8fcccde9f3ef04fa6eaaef4e7dec29, type: 2}
+  weaponModelType: 0
+  weaponModel: {fileID: 8942857016513429043, guid: fb7dce3bc85e28d449dd8bc9cd24785d, type: 3}
+  weaponClass: 5
+  strengthREQ: 8
+  dexREQ: 10
+  intREQ: 0
+  faithREQ: 0
+  physicalDamage: 72
+  magicDamage: 0
+  fireDamage: 0
+  holyDamage: 0
+  lightningDamage: 0
+  poiseDamage: 10
+  light_Attack_01_Modifier: 1
+  light_Attack_02_Modifier: 1.2
+  light_Jumping_Attack_01_Modifier: 1
+  heavy_Attack_01_Modifier: 1.4
+  heavy_Attack_02_Modifier: 1.6
+  heavy_Jumping_Attack_01_Modifier: 1.8
+  charge_Attack_01_Modifier: 2
+  charge_Attack_02_Modifier: 2.2
+  running_Attack_01_Modifier: 1.1
+  rolling_Attack_01_Modifier: 1.1
+  backstep_Attack_01_Modifier: 1.1
+  baseStaminaCost: 20
+  lightAttackStaminaCostMultiplier: 1
+  heavyAttackStaminaCostMultiplier: 1.3
+  chargedAttackStaminaCostMultiplier: 1.5
+  runningAttackStaminaCostMultiplier: 1.1
+  rollingAttackStaminaCostMultiplier: 1.1
+  backstepAttackStaminaCostMultiplier: 1.1
+  physicalBaseDamageAbsorption: 50
+  magicBaseDamageAbsorption: 50
+  fireBaseDamageAbsorption: 50
+  lightningBaseDamageAbsorption: 50
+  holyBaseDamageAbsorption: 50
+  stability: 50
+  oh_RB_Action: {fileID: 11400000, guid: 252c474abaae1044e953d2f1b6a61205, type: 2}
+  oh_RT_Action: {fileID: 11400000, guid: 31d962a2cd04dc646b59d021e3faba6e, type: 2}
+  oh_LB_Action: {fileID: 11400000, guid: 5bfb5c617e4aa9b4cb59644ffdb5f29a, type: 2}
+  ashOfWarAction: {fileID: 0}
+  whooshes: []
+  blocking: []
+  drawSounds: []
+  releaseSounds: []

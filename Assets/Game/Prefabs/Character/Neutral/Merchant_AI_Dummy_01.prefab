@@ -3538,8 +3538,140 @@ MonoBehaviour:
   shopProgressionTier: 1
   autoScaleShopTierFromProgression: 1
   shopTierOffset: 0
-  useGlobalPurchasableItems: 1
-  customStock: []
+  useGlobalPurchasableItems: 0
+  customStock:
+  - item: {fileID: 11400000, guid: 44cf7f826137bed409bf10c407725a1c, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 1
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: fd79804dafa6951429288c553a1c075a, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 1
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: 8e41399ba98a2184984819f023083d90, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 1
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: 11604aa6e9114404cb9df6b4e87b6a49, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 1
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: 00c7c97a002a22b439e1e236b455d6e0, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 1
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: 5155f537089c49db919511a9f42f7442, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 1
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: 30824187b31746779dd30ae256554280, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 1
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: 5478ff6af15e44518ed40c45e12aed1d, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 1
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: f6842a4391c44deea0c75ac5ef9aa8dd, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 2
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: 1b039a437399475c87d11b926f4ef006, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 2
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: b5e3f874a87849dd8cc519f229539264, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 1
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: 25027cf1470e4ff3bebe5a74894d36da, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 1
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: f22fbf1330b04bb9804a1482c671148d, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 1
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: 8deec9e219c645289bf53ac2b1b7ab30, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 1
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: f7592f59d01347c1ae61c5c24b53c9d9, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 1
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: 6c4312431e5b4c97bc078f6bf7a59d63, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 1
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: 06e8017378dd4c7e8ff7e2cb14fb1a4c, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 1
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: 8b1448e8f59b45dabd7580b046817423, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 1
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: 0367518efc15af643bab9ad92d39bba7, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 2
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: 7a9a409d5732a69469b7d433784133b2, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 2
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: 8fca7fb39e972c64dadbfac6422a88fa, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 2
+    useLimitedQuantity: 0
+    startingQuantity: 1
+  - item: {fileID: 11400000, guid: 78ca0d8554b1d09499208d5e2aadb59f, type: 2}
+    buyPriceOverride: -1
+    sellPriceOverride: -1
+    requiredProgressionTier: 2
+    useLimitedQuantity: 0
+    startingQuantity: 1
   buyPriceIncreasePerTier: 0.2
   sellPriceIncreasePerTier: 0.05
 --- !u!114 &6751842201400020004
