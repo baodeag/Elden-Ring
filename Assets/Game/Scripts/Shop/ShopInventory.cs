@@ -109,6 +109,9 @@ namespace baodeag
                 if (stockEntries[i] == null || stockEntries[i].item == null)
                     continue;
 
+                if (stockEntries[i].item == item)
+                    return stockEntries[i];
+
                 if (stockEntries[i].item.itemID == item.itemID)
                     return stockEntries[i];
             }

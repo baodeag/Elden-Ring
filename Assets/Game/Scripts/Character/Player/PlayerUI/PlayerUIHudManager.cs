@@ -234,7 +234,7 @@ namespace baodeag
 
         public void SetRightWeaponQuickSlotIcon(int weaponID)
         {
-            WeaponItem weapon = WorldItemDatabase.Instance.GetWeaponByID(weaponID);
+            WeaponItem weapon = ResolveEquippedWeaponForHUD(weaponID, true);
 
             if (weapon == null)
             {
@@ -258,7 +258,8 @@ namespace baodeag
         
         public void SetLeftWeaponQuickSlotIcon(int weaponID)
         {
-            WeaponItem weapon = WorldItemDatabase.Instance.GetWeaponByID(weaponID);
+            WeaponItem weapon = ResolveEquippedWeaponForHUD(weaponID, false);
+
             if (weapon == null)
             {
                 Debug.Log("Item is null");
@@ -275,6 +276,42 @@ namespace baodeag
             }
             leftWeaponQuickSlotIcon.sprite = weapon.itemIcon;
             leftWeaponQuickSlotIcon.enabled = true;
+        }
+
+        private WeaponItem ResolveEquippedWeaponForHUD(int weaponID, bool isRightHand)
+        {
+            PlayerManager localPlayer = PlayerUIManager.instance != null ? PlayerUIManager.instance.localPlayer : null;
+
+            if (localPlayer != null && localPlayer.playerInventoryManager != null)
+            {
+                WeaponItem currentWeapon = isRightHand
+                    ? localPlayer.playerInventoryManager.currentRightHandWeapon
+                    : localPlayer.playerInventoryManager.currentLeftHandWeapon;
+
+                if (currentWeapon != null && (currentWeapon.itemID == weaponID || currentWeapon.itemIcon != null))
+                    return currentWeapon;
+
+                WeaponItem[] equippedWeapons = isRightHand
+                    ? localPlayer.playerInventoryManager.weaponsInRightHandSlots
+                    : localPlayer.playerInventoryManager.weaponsInLeftHandSlots;
+
+                if (equippedWeapons != null)
+                {
+                    for (int i = 0; i < equippedWeapons.Length; i++)
+                    {
+                        WeaponItem equippedWeapon = equippedWeapons[i];
+
+                        if (equippedWeapon == null || equippedWeapon.itemID != weaponID)
+                            continue;
+
+                        return equippedWeapon;
+                    }
+                }
+            }
+
+            return WorldItemDatabase.Instance != null
+                ? WorldItemDatabase.Instance.GetWeaponByID(weaponID)
+                : null;
         }
 
         public void SetSpellItemQuickSlotIcon(int spellID)

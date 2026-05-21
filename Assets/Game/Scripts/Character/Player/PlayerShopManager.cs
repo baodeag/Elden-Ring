@@ -29,7 +29,7 @@ namespace baodeag
             if (shopInventory != null && !shopInventory.TryPurchaseItem(entry.item))
                 return false;
 
-            Item purchasedItem = WorldItemDatabase.Instance.CreateItemInstance(entry.item.itemID);
+            Item purchasedItem = CreatePurchasedItem(entry.item);
 
             if (purchasedItem == null)
                 return false;
@@ -125,6 +125,23 @@ namespace baodeag
 
             player.playerStatsManager.AddRunes(sellPrice);
             TryAutoSave();
+        }
+
+        private Item CreatePurchasedItem(Item shopItem)
+        {
+            if (shopItem == null)
+                return null;
+
+            if (WorldItemDatabase.Instance != null)
+            {
+                Item purchasedItem = WorldItemDatabase.Instance.CreateItemInstance(shopItem.itemID);
+
+                if (purchasedItem != null)
+                    return purchasedItem;
+            }
+
+            // Fall back to the exact asset the merchant is selling if the database lookup is out of sync.
+            return Instantiate(shopItem);
         }
 
         private void RefreshOwnedPlayerUI()
