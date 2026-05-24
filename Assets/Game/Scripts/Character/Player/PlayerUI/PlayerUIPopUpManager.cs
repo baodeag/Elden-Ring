@@ -3,6 +3,7 @@ using TMPro;
 using System.Collections;
 using UnityEngine.UI;
 using Unity.Netcode;
+using UnityEngine.SceneManagement;
 namespace baodeag
 {
     public class PlayerUIPopUpManager : MonoBehaviour
@@ -69,15 +70,47 @@ namespace baodeag
         [SerializeField] TextMeshProUGUI endGamePrimaryButtonText;
         [SerializeField] Button endGameSecondaryButton;
         [SerializeField] TextMeshProUGUI endGameSecondaryButtonText;
+        [SerializeField] Button endGameLeaderboardButton;
+        [SerializeField] TextMeshProUGUI endGameLeaderboardButtonText;
+
+        [Header("Run Summary Overlay")]
+        [SerializeField] GameObject leaderboardOverlayGameObject;
+        [SerializeField] CanvasGroup leaderboardOverlayCanvasGroup;
+        [SerializeField] TextMeshProUGUI leaderboardRankText;
+        [SerializeField] TextMeshProUGUI leaderboardSummaryText;
+        [SerializeField] Button leaderboardCloseButton;
 
         private static readonly Color buffPopUpColor = new Color(0.96f, 0.84f, 0.42f, 1f);
         private EndGameActionType pendingPrimaryEndGameAction;
         private EndGameActionType pendingSecondaryEndGameAction;
         private const string WaitingForHostMessage = "Waiting for host to choose the next action...";
+        private const string EndGameLeaderboardButtonLabel = "LEADERBOARD";
+        private const string DefaultRunSummaryResultLabel = "RESULT PENDING";
+        private const float LeaderboardCloseInputDelay = 0.15f;
+        private string latestEndGameResultLabel = DefaultRunSummaryResultLabel;
+        private bool latestEndGameCanContinueProgression;
+        private float ignoreLeaderboardCloseUntilTime;
 
         public bool IsEndGameOverlayOpen()
         {
             return endGameOverlayGameObject != null && endGameOverlayGameObject.activeInHierarchy;
+        }
+
+        public bool IsLeaderboardOverlayOpen()
+        {
+            return leaderboardOverlayGameObject != null && leaderboardOverlayGameObject.activeInHierarchy;
+        }
+
+        public bool TryHandleCloseLeaderboardInput()
+        {
+            if (!IsLeaderboardOverlayOpen())
+                return false;
+
+            if (Time.unscaledTime < ignoreLeaderboardCloseUntilTime)
+                return true;
+
+            HideLeaderboardOverlay(true);
+            return true;
         }
 
         public void CloseAllPopUpWindows()
@@ -117,10 +150,13 @@ namespace baodeag
             }
 
             bool endGameOverlayOpen = IsEndGameOverlayOpen();
+            bool leaderboardOverlayOpen = IsLeaderboardOverlayOpen();
 
-            PlayerUIManager.instance.popUpWindowIsOpen = endGameOverlayOpen;
+            PlayerUIManager.instance.popUpWindowIsOpen = endGameOverlayOpen || leaderboardOverlayOpen;
 
-            if (!endGameOverlayOpen && !PlayerUIManager.instance.menuWindowIsOpen)
+            if (!endGameOverlayOpen &&
+                !leaderboardOverlayOpen &&
+                !PlayerUIManager.instance.menuWindowIsOpen)
                 PlayerUIManager.instance.playerUIHudManager?.ToggleHUDWithOutPopUps(true);
         }
 
@@ -166,6 +202,8 @@ namespace baodeag
 
         public void ShowLoseEndGameOverlay()
         {
+            CacheEndGameSummary("DEFEAT", false);
+
             ForceShowEndGameOverlay(
                 "DEFEAT",
                 "Your run ends here. Retry the map or return to the title screen.",
@@ -177,6 +215,8 @@ namespace baodeag
 
         public void ShowVictoryEndGameOverlay(bool canContinueProgression)
         {
+            CacheEndGameSummary("VICTORY", canContinueProgression);
+
             ForceShowEndGameOverlay(
                 "VICTORY",
                 canContinueProgression
@@ -610,6 +650,9 @@ namespace baodeag
             endGamePrimaryButtonText.text = primaryButtonLabel;
             endGameSecondaryButtonText.text = secondaryButtonLabel;
 
+            if (endGameLeaderboardButtonText != null)
+                endGameLeaderboardButtonText.text = EndGameLeaderboardButtonLabel;
+
             endGameOverlayCanvasGroup.alpha = 1f;
             endGameOverlayCanvasGroup.interactable = true;
             endGameOverlayCanvasGroup.blocksRaycasts = true;
@@ -636,13 +679,21 @@ namespace baodeag
             ApplyEndGameActionAvailability();
 
             if (CanLocalPlayerControlEndGameActions() && endGamePrimaryButton != null)
+            {
                 endGamePrimaryButton.Select();
+            }
+            else if (endGameLeaderboardButton != null)
+            {
+                endGameLeaderboardButton.Select();
+            }
         }
 
         private void HideEndGameOverlay()
         {
             if (endGameOverlayGameObject == null)
                 return;
+
+            HideLeaderboardOverlay(false);
 
             endGameOverlayCanvasGroup.alpha = 0f;
             endGameOverlayCanvasGroup.interactable = false;
@@ -675,6 +726,16 @@ namespace baodeag
             ExecuteEndGameAction(pendingSecondaryEndGameAction);
         }
 
+        public void HandleLeaderboardEndGameButtonPressed()
+        {
+            ShowLeaderboardOverlay();
+        }
+
+        public void HandleLeaderboardCloseButtonPressed()
+        {
+            HideLeaderboardOverlay(true);
+        }
+
         public void DismissEndGameOverlayForTransition(bool showLoadingScreen)
         {
             if (IsEndGameOverlayOpen())
@@ -705,6 +766,9 @@ namespace baodeag
 
             if (endGameSecondaryButton != null)
                 endGameSecondaryButton.interactable = canControlActions;
+
+            if (endGameLeaderboardButton != null)
+                endGameLeaderboardButton.interactable = true;
         }
 
         private bool CanLocalPlayerControlEndGameActions()
@@ -762,6 +826,218 @@ namespace baodeag
             }
 
             WorldGameSessionManager.instance.ExecuteSynchronizedEndGameAction(sessionAction, true);
+        }
+
+        private void CacheEndGameSummary(string resultLabel, bool canContinueProgression)
+        {
+            latestEndGameResultLabel = string.IsNullOrWhiteSpace(resultLabel)
+                ? DefaultRunSummaryResultLabel
+                : resultLabel;
+
+            latestEndGameCanContinueProgression = canContinueProgression;
+        }
+
+        private void ShowLeaderboardOverlay()
+        {
+            if (leaderboardOverlayGameObject == null ||
+                leaderboardOverlayCanvasGroup == null ||
+                leaderboardRankText == null ||
+                leaderboardSummaryText == null)
+            {
+                Debug.LogWarning("PlayerUIPopUpManager: Leaderboard overlay references are missing.");
+                return;
+            }
+
+            RefreshLeaderboardOverlayContent();
+            ignoreLeaderboardCloseUntilTime = Time.unscaledTime + LeaderboardCloseInputDelay;
+            SetEndGameOverlayVisible(false);
+
+            leaderboardOverlayCanvasGroup.alpha = 1f;
+            leaderboardOverlayCanvasGroup.interactable = true;
+            leaderboardOverlayCanvasGroup.blocksRaycasts = true;
+
+            Transform currentTransform = leaderboardOverlayGameObject.transform;
+            while (currentTransform != null)
+            {
+                currentTransform.gameObject.SetActive(true);
+                currentTransform = currentTransform.parent;
+            }
+
+            leaderboardOverlayGameObject.SetActive(true);
+            PlayerUIManager.instance.popUpWindowIsOpen = true;
+
+            if (leaderboardCloseButton != null)
+                leaderboardCloseButton.Select();
+        }
+
+        private void HideLeaderboardOverlay(bool restoreEndGameSelection)
+        {
+            if (leaderboardOverlayGameObject == null)
+                return;
+
+            if (leaderboardOverlayCanvasGroup != null)
+            {
+                leaderboardOverlayCanvasGroup.alpha = 0f;
+                leaderboardOverlayCanvasGroup.interactable = false;
+                leaderboardOverlayCanvasGroup.blocksRaycasts = false;
+            }
+
+            leaderboardOverlayGameObject.SetActive(false);
+            ignoreLeaderboardCloseUntilTime = 0f;
+            SetEndGameOverlayVisible(true);
+
+            if (restoreEndGameSelection && endGameLeaderboardButton != null && IsEndGameOverlayOpen())
+                endGameLeaderboardButton.Select();
+        }
+
+        private void RefreshLeaderboardOverlayContent()
+        {
+            int localDeathCount = GetLocalPlayerDeathCountForCurrentMap();
+            int maxDeaths = WorldGameSessionManager.instance != null
+                ? WorldGameSessionManager.instance.GetMaxDeathsPerMapBeforeLoseCount()
+                : 5;
+
+            leaderboardRankText.text = BuildRunRank(latestEndGameResultLabel, localDeathCount);
+            leaderboardSummaryText.text = BuildLeaderboardSummary(localDeathCount, maxDeaths);
+        }
+
+        private string BuildLeaderboardSummary(int localDeathCount, int maxDeaths)
+        {
+            int runMapIndex = ResolveRunMapIndex();
+            string runMapName = GameProgressionManager.Instance != null
+                ? GameProgressionManager.Instance.GetMapName(runMapIndex)
+                : $"Map {runMapIndex + 1}";
+
+            CharacterSaveData currentCharacterData = WorldSaveGameManager.instance != null
+                ? WorldSaveGameManager.instance.currentCharacterData
+                : null;
+
+            string playerName = GetLeaderboardPlayerName(currentCharacterData);
+            string progressionLabel = BuildProgressionSummary(runMapIndex);
+            int defeatedBossCount = CountCompletedEntries(currentCharacterData?.bossesDefeated);
+            int unlockedMapCount = CountCompletedEntries(currentCharacterData?.mapsUnlocked);
+            float totalPlaySeconds = currentCharacterData != null ? currentCharacterData.secondsPlayed : 0f;
+
+            return
+                $"<b>Player</b>\n{playerName}\n\n" +
+                $"<b>Result</b>\n{latestEndGameResultLabel}\n\n" +
+                $"<b>Run Map</b>\n{runMapName}\n\n" +
+                $"<b>Deaths This Map</b>\n{localDeathCount}/{maxDeaths}\n\n" +
+                $"<b>Progression</b>\n{progressionLabel}\n\n" +
+                $"<b>Bosses Defeated</b>\n{defeatedBossCount}\n\n" +
+                $"<b>Maps Unlocked</b>\n{unlockedMapCount}\n\n" +
+                $"<b>Total Play Time</b>\n{FormatDuration(totalPlaySeconds)}";
+        }
+
+        private int ResolveRunMapIndex()
+        {
+            if (GameProgressionManager.Instance == null)
+                return 0;
+
+            int activeSceneBuildIndex = SceneManager.GetActiveScene().buildIndex;
+            int sceneMapIndex = GameProgressionManager.Instance.GetMapIndexForSceneBuildIndex(activeSceneBuildIndex);
+
+            if (sceneMapIndex >= 0)
+                return sceneMapIndex;
+
+            return GameProgressionManager.Instance.CurrentMapIndex;
+        }
+
+        private int GetLocalPlayerDeathCountForCurrentMap()
+        {
+            if (WorldGameSessionManager.instance == null ||
+                PlayerUIManager.instance == null ||
+                PlayerUIManager.instance.localPlayer == null)
+            {
+                return 0;
+            }
+
+            return WorldGameSessionManager.instance.GetDeathCountForPlayerThisMap(PlayerUIManager.instance.localPlayer.OwnerClientId);
+        }
+
+        private string GetLeaderboardPlayerName(CharacterSaveData currentCharacterData)
+        {
+            if (currentCharacterData != null && !string.IsNullOrWhiteSpace(currentCharacterData.characterName))
+                return currentCharacterData.characterName;
+
+            return "Tarnished";
+        }
+
+        private string BuildProgressionSummary(int runMapIndex)
+        {
+            if (latestEndGameResultLabel != "VICTORY")
+                return "Retry the current map";
+
+            if (GameProgressionManager.Instance != null && GameProgressionManager.Instance.GameWon)
+                return "Journey complete";
+
+            if (!latestEndGameCanContinueProgression)
+                return "Replay available from the current map";
+
+            if (GameProgressionManager.Instance == null)
+                return "Next map unlocked";
+
+            int nextMapIndex = GameProgressionManager.Instance.CurrentMapIndex;
+
+            if (nextMapIndex == runMapIndex)
+                return "Current map remains available";
+
+            return $"Next destination: {GameProgressionManager.Instance.GetMapName(nextMapIndex)}";
+        }
+
+        private string BuildRunRank(string resultLabel, int localDeathCount)
+        {
+            if (resultLabel != "VICTORY")
+                return "C";
+
+            if (localDeathCount <= 0)
+                return "S";
+
+            if (localDeathCount == 1)
+                return "A";
+
+            if (localDeathCount <= 3)
+                return "B";
+
+            return "C";
+        }
+
+        private int CountCompletedEntries(SerializableDictionary<int, bool> source)
+        {
+            if (source == null || source.Count == 0)
+                return 0;
+
+            int count = 0;
+
+            foreach (var entry in source)
+            {
+                if (entry.Value)
+                    count += 1;
+            }
+
+            return count;
+        }
+
+        private string FormatDuration(float totalSeconds)
+        {
+            int roundedSeconds = Mathf.Max(0, Mathf.RoundToInt(totalSeconds));
+            int hours = roundedSeconds / 3600;
+            int minutes = (roundedSeconds % 3600) / 60;
+            int seconds = roundedSeconds % 60;
+            return $"{hours:00}:{minutes:00}:{seconds:00}";
+        }
+
+        private void SetEndGameOverlayVisible(bool isVisible)
+        {
+            if (endGameOverlayGameObject == null || endGameOverlayCanvasGroup == null)
+                return;
+
+            endGameOverlayCanvasGroup.alpha = isVisible ? 1f : 0f;
+            endGameOverlayCanvasGroup.interactable = isVisible;
+            endGameOverlayCanvasGroup.blocksRaycasts = isVisible;
+
+            if (endGameOverlayGameObject.activeSelf != isVisible)
+                endGameOverlayGameObject.SetActive(isVisible);
         }
     }
 }

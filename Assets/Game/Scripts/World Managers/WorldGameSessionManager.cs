@@ -275,6 +275,19 @@ namespace baodeag
             ReturnToTitleAfterVictory(0f);
         }
 
+        public int GetDeathCountForPlayerThisMap(ulong playerClientId)
+        {
+            if (playerDeathsThisMap.TryGetValue(playerClientId, out int deathCount))
+                return deathCount;
+
+            return 0;
+        }
+
+        public int GetMaxDeathsPerMapBeforeLoseCount()
+        {
+            return MaxDeathsPerMapBeforeLose;
+        }
+
         public bool CanRevivePlayers()
         {
             return !sessionLoseTriggered && !sessionWinTriggered;

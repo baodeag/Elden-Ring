@@ -919,6 +919,13 @@ namespace baodeag
             {
                 openCharacterMenuInput = false;
 
+                if (PlayerUIManager.instance != null &&
+                    PlayerUIManager.instance.playerUIPopUpManager != null &&
+                    PlayerUIManager.instance.playerUIPopUpManager.IsLeaderboardOverlayOpen())
+                {
+                    return;
+                }
+
                 PlayerUIManager.instance.playerUIPopUpManager.CloseAllPopUpWindows();
                 PlayerUIManager.instance.OpenMenuAsRoot(PlayerUIManager.instance.playerUICharacterMenuManager);
             }
@@ -929,6 +936,13 @@ namespace baodeag
             if (closeMenuInput)
             {
                 closeMenuInput = false;
+
+                if (PlayerUIManager.instance != null &&
+                    PlayerUIManager.instance.playerUIPopUpManager != null &&
+                    PlayerUIManager.instance.playerUIPopUpManager.TryHandleCloseLeaderboardInput())
+                {
+                    return;
+                }
 
                 if (PlayerUIManager.instance.menuWindowIsOpen)
                 {
