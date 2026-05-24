@@ -8,6 +8,7 @@ namespace baodeag {
     public class WorldSaveGameManager : MonoBehaviour
     {
         public static WorldSaveGameManager instance;
+        private const int TitleSceneBuildIndex = 0;
 
         public PlayerManager player;
 
@@ -45,6 +46,7 @@ namespace baodeag {
         [Header("Dialogues")]
         [SerializeField] List<CharacterDialogue> namelessKnightDialogues = new List<CharacterDialogue>();
         [SerializeField] List<CharacterDialogue> blacksmithDialogues = new List<CharacterDialogue>();
+        private bool currentCharacterPlayTimeFrozen;
 
         private void Awake()
         {
@@ -70,6 +72,8 @@ namespace baodeag {
 
         private void Update()
         {
+            TickCurrentCharacterPlayTime();
+
             if (saveGame)
             {
                 saveGame = false;
@@ -81,6 +85,43 @@ namespace baodeag {
                 loadGame = false;
                 LoadGame();
             }
+        }
+
+        public static string FormatDuration(float totalSeconds)
+        {
+            int roundedSeconds = Mathf.Max(0, Mathf.RoundToInt(totalSeconds));
+            int hours = roundedSeconds / 3600;
+            int minutes = (roundedSeconds % 3600) / 60;
+            int seconds = roundedSeconds % 60;
+            return $"{hours:00}:{minutes:00}:{seconds:00}";
+        }
+
+        public CharacterSaveData GetCharacterDataForSlot(CharacterSlot characterSlot)
+        {
+            return characterSlot switch
+            {
+                CharacterSlot.CharacterSlot_01 => characterSlots01,
+                CharacterSlot.CharacterSlot_02 => characterSlots02,
+                CharacterSlot.CharacterSlot_03 => characterSlots03,
+                CharacterSlot.CharacterSlot_04 => characterSlots04,
+                CharacterSlot.CharacterSlot_05 => characterSlots05,
+                CharacterSlot.CharacterSlot_06 => characterSlots06,
+                CharacterSlot.CharacterSlot_07 => characterSlots07,
+                CharacterSlot.CharacterSlot_08 => characterSlots08,
+                CharacterSlot.CharacterSlot_09 => characterSlots09,
+                CharacterSlot.CharacterSlot_10 => characterSlots10,
+                _ => null
+            };
+        }
+
+        public float GetCurrentCharacterPlayedSeconds()
+        {
+            return currentCharacterData != null ? currentCharacterData.secondsPlayed : 0f;
+        }
+
+        public void SetCurrentCharacterPlayTimeFrozen(bool isFrozen)
+        {
+            currentCharacterPlayTimeFrozen = isFrozen;
         }
 
         public bool HasFreeCharacterSlot()
@@ -336,6 +377,8 @@ namespace baodeag {
             }
 
             currentCharacterData.EnsureCollectionsInitialized();
+            currentCharacterPlayTimeFrozen = false;
+            SetCharacterDataForSlot(currentCharacterSlotBeingUsed, currentCharacterData);
 
             GameProgressionManager.Instance.LoadFromCharacterData(currentCharacterData);
 
@@ -378,6 +421,7 @@ namespace baodeag {
 
             //write that info onto a json file, saved to this machine
             saveFileDataWriter.CreateNewCharacterSaveFile(currentCharacterData);
+            SetCharacterDataForSlot(currentCharacterSlotBeingUsed, currentCharacterData);
         }
 
         public void DeleteGame(CharacterSlot characterSlot)
@@ -387,6 +431,7 @@ namespace baodeag {
             saveFileDataWriter.saveDataDirectoryPath = Application.persistentDataPath;
             saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(characterSlot);
             saveFileDataWriter.DeleteSaveFile();
+            SetCharacterDataForSlot(characterSlot, null);
         }
 
         //load all character profiles on device when starting the game
@@ -572,6 +617,65 @@ namespace baodeag {
         private void GetStageIDsOnLoad()
         {
             namelessKnightDialogueStageID = currentCharacterData.namelessKnightStageID;
+        }
+
+        private void TickCurrentCharacterPlayTime()
+        {
+            if (!CanAdvanceCurrentCharacterPlayTime())
+                return;
+
+            currentCharacterData.secondsPlayed += Time.unscaledDeltaTime;
+        }
+
+        private bool CanAdvanceCurrentCharacterPlayTime()
+        {
+            if (currentCharacterPlayTimeFrozen)
+                return false;
+
+            if (currentCharacterData == null)
+                return false;
+
+            if (SceneManager.GetActiveScene().buildIndex <= TitleSceneBuildIndex)
+                return false;
+
+            return true;
+        }
+
+        private void SetCharacterDataForSlot(CharacterSlot characterSlot, CharacterSaveData characterData)
+        {
+            switch (characterSlot)
+            {
+                case CharacterSlot.CharacterSlot_01:
+                    characterSlots01 = characterData;
+                    break;
+                case CharacterSlot.CharacterSlot_02:
+                    characterSlots02 = characterData;
+                    break;
+                case CharacterSlot.CharacterSlot_03:
+                    characterSlots03 = characterData;
+                    break;
+                case CharacterSlot.CharacterSlot_04:
+                    characterSlots04 = characterData;
+                    break;
+                case CharacterSlot.CharacterSlot_05:
+                    characterSlots05 = characterData;
+                    break;
+                case CharacterSlot.CharacterSlot_06:
+                    characterSlots06 = characterData;
+                    break;
+                case CharacterSlot.CharacterSlot_07:
+                    characterSlots07 = characterData;
+                    break;
+                case CharacterSlot.CharacterSlot_08:
+                    characterSlots08 = characterData;
+                    break;
+                case CharacterSlot.CharacterSlot_09:
+                    characterSlots09 = characterData;
+                    break;
+                case CharacterSlot.CharacterSlot_10:
+                    characterSlots10 = characterData;
+                    break;
+            }
         }
     }
 }

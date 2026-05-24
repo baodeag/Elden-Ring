@@ -916,7 +916,9 @@ namespace baodeag
             string progressionLabel = BuildProgressionSummary(runMapIndex);
             int defeatedBossCount = CountCompletedEntries(currentCharacterData?.bossesDefeated);
             int unlockedMapCount = CountCompletedEntries(currentCharacterData?.mapsUnlocked);
-            float totalPlaySeconds = currentCharacterData != null ? currentCharacterData.secondsPlayed : 0f;
+            float totalPlaySeconds = WorldSaveGameManager.instance != null
+                ? WorldSaveGameManager.instance.GetCurrentCharacterPlayedSeconds()
+                : 0f;
 
             return
                 $"<b>Player</b>\n{playerName}\n\n" +
@@ -926,7 +928,7 @@ namespace baodeag
                 $"<b>Progression</b>\n{progressionLabel}\n\n" +
                 $"<b>Bosses Defeated</b>\n{defeatedBossCount}\n\n" +
                 $"<b>Maps Unlocked</b>\n{unlockedMapCount}\n\n" +
-                $"<b>Total Play Time</b>\n{FormatDuration(totalPlaySeconds)}";
+                $"<b>Total Play Time</b>\n{WorldSaveGameManager.FormatDuration(totalPlaySeconds)}";
         }
 
         private int ResolveRunMapIndex()
@@ -1016,15 +1018,6 @@ namespace baodeag
             }
 
             return count;
-        }
-
-        private string FormatDuration(float totalSeconds)
-        {
-            int roundedSeconds = Mathf.Max(0, Mathf.RoundToInt(totalSeconds));
-            int hours = roundedSeconds / 3600;
-            int minutes = (roundedSeconds % 3600) / 60;
-            int seconds = roundedSeconds % 60;
-            return $"{hours:00}:{minutes:00}:{seconds:00}";
         }
 
         private void SetEndGameOverlayVisible(bool isVisible)

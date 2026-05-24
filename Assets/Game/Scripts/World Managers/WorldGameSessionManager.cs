@@ -186,6 +186,9 @@ namespace baodeag
                 PlayerUIManager.instance.playerUIPopUpManager.ShowLoseEndGameOverlay();
             }
 
+            if (WorldSaveGameManager.instance != null)
+                WorldSaveGameManager.instance.SetCurrentCharacterPlayTimeFrozen(true);
+
             if (WorldAIManager.instance != null)
                 WorldAIManager.instance.DisableAllBossFights();
         }
@@ -197,6 +200,9 @@ namespace baodeag
 
             sessionWinTriggered = true;
             CancelPendingRevival();
+
+            if (WorldSaveGameManager.instance != null)
+                WorldSaveGameManager.instance.SetCurrentCharacterPlayTimeFrozen(true);
 
             if (PlayerUIManager.instance != null && PlayerUIManager.instance.playerUIPopUpManager != null)
             {
@@ -1134,6 +1140,9 @@ namespace baodeag
             sessionWinTriggered = false;
             CancelPendingRevival();
             ClearPendingVictoryTransition();
+
+            if (WorldSaveGameManager.instance != null)
+                WorldSaveGameManager.instance.SetCurrentCharacterPlayTimeFrozen(false);
         }
 
         private void ClearPendingVictoryTransition()
