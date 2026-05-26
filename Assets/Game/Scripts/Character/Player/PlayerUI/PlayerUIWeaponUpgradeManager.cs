@@ -7,6 +7,8 @@ namespace baodeag
 {
     public class PlayerUIWeaponUpgradeManager : PlayerUIMenu
     {
+        private const string MenuTitleText = "Upgrade Weapons";
+
         [Header("Menus")]
         [SerializeField] GameObject confirmUpgradePopUp;
 
@@ -63,12 +65,50 @@ namespace baodeag
         {
             base.OpenMenu();
 
+            AlignMenuTitle();
             confirmUpgradePopUp.SetActive(false);
             ToggleEquipmentButtons(true);
             RefreshEquipmentSlotIcons();
 
             //select the first button and factors upgrade cost
             SelectEquipmentSlot(0);
+        }
+
+        private void AlignMenuTitle()
+        {
+            if (menu == null)
+                return;
+
+            TextMeshProUGUI[] textFields = menu.GetComponentsInChildren<TextMeshProUGUI>(true);
+
+            for (int i = 0; i < textFields.Length; i++)
+            {
+                TextMeshProUGUI titleText = textFields[i];
+
+                if (titleText == null)
+                    continue;
+
+                string normalizedText = titleText.text.Trim();
+                bool isUpgradeTitle = string.Equals(normalizedText, MenuTitleText, System.StringComparison.OrdinalIgnoreCase);
+
+                if (!isUpgradeTitle && titleText.gameObject.name != "Menu Title")
+                    continue;
+
+                RectTransform titleRect = titleText.rectTransform;
+                titleRect.anchorMin = new Vector2(0f, 1f);
+                titleRect.anchorMax = new Vector2(1f, 1f);
+                titleRect.pivot = new Vector2(0.5f, 0.5f);
+                titleRect.anchoredPosition = new Vector2(0f, -64f);
+                titleRect.sizeDelta = new Vector2(0f, 50f);
+
+                titleText.alignment = TextAlignmentOptions.Center;
+                titleText.textWrappingMode = TextWrappingModes.NoWrap;
+                titleText.enableAutoSizing = true;
+                titleText.fontSizeMin = 36f;
+                titleText.fontSizeMax = 50f;
+                titleText.ForceMeshUpdate();
+                return;
+            }
         }
 
         //use to disable/enable weapon buttons when confirming upgrade

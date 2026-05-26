@@ -1009,7 +1009,7 @@ namespace baodeag {
 
         private string GetFormattedClassButtonLabel(CharacterClass characterClass)
         {
-            return $"{characterClass.className.ToUpperInvariant()}\n<size=70%>{GetClassSubtitle(characterClass).ToUpperInvariant()}</size>";
+            return characterClass.className.ToUpperInvariant();
         }
 
         private string GetClassSubtitle(CharacterClass characterClass)
