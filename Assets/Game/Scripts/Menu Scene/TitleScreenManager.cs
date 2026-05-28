@@ -1,7 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.InputManagerEntry;
 using TMPro;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;

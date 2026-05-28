@@ -1359,7 +1359,9 @@ namespace baodeag
             light.range = config.chandelierLightRange;
             light.intensity = config.chandelierLightIntensity;
             light.shadows = LightShadows.None;
+#if UNITY_EDITOR
             light.lightmapBakeType = LightmapBakeType.Mixed;
+#endif
         }
 
         private void SpawnTorchLight(GameObject torch, Vector3 torchPosition, Vector3 inward, Transform parent)
@@ -1376,7 +1378,9 @@ namespace baodeag
             light.range = config.torchLightRange;
             light.intensity = config.torchLightIntensity;
             light.shadows = LightShadows.None;
+#if UNITY_EDITOR
             light.lightmapBakeType = LightmapBakeType.Mixed;
+#endif
         }
 
         private Vector3 GetWallMountedTorchPosition(Bounds floorBoundsForTile, int directionIndex, Vector3 inward)
