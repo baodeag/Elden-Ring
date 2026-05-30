@@ -84,12 +84,14 @@ namespace baodeag
 
         public override void OnNetworkSpawn()
         {
+            BuildRuntimeLogger.Log($"PlayerManager.OnNetworkSpawn begin owner={IsOwner} server={IsServer} host={IsHost} clientId={OwnerClientId}");
             base.OnNetworkSpawn();
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
 
             //if we own this player, set the camera's player to this
             if (IsOwner)
             {
+                BuildRuntimeLogger.Log("PlayerManager.OnNetworkSpawn configuring local owner references");
                 PlayerCamera.instance.player = this;
                 PlayerInputManager.instance.player = this;
                 PlayerUIManager.instance.localPlayer = this;
@@ -121,6 +123,7 @@ namespace baodeag
 
                 //reset camera rotation to standard when aiming is disabled
                 playerNetworkManager.isAiming.OnValueChanged += playerNetworkManager.OnIsAimingChanged;
+                BuildRuntimeLogger.Log("PlayerManager.OnNetworkSpawn local owner references configured");
             }
 
             //only update the floating hp bar if this character is not the local players character
@@ -189,8 +192,12 @@ namespace baodeag
             //upon connecting, if we are the owner of this player, but not the server, reload our character data to this newly instantiated character
             if (IsOwner && !IsServer)
             {
+                BuildRuntimeLogger.Log("PlayerManager.OnNetworkSpawn loading client character data");
                 LoadGameDataFromCurrentCharacterData(ref WorldSaveGameManager.instance.currentCharacterData);
+                BuildRuntimeLogger.Log("PlayerManager.OnNetworkSpawn client character data loaded");
             }
+
+            BuildRuntimeLogger.Log("PlayerManager.OnNetworkSpawn end");
         }
 
         public override void OnNetworkDespawn()
@@ -287,6 +294,7 @@ namespace baodeag
 
         private void OnClientConnectedCallback(ulong clientID)
         {
+            BuildRuntimeLogger.Log($"PlayerManager.OnClientConnectedCallback clientID={clientID} owner={IsOwner} server={IsServer} localClientId={NetworkManager.Singleton.LocalClientId}");
             WorldGameSessionManager.instance.AddPlayerToActivePlayersList(this);
 
             if (IsServer && clientID != NetworkManager.Singleton.LocalClientId)
@@ -507,6 +515,7 @@ namespace baodeag
 
         public void LoadGameDataFromCurrentCharacterData(ref CharacterSaveData currentCharacterData)
         {
+            BuildRuntimeLogger.Log("PlayerManager.LoadGameDataFromCurrentCharacterData begin");
             playerNetworkManager.characterName.Value = currentCharacterData.characterName;
             playerNetworkManager.isMale.Value = currentCharacterData.isMale;
 
@@ -547,6 +556,7 @@ namespace baodeag
             playerNetworkManager.buildUpCapacity.Value = playerStatsManager.CalculateBuildUpCapacityBasedOnVitalityLevel(playerNetworkManager.vigor.Value);
             playerNetworkManager.lastSiteOfGraceUsed.Value = currentCharacterData.lastSiteOfGraceRestedAt;
             isDead.Value = false;
+            BuildRuntimeLogger.Log("PlayerManager.LoadGameDataFromCurrentCharacterData stats/body loaded");
 
             playerStatsManager.runes = currentCharacterData.runes;
 
@@ -621,6 +631,7 @@ namespace baodeag
             playerInventoryManager.quickSlotItemsInQuickSlots[1] = currentCharacterData.quickSlotItem02.GetQuickSlotItem();
             playerInventoryManager.quickSlotItemsInQuickSlots[2] = currentCharacterData.quickSlotItem03.GetQuickSlotItem();
             playerEquipmentManager.LoadQuickSlotEquipment(playerInventoryManager.quickSlotItemsInQuickSlots[playerInventoryManager.quickSlotItemIndex]); //this refreshes the hud
+            BuildRuntimeLogger.Log("PlayerManager.LoadGameDataFromCurrentCharacterData quick slots loaded");
 
             if (currentCharacterData.rightWeaponIndex >= 0)
             {
@@ -702,6 +713,7 @@ namespace baodeag
             playerEquipmentManager.LoadMainProjectileEquipment(currentCharacterData.mainProjectile.GetProjectile());
             playerEquipmentManager.LoadSecondaryProjectileEquipment(currentCharacterData.secondaryProjectile.GetProjectile());
             playerEffectsManager.LoadActiveBuffs(currentCharacterData.activeBuffs);
+            BuildRuntimeLogger.Log("PlayerManager.LoadGameDataFromCurrentCharacterData end");
         }
 
         public void LoadOtherPlayerCharacterWhenJoiningServer()

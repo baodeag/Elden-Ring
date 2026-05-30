@@ -105,6 +105,8 @@ namespace baodeag {
 
         private void Awake()
         {
+            BuildRuntimeLogger.Log("TitleScreenManager.Awake");
+
             if(Instance == null)
             {
                 Instance = this;
@@ -117,12 +119,14 @@ namespace baodeag {
 
         private void Start()
         {
+            BuildRuntimeLogger.Log("TitleScreenManager.Start begin");
             HideGameplayHUDOnTitleScreen();
             HideLegacyNetworkControls();
             EnsureSettingsMenu();
             EnsureCharacterClassSelectionUI();
             EnsureLaunchModeMenu();
             RefreshSaveMenuButtons();
+            BuildRuntimeLogger.Log("TitleScreenManager.Start end");
         }
 
         private void Update()
@@ -293,24 +297,34 @@ namespace baodeag {
 
         public async void AttemptToCreateNewCharacter()
         {
+            BuildRuntimeLogger.Log("TitleScreenManager.AttemptToCreateNewCharacter begin");
+
             if (!await EnsureHostSessionForSaveMenus())
+            {
+                BuildRuntimeLogger.Warning("TitleScreenManager.AttemptToCreateNewCharacter aborted: EnsureHostSessionForSaveMenus failed");
                 return;
+            }
 
             if (WorldSaveGameManager.instance.HasFreeCharacterSlot())
             {
+                BuildRuntimeLogger.Log("TitleScreenManager.AttemptToCreateNewCharacter opening character creation menu");
                 OpenCharacterCreationMenu();
             }
             else
             {
                 //if there are no available slots, notify the player
+                BuildRuntimeLogger.Warning("TitleScreenManager.AttemptToCreateNewCharacter no free character slots");
                 DisplayNoFreeCharacterSlotPopUp();
             }
         }
 
         public void StartNewGame()
         {
+            BuildRuntimeLogger.Log("TitleScreenManager.StartNewGame begin");
             selectedStartingClassID = GetSelectedStartingClassID();
+            BuildRuntimeLogger.Log($"TitleScreenManager.StartNewGame selectedStartingClassID={selectedStartingClassID}");
             WorldSaveGameManager.instance.AttemptToCreateNewGame();
+            BuildRuntimeLogger.Log("TitleScreenManager.StartNewGame returned from AttemptToCreateNewGame");
         }
 
         public async void OpenLoadGameMenu()
@@ -441,18 +455,26 @@ namespace baodeag {
 
         private async Task<bool> EnsureHostSessionForSaveMenus()
         {
+            BuildRuntimeLogger.Log("TitleScreenManager.EnsureHostSessionForSaveMenus begin");
+
             if (NetworkManager.Singleton.IsHost)
+            {
+                BuildRuntimeLogger.Log("TitleScreenManager.EnsureHostSessionForSaveMenus already host");
                 return true;
+            }
 
             if (NetworkManager.Singleton.IsClient)
             {
-                Debug.LogWarning("New Game and Load Game are only available for the host session.");
+                BuildRuntimeLogger.Warning("New Game and Load Game are only available for the host session.");
                 return false;
             }
 
-            return WorldGameSessionManager.instance.RequiresRelayForCurrentMode()
+            bool result = WorldGameSessionManager.instance.RequiresRelayForCurrentMode()
                 ? await WorldGameSessionManager.instance.StartGameAsRelayHostAsync()
                 : WorldGameSessionManager.instance.StartGameAsHost();
+
+            BuildRuntimeLogger.Log($"TitleScreenManager.EnsureHostSessionForSaveMenus result={result}");
+            return result;
         }
 
         private void SetLaunchMode(SessionLaunchMode launchMode)

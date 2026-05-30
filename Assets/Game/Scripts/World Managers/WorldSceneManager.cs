@@ -51,6 +51,8 @@ namespace baodeag
 
         private void Awake()
         {
+            BuildRuntimeLogger.Log("WorldSceneManager.Awake");
+
             if (instance == null)
             {
                 instance = this;
@@ -66,11 +68,13 @@ namespace baodeag
 
         private void OnEnable()
         {
+            BuildRuntimeLogger.Log("WorldSceneManager.OnEnable subscribe sceneLoaded");
             SceneManager.sceneLoaded += OnUnitySceneLoaded;
         }
 
         private void OnDisable()
         {
+            BuildRuntimeLogger.Log("WorldSceneManager.OnDisable unsubscribe sceneLoaded");
             SceneManager.sceneLoaded -= OnUnitySceneLoaded;
         }
 
@@ -93,6 +97,8 @@ namespace baodeag
 
         private void OnSceneEvent(SceneEvent sceneEvent)
         {
+            BuildRuntimeLogger.Log($"WorldSceneManager.OnSceneEvent type={sceneEvent.SceneEventType} scene={sceneEvent.SceneName} clients={sceneEvent.ClientsThatCompleted?.Count ?? 0}");
+
             if (!NetworkManager.IsServer)
                 return;
 
@@ -163,17 +169,21 @@ namespace baodeag
         //used to load our main world scene
         public void LoadWorldScene(int buildIndex)
         {
+            BuildRuntimeLogger.Log($"WorldSceneManager.LoadWorldScene requested buildIndex={buildIndex}");
             PrepareForSingleWorldSceneLoad();
 
             //activate loading screen
+            BuildRuntimeLogger.Log("WorldSceneManager.LoadWorldScene activating loading screen");
+            BuildRuntimeLogger.BeginLoadingWatch("WorldSceneManager.LoadWorldScene");
             PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
             PlayerUIManager.instance.playerUILoadingScreenManager.SetProgress(0.02f, "Loading World");
 
             string worldScenePath = SceneUtility.GetScenePathByBuildIndex(buildIndex);
+            BuildRuntimeLogger.Log($"WorldSceneManager.LoadWorldScene resolved path='{worldScenePath}'");
 
             if (string.IsNullOrEmpty(worldScenePath))
             {
-                Debug.LogWarning($"WorldSceneManager: Could not resolve scene path for build index {buildIndex}.");
+                BuildRuntimeLogger.Warning($"WorldSceneManager: Could not resolve scene path for build index {buildIndex}.");
                 return;
             }
 
@@ -184,26 +194,38 @@ namespace baodeag
                 (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer))
             {
                 string worldSceneName = Path.GetFileNameWithoutExtension(worldScenePath);
+                BuildRuntimeLogger.Log($"WorldSceneManager.LoadWorldScene starting Netcode load scene='{worldSceneName}'");
+                BuildRuntimeLogger.MainThreadHeartbeat($"Before Netcode LoadScene {worldSceneName}");
                 var loadSceneStatus = NetworkManager.Singleton.SceneManager.LoadScene(worldSceneName, LoadSceneMode.Single);
+                BuildRuntimeLogger.MainThreadHeartbeat($"After Netcode LoadScene {worldSceneName}");
                 startedNetworkSceneLoad = loadSceneStatus == SceneEventProgressStatus.Started;
+                BuildRuntimeLogger.Log($"WorldSceneManager.LoadWorldScene Netcode status scene='{worldSceneName}' status={loadSceneStatus}");
 
                 if (!startedNetworkSceneLoad)
                 {
-                    Debug.LogWarning($"WorldSceneManager: Netcode scene load did not start for '{worldSceneName}' (build index {buildIndex}). Falling back to SceneManager.LoadScene.");
+                    BuildRuntimeLogger.Warning($"WorldSceneManager: Netcode scene load did not start for '{worldSceneName}' (build index {buildIndex}). Falling back to SceneManager.LoadScene.");
                 }
             }
 
             if (!startedNetworkSceneLoad)
             {
+                BuildRuntimeLogger.Warning($"WorldSceneManager.LoadWorldScene starting synchronous Unity SceneManager.LoadScene buildIndex={buildIndex}. This can block the UI thread until the scene finishes loading.");
+                BuildRuntimeLogger.MainThreadHeartbeat($"Before synchronous SceneManager.LoadScene {buildIndex}");
                 SceneManager.LoadScene(buildIndex, LoadSceneMode.Single);
+                BuildRuntimeLogger.MainThreadHeartbeat($"After synchronous SceneManager.LoadScene {buildIndex}");
+                BuildRuntimeLogger.Log($"WorldSceneManager.LoadWorldScene Unity SceneManager.LoadScene returned buildIndex={buildIndex}");
             }
 
             //load player save data
+            BuildRuntimeLogger.Log("WorldSceneManager.LoadWorldScene loading local player data after scene load request");
             PlayerUIManager.instance.localPlayer.LoadGameDataFromCurrentCharacterData(ref WorldSaveGameManager.instance.currentCharacterData);
+            BuildRuntimeLogger.Log("WorldSceneManager.LoadWorldScene local player data load completed");
         }
 
         private void PrepareForSingleWorldSceneLoad()
         {
+            BuildRuntimeLogger.Log("WorldSceneManager.PrepareForSingleWorldSceneLoad begin");
+
             if (loadingAdditiveScenesCoroutine != null)
             {
                 StopCoroutine(loadingAdditiveScenesCoroutine);
@@ -235,10 +257,14 @@ namespace baodeag
 
             if (WorldLocationManager.instance != null)
                 WorldLocationManager.instance.ResetForWorldSceneTransition();
+
+            BuildRuntimeLogger.Log("WorldSceneManager.PrepareForSingleWorldSceneLoad end");
         }
 
         private void OnUnitySceneLoaded(Scene scene, LoadSceneMode loadMode)
         {
+            BuildRuntimeLogger.Log($"WorldSceneManager.OnUnitySceneLoaded scene={scene.name} buildIndex={scene.buildIndex} mode={loadMode}");
+
             if (loadMode != LoadSceneMode.Single)
                 return;
 
@@ -249,6 +275,26 @@ namespace baodeag
 
             if (WorldLocationManager.instance != null)
                 WorldLocationManager.instance.ResetForWorldSceneTransition();
+        }
+
+        public void LogLoadingStateSnapshot(string source)
+        {
+            string activeSceneName = SceneManager.GetActiveScene().name;
+            bool loadingScreenActive =
+                PlayerUIManager.instance != null &&
+                PlayerUIManager.instance.playerUILoadingScreenManager != null &&
+                PlayerUIManager.instance.playerUILoadingScreenManager.LoadingScreenIsActive();
+
+            bool aiLoading = WorldAIManager.instance != null && WorldAIManager.instance.isPerformingLoadingOperation;
+            bool networkListening = NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening;
+            bool networkHost = NetworkManager.Singleton != null && NetworkManager.Singleton.IsHost;
+            bool networkServer = NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer;
+            bool networkClient = NetworkManager.Singleton != null && NetworkManager.Singleton.IsClient;
+
+            BuildRuntimeLogger.Log(
+                $"LOADING-SNAPSHOT source={source} activeScene={activeSceneName} world={world} loadingScreen={loadingScreenActive} " +
+                $"sceneIsLoading={sceneIsLoading} sceneIsUnloading={sceneIsUnloading} queuedLoad={quedScenesToLoad} queuedUnload={quedScenesToUnload} " +
+                $"loadedScenes={loadedScenes.Count} aiLoading={aiLoading} netListening={networkListening} host={networkHost} server={networkServer} client={networkClient}");
         }
 
         private void RefreshCurrentWorldSceneID(Scene scene)
@@ -343,6 +389,8 @@ namespace baodeag
         //used to load additive scenes in main world scene
         private void LoadAdditiveScene(string sceneName)
         {
+            BuildRuntimeLogger.Log($"WorldSceneManager.LoadAdditiveScene requested scene={sceneName}");
+
             for (int i = 0; i < loadedScenes.Count; i++)
             {
                 //if the scene in the list is null, continue to look at other scenes
@@ -362,10 +410,13 @@ namespace baodeag
                 NetworkManager.Singleton.SceneManager != null &&
                 (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer))
             {
+                BuildRuntimeLogger.Log($"WorldSceneManager.LoadAdditiveScene starting Netcode additive scene={sceneName}");
                 loadSceneStatus = NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+                BuildRuntimeLogger.Log($"WorldSceneManager.LoadAdditiveScene Netcode status scene={sceneName} status={loadSceneStatus}");
             }
             else
             {
+                BuildRuntimeLogger.Log($"WorldSceneManager.LoadAdditiveScene starting local coroutine scene={sceneName}");
                 StartCoroutine(LoadAdditiveSceneNonNetworkCoroutine(sceneName));
                 return;
             }
@@ -379,6 +430,7 @@ namespace baodeag
 
         private IEnumerator LoadAdditiveSceneNonNetworkCoroutine(string sceneName)
         {
+            BuildRuntimeLogger.Log($"WorldSceneManager.LoadAdditiveSceneNonNetworkCoroutine begin scene={sceneName}");
             AsyncOperation loadingOperation = null;
 
             try
@@ -400,6 +452,7 @@ namespace baodeag
 
             while (!loadingOperation.isDone)
             {
+                BuildRuntimeLogger.MainThreadHeartbeat($"Additive LoadSceneAsync scene={sceneName} progress={loadingOperation.progress:0.00}");
                 yield return null;
             }
 
@@ -423,16 +476,26 @@ namespace baodeag
             }
 
             sceneIsLoading = false;
+            BuildRuntimeLogger.Log($"WorldSceneManager.LoadAdditiveSceneNonNetworkCoroutine end scene={sceneName}");
             CheckForRequiredRenderers();
         }
 
         //used to load multiple additive scenes at once when entering new area
         public void LoadAdditiveScenes(List<string> scenesToLoad)
         {
+            BuildRuntimeLogger.Log($"WorldSceneManager.LoadAdditiveScenes begin requestedCount={(scenesToLoad != null ? scenesToLoad.Count : 0)}");
+
             if (NetworkManager.Singleton != null &&
                 NetworkManager.Singleton.IsClient &&
                 !NetworkManager.Singleton.IsServer)
             {
+                BuildRuntimeLogger.Log("WorldSceneManager.LoadAdditiveScenes skipped client-only instance");
+                return;
+            }
+
+            if (scenesToLoad == null)
+            {
+                BuildRuntimeLogger.Warning("WorldSceneManager.LoadAdditiveScenes skipped null scene list");
                 return;
             }
 
@@ -449,6 +512,7 @@ namespace baodeag
             }
 
             quedScenesToLoad = quedSceneIDs.Count;
+            BuildRuntimeLogger.Log($"WorldSceneManager.LoadAdditiveScenes queuedCount={quedScenesToLoad}");
 
             if (quedScenesToLoad <= 0)
                 return;
@@ -457,6 +521,7 @@ namespace baodeag
                 StopCoroutine(loadingAdditiveScenesCoroutine);
 
             loadingAdditiveScenesCoroutine = StartCoroutine(LoadAdditiveScenesCoroutine());
+            BuildRuntimeLogger.Log("WorldSceneManager.LoadAdditiveScenes coroutine started");
         }
 
         private bool IsSceneLoadedOrQueued(string sceneName)
@@ -480,16 +545,22 @@ namespace baodeag
 
         private IEnumerator LoadAdditiveScenesCoroutine()
         {
+            BuildRuntimeLogger.Log("WorldSceneManager.LoadAdditiveScenesCoroutine begin");
+            yield return null;
+
             float waitTime = 0.1f;
 
             //check to see if a scene is currently being loaded/unloaded and if it is, wait
             for (int i = 0; i < quedSceneIDs.Count; i++)
             {
+                BuildRuntimeLogger.MainThreadHeartbeat($"LoadAdditiveScenesCoroutine index={i}/{quedSceneIDs.Count} scene={quedSceneIDs[i]}");
+
                 if (PlayerUIManager.instance.playerUILoadingScreenManager.LoadingScreenIsActive())
                     waitTime = 0;
 
                 while (sceneIsLoading || sceneIsUnloading)
                 {
+                    BuildRuntimeLogger.MainThreadHeartbeat($"LoadAdditiveScenesCoroutine waiting busy scene={quedSceneIDs[i]} loading={sceneIsLoading} unloading={sceneIsUnloading}");
                     yield return new WaitForSeconds(waitTime);
                 }
 
@@ -504,6 +575,7 @@ namespace baodeag
 
                 while (sceneIsLoading || sceneIsUnloading)
                 {
+                    BuildRuntimeLogger.MainThreadHeartbeat($"LoadAdditiveScenesCoroutine waiting scene complete scene={quedSceneIDs[i]} loading={sceneIsLoading} unloading={sceneIsUnloading}");
                     yield return new WaitForSeconds(waitTime);
                 }
 
@@ -516,6 +588,7 @@ namespace baodeag
             }
 
             loadingAdditiveScenesCoroutine = null;
+            BuildRuntimeLogger.Log("WorldSceneManager.LoadAdditiveScenesCoroutine end");
 
             yield return null;
         }
@@ -750,8 +823,13 @@ namespace baodeag
 
         public void CheckForRequiredRenderers()
         {
+            BuildRuntimeLogger.Log("WorldSceneManager.CheckForRequiredRenderers begin");
+
             if (WorldLocationManager.instance == null)
+            {
+                BuildRuntimeLogger.Warning("WorldSceneManager.CheckForRequiredRenderers skipped WorldLocationManager null");
                 return;
+            }
 
             if (requiredRenderersCoroutine != null)
                 StopCoroutine(requiredRenderersCoroutine);
@@ -759,14 +837,24 @@ namespace baodeag
             WorldLocationSceneSet location = PlayerUIManager.instance.localPlayer.areaCurrentlyIn;
 
             if (location != null)
+            {
+                BuildRuntimeLogger.Log($"WorldSceneManager.CheckForRequiredRenderers starting coroutine location={location.name}");
                 requiredRenderersCoroutine = StartCoroutine(CheckForRequiredSceneRenderersCoroutine(location));
+            }
+            else
+            {
+                BuildRuntimeLogger.Warning("WorldSceneManager.CheckForRequiredRenderers skipped null player area");
+            }
         }
 
         private IEnumerator CheckForRequiredSceneRenderersCoroutine(WorldLocationSceneSet location)
         {
+            BuildRuntimeLogger.Log($"WorldSceneManager.CheckForRequiredSceneRenderersCoroutine begin location={(location != null ? location.name : "null")}");
+
             //wait until scenes have finished loading to search for renderers/root objects
             while (sceneIsLoading)
             {
+                BuildRuntimeLogger.MainThreadHeartbeat("CheckForRequiredSceneRenderersCoroutine waiting sceneIsLoading");
                 yield return new WaitForEndOfFrame();
             }
 
@@ -781,6 +869,7 @@ namespace baodeag
                     WorldLocationManager.instance.worldLocationRenderers[i].ToggleRootObjects(true);
                 }
 
+                BuildRuntimeLogger.Log("WorldSceneManager.CheckForRequiredSceneRenderersCoroutine end generated-world-all-at-once");
                 yield break;
             }
 
@@ -834,6 +923,7 @@ namespace baodeag
                 }
             }
 
+            BuildRuntimeLogger.Log("WorldSceneManager.CheckForRequiredSceneRenderersCoroutine end");
             yield return null;
         }
 
@@ -841,6 +931,170 @@ namespace baodeag
         {
             int buildIndex = SceneUtility.GetBuildIndexByScenePath(sceneID);
             return buildIndex;
+        }
+    }
+
+    internal static class BuildRuntimeLogger
+    {
+        private static readonly object FileLock = new object();
+        private static string logPath;
+        private static bool initialized;
+        private static bool unityLogHooked;
+        private static System.Threading.Timer loadingWatchdogTimer;
+        private static volatile bool loadingWatchActive;
+        private static volatile int loadingWatchSequence;
+        private static System.DateTime lastMainThreadHeartbeatUtc = System.DateTime.UtcNow;
+        private static System.DateTime lastMainThreadHeartbeatWriteUtc = System.DateTime.MinValue;
+        private static string lastMainThreadHeartbeatContext = "Not started";
+        private static string lastMainThreadHeartbeatWrittenContext = string.Empty;
+
+        public static string LogPath
+        {
+            get
+            {
+                Initialize();
+                return logPath;
+            }
+        }
+
+        public static void Log(string message)
+        {
+            Write("INFO", message);
+            Debug.Log(message);
+        }
+
+        public static void Warning(string message)
+        {
+            Write("WARN", message);
+            Debug.LogWarning(message);
+        }
+
+        public static void Error(string message)
+        {
+            Write("ERROR", message);
+            Debug.LogError(message);
+        }
+
+        private static void Initialize()
+        {
+            if (initialized)
+                return;
+
+            initialized = true;
+
+            try
+            {
+                string directory = Path.Combine(Application.persistentDataPath, "BuildLogs");
+                string rootDirectory = Path.GetDirectoryName(Application.dataPath);
+
+                if (string.IsNullOrEmpty(rootDirectory))
+                    rootDirectory = Application.persistentDataPath;
+
+                directory = Path.Combine(rootDirectory, "logs");
+                Directory.CreateDirectory(directory);
+                string timestamp = System.DateTime.Now.ToString("yyyyMMdd-HHmmss");
+                logPath = Path.Combine(directory, timestamp + ".txt");
+
+                WriteRaw("=== Build Runtime Log ===");
+                WriteRaw("LogPath: " + logPath);
+                WriteRaw("UnityVersion: " + Application.unityVersion);
+                WriteRaw("Product: " + Application.companyName + "/" + Application.productName);
+                WriteRaw("Platform: " + Application.platform);
+                WriteRaw("DataPath: " + Application.dataPath);
+                WriteRaw("PersistentDataPath: " + Application.persistentDataPath);
+
+                if (!unityLogHooked)
+                {
+                    Application.logMessageReceivedThreaded += HandleUnityLogMessage;
+                    unityLogHooked = true;
+                }
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogWarning("BuildRuntimeLogger failed to initialize: " + exception.Message);
+            }
+        }
+
+        public static void BeginLoadingWatch(string reason)
+        {
+            Initialize();
+            loadingWatchActive = true;
+            loadingWatchSequence++;
+            MainThreadHeartbeat("BeginLoadingWatch: " + reason);
+            WriteRaw("[" + System.DateTime.Now.ToString("HH:mm:ss.fff") + "] [WATCH] Loading watch BEGIN reason=" + reason + " sequence=" + loadingWatchSequence);
+
+            if (loadingWatchdogTimer == null)
+                loadingWatchdogTimer = new System.Threading.Timer(WriteLoadingWatchdogSnapshot, null, 1000, 1000);
+        }
+
+        public static void EndLoadingWatch(string reason)
+        {
+            MainThreadHeartbeat("EndLoadingWatch: " + reason);
+            loadingWatchActive = false;
+            WriteRaw("[" + System.DateTime.Now.ToString("HH:mm:ss.fff") + "] [WATCH] Loading watch END reason=" + reason + " sequence=" + loadingWatchSequence);
+        }
+
+        public static void MainThreadHeartbeat(string context)
+        {
+            lastMainThreadHeartbeatUtc = System.DateTime.UtcNow;
+            lastMainThreadHeartbeatContext = context;
+
+            if (loadingWatchActive &&
+                ((lastMainThreadHeartbeatUtc - lastMainThreadHeartbeatWriteUtc).TotalSeconds >= 0.5 ||
+                 lastMainThreadHeartbeatWrittenContext != context))
+            {
+                lastMainThreadHeartbeatWriteUtc = lastMainThreadHeartbeatUtc;
+                lastMainThreadHeartbeatWrittenContext = context;
+                WriteRaw("[" + System.DateTime.Now.ToString("HH:mm:ss.fff") + "] [MAIN] heartbeat context=" + context);
+            }
+        }
+
+        private static void WriteLoadingWatchdogSnapshot(object state)
+        {
+            if (!loadingWatchActive)
+                return;
+
+            double secondsSinceHeartbeat = (System.DateTime.UtcNow - lastMainThreadHeartbeatUtc).TotalSeconds;
+            string prefix = secondsSinceHeartbeat >= 2.0 ? "[WATCH-STALLED]" : "[WATCH]";
+            WriteRaw("[" + System.DateTime.Now.ToString("HH:mm:ss.fff") + "] " + prefix +
+                     " loadingActive=true secondsSinceMainThreadHeartbeat=" + secondsSinceHeartbeat.ToString("0.00") +
+                     " lastMainThreadContext=" + lastMainThreadHeartbeatContext +
+                     " sequence=" + loadingWatchSequence);
+        }
+
+        private static void HandleUnityLogMessage(string condition, string stackTrace, LogType type)
+        {
+            if (string.IsNullOrEmpty(logPath))
+                return;
+
+            WriteRaw("[" + System.DateTime.Now.ToString("HH:mm:ss.fff") + "] [UNITY-" + type + "] " + condition);
+
+            if (!string.IsNullOrWhiteSpace(stackTrace) && (type == LogType.Exception || type == LogType.Error || type == LogType.Assert))
+                WriteRaw(stackTrace);
+        }
+
+        private static void Write(string level, string message)
+        {
+            Initialize();
+            WriteRaw("[" + System.DateTime.Now.ToString("HH:mm:ss.fff") + "] [" + level + "] " + message);
+        }
+
+        private static void WriteRaw(string message)
+        {
+            if (string.IsNullOrEmpty(logPath))
+                return;
+
+            try
+            {
+                lock (FileLock)
+                {
+                    File.AppendAllText(logPath, message + System.Environment.NewLine);
+                }
+            }
+            catch
+            {
+                // Keep diagnostics from affecting gameplay or scene loading.
+            }
         }
     }
 }

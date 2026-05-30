@@ -317,10 +317,13 @@ namespace baodeag
 
         private IEnumerator HandlePendingMapEntryCoroutine()
         {
+            BuildRuntimeLogger.Log("WorldGameSessionManager.HandlePendingMapEntryCoroutine begin");
             int targetSiteOfGraceID = GameProgressionManager.Instance.ConsumePendingTransitionSiteOfGraceID();
+            BuildRuntimeLogger.Log($"WorldGameSessionManager.HandlePendingMapEntryCoroutine targetSiteOfGraceID={targetSiteOfGraceID}");
 
             if (targetSiteOfGraceID < 0)
             {
+                BuildRuntimeLogger.Warning("WorldGameSessionManager.HandlePendingMapEntryCoroutine no target site of grace; deactivating loading screen");
                 if (PlayerUIManager.instance != null)
                     PlayerUIManager.instance.playerUILoadingScreenManager.DeactivateLoadingScreen(1.5f);
 
@@ -336,12 +339,14 @@ namespace baodeag
                     WorldObjectManager.instance == null) &&
                    elapsedTime < timeout)
             {
+                BuildRuntimeLogger.MainThreadHeartbeat($"HandlePendingMapEntry waiting managers elapsed={elapsedTime:0.00}");
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
 
             if (PlayerUIManager.instance == null || PlayerUIManager.instance.localPlayer == null)
             {
+                BuildRuntimeLogger.Warning("WorldGameSessionManager.HandlePendingMapEntryCoroutine abort: PlayerUIManager/localPlayer missing after timeout");
                 pendingMapEntryCoroutine = null;
                 yield break;
             }
@@ -350,6 +355,7 @@ namespace baodeag
 
             bool loadGeneratedWorldAllAtOnce = WorldSceneManager.instance != null &&
                                                WorldSceneManager.instance.ShouldLoadGeneratedWorldAllAtOnce();
+            BuildRuntimeLogger.Log($"WorldGameSessionManager.HandlePendingMapEntryCoroutine loadGeneratedWorldAllAtOnce={loadGeneratedWorldAllAtOnce}");
 
             if (loadGeneratedWorldAllAtOnce)
             {
@@ -357,7 +363,11 @@ namespace baodeag
             }
             else
             {
+                BuildRuntimeLogger.Log("WorldGameSessionManager.HandlePendingMapEntryCoroutine yielding before initial area trigger");
+                yield return null;
+
                 WorldLocationSceneSet initialArea = TriggerInitialAreaLoadForPlayer(PlayerUIManager.instance.localPlayer);
+                BuildRuntimeLogger.Log($"WorldGameSessionManager.HandlePendingMapEntryCoroutine initialArea={(initialArea != null ? initialArea.name : "null")}");
                 yield return WaitForRequiredAreaScenes(initialArea, 30f, 0.05f, 0.55f);
             }
 
@@ -368,6 +378,7 @@ namespace baodeag
                     WorldObjectManager.instance.sitesOfGrace.Count == 0) &&
                    elapsedTime < timeout)
             {
+                BuildRuntimeLogger.MainThreadHeartbeat($"HandlePendingMapEntry waiting sitesOfGrace elapsed={elapsedTime:0.00}");
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
@@ -393,6 +404,7 @@ namespace baodeag
 
             if (targetSiteOfGrace != null)
             {
+                BuildRuntimeLogger.Log($"WorldGameSessionManager.HandlePendingMapEntryCoroutine teleporting to siteOfGraceID={targetSiteOfGrace.siteOfGraceID}");
                 PlayerManager localPlayer = PlayerUIManager.instance.localPlayer;
                 targetSiteOfGrace.TeleportPlayerToSiteOfGrace(localPlayer, false);
                 localPlayer.playerNetworkManager.lastSiteOfGraceUsed.Value = targetSiteOfGrace.siteOfGraceID;
@@ -415,12 +427,17 @@ namespace baodeag
                 }
                 else
                 {
+                    BuildRuntimeLogger.Log("WorldGameSessionManager.HandlePendingMapEntryCoroutine yielding before nearest area trigger");
+                    yield return null;
+
                     WorldLocationSceneSet entryArea = TriggerNearestAreaLoadForPlayer(localPlayer, targetSiteOfGrace.transform.position);
+                    BuildRuntimeLogger.Log($"WorldGameSessionManager.HandlePendingMapEntryCoroutine entryArea={(entryArea != null ? entryArea.name : "null")}");
                     yield return WaitForRequiredAreaScenes(entryArea, 30f, 0.55f, 0.95f);
                 }
             }
             else
             {
+                BuildRuntimeLogger.Warning("WorldGameSessionManager.HandlePendingMapEntryCoroutine target site of grace not found; waiting fallback");
                 SetLoadingProgress(0.95f, "Loading Map");
                 yield return new WaitForSeconds(4f);
             }
@@ -431,6 +448,7 @@ namespace baodeag
                 PlayerUIManager.instance.playerUILoadingScreenManager.DeactivateLoadingScreen(2.5f);
             }
 
+            BuildRuntimeLogger.Log("WorldGameSessionManager.HandlePendingMapEntryCoroutine end");
             pendingMapEntryCoroutine = null;
         }
 
@@ -461,12 +479,14 @@ namespace baodeag
         /// </summary>
         private WorldLocationSceneSet TriggerNearestAreaLoadForPlayer(PlayerManager player, Vector3 origin, float searchRadius = 120f)
         {
-            EventTriggerLoadScene[] allTriggers = FindObjectsByType<EventTriggerLoadScene>(FindObjectsSortMode.None);
+            BuildRuntimeLogger.Log($"WorldGameSessionManager.TriggerNearestAreaLoadForPlayer begin player={(player != null ? player.name : "null")} origin={origin} radius={searchRadius}");
+            List<EventTriggerLoadScene> allTriggers = EventTriggerLoadScene.GetRegisteredTriggersSnapshot();
+            BuildRuntimeLogger.Log($"WorldGameSessionManager.TriggerNearestAreaLoadForPlayer registeredTriggers={allTriggers.Count}");
 
             EventTriggerLoadScene nearest = null;
             float nearestDistSq = searchRadius * searchRadius;
 
-            for (int i = 0; i < allTriggers.Length; i++)
+            for (int i = 0; i < allTriggers.Count; i++)
             {
                 if (allTriggers[i] == null)
                     continue;
@@ -495,19 +515,24 @@ namespace baodeag
 
             if (nearest != null)
             {
+                BuildRuntimeLogger.Log($"WorldGameSessionManager.TriggerNearestAreaLoadForPlayer firing trigger={nearest.name} area={(nearest.GetArea() != null ? nearest.GetArea().name : "null")}");
                 nearest.ManualTriggerForPlayer(player);
+                BuildRuntimeLogger.Log($"WorldGameSessionManager.TriggerNearestAreaLoadForPlayer end trigger={nearest.name}");
                 return nearest.GetArea();
             }
 
+            BuildRuntimeLogger.Warning("WorldGameSessionManager.TriggerNearestAreaLoadForPlayer no registered trigger found");
             return null;
         }
 
         private WorldLocationSceneSet TriggerInitialAreaLoadForPlayer(PlayerManager player)
         {
-            EventTriggerLoadScene[] allTriggers = FindObjectsByType<EventTriggerLoadScene>(FindObjectsSortMode.None);
+            BuildRuntimeLogger.Log($"WorldGameSessionManager.TriggerInitialAreaLoadForPlayer begin player={(player != null ? player.name : "null")}");
+            List<EventTriggerLoadScene> allTriggers = EventTriggerLoadScene.GetRegisteredTriggersSnapshot();
+            BuildRuntimeLogger.Log($"WorldGameSessionManager.TriggerInitialAreaLoadForPlayer registeredTriggers={allTriggers.Count}");
             EventTriggerLoadScene firstTrigger = null;
 
-            for (int i = 0; i < allTriggers.Length; i++)
+            for (int i = 0; i < allTriggers.Count; i++)
             {
                 EventTriggerLoadScene trigger = allTriggers[i];
 
@@ -522,9 +547,14 @@ namespace baodeag
             }
 
             if (firstTrigger == null)
+            {
+                BuildRuntimeLogger.Warning("WorldGameSessionManager.TriggerInitialAreaLoadForPlayer no registered trigger found");
                 return null;
+            }
 
+            BuildRuntimeLogger.Log($"WorldGameSessionManager.TriggerInitialAreaLoadForPlayer firing trigger={firstTrigger.name} area={(firstTrigger.GetArea() != null ? firstTrigger.GetArea().name : "null")}");
             firstTrigger.ManualTriggerForPlayer(player);
+            BuildRuntimeLogger.Log($"WorldGameSessionManager.TriggerInitialAreaLoadForPlayer end trigger={firstTrigger.name}");
             return firstTrigger.GetArea();
         }
 
@@ -534,6 +564,8 @@ namespace baodeag
                 ? area.GetRequiredSceneIDsForWorldLocation()
                 : new List<string>();
 
+            BuildRuntimeLogger.Log($"WorldGameSessionManager.WaitForRequiredAreaScenes begin area={(area != null ? area.name : "null")} requiredScenes={requiredScenes.Count} timeout={timeout}");
+
             if (WorldSceneManager.instance != null && WorldSceneManager.instance.ShouldLoadGeneratedWorldAllAtOnce())
             {
                 WorldSceneManager.instance.LoadAllGeneratedWorldAreaScenes();
@@ -541,6 +573,7 @@ namespace baodeag
             }
             else if (area == null)
             {
+                BuildRuntimeLogger.Warning("WorldGameSessionManager.WaitForRequiredAreaScenes area null; fallback wait");
                 SetLoadingProgress(endProgress, "Loading Map");
                 yield return new WaitForSeconds(4f);
                 yield break;
@@ -575,9 +608,11 @@ namespace baodeag
 
                 float sceneProgress = requiredSceneCount <= 0 ? 1f : (float)loadedSceneCount / requiredSceneCount;
                 SetLoadingProgress(Mathf.Lerp(startProgress, endProgress, sceneProgress), "Loading Map");
+                BuildRuntimeLogger.MainThreadHeartbeat($"WaitForRequiredAreaScenes loaded={loadedSceneCount}/{requiredSceneCount} elapsed={elapsedTime:0.00}");
 
                 if (allScenesLoaded)
                 {
+                    BuildRuntimeLogger.Log($"WorldGameSessionManager.WaitForRequiredAreaScenes all scenes loaded loaded={loadedSceneCount}/{requiredSceneCount} elapsed={elapsedTime:0.00}");
                     if (WorldSceneManager.instance != null)
                         WorldSceneManager.instance.CheckForRequiredRenderers();
 
@@ -590,7 +625,8 @@ namespace baodeag
                 yield return null;
             }
 
-            Debug.LogWarning($"WorldGameSessionManager: Timed out while waiting for required area scenes for '{area.name}'. Continuing so the player is not stuck on the loading screen.");
+            string areaName = area != null ? area.name : "null";
+            BuildRuntimeLogger.Warning($"WorldGameSessionManager: Timed out while waiting for required area scenes for '{areaName}'. Continuing so the player is not stuck on the loading screen.");
 
             if (WorldSceneManager.instance != null)
                 WorldSceneManager.instance.CheckForRequiredRenderers();
