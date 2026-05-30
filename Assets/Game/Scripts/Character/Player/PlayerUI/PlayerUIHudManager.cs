@@ -10,6 +10,8 @@ namespace baodeag
 {
     public class PlayerUIHudManager : MonoBehaviour
     {
+        [Header("HUD Visibility")]
+        [SerializeField] bool hideGameplayHud = false;
         [SerializeField] CanvasGroup[] canvasGroup;
 
         [Header("Stat Bars")]
@@ -63,6 +65,16 @@ namespace baodeag
         private readonly Dictionary<int, Image> activeBuffIconsBySourceID = new Dictionary<int, Image>();
         private readonly Dictionary<int, TextMeshProUGUI> activeBuffTimerTextsBySourceID = new Dictionary<int, TextMeshProUGUI>();
 
+        private void Awake()
+        {
+            ApplyGameplayHUDVisibility(!hideGameplayHud);
+        }
+
+        private void OnEnable()
+        {
+            ApplyGameplayHUDVisibility(!hideGameplayHud);
+        }
+
         private void Update()
         {
             RefreshActiveBuffTimerTexts();
@@ -71,18 +83,21 @@ namespace baodeag
         public void ToggleHUD(bool status)
         {
             //to do fade in and out over time
+            if (canvasGroup == null)
+                return;
+
             if (status)
             {
-                foreach (var canvas in canvasGroup)
+                for (int i = 0; i < canvasGroup.Length; i++)
                 {
-                    canvas.alpha = 1;
+                    SetCanvasGroupVisible(canvasGroup[i], !IsGameplayHUDCanvasGroup(i) || !hideGameplayHud);
                 }
             }
             else
             {
                 foreach (var canvas in canvasGroup)
                 {
-                    canvas.alpha = 0;
+                    SetCanvasGroupVisible(canvas, false);
                 }
             }
         }
@@ -92,12 +107,35 @@ namespace baodeag
             //to do fade in and out over time
             if (status)
             {
-                canvasGroup[0].alpha = 1;
+                ApplyGameplayHUDVisibility(!hideGameplayHud);
             }
             else
             {
-                canvasGroup[0].alpha = 0;
+                ApplyGameplayHUDVisibility(false);
             }
+        }
+
+        private bool IsGameplayHUDCanvasGroup(int index)
+        {
+            return index == 0;
+        }
+
+        private void ApplyGameplayHUDVisibility(bool isVisible)
+        {
+            if (canvasGroup == null || canvasGroup.Length == 0)
+                return;
+
+            SetCanvasGroupVisible(canvasGroup[0], isVisible && !hideGameplayHud);
+        }
+
+        private void SetCanvasGroupVisible(CanvasGroup canvas, bool isVisible)
+        {
+            if (canvas == null)
+                return;
+
+            canvas.alpha = isVisible ? 1 : 0;
+            canvas.interactable = isVisible;
+            canvas.blocksRaycasts = isVisible;
         }
 
         public void RefreshHUD()

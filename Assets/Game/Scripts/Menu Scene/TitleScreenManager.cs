@@ -117,6 +117,7 @@ namespace baodeag {
 
         private void Start()
         {
+            HideGameplayHUDOnTitleScreen();
             HideLegacyNetworkControls();
             EnsureSettingsMenu();
             EnsureCharacterClassSelectionUI();
@@ -128,6 +129,19 @@ namespace baodeag {
         {
             if (titleScreenSettingsMenu != null && titleScreenSettingsMenu.activeSelf && Input.GetKeyDown(KeyCode.Escape))
                 CloseSettingsMenu();
+        }
+
+        private void LateUpdate()
+        {
+            HideGameplayHUDOnTitleScreen();
+        }
+
+        private void HideGameplayHUDOnTitleScreen()
+        {
+            if (PlayerUIManager.instance == null || PlayerUIManager.instance.playerUIHudManager == null)
+                return;
+
+            PlayerUIManager.instance.playerUIHudManager.ToggleHUD(false);
         }
 
         public void StartNetworkAsHost()

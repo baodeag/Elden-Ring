@@ -8501,6 +8501,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a44790f3dc2dd134e97b3a6cc9667243, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hideGameplayHud: 0
   canvasGroup:
   - {fileID: 373295865164308817}
   - {fileID: 3157970059420601409}
@@ -15019,6 +15020,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loadingScreen: {fileID: 1117094783421447945}
   canvasGroup: {fileID: 5153962504201770538}
+  hideLoadingProgressUI: 1
+  loadingProgressUI: {fileID: 9100000000000000001}
+  hideGameplayHUDWhileLoading: 1
   progressBar: {fileID: 9100000000000000007}
   progressText: {fileID: 9100000000000000017}
 --- !u!1 &2363491010416526521

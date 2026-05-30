@@ -10,15 +10,24 @@ namespace baodeag
         [SerializeField] GameObject loadingScreen;
         [SerializeField] CanvasGroup canvasGroup;
         [Header("Loading Progress")]
+        [SerializeField] bool hideLoadingProgressUI = true;
+        [SerializeField] GameObject loadingProgressUI;
+        [SerializeField] bool hideGameplayHUDWhileLoading = true;
         [SerializeField] Slider progressBar;
         [SerializeField] Text progressText;
         private Coroutine fadeLoadingScreenCoroutine;
         private const string DefaultProgressLabel = "Loading";
 
 
+        private void Awake()
+        {
+            HideLoadingProgressUIIfNeeded();
+        }
+
         private void Start()
         {
             SceneManager.activeSceneChanged += OnSceneChanged;
+            HideLoadingProgressUIIfNeeded();
         }
 
         private void OnSceneChanged(Scene arg0, Scene arg1)
@@ -38,7 +47,9 @@ namespace baodeag
 
             canvasGroup.alpha = 1;
             loadingScreen.SetActive(true);
+            ToggleGameplayHUDForLoading(false);
             SetProgress(0, DefaultProgressLabel);
+            HideLoadingProgressUIIfNeeded();
         }
 
         public void SetProgress(float progress, string label = DefaultProgressLabel)
@@ -145,8 +156,41 @@ namespace baodeag
 
             canvasGroup.alpha = 0;
             loadingScreen.SetActive(false);
+            ToggleGameplayHUDForLoading(true);
             fadeLoadingScreenCoroutine = null;
             yield return null;
+        }
+
+        private void ToggleGameplayHUDForLoading(bool isVisible)
+        {
+            if (!hideGameplayHUDWhileLoading)
+                return;
+
+            if (PlayerUIManager.instance == null || PlayerUIManager.instance.playerUIHudManager == null)
+                return;
+
+            PlayerUIManager.instance.playerUIHudManager.ToggleHUD(isVisible);
+        }
+
+        private void HideLoadingProgressUIIfNeeded()
+        {
+            if (!hideLoadingProgressUI)
+                return;
+
+            if (loadingProgressUI != null)
+            {
+                loadingProgressUI.SetActive(false);
+                return;
+            }
+
+            if (progressBar != null && progressBar.transform.parent != null)
+            {
+                progressBar.transform.parent.gameObject.SetActive(false);
+                return;
+            }
+
+            if (progressText != null)
+                progressText.gameObject.SetActive(false);
         }
 
         public bool LoadingScreenIsActive()
@@ -165,6 +209,7 @@ namespace baodeag
             SetProgress(1, "Ready");
             canvasGroup.alpha = 0;
             loadingScreen.SetActive(false);
+            ToggleGameplayHUDForLoading(true);
         }
     }
 }
