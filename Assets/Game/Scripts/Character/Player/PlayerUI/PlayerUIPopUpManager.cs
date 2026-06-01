@@ -170,6 +170,7 @@ namespace baodeag
         public void SendItemPopUp(Item item, int amount)
         {
             itemAmount.enabled = false;
+            itemIcon.enabled = item.itemIcon != null;
             itemIcon.sprite = item.itemIcon;
             itemName.text = item.itemName;
 

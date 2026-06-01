@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!1 &535524011901711528
 GameObject:
@@ -781,8 +781,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dropItemChance: 100
   droppableItems:
-  - {fileID: 11400000, guid: 7a9a409d5732a69469b7d433784133b2, type: 2}
+  - {fileID: 11400000, guid: 88cb2159704044f19e135ef55695d149, type: 2}
+  - {fileID: 11400000, guid: 2f868949b4854ea1b0f7cc400f4b841c, type: 2}
+  - {fileID: 11400000, guid: cb4b99839b004893ab2c6226bb72c0a0, type: 2}
+  - {fileID: 11400000, guid: dd2fbd6847904ee1a013df375fddcd5e, type: 2}
+  - {fileID: 11400000, guid: 6dee0a550ad64728866eec4fa1c1e50c, type: 2}
+  - {fileID: 11400000, guid: bf79f943cfcd40828e02a07bb6283a81, type: 2}
+  - {fileID: 11400000, guid: a7bdfe63b38f49b4bc6906fdc65c6e45, type: 2}
+  - {fileID: 11400000, guid: 9ae9c54ca4d043c487262c499ab9beaf, type: 2}
+  - {fileID: 11400000, guid: 5cb954dc960545b2bdfce0f98418ed66, type: 2}
   - {fileID: 11400000, guid: 8fca7fb39e972c64dadbfac6422a88fa, type: 2}
+  - {fileID: 11400000, guid: 7ed8b946c69d41968db97a00b17b9f41, type: 2}
+  - {fileID: 11400000, guid: d70d8d3e0bb442d3a6b59fa98d16e75e, type: 2}
+  - {fileID: 11400000, guid: 05136e6fed06407383470393bd3202ad, type: 2}
+  - {fileID: 11400000, guid: 5c42c8ef009b4b5f9f63f10ba8664379, type: 2}
+  - {fileID: 11400000, guid: 024c0e34feaf4e098b85f1368969fe67, type: 2}
+  - {fileID: 11400000, guid: 2afa053ef9ae4ee6aec5070fcda79cf8, type: 2}
+  - {fileID: 11400000, guid: 86d2b2faec00414797fc5324d9e48971, type: 2}
+  - {fileID: 11400000, guid: 538b44e3594a4ec28368b8bb3daa6cb9, type: 2}
 --- !u!114 &-194083055525034274
 MonoBehaviour:
   m_ObjectHideFlags: 0

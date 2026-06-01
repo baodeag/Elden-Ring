@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!1 &1822081526993742475
 GameObject:
@@ -627,8 +627,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dropItemChance: 100
   droppableItems:
-  - {fileID: 11400000, guid: 7a9a409d5732a69469b7d433784133b2, type: 2}
-  - {fileID: 11400000, guid: 8fca7fb39e972c64dadbfac6422a88fa, type: 2}
+  - {fileID: 11400000, guid: fd79804dafa6951429288c553a1c075a, type: 2}
+  - {fileID: 11400000, guid: 497f3ca4a3dd40c6bc9962522275f740, type: 2}
+  - {fileID: 11400000, guid: 808a612b15e44c5cab064faae85ef797, type: 2}
+  - {fileID: 11400000, guid: 88cb2159704044f19e135ef55695d149, type: 2}
+  - {fileID: 11400000, guid: 15a0facbc2e54af3920539428760a03c, type: 2}
+  - {fileID: 11400000, guid: 8709d19433064797b4684aaffb912d72, type: 2}
+  - {fileID: 11400000, guid: 25b09f0f44944dd1b269c6acd8f76ac5, type: 2}
+  - {fileID: 11400000, guid: cae476d0db7e467ba88c439feb7cb551, type: 2}
+  - {fileID: 11400000, guid: 5155f537089c49db919511a9f42f7442, type: 2}
+  - {fileID: 11400000, guid: a2e26a73408d4b3c895d6f0618977471, type: 2}
+  - {fileID: 11400000, guid: 2cec6e4f44da45dcb8deb72278216993, type: 2}
+  - {fileID: 11400000, guid: 9db1c68afd41f204eb9ce916a7bea945, type: 2}
+  - {fileID: 11400000, guid: 084b2a1afb6e449aa78791c2bf01321d, type: 2}
+  - {fileID: 11400000, guid: fdcea472767d426eab9d4ae91ae5ce80, type: 2}
+  - {fileID: 11400000, guid: 6bb7e9f7ca574640b540a699fedd3350, type: 2}
+  - {fileID: 11400000, guid: c77bee71f8d343c38cbfed4a07d98f1d, type: 2}
+  - {fileID: 11400000, guid: 24a9be4e30eb4bab8e7d852269ae0af3, type: 2}
+  - {fileID: 11400000, guid: 6417f7aadc3d40d0afc4bdede2e6389f, type: 2}
+  - {fileID: 11400000, guid: dcf92add63574b849385c76f2014aa4d, type: 2}
+  - {fileID: 11400000, guid: 8b137832ec1444189ce0d4bb4eb18e1a, type: 2}
+  - {fileID: 11400000, guid: 8b1448e8f59b45dabd7580b046817423, type: 2}
+  - {fileID: 11400000, guid: 8e3a1e9cf1d84385a1f95c56c3f6e0d4, type: 2}
+  - {fileID: 11400000, guid: f22fbf1330b04bb9804a1482c671148d, type: 2}
+  - {fileID: 11400000, guid: d722204c09d340e18e545cabe030dffe, type: 2}
+  - {fileID: 11400000, guid: 78ca0d8554b1d09499208d5e2aadb59f, type: 2}
+  - {fileID: 11400000, guid: a5fca22cc7154efc8e4152ad6d382428, type: 2}
+  - {fileID: 11400000, guid: 7119823caab84d14833b4fba73af43de, type: 2}
+  - {fileID: 11400000, guid: ae2fdd23d8ff4c77bc6934da81c069dd, type: 2}
+  - {fileID: 11400000, guid: a95b2b01b9e149fd959c7847c1679828, type: 2}
+  - {fileID: 11400000, guid: 6f6ee6b779484379919c7d727961c875, type: 2}
+  - {fileID: 11400000, guid: e440e877767d4e5a9ae54fc16fcc1d4b, type: 2}
+  - {fileID: 11400000, guid: 3d82b751fb4b443f8cc43fd1dd676ef2, type: 2}
 --- !u!114 &1657130946531113647
 MonoBehaviour:
   m_ObjectHideFlags: 0

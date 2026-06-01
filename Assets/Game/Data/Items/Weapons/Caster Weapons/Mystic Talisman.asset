@@ -15,44 +15,44 @@ MonoBehaviour:
   itemName: Mystic Talisman
   itemIcon: {fileID: 21300000, guid: 0d6ab70783e60f54cbe06ed934f07231, type: 3}
   itemDescription: 
-  itemID: 0
+  itemID: 8
   itemWeight: 0
   weaponAnimator: {fileID: 22100000, guid: d2844b116f9e11c4b8091b630143decd, type: 2}
   weaponModelType: 0
   weaponModel: {fileID: 0}
   weaponClass: 3
-  strengthREQ: 0
-  dexREQ: 0
-  intREQ: 0
-  faithREQ: 0
-  physicalDamage: 0
-  magicDamage: 0
+  strengthREQ: 4
+  dexREQ: 6
+  intREQ: 12
+  faithREQ: 10
+  physicalDamage: 12
+  magicDamage: 58
   fireDamage: 0
-  holyDamage: 0
+  holyDamage: 22
   lightningDamage: 0
-  poiseDamage: 10
-  light_Attack_01_Modifier: 1
-  light_Attack_02_Modifier: 1.2
-  heavy_Attack_01_Modifier: 1.4
-  heavy_Attack_02_Modifier: 1.6
-  charge_Attack_01_Modifier: 2
-  charge_Attack_02_Modifier: 2.2
-  running_Attack_01_Modifier: 1.1
-  rolling_Attack_01_Modifier: 1.1
-  backstep_Attack_01_Modifier: 1.1
-  baseStaminaCost: 20
-  lightAttackStaminaCostMultiplier: 1
-  heavyAttackStaminaCostMultiplier: 1.3
-  chargedAttackStaminaCostMultiplier: 1.5
-  runningAttackStaminaCostMultiplier: 1.1
-  rollingAttackStaminaCostMultiplier: 1.1
-  backstepAttackStaminaCostMultiplier: 1.1
-  physicalBaseDamageAbsorption: 50
-  magicBaseDamageAbsorption: 50
-  fireBaseDamageAbsorption: 50
-  lightningBaseDamageAbsorption: 50
-  holyBaseDamageAbsorption: 50
-  stability: 50
+  poiseDamage: 8
+  light_Attack_01_Modifier: 1.01
+  light_Attack_02_Modifier: 1.09
+  heavy_Attack_01_Modifier: 1.3
+  heavy_Attack_02_Modifier: 1.46
+  charge_Attack_01_Modifier: 1.78
+  charge_Attack_02_Modifier: 1.96
+  running_Attack_01_Modifier: 1.02
+  rolling_Attack_01_Modifier: 1
+  backstep_Attack_01_Modifier: 0.96
+  baseStaminaCost: 16
+  lightAttackStaminaCostMultiplier: 0.94
+  heavyAttackStaminaCostMultiplier: 1.16
+  chargedAttackStaminaCostMultiplier: 1.36
+  runningAttackStaminaCostMultiplier: 1.03
+  rollingAttackStaminaCostMultiplier: 0.99
+  backstepAttackStaminaCostMultiplier: 0.98
+  physicalBaseDamageAbsorption: 49
+  magicBaseDamageAbsorption: 55
+  fireBaseDamageAbsorption: 49
+  lightningBaseDamageAbsorption: 49
+  holyBaseDamageAbsorption: 55
+  stability: 24
   oh_RB_Action: {fileID: 11400000, guid: bbf015b1b9477d24186ac37c20d6fc4d, type: 2}
   oh_RT_Action: {fileID: 11400000, guid: bbf015b1b9477d24186ac37c20d6fc4d, type: 2}
   oh_LB_Action: {fileID: 11400000, guid: bbf015b1b9477d24186ac37c20d6fc4d, type: 2}

@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!29 &1
 OcclusionCullingSettings:
@@ -1395,7 +1395,7 @@ PrefabInstance:
     - target: {fileID: 2076382501041996191, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
       propertyPath: characterGameObject
       value: 
-      objectReference: {fileID: 6944900050668453464, guid: 5c0ef66d8cf19744e953aebd452d783a, type: 3}
+      objectReference: {fileID: 6944900050668453464, guid: 74b7b343562999e4196f5a08ce14ac9a, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2000,7 +2000,7 @@ PrefabInstance:
     - target: {fileID: 2076382501041996191, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
       propertyPath: characterGameObject
       value: 
-      objectReference: {fileID: 6944900050668453464, guid: 5c0ef66d8cf19744e953aebd452d783a, type: 3}
+      objectReference: {fileID: 6944900050668453464, guid: 6533b33a99a28e3478f7575a499e24e8, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2116,7 +2116,7 @@ PrefabInstance:
     - target: {fileID: 2076382501041996191, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
       propertyPath: characterGameObject
       value: 
-      objectReference: {fileID: 6944900050668453464, guid: 5c0ef66d8cf19744e953aebd452d783a, type: 3}
+      objectReference: {fileID: 6944900050668453464, guid: 0004444c4b70c634f9669f38be9d05fb, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2323,7 +2323,7 @@ PrefabInstance:
     - target: {fileID: 2076382501041996191, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
       propertyPath: characterGameObject
       value: 
-      objectReference: {fileID: 6944900050668453464, guid: 5c0ef66d8cf19744e953aebd452d783a, type: 3}
+      objectReference: {fileID: 6944900050668453464, guid: 7857e2c9b2af2bd4aa0cb659198b219f, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3125,7 +3125,7 @@ PrefabInstance:
     - target: {fileID: 2076382501041996191, guid: a9089cda8ca51f04bb57f15b9251b384, type: 3}
       propertyPath: characterGameObject
       value: 
-      objectReference: {fileID: 6944900050668453464, guid: 5c0ef66d8cf19744e953aebd452d783a, type: 3}
+      objectReference: {fileID: 6944900050668453464, guid: 64fbc81176f3be240a7799dda3380e12, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

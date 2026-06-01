@@ -19,38 +19,38 @@ MonoBehaviour:
   weaponAnimator: {fileID: 22100000, guid: fffc2bdf643b1b54ebe5ccace4a29b9a, type: 2}
   weaponModelType: 0
   weaponModel: {fileID: 3655762614452610535, guid: f627b79b0f0a53847bac97469a48adf5, type: 3}
-  strengthREQ: 10
+  strengthREQ: 9
   dexREQ: 10
   intREQ: 0
   faithREQ: 0
-  physicalDamage: 118
+  physicalDamage: 106
   magicDamage: 0
   fireDamage: 0
   holyDamage: 0
   lightningDamage: 0
-  poiseDamage: 25
-  light_Attack_01_Modifier: 1
-  light_Attack_02_Modifier: 1.2
-  heavy_Attack_01_Modifier: 1.4
-  heavy_Attack_02_Modifier: 1.6
-  charge_Attack_01_Modifier: 2
-  charge_Attack_02_Modifier: 2.2
-  running_Attack_01_Modifier: 1.1
-  rolling_Attack_01_Modifier: 1.1
-  backstep_Attack_01_Modifier: 1.1
+  poiseDamage: 27
+  light_Attack_01_Modifier: 1.03
+  light_Attack_02_Modifier: 1.15
+  heavy_Attack_01_Modifier: 1.35
+  heavy_Attack_02_Modifier: 1.55
+  charge_Attack_01_Modifier: 1.87
+  charge_Attack_02_Modifier: 2.11
+  running_Attack_01_Modifier: 1.09
+  rolling_Attack_01_Modifier: 1.01
+  backstep_Attack_01_Modifier: 0.98
   baseStaminaCost: 20
-  lightAttackStaminaCostMultiplier: 0.9
-  heavyAttackStaminaCostMultiplier: 1.3
-  chargedAttackStaminaCostMultiplier: 1.5
-  runningAttackStaminaCostMultiplier: 1.1
-  rollingAttackStaminaCostMultiplier: 1.1
-  backstepAttackStaminaCostMultiplier: 1.1
-  physicalBaseDamageAbsorption: 50
-  magicBaseDamageAbsorption: 50
-  fireBaseDamageAbsorption: 50
-  lightningBaseDamageAbsorption: 50
-  holyBaseDamageAbsorption: 50
-  stability: 30
+  lightAttackStaminaCostMultiplier: 0.97
+  heavyAttackStaminaCostMultiplier: 1.22
+  chargedAttackStaminaCostMultiplier: 1.46
+  runningAttackStaminaCostMultiplier: 1.06
+  rollingAttackStaminaCostMultiplier: 1.02
+  backstepAttackStaminaCostMultiplier: 1.01
+  physicalBaseDamageAbsorption: 49
+  magicBaseDamageAbsorption: 49
+  fireBaseDamageAbsorption: 49
+  lightningBaseDamageAbsorption: 49
+  holyBaseDamageAbsorption: 49
+  stability: 31
   oh_RB_Action: {fileID: 11400000, guid: 7ded38d00ecd2fb4bb1d9c059955ab0f, type: 2}
   oh_RT_Action: {fileID: 11400000, guid: 0c09a584d46b74442a155e216ac45ba7, type: 2}
   oh_LB_Action: {fileID: 11400000, guid: cfe3d18711ba1614d9476db6ca13f85b, type: 2}
