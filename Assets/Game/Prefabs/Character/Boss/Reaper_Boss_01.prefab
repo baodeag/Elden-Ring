@@ -472,8 +472,8 @@ MonoBehaviour:
   attack: {fileID: 11400000, guid: c29317ed79b13114b91d43a22fb544c5, type: 2}
   investigateSound: {fileID: 11400000, guid: 62293090a4667164086109bf89878777, type: 2}
   bossID: 0
-  bossIntroClip: {fileID: 8300000, guid: 2cb017acd7587e547b508854354b3471, type: 3}
-  bossBattleLoopClip: {fileID: 8300000, guid: e55c426f2c73cee43993a9c5d89e8a9b, type: 3}
+  bossIntroClip: {fileID: 8300000, guid: f81f61d52a004e74ca0661a9236d6802, type: 3}
+  bossBattleLoopClip: {fileID: 8300000, guid: f81f61d52a004e74ca0661a9236d6802, type: 3}
   autoWakeOnSpawn: 0
   bossFightIsActive:
     m_InternalValue: 0

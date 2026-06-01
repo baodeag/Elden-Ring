@@ -59,6 +59,10 @@ MonoBehaviour:
   notchArrowSFX:
   - {fileID: 8300000, guid: 2c1ffdcfea733824e8e622d9c6f29063, type: 3}
   healingFlaskSFX: {fileID: 8300000, guid: 684a7046a9cec8b4abd0d22283eaedfc, type: 3}
+  unableToContinueUISFX: {fileID: 0}
+  hoverUISFX: {fileID: 0}
+  confirmUISFX: {fileID: 8300000, guid: 8aee0c3a97c8fb746a821d410c5feae9, type: 3}
+  buttonClickUISFX: {fileID: 8300000, guid: 8aee0c3a97c8fb746a821d410c5feae9, type: 3}
 --- !u!82 &-4778866460423146414
 AudioSource:
   m_ObjectHideFlags: 0

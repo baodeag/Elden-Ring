@@ -16384,6 +16384,8 @@ MonoBehaviour:
   hostWorldButton: {fileID: 0}
   joinWorldButton: {fileID: 0}
   networkAddressInputField: {fileID: 0}
+  enterGameSong: {fileID: 8300000, guid: 5b6358bf31c329141b557401f6b9b7e8, type: 3}
+  buttonClickSFX: {fileID: 8300000, guid: 8aee0c3a97c8fb746a821d410c5feae9, type: 3}
   noCharacterSlotsPopUp: {fileID: 82129611}
   noCharacterSlotsOkayButton: {fileID: 41485165}
   deleteCharacterSlotPopup: {fileID: 2009951063}

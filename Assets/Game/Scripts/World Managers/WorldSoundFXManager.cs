@@ -29,6 +29,7 @@ namespace baodeag
         public AudioClip unableToContinueUISFX;
         public AudioClip hoverUISFX;
         public AudioClip confirmUISFX;
+        public AudioClip buttonClickUISFX;
 
         private void Awake()
         {
@@ -57,11 +58,25 @@ namespace baodeag
         public void PlayBossTrack(AudioClip introTrack, AudioClip loopTrack)
         {
             ApplyAudioSettings();
+            AudioClip singleLoopTrack = loopTrack != null ? loopTrack : introTrack;
+
+            if (singleLoopTrack == null)
+                return;
+
+            if (introTrack == null || introTrack == singleLoopTrack)
+            {
+                bossIntroPlayer.Stop();
+                bossLoopPlayer.clip = singleLoopTrack;
+                bossLoopPlayer.loop = true;
+                bossLoopPlayer.Play();
+                return;
+            }
+
             bossIntroPlayer.clip = introTrack;
             bossIntroPlayer.loop = false;
             bossIntroPlayer.Play();
 
-            bossLoopPlayer.clip = loopTrack;
+            bossLoopPlayer.clip = singleLoopTrack;
             bossLoopPlayer.loop = true;
             bossLoopPlayer.PlayDelayed(bossIntroPlayer.clip.length);
         }

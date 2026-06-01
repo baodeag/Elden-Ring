@@ -33,6 +33,13 @@ namespace baodeag {
         [SerializeField] Button joinWorldButton;
         [SerializeField] TMP_InputField networkAddressInputField;
 
+        [Header("Title Music")]
+        [SerializeField] AudioClip enterGameSong;
+        [SerializeField] AudioClip buttonClickSFX;
+        private AudioSource enterGameMusicPlayer;
+        private AudioSource buttonClickSFXPlayer;
+        private readonly HashSet<Button> titleButtonsWithClickSFX = new HashSet<Button>();
+
         [Header("Main Menu Pop Ups")]
         [SerializeField] GameObject noCharacterSlotsPopUp;
         [SerializeField] Button noCharacterSlotsOkayButton;
@@ -117,15 +124,28 @@ namespace baodeag {
             }
         }
 
+        private void OnEnable()
+        {
+            GameSettingsManager.SettingsChanged += ApplyTitleMusicVolume;
+        }
+
+        private void OnDisable()
+        {
+            GameSettingsManager.SettingsChanged -= ApplyTitleMusicVolume;
+        }
+
         private void Start()
         {
             BuildRuntimeLogger.Log("TitleScreenManager.Start begin");
+            EnsureEnterGameMusicPlayer();
+            EnsureButtonClickSFXPlayer();
             HideGameplayHUDOnTitleScreen();
             HideLegacyNetworkControls();
             EnsureSettingsMenu();
             EnsureCharacterClassSelectionUI();
             EnsureLaunchModeMenu();
             RefreshSaveMenuButtons();
+            InstallTitleButtonClickSFX();
             BuildRuntimeLogger.Log("TitleScreenManager.Start end");
         }
 
@@ -155,6 +175,7 @@ namespace baodeag {
 
         public void PressStart()
         {
+            PlayEnterGameMusic();
             CloseTitleScreenMainMenu();
             CloseLoadGameMenuIfOpen();
             CloseCharacterCreationMenuIfOpen();
@@ -321,10 +342,111 @@ namespace baodeag {
         public void StartNewGame()
         {
             BuildRuntimeLogger.Log("TitleScreenManager.StartNewGame begin");
+            StopEnterGameMusic();
             selectedStartingClassID = GetSelectedStartingClassID();
             BuildRuntimeLogger.Log($"TitleScreenManager.StartNewGame selectedStartingClassID={selectedStartingClassID}");
             WorldSaveGameManager.instance.AttemptToCreateNewGame();
             BuildRuntimeLogger.Log("TitleScreenManager.StartNewGame returned from AttemptToCreateNewGame");
+        }
+
+        private void EnsureEnterGameMusicPlayer()
+        {
+            if (enterGameMusicPlayer != null)
+                return;
+
+            enterGameMusicPlayer = gameObject.AddComponent<AudioSource>();
+            enterGameMusicPlayer.playOnAwake = false;
+            enterGameMusicPlayer.loop = true;
+            enterGameMusicPlayer.spatialBlend = 0f;
+            enterGameMusicPlayer.clip = enterGameSong;
+            ApplyTitleMusicVolume();
+        }
+
+        private void PlayEnterGameMusic()
+        {
+            if (enterGameSong == null)
+                return;
+
+            EnsureEnterGameMusicPlayer();
+
+            if (enterGameMusicPlayer.isPlaying)
+                return;
+
+            enterGameMusicPlayer.clip = enterGameSong;
+            enterGameMusicPlayer.loop = true;
+            ApplyTitleMusicVolume();
+            enterGameMusicPlayer.Play();
+        }
+
+        private void StopEnterGameMusic()
+        {
+            if (enterGameMusicPlayer != null)
+                enterGameMusicPlayer.Stop();
+        }
+
+        private void ApplyTitleMusicVolume()
+        {
+            if (GameSettingsManager.HasInstance)
+                ApplyTitleButtonClickVolume();
+
+            if (enterGameMusicPlayer == null || !GameSettingsManager.HasInstance)
+                return;
+
+            enterGameMusicPlayer.volume = GameSettingsManager.Instance.GetEffectiveMusicVolume();
+        }
+
+        private void EnsureButtonClickSFXPlayer()
+        {
+            if (buttonClickSFXPlayer != null)
+                return;
+
+            buttonClickSFXPlayer = gameObject.AddComponent<AudioSource>();
+            buttonClickSFXPlayer.playOnAwake = false;
+            buttonClickSFXPlayer.loop = false;
+            buttonClickSFXPlayer.spatialBlend = 0f;
+            ApplyTitleButtonClickVolume();
+        }
+
+        private void InstallTitleButtonClickSFX()
+        {
+            Button[] buttons = GetComponentsInChildren<Button>(true);
+
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                Button button = buttons[i];
+
+                if (button == null || titleButtonsWithClickSFX.Contains(button))
+                    continue;
+
+                if (button.GetComponent<TitleButtonClickSound>() == null)
+                    button.gameObject.AddComponent<TitleButtonClickSound>();
+
+                titleButtonsWithClickSFX.Add(button);
+            }
+        }
+
+        public void PlayTitleButtonClickSFX()
+        {
+            AudioClip clickClip = buttonClickSFX != null
+                ? buttonClickSFX
+                : WorldSoundFXManager.instance != null
+                    ? WorldSoundFXManager.instance.buttonClickUISFX
+                    : null;
+
+            if (clickClip == null)
+                return;
+
+            EnsureButtonClickSFXPlayer();
+            ApplyTitleButtonClickVolume();
+            buttonClickSFXPlayer.PlayOneShot(clickClip);
+        }
+
+        private void ApplyTitleButtonClickVolume()
+        {
+            if (buttonClickSFXPlayer == null || !GameSettingsManager.HasInstance)
+                return;
+
+            buttonClickSFXPlayer.volume = GameSettingsManager.Instance.GetEffectiveSFXVolume();
         }
 
         public async void OpenLoadGameMenu()
@@ -1398,6 +1520,37 @@ namespace baodeag {
         public void SetBlueColorSlider(float blueValue)
         {
             blueSlider.value = blueValue;
+        }
+    }
+
+    public class TitleButtonClickSound : MonoBehaviour, IPointerDownHandler, ISubmitHandler
+    {
+        private Button button;
+
+        private void Awake()
+        {
+            button = GetComponent<Button>();
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            PlayIfButtonCanClick();
+        }
+
+        public void OnSubmit(BaseEventData eventData)
+        {
+            PlayIfButtonCanClick();
+        }
+
+        private void PlayIfButtonCanClick()
+        {
+            if (button == null)
+                button = GetComponent<Button>();
+
+            if (button == null || !button.IsActive() || !button.IsInteractable())
+                return;
+
+            TitleScreenManager.Instance?.PlayTitleButtonClickSFX();
         }
     }
 
