@@ -37,12 +37,30 @@ namespace baodeag
         private bool isCheckingRelayCode;
         private string verifiedRelayJoinCode = string.Empty;
 
+        private void OnEnable()
+        {
+            if (WorldGameSessionManager.instance != null)
+                WorldGameSessionManager.instance.CurrentConnectionAddressChanged += OnCurrentConnectionAddressChanged;
+        }
+
+        private void OnDisable()
+        {
+            if (WorldGameSessionManager.instance != null)
+                WorldGameSessionManager.instance.CurrentConnectionAddressChanged -= OnCurrentConnectionAddressChanged;
+        }
+
         public override void OpenMenu()
         {
             base.OpenMenu();
 
             EnsureJoinWorldUI();
             EnsureMenuButtons();
+            RefreshJoinWorldUI();
+        }
+
+        private void OnCurrentConnectionAddressChanged()
+        {
+            EnsureJoinWorldUI();
             RefreshJoinWorldUI();
         }
 
@@ -443,11 +461,13 @@ namespace baodeag
 
             if (NetworkManager.Singleton.IsHost)
             {
+                string currentConnectionAddress = WorldGameSessionManager.instance.GetCurrentConnectionAddress();
                 string addressLabel = WorldGameSessionManager.instance.HasRelayJoinCode()
                     ? "YOUR RELAY CODE"
                     : "YOUR LOCAL ADDRESS";
 
-                worldAddressLabel.text = $"{addressLabel}\n<size=140%>{WorldGameSessionManager.instance.GetCurrentConnectionAddress()}</size>\n<size=75%>Send this to the other player.</size>";
+                ClearOwnHostCodeFromJoinInput(currentConnectionAddress);
+                worldAddressLabel.text = $"{addressLabel}\n<size=140%>{currentConnectionAddress}</size>\n<size=75%>Send this to the other player.</size>";
             }
             else if (NetworkManager.Singleton.IsClient)
             {
@@ -479,6 +499,14 @@ namespace baodeag
             }
 
             string addressInput = GetJoinAddressInput();
+
+            if (IsOwnRelayCodeInput(addressInput))
+            {
+                verifiedRelayJoinCode = string.Empty;
+                ShowJoinStatus("You are already hosting this Relay code.", new Color(1f, 0.78f, 0.25f, 1f));
+                RefreshJoinControlsState();
+                return;
+            }
 
             if (!IsRelayCodeInput(addressInput))
             {
@@ -524,6 +552,13 @@ namespace baodeag
                 return;
 
             string addressInput = GetJoinAddressInput();
+
+            if (IsOwnRelayCodeInput(addressInput))
+            {
+                ShowJoinStatus("You cannot join the world you are already hosting.", new Color(1f, 0.78f, 0.25f, 1f));
+                RefreshJoinControlsState();
+                return;
+            }
 
             if (WorldGameSessionManager.instance.RequiresRelayForCurrentMode() && !IsRelayCodeInput(addressInput))
             {
@@ -596,13 +631,15 @@ namespace baodeag
             if (WorldGameSessionManager.instance != null && WorldGameSessionManager.instance.RequiresRelayForCurrentMode())
             {
                 joinWorldButton.interactable = IsRelayCodeInput(addressInput) &&
+                                               !IsOwnRelayCodeInput(addressInput) &&
                                                IsCurrentRelayCodeVerified(addressInput);
                 return;
             }
 
             if (IsRelayCodeInput(addressInput))
             {
-                joinWorldButton.interactable = IsCurrentRelayCodeVerified(addressInput);
+                joinWorldButton.interactable = !IsOwnRelayCodeInput(addressInput) &&
+                                               IsCurrentRelayCodeVerified(addressInput);
                 return;
             }
 
@@ -614,6 +651,18 @@ namespace baodeag
             return joinWorldAddressInputField != null && !string.IsNullOrWhiteSpace(joinWorldAddressInputField.text)
                 ? joinWorldAddressInputField.text
                 : string.Empty;
+        }
+
+        private void ClearOwnHostCodeFromJoinInput(string currentConnectionAddress)
+        {
+            if (joinWorldAddressInputField == null)
+                return;
+
+            if (string.IsNullOrWhiteSpace(joinWorldAddressInputField.text) ||
+                string.Equals(joinWorldAddressInputField.text.Trim(), currentConnectionAddress, System.StringComparison.OrdinalIgnoreCase))
+            {
+                joinWorldAddressInputField.SetTextWithoutNotify(string.Empty);
+            }
         }
 
         private bool IsRelayCodeInput(string addressInput)
@@ -650,6 +699,14 @@ namespace baodeag
                    WorldGameSessionManager.instance.IsRelayJoinCodeChecked(addressInput);
         }
 
+        private bool IsOwnRelayCodeInput(string addressInput)
+        {
+            return NetworkManager.Singleton != null &&
+                   NetworkManager.Singleton.IsHost &&
+                   WorldGameSessionManager.instance != null &&
+                   WorldGameSessionManager.instance.IsCurrentRelayJoinCode(addressInput);
+        }
+
         private void ShowJoinStatus(string statusText, Color statusColor)
         {
             if (joinStatusLabel == null)
@@ -677,6 +734,15 @@ namespace baodeag
 
             if (placeholderText == null)
                 return;
+
+            if (WorldGameSessionManager.instance != null &&
+                NetworkManager.Singleton != null &&
+                NetworkManager.Singleton.IsHost &&
+                WorldGameSessionManager.instance.HasRelayJoinCode())
+            {
+                placeholderText.text = WorldGameSessionManager.instance.GetCurrentConnectionAddress();
+                return;
+            }
 
             placeholderText.text = WorldGameSessionManager.instance != null &&
                                    WorldGameSessionManager.instance.RequiresRelayForCurrentMode()

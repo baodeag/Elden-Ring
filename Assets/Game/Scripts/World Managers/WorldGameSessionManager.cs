@@ -53,6 +53,7 @@ namespace baodeag
         private JoinAllocation checkedRelayJoinAllocation;
         private bool isStartingRelaySession;
         private SessionLaunchMode currentLaunchMode = SessionLaunchMode.Singleplayer;
+        public event System.Action CurrentConnectionAddressChanged;
         private readonly Dictionary<ulong, int> playerDeathsThisMap = new Dictionary<ulong, int>();
         private int trackedDeathMapIndex = -1;
         private bool sessionLoseTriggered;
@@ -701,6 +702,7 @@ namespace baodeag
             }
 
             Debug.Log($"Host started with UnityTransport on {GetCurrentConnectionAddress()}.");
+            CurrentConnectionAddressChanged?.Invoke();
             return true;
         }
 
@@ -768,16 +770,19 @@ namespace baodeag
                 {
                     Debug.LogError("Failed to start Relay host session.");
                     currentRelayJoinCode = string.Empty;
+                    CurrentConnectionAddressChanged?.Invoke();
                     return false;
                 }
 
                 Debug.Log($"Relay host started. Join code: {currentRelayJoinCode}");
+                CurrentConnectionAddressChanged?.Invoke();
                 return true;
             }
             catch (System.Exception exception)
             {
                 Debug.LogError($"Failed to start Relay host: {exception.Message}");
                 currentRelayJoinCode = string.Empty;
+                CurrentConnectionAddressChanged?.Invoke();
                 return false;
             }
             finally
@@ -915,6 +920,7 @@ namespace baodeag
                     return false;
 
                 currentRelayJoinCode = string.Empty;
+                CurrentConnectionAddressChanged?.Invoke();
                 unityTransport.UseWebSockets = false;
                 unityTransport.SetRelayServerData(new RelayServerData(joinAllocation, RelayConnectionType));
 
@@ -1012,6 +1018,13 @@ namespace baodeag
         public bool HasRelayJoinCode()
         {
             return !string.IsNullOrWhiteSpace(currentRelayJoinCode);
+        }
+
+        public bool IsCurrentRelayJoinCode(string relayJoinCode)
+        {
+            return TryNormalizeRelayJoinCode(relayJoinCode, out relayJoinCode) &&
+                   !string.IsNullOrWhiteSpace(currentRelayJoinCode) &&
+                   currentRelayJoinCode == relayJoinCode;
         }
 
         public bool IsRelayJoinCodeChecked(string relayJoinCode)
