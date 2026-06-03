@@ -429,7 +429,6 @@ namespace baodeag {
 
         public void SaveGame()
         {
-            BuildRuntimeLogger.Log($"WorldSaveGameManager.SaveGame begin slot={currentCharacterSlotBeingUsed}");
             //save the current file under a file name depending on which slot we are using
             saveFileName = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(currentCharacterSlotBeingUsed);
 
@@ -448,7 +447,6 @@ namespace baodeag {
             //write that info onto a json file, saved to this machine
             saveFileDataWriter.CreateNewCharacterSaveFile(currentCharacterData);
             SetCharacterDataForSlot(currentCharacterSlotBeingUsed, currentCharacterData);
-            BuildRuntimeLogger.Log($"WorldSaveGameManager.SaveGame end filename={saveFileName}");
         }
 
         public void DeleteGame(CharacterSlot characterSlot)
