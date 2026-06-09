@@ -1,0 +1,1009 @@
+HỌC VIỆN KỸ THUẬT MẬT MÃ
+KHOA CÔNG NGHỆ THÔNG TIN
+ĐỒ ÁN TỐT NGHIỆP
+ĐỀ TÀI:
+XÂY DỰNG GAME ETERNAL HOLLOW 3D NHIỀU NGƯỜI CHƠI TRÊN MÁY TÍNH CÁ NHÂN
+Nhận xét của cán bộ hướng dẫn:
+Điểm chuyên cần:
+Điểm báo cáo:
+Xác nhận của cán bộ hướng dẫn
+DANH MỤC TỪ VIẾT TẮT
+DANH MỤC BẢNG
+Bảng 2.1. Vai trò các lớp trong kiến trúc tổng thể	52
+Bảng 2.2. Các thành phần chính trong hệ thống nhân vật và class khởi đầu	54
+Bảng 2.3. Các thành phần chính trong hệ thống chiến đấu và tương tác	55
+Bảng 2.4. Các thành phần chính trong hệ thống AI quái vật và boss	57
+Bảng 2.5. Các thành phần chính trong hệ thống multiplayer	59
+Bảng 2.6. Các thành phần chính trong hệ thống dữ liệu, lưu trữ và progression	61
+Bảng 2.7. Các nhóm dữ liệu nhân vật, chỉ số và trang bị	62
+Bảng 2.8. Các chỉ số cơ bản của nhân vật	63
+Bảng 2.9. Các nhóm dữ liệu vật phẩm, vũ khí và hiệu ứng	65
+Bảng 2.10. Một số trường dữ liệu tiêu biểu của vũ khí	66
+Bảng 2.11. Các nhóm dữ liệu boss, map và world progression	68
+Bảng 2.12. Một số trường dữ liệu tiêu biểu của progression	69
+Bảng 2.13. Các nhóm dữ liệu chính trong save game	70
+Bảng 2.14. Một số trường dữ liệu tiêu biểu trong save game	71
+Bảng 4.1. Kịch bản và kết quả thực nghiệm vòng lặp gameplay	139
+Bảng 4.2. Kịch bản và kết quả thực nghiệm AI quái vật và boss	145
+Bảng 4.3. Kịch bản và kết quả thực nghiệm hệ thống chiến đấu	148
+Bảng 4.4. Kịch bản và kết quả thực nghiệm kho đồ, shop và nâng cấp	153
+Bảng 4.5. Kịch bản và kết quả thực nghiệm save-load, progression và chuyển map	157
+Bảng 4.6. Kịch bản và kết quả thực nghiệm multiplayer	160
+DANH MỤC HÌNH
+Hình 1.1. Game 3D hành động nhập vai hiện nay	1
+Hình 1.2. Khảo sát game nhập vai hành động hàng đầu	2
+Hình 1.3. Gameplay của game Elden Ring	4
+Hình 1.4. Minh họa AI bot trong game	6
+Hình 1.5. Các class trong game hành động nhập vai	8
+Hình 1.6. Unity Engine	11
+Hình 1.7. Ngôn ngữ lập trình C#	13
+Hình 2.1. Biểu đồ Usecase tổng quát	25
+Hình 2.2. Usecase tạo nhân vật	26
+Hình 2.3. Usecase tải dữ liệu nhân vật	27
+Hình 2.4. Usecase Điều khiển nhân vật	28
+Hình 2.5. Usecase chiến đấu với quái thường	29
+Hình 2.6. Usecase chiến đấu với Boss	30
+Hình 2.7. Usecase thu thập vật phẩm	31
+Hình 2.8. Usecase quản lý kho đồ và trang bị	32
+Hình 2.9. Usecase tương tác Site Of Grace	33
+Hình 2.10. Usecase nâng cấp nhân vật	34
+Hình 2.11. Usecase nâng cấp vũ khí	35
+Hình 2.12. Usecase mua bán với Merchant	36
+Hình 2.13. Usecase lưu dữ liệu game	37
+Hình 2.14. Usecase đánh bại boss và mở khóa map mới	38
+Hình 2.15. Usecase chuyển map	39
+Hình 2.16. Usecase tham gia multiplayer	40
+Hình 2.17. Biểu đồ tuần tự tạo nhân vật mới	41
+Hình 2.18. Biểu đồ tuần tự tải dữ liệu nhân vật	41
+Hình 2.19. Biểu đồ tuần tự điều khiển nhân vật	42
+Hình 2.20. Biểu đồ tuần tự chiến đấu với quái thường	43
+Hình 2.21. Biểu đồ tuần tự chiến đấu với boss	43
+Hình 2.22. Biểu đồ tuần tự thu thập vật phẩm	44
+Hình 2.23. Biểu đồ tuần tự quản lý kho đồ và trang bị	44
+Hình 2.24. Biểu đồ tuần tự tương tác Site of Grace	45
+Hình 2.25. Biểu đồ tuần tự nâng cấp nhân vật	46
+Hình 2.26. Biểu đồ tuần tự nâng cấp vũ khí	46
+Hình 2.27. Biểu đồ tuần tự mua bán với merchant	47
+Hình 2.28. Biểu đồ tuần tự lưu dữ liệu game	48
+Hình 2.29. Biểu đồ tuần tự đánh bại boss và mở khóa map mới	48
+Hình 2.30. Biểu đồ tuần tự chuyển map	49
+Hình 2.31. Biểu đồ tuần tự tham gia multiplayer	50
+Hình 2.32. Sơ đồ kiến trúc tổng thể của game	51
+Hình 2.33. Sơ đồ hệ thống nhân vật và class khởi đầu	53
+Hình 2.34. Sơ đồ hệ thống chiến đấu và tương tác	55
+Hình 2.35. Sơ đồ hệ thống AI quái vật và boss	57
+Hình 2.36. Sơ đồ hệ thống multiplayer	59
+Hình 2.37. Sơ đồ hệ thống dữ liệu, lưu trữ và progression	60
+Hình 2.38. Cấu trúc dữ liệu nhân vật, chỉ số và trang bị	62
+Hình 2.39. Cấu trúc dữ liệu vật phẩm, vũ khí và hiệu ứng	65
+Hình 2.40. Cấu trúc dữ liệu boss, map và world progression	68
+Hình 2.41. Cấu trúc dữ liệu save game	70
+Hình 3.1. Quá trình đăng ký các input action của người chơi trong hệ thống	73
+Hình 3.2. Cơ chế di chuyển	75
+Hình 3.3. Cơ chế xoay hướng nhân vật	76
+Hình 3.4. Cơ chế chạy nước rút	77
+Hình 3.5. Cơ chế né tránh	77
+Hình 3.6. Cơ chế nhảy	78
+Hình 3.7. Tiếp nhận input tấn công và gọi action vũ khí	80
+Hình 3.8. Điều phối action chiến đấu trong PlayerCombatManager	80
+Hình 3.9. Xử lý đòn đánh nhẹ theo trạng thái nhân vật	81
+Hình 3.10. Tính thể lực tiêu hao theo loại đòn đánh	82
+Hình 3.11. Kiểm tra trạng thái phòng thủ khi nhận đòn đánh	82
+Hình 3.12. Kiểm tra va chạm và tạo hiệu ứng sát thương	83
+Hình 3.13. Tính toán và áp dụng sát thương lên nhân vật	84
+Hình 3.14. Cơ chế kiểm tra điều kiện và thi triển phép thuật	85
+Hình 3.15. Cơ chế tạo hiệu ứng tăng cường khi sử dụng vật phẩm	86
+Hình 3.16. Cơ chế áp dụng và gỡ hiệu ứng tăng chỉ số theo thời gian	87
+Hình 3.17. Cơ chế xử lý hiệu ứng độc gây sát thương theo thời gian	88
+Hình 3.18. Công thức tính máu, thể lực và năng lượng theo thuộc tính nhân vật	90
+Hình 3.19. Tính chỉ số tối đa sau khi áp dụng buff	90
+Hình 3.20. Cập nhật lại máu, thể lực và năng lượng khi chỉ số thay đổi	91
+Hình 3.21. Cơ chế hồi phục thể lực theo thời gian	92
+Hình 3.22. Cập nhật chỉ số tối đa và giao diện HUD	92
+Hình 3.23. Cơ chế tính level nhân vật dựa trên tổng thuộc tính	94
+Hình 3.24. Khởi tạo thông tin nhân vật trong giao diện nâng cấp	95
+Hình 3.25. Cập nhật level dự kiến và kiểm tra rune khi thay đổi thuộc tính	96
+Hình 3.26. Cơ chế tính chi phí rune khi nâng cấp level	97
+Hình 3.27. Xác nhận nâng cấp và lưu lại chỉ số nhân vật	98
+Hình 3.28. Cấu trúc quản lý trang bị và vật phẩm của người chơi	99
+Hình 3.29. Cơ chế chuyển vật phẩm quick slot	100
+Hình 3.30. Cơ chế sử dụng vật phẩm trong quick slot	101
+Hình 3.31. Cơ chế tải trang bị giáp lên nhân vật	101
+Hình 3.32. Kiểm tra điều kiện trước khi nâng cấp vũ khí	102
+Hình 3.33. Xác định nguyên liệu cần thiết để nâng cấp vũ khí	103
+Hình 3.34. Xác nhận nâng cấp vũ khí và lưu dữ liệu	104
+Hình 3.35. Khởi tạo các trạng thái chính của quái vật thường	105
+Hình 3.36. Trạng thái chờ và phát hiện mục tiêu của quái vật	106
+Hình 3.37. Cơ chế truy đuổi người chơi bằng NavMeshAgent	107
+Hình 3.38. Cơ chế lựa chọn đòn đánh của quái vật thường	108
+Hình 3.39. Cơ chế kích hoạt boss fight khi người chơi vào khu vực boss	110
+Hình 3.40. Cơ chế đánh thức boss và kích hoạt arena	111
+Hình 3.41. Cơ chế chuyển phase boss theo lượng máu	112
+Hình 3.42. Cơ chế xử lý state machine của AI	113
+Hình 3.43. Lớp cơ sở dùng để chuyển đổi và đặt lại trạng thái AI	113
+Hình 3.44. Cơ chế xử lý trạng thái tấn công của AI	114
+Hình 3.45. Cấu trúc khai báo các scene cần thiết cho một khu vực bản đồ	115
+Hình 3.46. Cơ chế tải additive scene khi khởi tạo khu vực	116
+Hình 3.47. Cơ chế tải khu vực bản đồ theo vị trí hiện tại của người chơi	117
+Hình 3.48. Cơ chế mở khóa map mới sau khi đánh bại boss	118
+Hình 3.49. Cơ chế tương tác để chuyển sang map khác	119
+Hình 3.50. Cơ chế nghỉ tại Site of Grace và lưu checkpoint	120
+Hình 3.51. Cơ chế xử lý tử vong và hồi sinh nhân vật	121
+Hình 3.52. Cơ chế thêm vật phẩm vào kho khi người chơi nhặt đồ	122
+Hình 3.53. Cơ chế thêm và kiểm tra số lượng vật phẩm trong inventory	123
+Hình 3.54. Cơ chế mở shop khi tương tác với merchant	124
+Hình 3.55. Cơ chế mua vật phẩm bằng rune	125
+Hình 3.56. Cơ chế cập nhật các thanh chỉ số trên HUD	126
+Hình 3.57. Cơ chế cập nhật vật phẩm quick slot trên HUD	127
+Hình 3.58. Cơ chế lưu dữ liệu nhân vật và tiến trình thế giới	128
+Hình 3.59. Cơ chế ghi dữ liệu nhân vật vào CharacterSaveData	129
+Hình 3.60. Cơ chế tạo phiên multiplayer bằng Unity Relay	130
+Hình 3.61. Cơ chế đồng bộ hành động vũ khí qua ServerRpc và ClientRpc	131
+Hình 4.1. Màn hình khởi động Press Start	134
+Hình 4.2. Giao diện tạo nhân vật và lựa chọn class khởi đầu	135
+Hình 4.3. Nhân vật xuất hiện trong scene và bắt đầu khám phá bản đồ	136
+Hình 4.4. Quá trình chiến đấu với quái vật và thu thập vật phẩm trong map	137
+Hình 4.5. Tương tác với Site of Grace trong quá trình thực nghiệm	138
+Hình 4.6. Trận đánh boss và kết quả mở khóa map mới	139
+Hình 4.7. Quái vật phát hiện người chơi và chuyển sang trạng thái truy đuổi	141
+Hình 4.8. Quái vật thực hiện hành vi chiến đấu khi tiếp cận người chơi	142
+Hình 4.9. Trước và sau khi boss được kích hoạt khi người chơi đi vào khu vực chiến đấu	143
+Hình 4.10. Trước và sau khi boss chuyển sang giai đoạn chiến đấu mới	144
+Hình 4.11. Nhân vật thực hiện đòn tấn công cận chiến	146
+Hình 4.12. Thao tác né tránh và phòng thủ trong tình huống giao chiến	147
+Hình 4.13. Sử dụng cung tên	148
+Hình 4.14. Giao diện kho đồ	150
+Hình 4.15. Giao diện shop và quá trình mua bán với merchant	151
+Hình 4.16. Giao diện nâng cấp nhân vật	152
+Hình 4.17. Giao diện nâng cấp vũ khí	153
+Hình 4.18. Thao tác lưu tiến trình tại Site Of Grace	155
+Hình 4.19. Trạng thái game sau khi tải lại dữ liệu đã lưu	156
+Hình 4.20. Người chơi tạo phiên multiplayer ở vai trò host	158
+Hình 4.21. Người chơi thứ hai tham gia thành công vào phiên multiplayer	159
+LỜI CẢM ƠN
+Trong suốt quá trình thực hiện đồ án tốt nghiệp với đề tài “Xây dựng game Eternal Hollow 3D nhiều người chơi trên máy tính cá nhân”, em đã nhận được rất nhiều sự quan tâm, hướng dẫn và hỗ trợ quý báu từ thầy cô, gia đình và bạn bè. Đây là nguồn động lực to lớn giúp em có thể từng bước hoàn thành đề tài này.
+Trước hết, em xin bày tỏ lòng biết ơn sâu sắc tới TS. Nguyễn Đức Hiếu, người đã trực tiếp hướng dẫn, định hướng và góp ý cho em trong suốt quá trình nghiên cứu và thực hiện đồ án. Những ý kiến chuyên môn, sự tận tình chỉ bảo cùng những kinh nghiệm thực tiễn của thầy đã giúp em hiểu rõ hơn về quy trình xây dựng một hệ thống game 3D, đồng thời hoàn thiện đề tài theo đúng định hướng đề ra.
+Em xin chân thành cảm ơn các thầy cô trong Khoa Công nghệ thông tin, Học viện Kỹ thuật mật mã đã truyền đạt cho em những kiến thức nền tảng và chuyên sâu trong suốt quá trình học tập. Những kiến thức đó chính là cơ sở quan trọng để em có thể vận dụng vào việc phân tích, thiết kế và triển khai đồ án tốt nghiệp này.
+Bên cạnh đó, em cũng xin gửi lời cảm ơn tới gia đình, bạn bè và những người đã luôn động viên, hỗ trợ em cả về tinh thần lẫn điều kiện học tập trong suốt thời gian thực hiện đồ án. Sự quan tâm và khích lệ của mọi người là nguồn động lực lớn giúp em vượt qua những khó khăn trong quá trình nghiên cứu và phát triển sản phẩm.
+Mặc dù đã rất cố gắng, song do hạn chế về thời gian, kinh nghiệm thực tiễn và phạm vi của một đồ án tốt nghiệp, nội dung báo cáo chắc chắn vẫn còn những thiếu sót nhất định. Em rất mong nhận được những ý kiến đóng góp quý báu từ thầy cô và các bạn để đề tài được hoàn thiện hơn.
+Em xin chân thành cảm ơn.
+LỜI NÓI ĐẦU
+Trong bối cảnh công nghệ ngày càng phát triển, ngành công nghiệp trò chơi điện tử đã và đang trở thành một lĩnh vực giải trí quan trọng, thu hút hàng triệu người chơi trên toàn thế giới. Không chỉ dừng lại ở vai trò giải trí, phát triển game còn là một lĩnh vực sáng tạo, kết hợp giữa nghệ thuật, công nghệ và khả năng lập trình, đòi hỏi người thực hiện phải không ngừng học hỏi, đổi mới và hoàn thiện kỹ năng chuyên môn.
+Nhận thức được tiềm năng và sức hấp dẫn của ngành phát triển game, em đã quyết định lựa chọn đề tài xây dựng game 3D hành động nhập vai để nghiên cứu và thực hiện trong đồ án tốt nghiệp. Mục tiêu của báo cáo này là tìm hiểu và trình bày các giai đoạn quan trọng trong quá trình phát triển một trò chơi điện tử, từ khâu hình thành ý tưởng, phân tích yêu cầu, thiết kế hệ thống, lập trình các cơ chế gameplay, cho đến thử nghiệm và hoàn thiện sản phẩm. Bên cạnh đó, báo cáo cũng đề cập đến những công nghệ và công cụ phổ biến được sử dụng trong quá trình phát triển game hiện nay, qua đó cung cấp cho người đọc cái nhìn tổng quan về quy trình xây dựng một game 3D trên nền tảng máy tính cá nhân.
+Báo cáo này gồm năm chương chính và phần kết luận:
+Chương 1: Tổng quan về đề tài và cơ sở lý thuyết. Chương này trình bày cơ sở lý thuyết liên quan đến game 3D hành động nhập vai, khảo sát đặc điểm của thể loại game theo phong cách Soulslike, tìm hiểu cơ chế gameplay, hệ thống trí tuệ nhân tạo trong game, hệ thống nhân vật, bản đồ và các công nghệ được sử dụng trong quá trình phát triển đề tài.
+Chương 2: Phân tích thiết kế hệ thống. Chương này tập trung phân tích các yêu cầu chức năng và phi chức năng của trò chơi, đồng thời trình bày cấu trúc tổng thể của hệ thống thông qua các mô hình phân tích và thiết kế như use case, biểu đồ hoạt động, kiến trúc game, thiết kế dữ liệu và các thành phần cốt lõi của hệ thống.
+Chương 3: Xây dựng cơ chế game Eternal Hollow. Nội dung chương này mô tả quá trình hiện thực hóa các cơ chế quan trọng như điều khiển và di chuyển nhân vật, chiến đấu, quản lý chỉ số, AI quái vật và boss, hệ thống checkpoint, hồi sinh, HUD, bản đồ, kho đồ, nâng cấp và nền tảng chơi nhiều người.
+Chương 4: Thử nghiệm game Eternal Hollow Chương này trình bày các nội dung kiểm thử đối với gameplay, AI, chiến đấu, save-load, progression và multiplayer, đồng thời đánh giá những ưu điểm, hạn chế và định hướng phát triển tiếp theo của hệ thống.
+Phần kết luận: Nêu lên những kết quả đã đạt được, các hạn chế còn tồn tại và hướng phát triển của đề tài trong tương lai.
+Em hy vọng rằng bài báo cáo này không chỉ giúp người đọc hiểu rõ hơn về quy trình phát triển một game 3D hành động nhập vai mà còn có thể trở thành tài liệu tham khảo hữu ích cho những ai quan tâm đến lĩnh vực lập trình và phát triển trò chơi điện tử. Trong quá trình thực hiện đề tài, em đã gặp không ít khó khăn và thách thức, tuy nhiên nhờ sự hướng dẫn tận tình của giảng viên hướng dẫn cùng với sự nỗ lực của bản thân, em đã từng bước hoàn thiện báo cáo và sản phẩm thực nghiệm.
+Em rất mong nhận được những ý kiến đóng góp quý báu từ thầy cô để bài báo cáo được hoàn thiện hơn.
+Trân trọng!
+TỔNG QUAN VỀ ĐỀ TÀI VÀ CƠ SỞ LÝ THUYẾT
+Khảo sát các game 3D hành động nhập vai hiện nay
+Trong những năm gần đây, game 3D hành động nhập vai đã trở thành một trong những thể loại nổi bật và có sức ảnh hưởng lớn trong ngành công nghiệp trò chơi điện tử. Khác với nhiều thể loại game chỉ tập trung vào yếu tố giải trí ngắn hạn, game 3D hành động nhập vai thường đem đến cho người chơi một trải nghiệm có chiều sâu, kết hợp giữa khám phá thế giới, phát triển nhân vật, chiến đấu thời gian thực và tương tác với môi trường xung quanh. Chính sự kết hợp này đã giúp thể loại game này duy trì được sức hút mạnh mẽ đối với cộng đồng người chơi.
+Hình 1.1. Game 3D hành động nhập vai hiện nay
+Một trong những đặc điểm quan trọng của game 3D hành động nhập vai là khả năng xây dựng thế giới game sống động và có tính nhập vai cao. Người chơi không chỉ điều khiển nhân vật thực hiện các hành động cơ bản như di chuyển, chiến đấu hay thu thập vật phẩm, mà còn từng bước phát triển nhân vật theo phong cách riêng thông qua hệ thống chỉ số, trang bị, kỹ năng và các lựa chọn chiến thuật trong quá trình chơi. Điều này làm cho trải nghiệm của mỗi người chơi có thể khác nhau, tạo nên tính đa dạng và giá trị chơi lại cao cho sản phẩm.
+Bên cạnh đó, sự phát triển của công nghệ đồ họa 3D, trí tuệ nhân tạo và các game engine hiện đại như Unity hoặc Unreal Engine đã góp phần thúc đẩy thể loại này phát triển mạnh mẽ hơn. Các nhà phát triển hiện nay có thể xây dựng những môi trường rộng lớn, mô hình nhân vật chi tiết, hệ thống chiến đấu chân thực và các cơ chế tương tác phức tạp hơn trước rất nhiều. Nhờ vậy, game 3D hành động nhập vai không chỉ hấp dẫn về mặt hình ảnh mà còn tạo được chiều sâu về gameplay và trải nghiệm người dùng.
+Nhiều tựa game nổi tiếng trên thế giới đã góp phần định hình và phát triển thể loại này, tiêu biểu như Dark Souls, Elden Ring, The Witcher 3, Dragon’s Dogma hay Black Myth: Wukong. Trong đó, các trò chơi theo phong cách Soulslike như Dark Souls và Elden Ring đặc biệt gây ấn tượng bởi hệ thống chiến đấu có độ thử thách cao, cơ chế quản lý thể lực chặt chẽ, thiết kế bản đồ có chiều sâu, cùng cảm giác chinh phục rõ rệt khi người chơi vượt qua được các boss hoặc khu vực khó. Đây cũng là nhóm sản phẩm có ảnh hưởng trực tiếp đến định hướng xây dựng gameplay của đề tài.
+Hình 1.2. Khảo sát game nhập vai hành động hàng đầu
+Từ việc khảo sát các sản phẩm thực tế, có thể thấy rằng một game 3D hành động nhập vai hiện đại thường cần hội tụ nhiều thành phần quan trọng như hệ thống điều khiển mượt mà, chiến đấu thời gian thực, trí tuệ nhân tạo cho quái vật và boss, hệ thống bản đồ có tổ chức rõ ràng, hệ thống vật phẩm và nâng cấp, cùng với giao diện trực quan hỗ trợ người chơi trong suốt quá trình trải nghiệm. Những thành phần này không tồn tại tách rời mà có mối liên hệ chặt chẽ với nhau, cùng tạo nên cấu trúc tổng thể của một trò chơi hoàn chỉnh.
+Đối với đề tài “Eternal Hollow 3D”, việc khảo sát các game 3D hành động nhập vai hiện nay có ý nghĩa quan trọng trong việc xác định hướng phát triển phù hợp. Thay vì xây dựng một sản phẩm quá rộng về quy mô, đề tài tập trung lựa chọn và hiện thực hóa những thành phần cốt lõi nhất của thể loại, bao gồm hệ thống nhân vật, chiến đấu, quái vật, boss, bản đồ, tiến trình nâng cấp và khả năng hỗ trợ nhiều người chơi ở mức nền tảng. Đây là hướng tiếp cận phù hợp với phạm vi của một đồ án tốt nghiệp, đồng thời vẫn đảm bảo thể hiện được bản chất của một game 3D hành động nhập vai hiện đại.
+Tìm hiểu cơ chế gameplay trong game 3D hành động nhập vai
+Gameplay là yếu tố trung tâm quyết định chất lượng và sức hấp dẫn của một trò chơi điện tử. Đối với game 3D hành động nhập vai, gameplay không chỉ đơn thuần là các thao tác điều khiển nhân vật mà còn là toàn bộ quá trình người chơi tương tác với thế giới game, với hệ thống chiến đấu, vật phẩm, chỉ số nhân vật, môi trường và tiến trình phát triển trong trò chơi. Một gameplay được xây dựng hợp lý sẽ tạo ra cảm giác lôi cuốn, thử thách và khuyến khích người chơi tiếp tục khám phá trong thời gian dài.
+Trong các game 3D hành động nhập vai hiện nay, gameplay thường được tổ chức theo hướng kết hợp giữa hành động thời gian thực và cơ chế nhập vai phát triển nhân vật. Người chơi không chỉ chiến đấu để vượt qua kẻ địch mà còn phải quản lý tài nguyên, lựa chọn trang bị, nâng cấp sức mạnh và thích nghi với độ khó ngày càng tăng của trò chơi. Vì vậy, việc tìm hiểu gameplay là bước quan trọng để xác định hướng xây dựng hệ thống cho đề tài Eternal Hollow 3D.
+Khái niệm
+Gameplay có thể được hiểu là cách mà người chơi tham gia và trải nghiệm trò chơi thông qua các quy tắc, cơ chế và phản hồi mà hệ thống tạo ra. Nói cách khác, gameplay phản ánh việc trò chơi được chơi như thế nào trên thực tế. Trong game 3D hành động nhập vai, gameplay thường bao gồm các hoạt động như điều khiển nhân vật trong môi trường ba chiều, thực hiện các hành động chiến đấu, thu thập vật phẩm, nâng cấp chỉ số và tương tác với nhiều thành phần khác trong thế giới game.
+Hình 1.3. Gameplay của game Elden Ring
+Khác với những thể loại game đơn giản chỉ tập trung vào một mục tiêu ngắn hạn, gameplay của game hành động nhập vai có tính tổng hợp cao. Người chơi vừa phải có kỹ năng điều khiển, vừa phải có khả năng quan sát, phản ứng và lựa chọn chiến thuật phù hợp. Chính sự kết hợp này tạo nên chiều sâu trong trải nghiệm và giúp thể loại game này có sức hút lâu dài.
+Vòng lặp gameplay cốt lõi
+Vòng lặp gameplay cốt lõi là chuỗi hoạt động lặp lại trong suốt quá trình chơi, giúp người chơi luôn có mục tiêu để tiếp tục tiến lên. Trong game 3D hành động nhập vai, vòng lặp này thường bắt đầu từ việc người chơi tiến vào bản đồ, khám phá môi trường, chiến đấu với quái vật, nhận phần thưởng, nâng cấp nhân vật rồi tiếp tục đối mặt với thử thách khó hơn.
+Đối với đề tài Eternal Hollow 3D, vòng lặp gameplay được định hướng theo phong cách hành động nhập vai quen thuộc: người chơi chọn class khởi đầu, khởi động world scene, chiến đấu với quái vật để kiếm rune hoặc vật phẩm, nghỉ tại checkpoint để hồi phục và lưu tiến trình, nâng cấp nhân vật hoặc vũ khí, sau đó tiếp tục khám phá khu vực hiện tại cho đến khi đủ sức đối đầu với boss. Khi boss bị đánh bại, người chơi mở khóa map tiếp theo và tiếp tục vòng lặp ở mức độ khó cao hơn. Cách tổ chức này giúp trò chơi có tiến trình rõ ràng và tạo cảm giác phát triển liên tục.
+Đặc trưng của game theo phong cách Soulslike
+Một trong những hướng phát triển nổi bật của game hành động nhập vai hiện nay là phong cách Soulslike. Các trò chơi thuộc phong cách này thường có hệ thống chiến đấu mang tính thử thách cao, yêu cầu người chơi căn thời điểm tấn công, né tránh và phòng thủ hợp lý thay vì chỉ liên tục ra đòn. Ngoài ra, việc quản lý thể lực, sử dụng checkpoint, chiến đấu với boss và vượt qua các khu vực khó cũng là những đặc trưng rất điển hình.
+Bên cạnh yếu tố thử thách, game Soulslike còn tạo cảm giác chinh phục rõ ràng khi người chơi vượt qua được quái mạnh, boss hoặc các khu vực nguy hiểm. Đây là dạng gameplay vừa đòi hỏi kỹ năng, vừa yêu cầu người chơi học hỏi dần qua mỗi lần thất bại. Đối với đề tài Eternal Hollow 3D, phong cách này được tham khảo để xây dựng các cơ chế như chiến đấu thời gian thực, quản lý chỉ số, hệ thống checkpoint, boss fight và tiến trình mở khóa nhiều map theo từng giai đoạn. Điều này giúp game có định hướng rõ ràng hơn và phù hợp với mục tiêu xây dựng một sản phẩm hành động nhập vai có chiều sâu trong phạm vi đồ án tốt nghiệp.
+Tìm hiểu hệ thống trí tuệ nhân tạo trong game
+Trí tuệ nhân tạo trong game là một trong những thành phần quan trọng giúp tạo ra sự sống động và tính tương tác cho thế giới trò chơi. Thông qua AI, các đối tượng trong game như quái vật, boss hoặc NPC có thể phản ứng với hành động của người chơi một cách hợp lý, từ đó làm cho trải nghiệm chơi trở nên tự nhiên, hấp dẫn và có chiều sâu hơn. Đối với game 3D hành động nhập vai, AI không chỉ đơn thuần điều khiển việc di chuyển hay tấn công của kẻ địch, mà còn góp phần quyết định độ khó, nhịp độ chiến đấu và cảm giác chinh phục của người chơi.
+Trong các game hành động nhập vai hiện đại, AI thường được sử dụng để xây dựng hành vi cho quái vật theo từng trạng thái khác nhau như đứng yên, tuần tra, phát hiện mục tiêu, truy đuổi, tấn công hoặc rút lui. Việc chia hành vi thành nhiều trạng thái giúp hệ thống dễ kiểm soát hơn và tạo cảm giác hợp lý khi kẻ địch phản ứng với môi trường xung quanh. Ngoài quái vật thông thường, AI còn được áp dụng cho boss, nơi yêu cầu mức độ phức tạp cao hơn về hành vi, khả năng gây áp lực và tạo thử thách cho người chơi.
+Hình 1.4. Minh họa AI bot trong game
+Một hệ thống AI tốt trong game không nhất thiết phải quá phức tạp, nhưng cần đảm bảo ba yếu tố quan trọng. Thứ nhất là tính hợp lý, tức là kẻ địch phải hành động phù hợp với tình huống thay vì phản ứng ngẫu nhiên. Thứ hai là tính thử thách, giúp người chơi cảm thấy cần quan sát, học hỏi và thích nghi khi đối đầu với từng loại kẻ địch. Thứ ba là tính ổn định, nghĩa là các hành vi phải được thực hiện nhất quán để tránh gây lỗi hoặc làm mất trải nghiệm trong quá trình chơi.
+Trong môi trường phát triển game bằng Unity, AI thường được xây dựng dựa trên các mô hình như Finite State Machine, NavMesh navigation, trigger detection hoặc event-driven logic. Các mô hình này cho phép xây dựng hành vi theo từng trạng thái rõ ràng, đồng thời dễ mở rộng khi cần thêm loại quái vật, boss hoặc các mẫu hành vi mới. Đây cũng là hướng tiếp cận phù hợp với một đồ án tốt nghiệp vì vừa đảm bảo tính thực tiễn, vừa thuận lợi trong triển khai và kiểm thử.
+Đối với đề tài Eternal Hollow 3D, hệ thống AI đóng vai trò quan trọng trong việc tạo ra trải nghiệm chiến đấu và khám phá bản đồ. AI được định hướng sử dụng cho quái vật thường, boss và một số đối tượng tương tác trong game. Các hành vi cơ bản như phát hiện người chơi, di chuyển đến mục tiêu, lựa chọn hành động tấn công và kích hoạt chiến đấu với boss sẽ là nền tảng để xây dựng nên độ khó và tính hấp dẫn của gameplay. Việc nghiên cứu hệ thống AI vì vậy là một nội dung cần thiết, góp phần hoàn thiện cả mặt kỹ thuật lẫn trải nghiệm của trò chơi.
+Tìm hiểu hệ thống nhân vật và bản đồ trong game
+Trong game 3D hành động nhập vai, hệ thống nhân vật và bản đồ là hai thành phần nền tảng quyết định trực tiếp đến trải nghiệm của người chơi. Nếu nhân vật là trung tâm của mọi hành động, chiến đấu và phát triển sức mạnh, thì bản đồ lại là không gian để toàn bộ quá trình đó diễn ra. Hai yếu tố này có mối liên hệ chặt chẽ với nhau, bởi cách xây dựng nhân vật sẽ ảnh hưởng đến cách người chơi tiếp cận môi trường, còn cách thiết kế bản đồ lại tác động đến nhịp độ khám phá, chiến đấu và tiến trình của trò chơi.
+Đối với đề tài Eternal Hollow 3D, việc nghiên cứu hệ thống nhân vật và bản đồ có ý nghĩa quan trọng trong việc xây dựng một game hành động nhập vai có cấu trúc rõ ràng. Người chơi cần có cảm giác mình đang điều khiển một nhân vật có vai trò, có chỉ số, có trang bị và có khả năng phát triển theo thời gian. Đồng thời, thế giới game cũng cần được tổ chức thành các khu vực hợp lý để người chơi khám phá, chiến đấu, nghỉ tại checkpoint và tiến đến các trận đấu boss theo đúng tiến trình thiết kế.
+Hệ thống nhân vật
+Hệ thống nhân vật trong game hành động nhập vai thường bao gồm các thành phần như lớp nhân vật, bộ chỉ số, trang bị, hiệu ứng trạng thái và các khả năng chiến đấu. Đây là phần giúp người chơi cảm nhận được sự khác biệt giữa các lối chơi, đồng thời tạo nên chiều sâu trong quá trình phát triển nhân vật. Một hệ thống nhân vật tốt không chỉ cho phép điều khiển linh hoạt mà còn phải hỗ trợ được việc nâng cấp, thay đổi trang bị và thích nghi với nhiều loại thử thách khác nhau trong game.
+Hình 1.5. Các class trong game hành động nhập vai
+Trong đề tài này, hệ thống nhân vật được định hướng theo mô hình class-based, tức là người chơi có thể bắt đầu với một lớp nhân vật nhất định, mỗi class có đặc điểm riêng về chỉ số, trang bị khởi đầu và phong cách chiến đấu. Cách tổ chức này giúp gameplay rõ ràng hơn, đồng thời tạo điều kiện để người chơi có thể lựa chọn hướng phát triển phù hợp với sở thích cá nhân. Bên cạnh đó, hệ thống nhân vật còn gắn liền với các yếu tố như máu, thể lực, năng lượng, level, thuộc tính và trang bị, từ đó hình thành nên toàn bộ năng lực chiến đấu của người chơi trong quá trình trải nghiệm game.
+Hệ thống bản đồ
+Bản đồ trong game 3D hành động nhập vai không chỉ là không gian hiển thị môi trường mà còn là thành phần định hình nhịp chơi và tiến trình của trò chơi. Một bản đồ được thiết kế hợp lý cần hỗ trợ người chơi di chuyển, khám phá, tương tác với môi trường, gặp kẻ địch, tìm checkpoint và tiến tới các trận đấu boss. Do đó, bản đồ không chỉ mang ý nghĩa hình ảnh mà còn là một phần của gameplay và cấu trúc hệ thống.
+Trong Eternal Hollow 3D, hệ thống bản đồ được định hướng theo mô hình nhiều khu vực hoặc nhiều map nối tiếp nhau. Mỗi map đại diện cho một giai đoạn thử thách riêng, có độ khó tăng dần và được liên kết với hệ thống progression của game. Trong mỗi bản đồ, có thể bố trí các khu vực chiến đấu, điểm hồi phục, vị trí quái vật, vật phẩm, khu vực boss và các điểm chuyển cảnh sang map mới. Cách tổ chức này giúp trò chơi có tiến trình rõ ràng, đồng thời tạo điều kiện để người chơi cảm nhận được sự phát triển của hành trình chinh phục thế giới game.
+Nhìn chung, hệ thống nhân vật và hệ thống bản đồ là hai thành phần không thể tách rời trong game 3D hành động nhập vai. Nhân vật là phương tiện để người chơi tham gia vào thế giới game, còn bản đồ là không gian để mọi trải nghiệm đó diễn ra. Việc nghiên cứu kỹ hai hệ thống này là cơ sở quan trọng để xây dựng một trò chơi có cấu trúc hợp lý, gameplay mạch lạc và định hướng phát triển rõ ràng.
+Một số công cụ và công nghệ sử dụng trong phát triển game
+Để xây dựng một game 3D hành động nhập vai trên máy tính cá nhân, việc lựa chọn công cụ và công nghệ phù hợp là yếu tố rất quan trọng. Các công cụ này không chỉ hỗ trợ trong quá trình lập trình mà còn góp phần vào việc thiết kế giao diện, quản lý tài nguyên, xây dựng thế giới game, kiểm thử và tối ưu hệ thống. Đối với đề tài Eternal Hollow 3D, việc sử dụng đúng công nghệ giúp quá trình phát triển trở nên hiệu quả hơn, đồng thời đảm bảo sản phẩm có thể vận hành ổn định và dễ mở rộng trong tương lai.
+Trong quá trình thực hiện đề tài, một số nhóm công cụ và công nghệ chính được sử dụng bao gồm game engine, ngôn ngữ lập trình, các công cụ thiết kế và công cụ kiểm thử. Mỗi thành phần đều giữ một vai trò riêng nhưng có mối liên hệ chặt chẽ với nhau trong toàn bộ quy trình phát triển sản phẩm.
+Game Engine
+Game engine là nền tảng trung tâm trong quá trình phát triển trò chơi, đóng vai trò như một môi trường tích hợp để xây dựng, quản lý và vận hành hầu hết các thành phần của game. Bên trong một game engine thường bao gồm nhiều hệ thống quan trọng như hệ thống dựng hình, hệ thống vật lý, hệ thống quản lý scene, hệ thống animation, hệ thống âm thanh, hệ thống input, hệ thống giao diện người dùng, công cụ lập trình gameplay và các công cụ hỗ trợ kiểm thử. Nhờ có game engine, nhà phát triển không cần xây dựng toàn bộ các thành phần kỹ thuật từ đầu mà có thể tập trung nhiều hơn vào việc thiết kế gameplay, xây dựng nội dung và hoàn thiện trải nghiệm người chơi.
+Trong đề tài này, Unity được lựa chọn làm game engine chính. Unity cung cấp hệ thống dựng hình để hiển thị mô hình 3D, ánh sáng, vật liệu, bóng đổ và các hiệu ứng hình ảnh trong thế giới game. Đối với Eternal Hollow 3D, hệ thống này được sử dụng để xây dựng môi trường chiến đấu, nhân vật, quái vật, vũ khí và các hiệu ứng trực quan như đòn đánh, va chạm hoặc hiệu ứng kỹ năng. Việc thiết lập ánh sáng, camera và vật liệu trong Unity giúp tạo ra không gian game có chiều sâu, đồng thời hỗ trợ người chơi quan sát rõ nhân vật, kẻ địch và các khu vực tương tác trong bản đồ.
+Hình 1.6. Unity Engine
+Bên cạnh dựng hình, Unity còn có hệ thống vật lý thông qua các thành phần như Rigidbody, Collider và Physics. Hệ thống này giúp xử lý va chạm giữa nhân vật với môi trường, phát hiện vùng tấn công của vũ khí, kiểm tra khoảng cách giữa người chơi và kẻ địch, cũng như hỗ trợ các cơ chế di chuyển, né tránh và tương tác trong game. Đối với game hành động nhập vai, vật lý và va chạm là yếu tố rất quan trọng vì chúng ảnh hưởng trực tiếp đến cảm giác chiến đấu, độ chính xác của đòn đánh và sự công bằng trong trải nghiệm gameplay.
+Unity cũng cung cấp hệ thống quản lý scene và prefab. Scene được dùng để tổ chức các khu vực trong game như bản đồ chính, khu vực boss, màn hình giao diện hoặc các phân cảnh khác nhau. Prefab cho phép tạo ra các mẫu đối tượng có thể tái sử dụng, chẳng hạn nhân vật người chơi, quái vật, vật phẩm, hiệu ứng, vũ khí hoặc điểm hồi sinh. Khi một đối tượng được đóng gói thành prefab, nhà phát triển có thể sử dụng lại nhiều lần trong các scene khác nhau, đồng thời dễ dàng cập nhật toàn bộ các bản sao khi cần chỉnh sửa. Điều này giúp quá trình phát triển trở nên nhanh hơn và hạn chế lỗi do phải tạo thủ công nhiều đối tượng giống nhau.
+Một thành phần quan trọng khác trong Unity là hệ thống animation. Hệ thống này cho phép quản lý các trạng thái chuyển động của nhân vật và kẻ địch như đứng yên, chạy, né tránh, tấn công, bị trúng đòn, choáng hoặc chết. Thông qua Animator Controller, các animation có thể được liên kết với điều kiện chuyển trạng thái, ví dụ khi người chơi nhấn nút tấn công thì nhân vật chuyển sang animation đánh, hoặc khi máu của boss giảm xuống một mức nhất định thì boss chuyển sang giai đoạn chiến đấu mới. Nhờ đó, chuyển động trong game trở nên mượt mà hơn và phản hồi tốt hơn với hành động của người chơi.
+Ngoài ra, Unity hỗ trợ hệ thống input và giao diện người dùng. Hệ thống input dùng để tiếp nhận thao tác từ bàn phím, chuột hoặc tay cầm, sau đó chuyển thành các hành động trong game như di chuyển, tấn công, phòng thủ, né tránh, sử dụng vật phẩm hoặc tương tác với môi trường. Hệ thống UI được dùng để hiển thị các thông tin quan trọng như thanh máu, thanh thể lực, năng lượng, vật phẩm đang chọn, thông báo tương tác, màn hình kho đồ, nâng cấp và shop. Đây là các thành phần giúp người chơi theo dõi trạng thái nhân vật và đưa ra quyết định phù hợp trong quá trình chơi.
+Cuối cùng, Unity cho phép lập trình gameplay bằng ngôn ngữ C# và tích hợp trực tiếp các script vào đối tượng trong scene. Mỗi đối tượng trong game có thể được gắn các component khác nhau để quy định hành vi của nó, ví dụ nhân vật có script điều khiển di chuyển, quái vật có script AI, vũ khí có script gây sát thương, còn GameManager có nhiệm vụ quản lý trạng thái chung của trò chơi. Cách tổ chức theo component giúp hệ thống linh hoạt, dễ mở rộng và phù hợp với việc phát triển một game 3D hành động nhập vai như Eternal Hollow 3D.
+Ngôn ngữ lập trình
+Ngôn ngữ lập trình là công cụ dùng để xây dựng logic hoạt động của trò chơi, quy định cách các đối tượng trong game phản ứng với hành động của người chơi và tương tác với nhau. Nếu game engine cung cấp môi trường và các hệ thống nền tảng, thì ngôn ngữ lập trình giúp kết nối những hệ thống đó thành các cơ chế gameplay cụ thể. Trong đề tài Eternal Hollow 3D, ngôn ngữ lập trình được sử dụng chính là C#, đây là ngôn ngữ được Unity hỗ trợ trực tiếp và được dùng phổ biến trong phát triển game bằng Unity.
+Hình 1.7. Ngôn ngữ lập trình C#
+C# được sử dụng để lập trình hầu hết các chức năng quan trọng của trò chơi như điều khiển nhân vật, hệ thống chiến đấu, trí tuệ nhân tạo của quái vật và boss, quản lý vật phẩm, nâng cấp nhân vật, lưu và tải dữ liệu, chuyển map, giao diện người dùng và các cơ chế tương tác trong môi trường. Mỗi chức năng thường được xây dựng dưới dạng một script riêng, sau đó gắn vào các đối tượng tương ứng trong Unity. Ví dụ, nhân vật người chơi có thể được gắn script điều khiển di chuyển và chiến đấu, quái vật có script xử lý hành vi AI, vật phẩm có script kiểm tra điều kiện nhặt, còn hệ thống quản lý game có script điều phối trạng thái chung của màn chơi.
+Một ưu điểm quan trọng của C# là hỗ trợ tốt cho lập trình hướng đối tượng. Trong game hành động nhập vai, có rất nhiều đối tượng khác nhau như người chơi, quái vật, boss, vũ khí, vật phẩm, kỹ năng, NPC và khu vực tương tác. Các đối tượng này có thuộc tính và hành vi riêng, vì vậy việc sử dụng class, object, inheritance và interface giúp tổ chức mã nguồn rõ ràng hơn. Chẳng hạn, các loại vũ khí khác nhau có thể cùng kế thừa từ một lớp vũ khí cơ bản, nhưng mỗi loại lại có sát thương, tốc độ đánh hoặc hiệu ứng riêng. Tương tự, quái vật thường và boss có thể cùng sử dụng một số hành vi chung nhưng được mở rộng thêm các trạng thái chiến đấu khác nhau.
+C# cũng hỗ trợ việc chia nhỏ hệ thống thành nhiều thành phần độc lập, giúp quá trình phát triển và bảo trì dễ dàng hơn. Thay vì viết toàn bộ logic vào một file lớn, các chức năng có thể được tách thành nhiều script như PlayerController, CombatSystem, EnemyAI, BossController, InventoryManager, SaveSystem, UIManager hoặc GameManager. Cách chia này giúp mỗi script chỉ tập trung vào một nhiệm vụ chính, giảm sự phụ thuộc giữa các phần và thuận tiện khi cần kiểm tra hoặc chỉnh sửa một cơ chế cụ thể. Khi dự án mở rộng, cấu trúc mã nguồn rõ ràng sẽ giúp hạn chế lỗi và giúp việc bổ sung chức năng mới trở nên nhanh hơn.
+Trong Unity, C# còn có khả năng kết hợp trực tiếp với Inspector, cho phép nhà phát triển chỉnh sửa các thông số gameplay mà không cần thay đổi mã nguồn liên tục. Các biến như máu tối đa, sát thương, tốc độ di chuyển, thời gian hồi chiêu, phạm vi phát hiện của kẻ địch hoặc số lượng vật phẩm có thể được hiển thị và điều chỉnh ngay trong Unity Editor. Điều này rất hữu ích trong quá trình cân bằng gameplay, bởi người phát triển có thể thay đổi thông số, chạy thử và đánh giá kết quả một cách nhanh chóng.
+Ngoài ra, C# còn hỗ trợ các cơ chế như event, delegate, coroutine và collection, giúp xử lý nhiều tình huống phức tạp trong game. Event có thể được sử dụng để thông báo khi người chơi nhận sát thương, nhặt vật phẩm hoặc đánh bại boss. Coroutine hỗ trợ xử lý các hành động theo thời gian như hồi chiêu kỹ năng, chờ animation kết thúc, tạo độ trễ khi chuyển cảnh hoặc kích hoạt hiệu ứng sau một khoảng thời gian nhất định. Các collection như List, Dictionary được dùng để quản lý danh sách vật phẩm, danh sách kẻ địch, dữ liệu trang bị hoặc các trạng thái nhiệm vụ trong game.
+Nhìn chung, C# là ngôn ngữ phù hợp để phát triển Eternal Hollow 3D vì vừa có khả năng tổ chức hệ thống rõ ràng, vừa tích hợp chặt chẽ với Unity. Việc sử dụng C# giúp mã nguồn của dự án dễ quản lý, dễ mở rộng và đáp ứng được các yêu cầu chính của một game 3D hành động nhập vai, từ điều khiển nhân vật, chiến đấu, AI cho đến quản lý dữ liệu và giao diện người dùng.
+Công cụ thiết kế
+Công cụ thiết kế là nhóm công cụ hỗ trợ xây dựng phần hình ảnh, môi trường, nhân vật, giao diện và các yếu tố trực quan trong trò chơi. Nếu game engine và ngôn ngữ lập trình đảm nhiệm vai trò xây dựng hệ thống kỹ thuật và logic gameplay, thì công cụ thiết kế giúp tạo nên phần nội dung mà người chơi trực tiếp nhìn thấy và tương tác. Đối với một game 3D hành động nhập vai như Eternal Hollow 3D, yếu tố thiết kế có vai trò rất quan trọng vì nó ảnh hưởng đến không khí của trò chơi, khả năng định hướng trong bản đồ, cảm giác chiến đấu và mức độ hấp dẫn của trải nghiệm người chơi.
+Trong quá trình thực hiện đề tài, Unity Editor là công cụ thiết kế chính được sử dụng để xây dựng scene, bố trí môi trường, đặt vị trí nhân vật, quái vật, vật phẩm, ánh sáng, camera và các điểm tương tác. Unity Editor cho phép quan sát trực tiếp không gian 3D, từ đó dễ dàng sắp xếp các đối tượng trong bản đồ sao cho phù hợp với lối chơi. Các khu vực chiến đấu, đường di chuyển, vị trí hồi sinh, khu vực boss, điểm chuyển map và vật phẩm đều có thể được bố trí trực quan trong scene. Điều này giúp quá trình thiết kế màn chơi trở nên thuận tiện hơn so với việc chỉ xây dựng bằng mã nguồn.
+Bên cạnh Unity Editor, các gói tài nguyên 3D cũng được sử dụng để hỗ trợ quá trình xây dựng thế giới game. Các tài nguyên này bao gồm mô hình nhân vật, quái vật, vũ khí, giáp, công trình, địa hình, vật thể môi trường, hiệu ứng kỹ năng và hiệu ứng va chạm. Việc sử dụng asset có sẵn giúp rút ngắn thời gian tạo mới tài nguyên từ đầu, đặc biệt trong phạm vi đồ án tốt nghiệp, nơi trọng tâm chính là xây dựng cơ chế gameplay và hoàn thiện hệ thống. Tuy nhiên, các asset vẫn cần được lựa chọn và tích hợp hợp lý để bảo đảm phong cách hình ảnh thống nhất, tránh cảm giác rời rạc giữa các thành phần trong game.
+Một phần quan trọng trong thiết kế game 3D là thiết kế môi trường và bố cục bản đồ. Trong Eternal Hollow 3D, môi trường cần thể hiện được không khí u tối, nguy hiểm và có tính khám phá. Vì vậy, khi thiết kế bản đồ cần quan tâm đến hình dạng địa hình, đường đi chính, khu vực phụ, điểm đặt kẻ địch, vật phẩm, checkpoint và khu vực boss. Bố cục môi trường không chỉ phục vụ mục đích thẩm mỹ mà còn ảnh hưởng trực tiếp đến gameplay. Ví dụ, một khu vực chiến đấu cần đủ rộng để người chơi né tránh, nhưng cũng phải có giới hạn không gian để tạo áp lực; đường đi cần có điểm nhấn để người chơi nhận biết hướng di chuyển; khu vực boss cần được thiết kế riêng để tạo cảm giác quan trọng và căng thẳng hơn so với các khu vực thông thường.
+Ánh sáng và vật liệu cũng là các yếu tố được chú trọng trong quá trình thiết kế. Ánh sáng giúp tạo chiều sâu cho không gian, làm nổi bật các đối tượng quan trọng và định hướng sự chú ý của người chơi. Trong game có phong cách u tối, ánh sáng không nên quá mạnh hoặc dàn đều, mà cần được bố trí có chủ đích để tạo bầu không khí bí ẩn, đồng thời vẫn bảo đảm người chơi nhìn rõ nhân vật, kẻ địch và đường đi. Vật liệu được sử dụng để thể hiện bề mặt của các đối tượng như đá, kim loại, gỗ, đất, áo giáp hoặc vũ khí. Việc lựa chọn và điều chỉnh vật liệu phù hợp giúp thế giới game trở nên chân thực và đồng nhất hơn.
+Ngoài môi trường 3D, công cụ thiết kế còn được sử dụng để xây dựng giao diện người dùng. Giao diện trong game bao gồm thanh máu, thanh thể lực, thanh năng lượng, biểu tượng vật phẩm, thông báo tương tác, màn hình kho đồ, màn hình nâng cấp và giao diện shop. Các thành phần này cần được thiết kế rõ ràng, dễ quan sát và không che khuất quá nhiều không gian chơi. Đối với game hành động, người chơi thường phải phản ứng nhanh, vì vậy giao diện cần truyền tải thông tin một cách trực quan, giúp người chơi nắm được trạng thái nhân vật mà không bị gián đoạn trải nghiệm.
+Ngoài ra, các công cụ thiết kế còn hỗ trợ việc tạo hiệu ứng hình ảnh như hiệu ứng đòn đánh, hiệu ứng nhận sát thương, hiệu ứng kỹ năng, hiệu ứng hồi máu, hiệu ứng vật phẩm và hiệu ứng khi đánh bại kẻ địch. Những hiệu ứng này giúp tăng cảm giác phản hồi cho người chơi, làm cho các hành động trong game trở nên rõ ràng và có lực hơn. Ví dụ, khi nhân vật tấn công trúng mục tiêu, hiệu ứng va chạm hoặc ánh sáng ngắn có thể giúp người chơi nhận biết đòn đánh đã thành công. Khi boss chuyển giai đoạn, hiệu ứng đặc biệt có thể được sử dụng để nhấn mạnh sự thay đổi trong trận đấu.
+Nhìn chung, công cụ thiết kế giữ vai trò quan trọng trong việc biến các ý tưởng gameplay thành một thế giới game cụ thể và có thể trải nghiệm được. Việc sử dụng Unity Editor kết hợp với các tài nguyên 3D, ánh sáng, vật liệu, giao diện và hiệu ứng hình ảnh giúp Eternal Hollow 3D có nền tảng trực quan rõ ràng hơn, đồng thời hỗ trợ tốt cho quá trình xây dựng, kiểm thử và hoàn thiện gameplay.
+Công cụ kiểm thử
+Công cụ kiểm thử được sử dụng để phát hiện lỗi và đánh giá mức độ ổn định của trò chơi trong quá trình phát triển. Đối với Eternal Hollow 3D, việc kiểm thử rất quan trọng vì game có nhiều hệ thống liên kết với nhau như điều khiển nhân vật, chiến đấu, AI, vật phẩm, giao diện, lưu dữ liệu và chuyển map.
+Trong đề tài này, Unity Editor là công cụ kiểm thử chính. Thông qua chế độ Play Mode, người phát triển có thể chạy thử trực tiếp các cơ chế như di chuyển, tấn công, né tránh, tương tác vật phẩm, mở giao diện và kích hoạt boss fight mà không cần build game sau mỗi lần chỉnh sửa. Điều này giúp phát hiện lỗi nhanh và điều chỉnh gameplay kịp thời.
+Unity Console được dùng để theo dõi lỗi biên dịch, lỗi runtime, cảnh báo và các thông tin debug từ script. Ngoài ra, Inspector và Gizmo hỗ trợ quan sát các thông số như máu, sát thương, phạm vi phát hiện của AI, vùng tấn công, điểm spawn hoặc khu vực kích hoạt sự kiện. Nhờ đó, các lỗi về logic, va chạm và trạng thái đối tượng có thể được kiểm tra rõ ràng hơn.
+Sau khi các chức năng chính hoạt động ổn định trong Editor, trò chơi được kiểm thử bằng bản build để đánh giá trong điều kiện gần với người dùng cuối. Bên cạnh đó, quá trình playtest cũng được thực hiện để kiểm tra cảm giác điều khiển, độ khó, bố cục bản đồ, giao diện và mức độ cân bằng gameplay trước khi hoàn thiện sản phẩm.
+Tổng kết chương 1
+Trong chương này, báo cáo đã trình bày tổng quan về đề tài và những cơ sở lý thuyết liên quan đến việc xây dựng game Eternal Hollow 3D. Trước hết, nội dung chương đã khảo sát đặc điểm của thể loại game 3D hành động nhập vai hiện nay, qua đó cho thấy đây là một thể loại có chiều sâu về gameplay, đòi hỏi sự kết hợp chặt chẽ giữa thiết kế nhân vật, chiến đấu, bản đồ, trí tuệ nhân tạo và hệ thống phát triển nhân vật.
+Tiếp theo, chương đã làm rõ cơ chế gameplay trong game 3D hành động nhập vai, bao gồm khái niệm gameplay, vòng lặp gameplay cốt lõi và một số đặc trưng của phong cách Soulslike. Đây là nền tảng quan trọng để xác định hướng xây dựng trải nghiệm cho trò chơi trong đề tài. Bên cạnh đó, phần tìm hiểu về hệ thống trí tuệ nhân tạo đã cho thấy vai trò của AI trong việc điều khiển quái vật và boss, góp phần tạo nên tính thử thách và sự hấp dẫn cho game.
+Chương này cũng đã phân tích vai trò của hệ thống nhân vật và hệ thống bản đồ, hai thành phần có ý nghĩa đặc biệt trong việc hình thành cấu trúc gameplay và tiến trình của trò chơi. Cuối cùng, các công cụ và công nghệ sử dụng trong quá trình phát triển game như Unity, C# và các công cụ kiểm thử đã được giới thiệu nhằm làm rõ nền tảng kỹ thuật của đề tài.
+Nhìn chung, chương 1 đã cung cấp cơ sở lý thuyết và định hướng thực tiễn cho việc triển khai đồ án. Những nội dung này là tiền đề để sang chương 2, nơi hệ thống game sẽ được phân tích và thiết kế cụ thể hơn dưới góc độ chức năng, kiến trúc và dữ liệu.
+PHÂN TÍCH THIẾT KẾ HỆ THỐNG
+Phân tích hệ thống
+Phân tích hệ thống là bước quan trọng nhằm xác định rõ những gì trò chơi cần thực hiện, đối tượng nào sẽ tương tác với hệ thống và các yêu cầu đặt ra để hệ thống có thể hoạt động đúng mục tiêu. Đối với đề tài Eternal Hollow 3D, việc phân tích hệ thống giúp làm rõ các chức năng cốt lõi của game hành động nhập vai, đồng thời tạo tiền đề cho việc thiết kế và triển khai các cơ chế phù hợp với phạm vi đồ án.
+Hệ thống được xây dựng với mục tiêu tạo ra một trò chơi 3D hành động nhập vai trên máy tính cá nhân, trong đó người chơi có thể lựa chọn nhân vật, chiến đấu với quái vật và boss, thu thập vật phẩm, nâng cấp sức mạnh, khám phá nhiều khu vực khác nhau và từng bước hoàn thành tiến trình của trò chơi. Ngoài ra, hệ thống cũng được định hướng hỗ trợ nền tảng nhiều người chơi ở mức cơ bản, tạo tiền đề cho việc mở rộng trong tương lai.
+Yêu cầu chức năng
+Yêu cầu chức năng mô tả những khả năng mà hệ thống game Eternal Hollow 3D cần có để đáp ứng mục tiêu của đề tài. Với đặc thù là một game 3D hành động nhập vai, hệ thống không chỉ cần hỗ trợ điều khiển và chiến đấu mà còn phải đảm bảo các chức năng liên quan đến nhân vật, bản đồ, vật phẩm, trí tuệ nhân tạo và tiến trình trò chơi.
+Các yêu cầu chức năng chính của hệ thống gồm:
+Lựa chọn và khởi tạo nhân vật:
+Cho phép người chơi bắt đầu trò chơi bằng việc chọn class nhân vật.
+Mỗi class cần có bộ chỉ số, trang bị và phong cách chiến đấu riêng.
+Hệ thống phải lưu lại class đã chọn để sử dụng trong quá trình chơi.
+Điều khiển nhân vật trong môi trường 3D:
+Cho phép người chơi di chuyển nhân vật trong không gian ba chiều.
+Hỗ trợ các thao tác cơ bản như chạy, xoay hướng, điều khiển camera và tương tác với môi trường.
+Đảm bảo người chơi có thể thao tác mượt mà trong quá trình khám phá và chiến đấu.
+Chiến đấu thời gian thực:
+Cho phép nhân vật thực hiện các hành động như tấn công, né tránh, phòng thủ và sử dụng kỹ năng.
+Hệ thống phải xử lý việc gây sát thương, nhận sát thương và phản ứng khi va chạm chiến đấu xảy ra.
+Hỗ trợ cơ chế quản lý các chỉ số liên quan đến chiến đấu như máu, thể lực và năng lượng.
+Hệ thống quái vật và boss:
+Quái vật cần có khả năng xuất hiện trong bản đồ và tham gia chiến đấu với người chơi.
+Boss phải đóng vai trò là thử thách chính ở từng khu vực hoặc từng map.
+Hệ thống cần hỗ trợ kích hoạt boss fight và xử lý kết quả sau khi người chơi chiến thắng.
+Hệ thống trí tuệ nhân tạo:
+Cho phép quái vật và boss phát hiện người chơi khi tiến vào phạm vi hoạt động.
+Hỗ trợ các hành vi như đứng yên, tuần tra, truy đuổi và tấn công.
+Đảm bảo AI phản ứng phù hợp với tình huống trong quá trình chơi.
+Hệ thống vật phẩm và trang bị:
+Cho phép người chơi nhặt, lưu trữ và sử dụng vật phẩm.
+Hỗ trợ trang bị vũ khí, giáp và các vật phẩm hỗ trợ.
+Hệ thống cần quản lý được inventory, equipment và quick slot.
+Hệ thống nâng cấp nhân vật và vũ khí:
+Cho phép người chơi dùng tài nguyên thu được để tăng chỉ số nhân vật.
+Hỗ trợ nâng cấp vũ khí nhằm tăng hiệu quả chiến đấu.
+Đảm bảo các thay đổi sau nâng cấp được cập nhật đúng vào dữ liệu nhân vật.
+Hệ thống bản đồ và tiến trình trò chơi:
+Trò chơi cần có nhiều map hoặc khu vực khác nhau để người chơi khám phá.
+Người chơi phải có thể mở khóa khu vực tiếp theo sau khi hoàn thành điều kiện nhất định, đặc biệt là đánh bại boss.
+Hệ thống phải quản lý được tiến trình vượt map và trạng thái hoàn thành của người chơi.
+Hệ thống checkpoint và hồi sinh:
+Cho phép người chơi nghỉ tại checkpoint để hồi phục và lưu tiến trình.
+Khi thất bại, người chơi phải có thể hồi sinh tại vị trí phù hợp.
+Chức năng này cần gắn liền với tiến trình của map và trạng thái nhân vật.
+Hệ thống lưu và tải dữ liệu:
+Hệ thống phải lưu được các thông tin quan trọng như class nhân vật, chỉ số, vật phẩm, trang bị và tiến trình game.
+Cho phép tải lại dữ liệu để người chơi tiếp tục từ trạng thái đã lưu.
+Đảm bảo dữ liệu được lưu nhất quán và không gây lỗi khi khôi phục.
+Hỗ trợ nền tảng nhiều người chơi:
+Hệ thống cần có khả năng làm nền tảng cho chế độ multiplayer.
+Hỗ trợ đồng bộ một số trạng thái cơ bản của nhân vật và môi trường.
+Tạo tiền đề để mở rộng trải nghiệm nhiều người chơi trong tương lai.
+Như vậy, các yêu cầu chức năng của Eternal Hollow 3D tập trung vào việc hình thành đầy đủ các thành phần cốt lõi của một game 3D hành động nhập vai. Đây là cơ sở quan trọng để hệ thống có thể được thiết kế và triển khai theo hướng hoàn chỉnh, rõ ràng và phù hợp với mục tiêu của đồ án.
+Yêu cầu phi chức năng
+Bên cạnh các yêu cầu chức năng, hệ thống game Eternal Hollow 3D còn cần đáp ứng các yêu cầu phi chức năng nhằm đảm bảo trò chơi có thể vận hành ổn định, dễ sử dụng và phù hợp với mục tiêu của đề tài. Nếu yêu cầu chức năng xác định hệ thống phải làm được gì, thì yêu cầu phi chức năng sẽ quyết định hệ thống cần đạt chất lượng như thế nào trong quá trình vận hành thực tế.
+Các yêu cầu phi chức năng chính của hệ thống gồm:
+Yêu cầu về hiệu năng:
+Trò chơi cần hoạt động ổn định trên môi trường máy tính cá nhân với cấu hình phù hợp.
+Các thao tác di chuyển, chiến đấu, tương tác và chuyển cảnh phải diễn ra với độ trễ thấp, tránh gây cảm giác giật hoặc mất phản hồi.
+Hệ thống cần được tổ chức hợp lý để hạn chế việc sử dụng tài nguyên không cần thiết trong quá trình chạy game.
+Yêu cầu về tính ổn định:
+Các chức năng chính như chiến đấu, lưu dữ liệu, chuyển map, checkpoint và AI phải hoạt động nhất quán.
+Hệ thống cần hạn chế tối đa các lỗi gây treo game, mất dữ liệu hoặc làm gián đoạn trải nghiệm người chơi.
+Những thành phần quan trọng của trò chơi phải được kiểm thử để đảm bảo hoạt động đúng theo thiết kế.
+Yêu cầu về khả năng mở rộng:
+Hệ thống cần được thiết kế theo hướng có thể bổ sung thêm map, boss, vật phẩm, class nhân vật hoặc cơ chế gameplay mới.
+Cấu trúc mã nguồn phải đủ rõ ràng để việc phát triển thêm tính năng trong tương lai không làm ảnh hưởng lớn đến các phần đã hoàn thiện.
+Các dữ liệu như vật phẩm, class hoặc tiến trình game nên được tổ chức theo cách dễ chỉnh sửa và tái sử dụng.
+Yêu cầu về khả năng bảo trì:
+Mã nguồn cần được tổ chức thành các nhóm chức năng rõ ràng như nhân vật, AI, chiến đấu, vật phẩm, UI và world management.
+Tên biến, tên lớp và các thành phần chính phải nhất quán để thuận lợi cho việc theo dõi và chỉnh sửa.
+Hệ thống phải đủ rõ ràng để người phát triển có thể sửa lỗi hoặc bổ sung nội dung mà không gây ảnh hưởng đến toàn bộ dự án.
+Yêu cầu về trải nghiệm người dùng:
+Giao diện trò chơi cần dễ quan sát, dễ thao tác và hỗ trợ tốt cho người chơi trong quá trình trải nghiệm.
+Các thông tin quan trọng như máu, thể lực, boss HP, vật phẩm và thông báo tiến trình cần được hiển thị rõ ràng.
+Hệ thống điều khiển phải có tính trực quan, giúp người chơi dễ làm quen và sử dụng.
+Yêu cầu về lưu trữ dữ liệu:
+Dữ liệu người chơi như chỉ số, vật phẩm, trang bị và tiến trình game phải được lưu lại đầy đủ và chính xác.
+Quá trình tải lại dữ liệu cần đảm bảo khôi phục đúng trạng thái trước đó của nhân vật và thế giới game.
+Hệ thống lưu trữ phải đảm bảo tính nhất quán, tránh lỗi mất dữ liệu hoặc sai lệch thông tin sau khi tải lại.
+Yêu cầu về tính phù hợp với phạm vi đồ án:
+Hệ thống cần được xây dựng trong phạm vi phù hợp với thời gian, nguồn lực và mục tiêu của một đồ án tốt nghiệp.
+Những chức năng được lựa chọn phải thể hiện được bản chất của game 3D hành động nhập vai mà vẫn đảm bảo khả năng hoàn thành.
+Các nội dung nâng cao như multiplayer hoàn chỉnh hoặc mở rộng quy mô lớn có thể được xem là định hướng phát triển tiếp theo thay vì yêu cầu bắt buộc ở phiên bản hiện tại.
+Như vậy, các yêu cầu phi chức năng của Eternal Hollow 3D tập trung vào chất lượng vận hành, khả năng phát triển và trải nghiệm tổng thể của trò chơi. Việc xác định rõ những yêu cầu này sẽ giúp hệ thống không chỉ đáp ứng đúng chức năng mà còn đạt được mức độ ổn định và hoàn thiện cần thiết trong quá trình triển khai.
+Các biểu đồ ca sử dụng
+Trên cơ sở phân tích yêu cầu của hệ thống game Eternal Hollow 3D ở các mục trước, có thể xác định hệ thống gồm các tác nhân chính là: Người chơi, Quái/Boss, Merchant cùng với các chức năng chính tương ứng được biểu diễn trong biểu đồ Use Case tổng quát. (Hình 2.1)
+Hình 2.1. Biểu đồ Usecase tổng quát
+Phân rã ca sử dụng tạo nhân vật mới
+Use case tạo nhân vật mới mô tả quá trình người chơi khởi tạo một phiên chơi mới trong game. Ở chức năng này, tác nhân chính là người chơi, thực hiện các thao tác như chọn tạo mới, chọn class khởi đầu và bắt đầu game. Sau đó, hệ thống sẽ khởi tạo dữ liệu nhân vật ban đầu, gán chỉ số và trang bị tương ứng, đồng thời tạo dữ liệu lưu cho tiến trình mới. Nội dung này được thể hiện trong biểu đồ phân rã Use Case tạo nhân vật mới. (Hình 2.2)
+Hình 2.2. Usecase tạo nhân vật
+Phân rã ca sử dụng tải dữ liệu nhân vật
+Use case tải dữ liệu nhân vật mô tả quá trình người chơi tiếp tục một tiến trình đã được lưu trước đó. Trong chức năng này, tác nhân chính là người chơi, thực hiện chọn dữ liệu lưu, sau đó hệ thống đọc thông tin nhân vật, trạng thái trang bị, chỉ số, vị trí hiện tại và tiến trình đã đạt được để đưa người chơi quay lại thế giới game. Nội dung này được thể hiện trong biểu đồ phân rã Use Case tải dữ liệu nhân vật. (Hình 2.3)
+Hình 2.3. Usecase tải dữ liệu nhân vật
+Phân rã ca sử dụng điều khiển nhân vật
+Use case điều khiển nhân vật mô tả quá trình người chơi trực tiếp thao tác với nhân vật trong thế giới game. Trong chức năng này, tác nhân chính là người chơi, thực hiện các thao tác như di chuyển, xoay camera, chạy, né tránh, nhảy, khóa mục tiêu và tương tác với môi trường. Đây là use case trung tâm, làm cơ sở cho phần lớn các hoạt động gameplay khác trong game. Nội dung này được thể hiện trong biểu đồ phân rã Use Case điều khiển nhân vật. (Hình 2.4)
+Hình 2.4. Usecase Điều khiển nhân vật
+Phân rã ca sử dụng chiến đấu với quái thường
+Use case chiến đấu với quái thường mô tả quá trình người chơi đối đầu với các kẻ địch thông thường trong quá trình khám phá bản đồ. Trong chức năng này, tác nhân chính là người chơi, thực hiện các thao tác tấn công, né tránh, phòng thủ, sử dụng kỹ năng hoặc vật phẩm để tiêu diệt mục tiêu. Kết quả của quá trình này là người chơi có thể nhận được rune, vật phẩm hoặc tiếp tục tiến sâu hơn trong màn chơi. Nội dung này được thể hiện trong biểu đồ phân rã Use Case chiến đấu với quái thường. (Hình 2.5)
+Hình 2.5. Usecase chiến đấu với quái thường
+Phân rã ca sử dụng chiến đấu với quái lớn
+Use case chiến đấu với boss mô tả quá trình người chơi tham gia trận đánh với kẻ địch chính của mỗi map. Trong chức năng này, tác nhân chính là người chơi và boss, với các thao tác như kích hoạt boss fight, tấn công, né tránh, phòng thủ và xử lý kết quả trận chiến. Khi chiến thắng, người chơi có thể mở khóa tiến trình tiếp theo của game. Nội dung này được thể hiện trong biểu đồ phân rã Use Case chiến đấu với boss. (Hình 2.6)
+Hình 2.6. Usecase chiến đấu với Boss
+Phân rã ca sử dụng thu thập vật phẩm
+Use case thu thập vật phẩm mô tả quá trình người chơi nhặt các vật phẩm xuất hiện trong thế giới game sau khi khám phá hoặc chiến đấu. Trong chức năng này, tác nhân chính là người chơi, thực hiện phát hiện vật phẩm, tương tác để nhặt và đưa vật phẩm vào kho đồ. Các vật phẩm thu thập được có thể là trang bị, vật phẩm tiêu hao, nguyên liệu nâng cấp hoặc tài nguyên phục vụ tiến trình phát triển nhân vật. Nội dung này được thể hiện trong biểu đồ phân rã Use Case thu thập vật phẩm. (Hình 2.7)
+Hình 2.7. Usecase thu thập vật phẩm
+Phân rã ca sử dụng quản lý kho đồ và trang bị
+Use case quản lý kho đồ và trang bị mô tả quá trình người chơi theo dõi, lựa chọn và sử dụng các vật phẩm đang sở hữu. Trong chức năng này, tác nhân chính là người chơi, thực hiện các thao tác xem kho đồ, trang bị hoặc tháo trang bị, thay đổi vũ khí, vật phẩm nhanh và sắp xếp tài nguyên phục vụ chiến đấu. Nội dung này được thể hiện trong biểu đồ phân rã Use Case quản lý kho đồ và trang bị. (Hình 2.8)
+Hình 2.8. Usecase quản lý kho đồ và trang bị
+Phân rã ca sử dụng tương tác Site Of Grace
+Use case tương tác Site of Grace mô tả quá trình người chơi sử dụng checkpoint trong game để hồi phục và lưu tiến trình. Trong chức năng này, tác nhân chính là người chơi, thực hiện tiếp cận điểm nghỉ, kích hoạt hoặc nghỉ tại Site of Grace, từ đó hệ thống cập nhật checkpoint, hồi phục tài nguyên và lưu dữ liệu cần thiết. Nội dung này được thể hiện trong biểu đồ phân rã Use Case tương tác Site of Grace. (Hình 2.9)
+Hình 2.9. Usecase tương tác Site Of Grace
+Phân rã ca sử dụng nâng cấp nhân vật
+Use case nâng cấp nhân vật mô tả quá trình người chơi sử dụng tài nguyên tích lũy để tăng cường sức mạnh của nhân vật. Trong chức năng này, tác nhân chính là người chơi, thực hiện lựa chọn chỉ số cần tăng, kiểm tra điều kiện nâng cấp và xác nhận thay đổi. Sau khi hoàn tất, hệ thống cập nhật lại chỉ số nhân vật tương ứng. Nội dung này được thể hiện trong biểu đồ phân rã Use Case nâng cấp nhân vật. (Hình 2.10)
+Hình 2.10. Usecase nâng cấp nhân vật
+Phân rã ca sử dụng nâng cấp vũ khí
+Use case nâng cấp vũ khí mô tả quá trình người chơi sử dụng vật liệu và tài nguyên để cải thiện hiệu quả chiến đấu của vũ khí đang sở hữu. Trong chức năng này, tác nhân chính là người chơi, thực hiện chọn vũ khí cần nâng cấp, kiểm tra điều kiện, xác nhận thao tác và cập nhật cấp độ vũ khí. Nội dung này được thể hiện trong biểu đồ phân rã Use Case nâng cấp vũ khí. (Hình 2.11)
+Hình 2.11. Usecase nâng cấp vũ khí
+Phân rã ca sử dụng mua bán với Merchant
+Use case mua bán với merchant mô tả quá trình người chơi trao đổi vật phẩm với thương nhân trong game. Trong chức năng này, tác nhân chính là người chơi và merchant, thực hiện các thao tác mở giao diện shop, xem danh sách vật phẩm, mua hoặc bán vật phẩm và cập nhật lại tài nguyên sau giao dịch. Nội dung này được thể hiện trong biểu đồ phân rã Use Case mua bán với merchant. (Hình 2.12)
+Hình 2.12. Usecase mua bán với Merchant
+Phân rã ca sử dụng lưu dữ liệu game
+Use case lưu dữ liệu game mô tả quá trình hệ thống ghi lại trạng thái hiện tại của nhân vật và tiến trình chơi. Trong chức năng này, tác nhân chính là người chơi, thông qua các thao tác hoặc sự kiện trong game làm phát sinh quá trình lưu dữ liệu. Hệ thống sẽ cập nhật các thông tin như chỉ số nhân vật, trang bị, vị trí, checkpoint và tiến trình hiện tại. Nội dung này được thể hiện trong biểu đồ phân rã Use Case lưu dữ liệu game. (Hình 2.13)
+Hình 2.13. Usecase lưu dữ liệu game
+Phân rã ca sử dụng đánh bại quái lớn và mở khóa bản đồ mới
+Use case đánh bại boss và mở khóa map mới mô tả quá trình người chơi hoàn thành mục tiêu chính của một khu vực để tiếp tục tiến trình game. Trong chức năng này, tác nhân chính là người chơi và boss, hệ thống sẽ xử lý kết quả trận chiến, cập nhật trạng thái boss, lưu tiến trình và mở khóa khu vực tiếp theo. Nội dung này được thể hiện trong biểu đồ phân rã Use Case đánh bại boss và mở khóa map mới. (Hình 2.14)
+Hình 2.14. Usecase đánh bại boss và mở khóa map mới
+Phân rã ca sử dụng chuyển bản đồ
+Use case chuyển map mô tả quá trình người chơi di chuyển từ khu vực hiện tại sang khu vực khác trong tiến trình game. Trong chức năng này, tác nhân chính là người chơi, hệ thống sẽ kiểm tra điều kiện chuyển map, xác định điểm đến, tải scene tương ứng và đưa nhân vật vào vị trí khởi đầu của map mới. Nội dung này được thể hiện trong biểu đồ phân rã Use Case chuyển map. (Hình 2.15)
+Hình 2.15. Usecase chuyển map
+Phân rã ca sử dụng tham gia đa người chơi
+Use case tham gia multiplayer mô tả quá trình người chơi thiết lập hoặc tham gia vào một phiên chơi mạng. Trong chức năng này, tác nhân chính là người chơi, thực hiện lựa chọn chế độ kết nối, tạo hoặc tham gia phiên chơi, đồng bộ dữ liệu cần thiết và vào thế giới game cùng những người chơi khác. Nội dung này được thể hiện trong biểu đồ phân rã Use Case tham gia multiplayer. (Hình 2.16)
+Hình 2.16. Usecase tham gia multiplayer
+Các biểu đồ tuần tự
+Biểu đồ tuần tự tạo nhân vật mới
+Biểu đồ tuần tự tạo nhân vật mới mô tả trình tự tương tác giữa người chơi và các thành phần của hệ thống khi bắt đầu một tiến trình chơi mới. Quá trình này bắt đầu từ thao tác chọn tạo nhân vật, sau đó hệ thống giao diện tiếp nhận thông tin, chuyển yêu cầu tới bộ quản lý nhân vật và bộ quản lý lưu trữ để khởi tạo dữ liệu ban đầu, lưu thông tin và đưa người chơi vào game. Nội dung này được thể hiện trong biểu đồ tuần tự tạo nhân vật mới. (Hình 2.17)
+Hình 2.17. Biểu đồ tuần tự tạo nhân vật mới
+Biểu đồ tuần tự tải dữ liệu nhân vật
+Biểu đồ tuần tự tải dữ liệu nhân vật mô tả trình tự tương tác giữa người chơi và các thành phần của hệ thống khi tiếp tục một tiến trình đã được lưu trước đó. Quá trình này bắt đầu từ việc người chơi mở giao diện tải game, chọn ô lưu, sau đó lớp giao diện gửi yêu cầu tới lớp điều khiển để đọc dữ liệu từ bộ lưu trữ, khôi phục trạng thái nhân vật và trả kết quả lại cho người chơi. Nội dung này được thể hiện trong biểu đồ tuần tự tải dữ liệu nhân vật. (Hình 2.18)
+Hình 2.18. Biểu đồ tuần tự tải dữ liệu nhân vật
+Biểu đồ tuần tự điều khiển nhân vật
+Biểu đồ tuần tự điều khiển nhân vật mô tả trình tự tương tác giữa người chơi và các thành phần của hệ thống trong quá trình điều khiển nhân vật trong game. Quá trình này bắt đầu từ việc người chơi nhập thao tác điều khiển, sau đó giao diện nhập liệu chuyển thông tin tới lớp điều khiển để xử lý di chuyển, camera và cập nhật trạng thái nhân vật trong thế giới game. Nội dung này được thể hiện trong biểu đồ tuần tự điều khiển nhân vật. (Hình 2.19)
+Hình 2.19. Biểu đồ tuần tự điều khiển nhân vật
+Biểu đồ tuần tự chiến đấu với quái thường
+Biểu đồ tuần tự chiến đấu với quái thường mô tả trình tự tương tác giữa người chơi và các thành phần của hệ thống trong quá trình giao chiến với kẻ địch thông thường. Quá trình này bắt đầu từ việc người chơi thực hiện lệnh tấn công, sau đó hệ thống xử lý va chạm, tính toán sát thương, cập nhật trạng thái quái và trả kết quả chiến đấu về giao diện. Nội dung này được thể hiện trong biểu đồ tuần tự chiến đấu với quái thường. (Hình 2.20)
+Hình 2.20. Biểu đồ tuần tự chiến đấu với quái thường
+Biểu đồ tuần tự chiến đấu với quái lớn
+Biểu đồ tuần tự chiến đấu với boss mô tả trình tự tương tác giữa người chơi và các thành phần của hệ thống trong trận đánh với boss của mỗi map. Quá trình này bắt đầu từ việc kích hoạt boss fight, sau đó hệ thống xử lý lệnh chiến đấu, tính toán sát thương, cập nhật trạng thái boss và xác định kết quả trận đấu. Nội dung này được thể hiện trong biểu đồ tuần tự chiến đấu với boss. (Hình 2.21)
+Hình 2.21. Biểu đồ tuần tự chiến đấu với boss
+Biểu đồ tuần tự thu thập vật phẩm
+Biểu đồ tuần tự thu thập vật phẩm mô tả trình tự tương tác giữa người chơi và các thành phần của hệ thống khi nhặt vật phẩm trong thế giới game. Quá trình này bắt đầu từ thao tác tương tác của người chơi, sau đó hệ thống kiểm tra trạng thái vật phẩm, cập nhật kho đồ và lưu lại thay đổi cần thiết trước khi trả kết quả về giao diện. Nội dung này được thể hiện trong biểu đồ tuần tự thu thập vật phẩm. (Hình 2.22)
+Hình 2.22. Biểu đồ tuần tự thu thập vật phẩm
+Biểu đồ tuần tự quản lý kho đồ và trang bị
+Biểu đồ tuần tự quản lý kho đồ và trang bị mô tả trình tự tương tác giữa người chơi và các thành phần của hệ thống khi thao tác với kho đồ và thay đổi trang bị. Quá trình này bắt đầu từ việc người chơi mở giao diện kho đồ, chọn vật phẩm hoặc trang bị cần sử dụng, sau đó hệ thống cập nhật trạng thái trang bị của nhân vật và trả kết quả về giao diện. Nội dung này được thể hiện trong biểu đồ tuần tự quản lý kho đồ và trang bị. (Hình 2.23)
+Hình 2.23. Biểu đồ tuần tự quản lý kho đồ và trang bị
+Biểu đồ tuần tự tương tác Site of Grace
+Biểu đồ tuần tự tương tác Site of Grace mô tả trình tự tương tác giữa người chơi và các thành phần của hệ thống khi sử dụng checkpoint trong game. Quá trình này bắt đầu từ thao tác tương tác của người chơi, sau đó hệ thống kiểm tra trạng thái Site of Grace, cập nhật checkpoint, hồi phục tài nguyên và lưu tiến trình trước khi trả kết quả về giao diện. Nội dung này được thể hiện trong biểu đồ tuần tự tương tác Site of Grace. (Hình 2.24)
+Hình 2.24. Biểu đồ tuần tự tương tác Site of Grace
+Biểu đồ tuần tự nâng cấp nhân vật
+Biểu đồ tuần tự nâng cấp nhân vật mô tả trình tự tương tác giữa người chơi và các thành phần của hệ thống khi tăng chỉ số cho nhân vật. Quá trình này bắt đầu từ việc người chơi mở giao diện nâng cấp, chọn chỉ số cần tăng, sau đó hệ thống kiểm tra điều kiện tài nguyên, cập nhật dữ liệu nhân vật và trả kết quả về giao diện. Nội dung này được thể hiện trong biểu đồ tuần tự nâng cấp nhân vật. (Hình 2.25)
+Hình 2.25. Biểu đồ tuần tự nâng cấp nhân vật
+Biểu đồ tuần tự nâng cấp vũ khí
+Biểu đồ tuần tự nâng cấp vũ khí mô tả trình tự tương tác giữa người chơi và các thành phần của hệ thống khi tăng cấp cho vũ khí đang sử dụng. Quá trình này bắt đầu từ việc người chơi mở giao diện nâng cấp vũ khí, chọn vũ khí cần nâng cấp, sau đó hệ thống kiểm tra vật liệu và tài nguyên, cập nhật cấp độ vũ khí và trả kết quả về giao diện. Nội dung này được thể hiện trong biểu đồ tuần tự nâng cấp vũ khí. (Hình 2.26)
+Hình 2.26. Biểu đồ tuần tự nâng cấp vũ khí
+Biểu đồ tuần tự mua bán với merchant
+Biểu đồ tuần tự mua bán với merchant mô tả trình tự tương tác giữa người chơi và các thành phần của hệ thống khi thực hiện giao dịch với thương nhân. Quá trình này bắt đầu từ việc người chơi mở giao diện shop, lựa chọn thao tác mua hoặc bán vật phẩm, sau đó hệ thống kiểm tra dữ liệu vật phẩm, cập nhật tài nguyên và kho đồ, rồi trả kết quả giao dịch về giao diện. Nội dung này được thể hiện trong biểu đồ tuần tự mua bán với merchant. (Hình 2.27)
+Hình 2.27. Biểu đồ tuần tự mua bán với merchant
+Biểu đồ tuần tự lưu dữ liệu game
+Biểu đồ tuần tự lưu dữ liệu game mô tả trình tự tương tác giữa các thành phần của hệ thống khi ghi lại trạng thái hiện tại của tiến trình chơi. Quá trình này bắt đầu từ việc phát sinh yêu cầu lưu, sau đó lớp điều khiển thu thập dữ liệu nhân vật, trạng thái thế giới và tiến trình hiện tại trước khi chuyển tới bộ lưu trữ để ghi vào file save. Nội dung này được thể hiện trong biểu đồ tuần tự lưu dữ liệu game. (Hình 2.28)
+Hình 2.28. Biểu đồ tuần tự lưu dữ liệu game
+Biểu đồ tuần tự đánh bại quái lớn và mở khóa bản đồ mới
+Biểu đồ tuần tự đánh bại boss và mở khóa map mới mô tả trình tự tương tác giữa người chơi và các thành phần của hệ thống khi hoàn thành mục tiêu chính của một map. Sau khi boss bị đánh bại, hệ thống cập nhật trạng thái boss, tiến trình thế giới, mở khóa map kế tiếp và lưu lại kết quả trước khi trả thông báo cho người chơi. Nội dung này được thể hiện trong biểu đồ tuần tự đánh bại boss và mở khóa map mới. (Hình 2.29)
+Hình 2.29. Biểu đồ tuần tự đánh bại boss và mở khóa map mới
+Biểu đồ tuần tự chuyển bản đồ
+Biểu đồ tuần tự chuyển map mô tả trình tự tương tác giữa người chơi và các thành phần của hệ thống khi di chuyển từ map hiện tại sang map khác. Quá trình này bắt đầu từ yêu cầu chuyển map, sau đó lớp điều khiển kiểm tra điều kiện, xác định map đích, yêu cầu hệ thống thế giới tải scene mới và cập nhật vị trí nhân vật trước khi trả kết quả về giao diện. Nội dung này được thể hiện trong biểu đồ tuần tự chuyển map. (Hình 2.30)
+Hình 2.30. Biểu đồ tuần tự chuyển map
+Biểu đồ tuần tự tham gia đa người chơi
+Biểu đồ tuần tự tham gia multiplayer mô tả trình tự tương tác giữa người chơi và các thành phần của hệ thống khi thiết lập hoặc tham gia vào một phiên chơi mạng. Quá trình này bắt đầu từ việc người chơi chọn chế độ multiplayer, sau đó lớp giao diện gửi yêu cầu tới lớp điều khiển để thiết lập kết nối, đồng bộ dữ liệu cần thiết và đưa người chơi vào thế giới game nhiều người. Nội dung này được thể hiện trong biểu đồ tuần tự tham gia multiplayer. (Hình 2.31)
+Hình 2.31. Biểu đồ tuần tự tham gia multiplayer
+Thiết kế hệ thống
+Thiết kế kiến trúc tổng thể của game
+Kiến trúc tổng thể của game được xây dựng theo hướng phân lớp chức năng, trong đó các thành phần chính được tổ chức thành những khối xử lý riêng nhằm đảm bảo tính rõ ràng, dễ mở rộng và thuận tiện cho việc phát triển từng cơ chế gameplay. Trên cơ sở đó, hệ thống được chia thành bốn lớp chính gồm: lớp giao diện và nhập liệu, lớp gameplay, lớp quản lý thế giới, và lớp dữ liệu và mạng. Mối quan hệ giữa các lớp này được thể hiện trong sơ đồ kiến trúc tổng thể của game. (Hình 2.32)
+Hình 2.32. Sơ đồ kiến trúc tổng thể của game
+Trong kiến trúc trên, lớp giao diện và nhập liệu là lớp tiếp xúc trực tiếp với người chơi. Lớp này bao gồm các thành phần như UI / HUD / Menu và Input System, có nhiệm vụ hiển thị thông tin, tiếp nhận thao tác điều khiển và chuyển các lệnh tương tác xuống các lớp xử lý bên dưới.
+Lớp gameplay là lớp trung tâm của hệ thống, chịu trách nhiệm xử lý các cơ chế cốt lõi của trò chơi. Lớp này gồm các thành phần như Player System, Combat & Interaction System và AI System. Đây là nơi diễn ra các hoạt động chính như điều khiển nhân vật, chiến đấu, tương tác môi trường và vận hành hành vi của quái vật, boss.
+Lớp quản lý thế giới đảm nhiệm việc tổ chức và điều phối môi trường chơi. Trong dự án, lớp này gồm World Management System và Scene / Map Progression, có chức năng quản lý scene, checkpoint, boss, chuyển map và tiến trình tổng thể của trò chơi.
+Lớp dữ liệu và mạng là lớp phụ trách lưu trữ và đồng bộ. Lớp này bao gồm Data & Save System và Multiplayer System, có vai trò quản lý dữ liệu nhân vật, vật phẩm, tiến trình game, save-load và hỗ trợ đồng bộ trạng thái khi game hoạt động ở chế độ nhiều người chơi.
+Quan hệ giữa các lớp được tổ chức theo hướng từ trên xuống. Người chơi thao tác thông qua lớp giao diện và nhập liệu; các dữ liệu này được chuyển xuống lớp gameplay để xử lý logic chơi; từ đó tác động tiếp tới lớp quản lý thế giới và lớp dữ liệu, mạng. Cách tổ chức này giúp hệ thống tách biệt rõ giữa phần hiển thị, phần xử lý gameplay, phần quản lý world và phần lưu trữ, đồng bộ. (Bảng 2.1)
+Bảng 2.1. Vai trò các lớp trong kiến trúc tổng thể
+Như vậy, kiến trúc tổng thể của game được thiết kế theo hướng phân lớp rõ ràng, giúp các thành phần trong hệ thống có phạm vi trách nhiệm riêng nhưng vẫn phối hợp chặt chẽ với nhau. Đây là cơ sở để triển khai chi tiết các hệ thống cụ thể ở các mục tiếp theo.
+Thiết kế hệ thống nhân vật và class khởi đầu
+Hệ thống nhân vật trong game được thiết kế xoay quanh nhân vật người chơi là trung tâm của toàn bộ quá trình trải nghiệm. Mỗi nhân vật được tổ chức theo hướng mô-đun, trong đó các chức năng như di chuyển, chiến đấu, chỉ số, trang bị, kho đồ, hiệu ứng và đồng bộ mạng được tách thành các thành phần riêng biệt. Cách tổ chức này giúp hệ thống dễ mở rộng, thuận lợi cho việc bổ sung cơ chế mới và phù hợp với đặc thù của game hành động nhập vai 3D.
+Về mặt cấu trúc, nhân vật người chơi được quản lý thông qua một lớp điều phối chính, liên kết với các thành phần con như xử lý di chuyển, animation, chiến đấu, chỉ số, trang bị, tương tác và dữ liệu mạng. Nhờ đó, khi người chơi thực hiện một hành động như di chuyển, tấn công, né tránh hoặc sử dụng vật phẩm, hệ thống có thể phân phối xử lý đến đúng bộ phận chức năng tương ứng thay vì dồn toàn bộ logic vào một lớp duy nhất.
+Cấu trúc tổng quát của hệ thống nhân vật và class khởi đầu được thể hiện trong sơ đồ sau. (Hình 2.33)
+Hình 2.33. Sơ đồ hệ thống nhân vật và class khởi đầu
+Bên cạnh cấu trúc nhân vật, game còn hỗ trợ hệ thống class khởi đầu để tạo ra sự khác biệt ngay từ đầu giữa các nhân vật. Khi bắt đầu game mới, người chơi có thể lựa chọn một trong nhiều class khác nhau. Mỗi class sẽ có bộ chỉ số ban đầu, trang bị xuất phát, vũ khí khởi đầu và vật phẩm nhanh riêng. Cách thiết kế này giúp định hình phong cách chơi ban đầu cho người chơi, đồng thời tạo cơ sở cho quá trình phát triển nhân vật về sau.
+Trong dự án hiện tại, các class khởi đầu được xây dựng theo hướng dữ liệu hóa, nghĩa là mỗi class được định nghĩa thông qua tập thông tin riêng gồm tên class, chỉ số, vũ khí chính, vũ khí phụ, giáp và vật phẩm nhanh. Khi người chơi xác nhận lựa chọn, hệ thống sẽ nạp bộ dữ liệu tương ứng và gán trực tiếp vào nhân vật mới tạo. Nhờ đó, việc thêm class mới hoặc cân bằng lại class cũ có thể thực hiện thuận tiện hơn mà không cần thay đổi lớn ở phần logic xử lý. (Bảng 2.2)
+Bảng 2.2. Các thành phần chính trong hệ thống nhân vật và class khởi đầu
+Thiết kế hệ thống chiến đấu và tương tác
+Hệ thống chiến đấu và tương tác là một trong những thành phần cốt lõi của game, quyết định trực tiếp đến trải nghiệm gameplay của người chơi. Hệ thống này được thiết kế theo hướng xử lý thời gian thực, cho phép nhân vật thực hiện các hành động như tấn công, phòng thủ, né tránh, sử dụng vật phẩm và tương tác với các đối tượng trong môi trường. Mục tiêu của thiết kế là tạo ra cảm giác điều khiển rõ ràng, phản hồi nhanh và phù hợp với phong cách game hành động nhập vai.
+Trong kiến trúc hiện tại, hệ thống chiến đấu được liên kết chặt với hệ thống nhân vật. Khi người chơi phát sinh thao tác tấn công hoặc phòng thủ, dữ liệu từ input sẽ được chuyển tới khối điều khiển nhân vật, sau đó kích hoạt animation tương ứng, collider gây sát thương và cơ chế tính toán kết quả chiến đấu. Quá trình này giúp đảm bảo sự đồng bộ giữa chuyển động, hoạt ảnh và hiệu ứng thực tế trong game.
+Cấu trúc tổng quát của hệ thống chiến đấu và tương tác được thể hiện trong sơ đồ sau. (Hình 2.34)
+Hình 2.34. Sơ đồ hệ thống chiến đấu và tương tác
+Về mặt chức năng, hệ thống chiến đấu bao gồm các hành vi chính như tấn công bằng vũ khí, phòng thủ bằng khiên hoặc trạng thái block, né tránh để tránh đòn đánh, sử dụng vật phẩm hỗ trợ và áp dụng các hiệu ứng trạng thái. Các đòn đánh có thể gây nhiều loại sát thương khác nhau tùy thuộc vào vũ khí và hiệu ứng đang sử dụng. Đồng thời, hệ thống cũng theo dõi các chỉ số liên quan như máu, thể lực, poise và trạng thái bất lợi để phản ánh đúng diễn biến giao tranh.
+Bên cạnh chiến đấu, hệ thống tương tác cho phép người chơi tác động tới các đối tượng trong môi trường như nhặt vật phẩm, kích hoạt Site of Grace, nói chuyện với merchant, mở giao diện shop hoặc kích hoạt boss fight tại các khu vực đặc biệt. Cách thiết kế này giúp gom toàn bộ các hành vi có tính chất “tương tác trực tiếp với thế giới game” vào cùng một nhóm chức năng, từ đó dễ quản lý và dễ mở rộng hơn. (Bảng 2.3)
+Bảng 2.3. Các thành phần chính trong hệ thống chiến đấu và tương tác
+Thiết kế hệ thống AI quái vật và boss
+Hệ thống AI quái vật và boss được thiết kế nhằm tạo ra các hành vi chiến đấu phù hợp với phong cách game hành động nhập vai. Khác với các hệ thống tĩnh chỉ phản hồi theo điều kiện đơn giản, AI trong game cần có khả năng quan sát mục tiêu, thay đổi trạng thái hành động, phản ứng với người chơi và duy trì nhịp độ giao tranh hợp lý. Vì vậy, hệ thống này được xây dựng theo hướng phân tách rõ giữa AI quái thường và AI boss, đồng thời sử dụng mô hình trạng thái để tổ chức hành vi.
+Đối với quái thường, AI được thiết kế theo mô hình state machine, trong đó mỗi thực thể có thể chuyển đổi giữa các trạng thái như chờ, truy đuổi, điều tra, vào thế chiến đấu và thực hiện tấn công. Khi người chơi tiến vào vùng phát hiện, AI sẽ thay đổi từ trạng thái bị động sang trạng thái chủ động và bắt đầu theo dõi mục tiêu. Việc tách AI thành nhiều trạng thái giúp hệ thống dễ mở rộng, dễ tinh chỉnh và phù hợp với nhiều loại quái khác nhau.
+Đối với boss, hệ thống AI được thiết kế phức tạp hơn do boss không chỉ cần phản ứng với người chơi mà còn phải điều khiển nhịp độ trận đấu. Ngoài các hành vi cơ bản như truy đuổi và tấn công, boss còn có các cơ chế riêng như kích hoạt boss fight, quản lý vùng chiến đấu, điều khiển nhạc nền, fog wall và chuyển phase chiến đấu khi máu giảm xuống ngưỡng nhất định. Nhờ đó, boss không chỉ là một kẻ địch có lượng máu lớn hơn mà còn là một thực thể gameplay đặc biệt, đóng vai trò trung tâm của progression trong từng map.
+Trong kiến trúc hiện tại, hệ thống AI được liên kết chặt với hệ thống chiến đấu, hệ thống thế giới và hệ thống progression. AI cần phối hợp với combat để xử lý đòn đánh và sát thương, phối hợp với world management để quản lý spawn, reset hoặc kích hoạt theo khu vực, đồng thời phối hợp với progression để cập nhật trạng thái boss đã bị đánh bại hoặc map mới được mở khóa.
+Cấu trúc tổng quát của hệ thống AI quái vật và boss được thể hiện trong sơ đồ sau. (Hình 2.35)
+Hình 2.35. Sơ đồ hệ thống AI quái vật và boss
+Từ góc độ chức năng, hệ thống AI có thể chia thành các thành phần chính như quản lý trạng thái hành vi, phát hiện mục tiêu, điều hướng di chuyển, thực hiện tấn công, xử lý trạng thái chiến đấu và điều phối boss fight. Các thành phần này phối hợp với nhau để tạo ra phản ứng thống nhất, giúp quái vật và boss có hành vi hợp lý trong từng tình huống cụ thể. (Bảng 2.4)
+Bảng 2.4. Các thành phần chính trong hệ thống AI quái vật và boss
+Thiết kế hệ thống multiplayer
+Hệ thống multiplayer được thiết kế nhằm cho phép nhiều người chơi cùng tham gia vào một phiên chơi trong cùng thế giới game. Trong dự án hiện tại, multiplayer được xây dựng trên nền Netcode for GameObjects, cho phép đồng bộ trạng thái của nhân vật, AI, boss, scene và các sự kiện gameplay quan trọng. Mục tiêu của thiết kế là duy trì trải nghiệm nhất quán giữa các người chơi, đồng thời tận dụng lại tối đa các hệ thống gameplay đã xây dựng cho chế độ chơi đơn.
+Về mặt kiến trúc, multiplayer được tổ chức xoay quanh các thành phần chính như quản lý phiên chơi, quản lý kết nối mạng, đồng bộ đối tượng mạng, đồng bộ scene và đồng bộ trạng thái gameplay. Khi người chơi tạo hoặc tham gia một phiên chơi, hệ thống sẽ thiết lập kết nối, khởi tạo phiên mạng và đưa người chơi vào cùng một world scene. Từ đó, các trạng thái quan trọng như vị trí nhân vật, hành động chiến đấu, AI, boss fight và tiến trình scene sẽ được đồng bộ giữa các máy khách.
+Trong quá trình vận hành, hệ thống multiplayer cần phối hợp trực tiếp với hệ thống người chơi, hệ thống chiến đấu, hệ thống AI và hệ thống quản lý thế giới. Các hành động của người chơi như di chuyển, tấn công, dùng vật phẩm hoặc tương tác với môi trường không chỉ được xử lý cục bộ mà còn phải được gửi và cập nhật tới các đối tượng liên quan trong phiên chơi mạng. Tương tự, các sự kiện như kích hoạt boss fight, hồi sinh, chuyển map hoặc cập nhật tiến trình cũng cần được xử lý thống nhất để tránh sai lệch giữa các máy khách.
+Cấu trúc tổng quát của hệ thống multiplayer được thể hiện trong sơ đồ sau. (Hình 2.36)
+Hình 2.36. Sơ đồ hệ thống multiplayer
+Một điểm quan trọng trong thiết kế multiplayer là phân biệt giữa phần xử lý cục bộ và phần xử lý đồng bộ qua mạng. Các thao tác nhập liệu, hiển thị giao diện và cảm nhận điều khiển được xử lý tại máy người chơi, trong khi các trạng thái chung của phiên chơi sẽ được quản lý và đồng bộ thông qua các network object và network variable. Cách thiết kế này giúp game giữ được cảm giác phản hồi nhanh ở phía người chơi nhưng vẫn đảm bảo tính nhất quán của thế giới mạng. (Bảng 2.5)
+Bảng 2.5. Các thành phần chính trong hệ thống multiplayer
+Thiết kế hệ thống dữ liệu, lưu trữ và progression
+Hệ thống dữ liệu, lưu trữ và progression được thiết kế nhằm quản lý toàn bộ thông tin cần thiết cho quá trình vận hành lâu dài của game. Khác với các hệ thống gameplay xử lý theo thời gian thực, khối này tập trung vào việc tổ chức dữ liệu nhân vật, vật phẩm, checkpoint, boss, map và tiến trình của người chơi giữa nhiều phiên chơi khác nhau. Đây là thành phần có vai trò duy trì tính liên tục của trải nghiệm game.
+Về mặt cấu trúc, hệ thống được chia thành ba nhóm chính: dữ liệu gameplay, lưu trữ save-load và quản lý progression. Nhóm dữ liệu gameplay bao gồm các thông tin như chỉ số nhân vật, trang bị, vũ khí, vật phẩm, boss, map và trạng thái thế giới. Nhóm save-load đảm nhiệm việc ghi và đọc dữ liệu từ file lưu. Trong khi đó, nhóm progression phụ trách theo dõi tiến trình hiện tại của người chơi như class khởi đầu, map hiện tại, boss đã tiêu diệt, checkpoint đã kích hoạt và map đã được mở khóa.
+Trong quá trình vận hành, hệ thống này liên kết chặt với hệ thống nhân vật, hệ thống thế giới và hệ thống multiplayer. Mỗi khi người chơi tương tác với Site of Grace, đánh bại boss, chuyển map, nâng cấp nhân vật hoặc thay đổi inventory, dữ liệu tương ứng đều cần được cập nhật và lưu lại. Nhờ đó, khi người chơi tiếp tục trò chơi ở lần sau, hệ thống có thể khôi phục chính xác trạng thái trước đó.
+Cấu trúc tổng quát của hệ thống dữ liệu, lưu trữ và progression được thể hiện trong sơ đồ sau. (Hình 2.37)
+Hình 2.37. Sơ đồ hệ thống dữ liệu, lưu trữ và progression
+Một đặc điểm quan trọng của thiết kế này là dữ liệu được tổ chức theo hướng tách biệt giữa phần cấu hình và phần tiến trình động. Các dữ liệu cấu hình như item, weapon, class, boss hoặc map được định nghĩa trước và sử dụng lại trong toàn game. Ngược lại, dữ liệu save game sẽ chỉ lưu trạng thái thay đổi phát sinh trong quá trình chơi. Cách tiếp cận này giúp hệ thống gọn hơn, giảm trùng lặp và thuận lợi cho việc mở rộng nội dung. (Bảng 2.6)
+Bảng 2.6. Các thành phần chính trong hệ thống dữ liệu, lưu trữ và progression
+Thiết kế dữ liệu và tài nguyên game
+Dữ liệu nhân vật, chỉ số và trang bị
+Dữ liệu nhân vật, chỉ số và trang bị là nhóm dữ liệu nền tảng, ảnh hưởng trực tiếp đến khả năng chiến đấu, sinh tồn và phát triển của người chơi trong game. Nhóm dữ liệu này được thiết kế nhằm quản lý toàn bộ thông tin liên quan đến trạng thái nhân vật, các thuộc tính cơ bản và các trang bị đang sử dụng trong quá trình chơi.
+Về mặt cấu trúc, dữ liệu nhân vật bao gồm các thông tin như tên nhân vật, class khởi đầu, vị trí hiện tại, chỉ số máu, thể lực, năng lượng, level, rune và các thuộc tính phát triển. Bên cạnh đó, hệ thống còn quản lý dữ liệu trang bị gồm vũ khí, giáp, vật phẩm nhanh và các trang bị đang được gắn trên nhân vật ở từng vị trí cụ thể. Việc tổ chức dữ liệu theo từng nhóm như vậy giúp hệ thống dễ khởi tạo, dễ lưu trữ và thuận tiện khi cập nhật trong lúc chơi.
+Cấu trúc dữ liệu nhân vật, chỉ số và trang bị được thể hiện trong sơ đồ sau. (Hình 2.38)
+Hình 2.38. Cấu trúc dữ liệu nhân vật, chỉ số và trang bị
+Trong quá trình vận hành, dữ liệu chỉ số nhân vật được sử dụng để tính toán các yếu tố gameplay như lượng máu tối đa, thể lực tối đa, khả năng gây sát thương, phòng thủ và điều kiện sử dụng một số loại vũ khí hoặc phép thuật. Dữ liệu trang bị lại ảnh hưởng đến ngoại hình, chỉ số bổ trợ, loại đòn đánh và phong cách chiến đấu của nhân vật. Vì vậy, hai nhóm dữ liệu này luôn được cập nhật đồng thời trong các hoạt động như lên cấp, đổi trang bị, sử dụng vật phẩm hoặc lưu tiến trình.
+Để khái quát các thành phần chính trong nhóm dữ liệu nhân vật, có thể trình bày như sau. (Bảng 2.7)
+Bảng 2.7. Các nhóm dữ liệu nhân vật, chỉ số và trang bị
+Ngoài ra, các thuộc tính cơ bản của nhân vật có thể được mô tả cụ thể hơn trong bảng sau. (Bảng 2.8)
+Bảng 2.8. Các chỉ số cơ bản của nhân vật
+Như vậy, dữ liệu nhân vật, chỉ số và trang bị được thiết kế theo hướng tách nhóm rõ ràng, vừa phục vụ xử lý gameplay thời gian thực, vừa hỗ trợ cho cơ chế save-load và progression lâu dài. Đây là nhóm dữ liệu cốt lõi làm cơ sở cho các phần dữ liệu vật phẩm, vũ khí và world progression ở các mục tiếp theo.
+Dữ liệu vật phẩm, vũ khí và hiệu ứng
+Dữ liệu vật phẩm, vũ khí và hiệu ứng là nhóm dữ liệu quan trọng, hỗ trợ trực tiếp cho hệ thống chiến đấu, phát triển nhân vật và tương tác trong game. Nhóm dữ liệu này được thiết kế để quản lý các đối tượng mà người chơi có thể thu thập, trang bị, sử dụng hoặc kích hoạt trong quá trình chơi, đồng thời làm cơ sở cho việc mở rộng nội dung gameplay về sau.
+Về mặt cấu trúc, dữ liệu vật phẩm được chia thành nhiều nhóm như vật phẩm tiêu hao, vật phẩm nhanh, vũ khí, giáp, projectile, nguyên liệu nâng cấp và các hiệu ứng trạng thái hoặc hiệu ứng tăng cường. Mỗi nhóm dữ liệu sẽ có các thuộc tính riêng tùy theo vai trò trong gameplay. Chẳng hạn, vũ khí sẽ có thông tin về sát thương, yêu cầu thuộc tính, cấp độ nâng cấp và animation liên quan; trong khi vật phẩm tiêu hao sẽ có số lượng sử dụng, tác dụng hồi phục hoặc hỗ trợ.
+Đối với vũ khí, dữ liệu được thiết kế nhằm phục vụ trực tiếp cho hệ thống chiến đấu. Một vũ khí không chỉ lưu thông tin cơ bản như tên và mô hình hiển thị mà còn bao gồm loại vũ khí, cấp nâng cấp, sát thương vật lý hoặc nguyên tố, chi phí thể lực và các hệ số cho từng loại đòn đánh. Cách tổ chức này giúp hệ thống tính toán chính xác hiệu quả chiến đấu của mỗi loại vũ khí và tạo ra sự khác biệt rõ ràng giữa các phong cách chiến đấu.
+Đối với vật phẩm và hiệu ứng, dữ liệu được dùng để quản lý tác dụng khi sử dụng hoặc khi kích hoạt trong chiến đấu. Một số vật phẩm có thể hồi máu, hồi năng lượng, tăng chỉ số tạm thời hoặc gây ra hiệu ứng trạng thái lên mục tiêu. Vì vậy, hệ thống dữ liệu cần thể hiện được mối liên hệ giữa vật phẩm, hiệu ứng kích hoạt và các thay đổi tương ứng lên nhân vật hoặc đối tượng bị tác động.
+Cấu trúc dữ liệu vật phẩm, vũ khí và hiệu ứng được thể hiện trong sơ đồ sau. (Hình 2.39)
+Hình 2.39. Cấu trúc dữ liệu vật phẩm, vũ khí và hiệu ứng
+Để khái quát các nhóm dữ liệu chính trong mục này, có thể trình bày như sau. (Bảng 2.9)
+Bảng 2.9. Các nhóm dữ liệu vật phẩm, vũ khí và hiệu ứng
+Bên cạnh đó, các trường dữ liệu quan trọng của vũ khí có thể được mô tả chi tiết hơn trong bảng sau. (Bảng 2.10)
+Bảng 2.10. Một số trường dữ liệu tiêu biểu của vũ khí
+Dữ liệu boss, map và world progression
+Dữ liệu boss, map và world progression là nhóm dữ liệu giữ vai trò tổ chức nội dung thế giới và điều khiển tiến trình tổng thể của game. Nhóm dữ liệu này không chỉ xác định cấu trúc các khu vực chơi mà còn quản lý mối liên hệ giữa boss của từng map, checkpoint, điều kiện mở khóa và mức độ khó tương ứng. Đây là cơ sở để game triển khai vòng lặp khám phá, chinh phục boss và tiến sang khu vực tiếp theo.
+Về mặt cấu trúc, dữ liệu map bao gồm tên map, scene tương ứng, điểm vào, checkpoint và các thông tin liên quan đến độ khó. Dữ liệu boss bao gồm mã boss, prefab hoặc thực thể tương ứng, trạng thái đã thức tỉnh hoặc đã bị tiêu diệt, cùng các thông tin phục vụ cho việc kích hoạt trận đánh. Trong khi đó, dữ liệu progression được dùng để theo dõi map hiện tại, các map đã mở khóa và trạng thái hoàn thành của từng giai đoạn trong game.
+Trong hệ thống hiện tại, mỗi map được gắn với một boss chính và một điểm vào khởi đầu. Sau khi boss của map bị đánh bại, hệ thống sẽ cập nhật tiến trình, mở khóa map tiếp theo và cho phép người chơi chuyển sang khu vực mới. Đồng thời, các thông số như độ khó của kẻ địch ở từng map cũng có thể được điều chỉnh thông qua dữ liệu progression, giúp duy trì nhịp phát triển hợp lý của trò chơi.
+Bên cạnh đó, dữ liệu world progression còn liên kết với hệ thống Site of Grace, save game và scene management. Điều này cho phép hệ thống không chỉ xác định người chơi đang ở đâu trong tiến trình mà còn phục hồi đúng vị trí, checkpoint và trạng thái map khi tiếp tục game ở các lần chơi sau.
+Cấu trúc dữ liệu boss, map và world progression được thể hiện trong sơ đồ sau. (Hình 2.40)
+Hình 2.40. Cấu trúc dữ liệu boss, map và world progression
+Để khái quát các nhóm dữ liệu chính trong mục này, có thể trình bày như sau. (Bảng 2.11)
+Bảng 2.11. Các nhóm dữ liệu boss, map và world progression
+Ngoài ra, các trường dữ liệu tiêu biểu của progression có thể trình bày trong bảng sau. (Bảng 2.12)
+Bảng 2.12. Một số trường dữ liệu tiêu biểu của progression
+Dữ liệu save game
+Dữ liệu save game là nhóm dữ liệu tổng hợp, dùng để lưu lại trạng thái hiện tại của toàn bộ tiến trình chơi tại một thời điểm xác định. Đây là thành phần có vai trò quan trọng trong việc bảo đảm người chơi có thể tiếp tục trò chơi ở các lần chơi sau mà không bị mất dữ liệu. Trong game hành động nhập vai, dữ liệu save không chỉ lưu vị trí nhân vật mà còn phải phản ánh đầy đủ các thay đổi đã diễn ra trong suốt quá trình chơi.
+Về mặt cấu trúc, dữ liệu save game bao gồm thông tin nhân vật, chỉ số hiện tại, tài nguyên, trang bị, inventory, trạng thái world, boss đã tiêu diệt, checkpoint gần nhất, map hiện tại và tiến trình đã mở khóa. Ngoài ra, hệ thống còn cần lưu các dữ liệu liên quan đến merchant, vật phẩm thế giới, trạng thái buff đang hoạt động và một số cờ phục vụ gameplay như dead spot hoặc trạng thái chiến thắng game.
+Trong quá trình vận hành, dữ liệu save được cập nhật mỗi khi xảy ra các mốc quan trọng như tạo nhân vật mới, nghỉ tại Site of Grace, đánh bại boss, chuyển map, thay đổi inventory hoặc nâng cấp nhân vật. Khi người chơi chọn tải game, toàn bộ dữ liệu này sẽ được đọc lại để khôi phục đúng trạng thái trước đó. Vì vậy, save game có thể xem là lớp dữ liệu tổng hợp bao trùm lên nhiều nhóm dữ liệu nhỏ hơn trong hệ thống.
+Cấu trúc dữ liệu save game được thể hiện trong sơ đồ sau. (Hình 2.41)
+Hình 2.41. Cấu trúc dữ liệu save game
+Một đặc điểm quan trọng của save game là dữ liệu được tổ chức theo hướng lưu trạng thái thực tế tại thời điểm hiện tại thay vì chỉ lưu cấu hình. Điều này có nghĩa là save file không chỉ chứa danh mục dữ liệu gốc mà còn lưu các thay đổi đã phát sinh trong quá trình chơi, ví dụ như số rune còn lại, trang bị đang mặc, boss nào đã bị hạ và vị trí checkpoint gần nhất. Cách tiếp cận này giúp hệ thống khôi phục chính xác tiến trình của người chơi.
+Để khái quát các nhóm dữ liệu chính có trong save game, có thể trình bày như sau. (Bảng 2.13)
+Bảng 2.13. Các nhóm dữ liệu chính trong save game
+Ngoài ra, một số trường dữ liệu tiêu biểu trong save game có thể được tổng hợp như sau. (Bảng 2.14)
+Bảng 2.14. Một số trường dữ liệu tiêu biểu trong save game
+Như vậy, dữ liệu save game được thiết kế như lớp dữ liệu tổng hợp, bao trùm lên toàn bộ trạng thái hiện hành của nhân vật và thế giới game. Đây là cơ sở để hệ thống bảo đảm tính liên tục của trải nghiệm, đồng thời hỗ trợ chặt chẽ cho progression, checkpoint và quá trình phát triển nhân vật qua nhiều lần chơi.
+Tổng kết chương 2
+Trong chương 2, đồ án đã trình bày quá trình phân tích và thiết kế hệ thống cho game Eternal Hollow 3D. Trước hết, chương đã xác định các yêu cầu chức năng và phi chức năng làm cơ sở cho việc xây dựng hệ thống. Trên nền tảng đó, các biểu đồ use case, biểu đồ hoạt động và biểu đồ tuần tự đã được sử dụng để mô tả những chức năng chính cũng như luồng xử lý tiêu biểu của game.
+Tiếp theo, chương đã trình bày thiết kế tổng thể của hệ thống thông qua các khối chức năng chính như giao diện và nhập liệu, gameplay, quản lý thế giới, dữ liệu và mạng. Các hệ thống quan trọng như nhân vật, chiến đấu, AI, multiplayer, lưu trữ và progression cũng đã được mô tả theo hướng mô-đun hóa, làm rõ vai trò của từng thành phần trong kiến trúc chung của game.
+Ngoài ra, chương còn phân tích nhóm dữ liệu cốt lõi của hệ thống gồm dữ liệu nhân vật, dữ liệu vật phẩm và vũ khí, dữ liệu boss, map và progression, cùng dữ liệu save game. Việc tổ chức dữ liệu theo từng nhóm rõ ràng giúp hệ thống vừa hỗ trợ tốt cho xử lý gameplay thời gian thực, vừa đảm bảo khả năng lưu trữ và khôi phục tiến trình lâu dài của người chơi.
+Nhìn chung, kết quả của chương 2 đã xây dựng được nền tảng phân tích và thiết kế đầy đủ cho game, tạo cơ sở để chuyển sang giai đoạn cài đặt và xây dựng các cơ chế gameplay cụ thể trong chương tiếp theo.
+XÂY DỰNG CƠ CHẾ GAME ETERNAL HOLLOW
+Xây dựng cơ chế điều khiển và chiến đấu
+Cơ chế di chuyển và điều khiển nhân vật
+Cơ chế di chuyển và điều khiển nhân vật là một trong những hệ thống nền tảng của game Eternal Hollow 3D, vì đây là phần quyết định trực tiếp đến cảm giác điều khiển và khả năng tương tác của người chơi với thế giới game. Đối với game hành động nhập vai 3D, nhân vật cần phản hồi nhanh với thao tác của người chơi, đồng thời phải di chuyển tự nhiên theo hướng nhìn của camera. Vì vậy, hệ thống điều khiển được xây dựng theo hướng kết hợp giữa input, camera, trạng thái hiện tại của nhân vật và hệ thống animation.
+Trong dự án, thao tác điều khiển của người chơi được tiếp nhận thông qua hệ thống input. Các lệnh như di chuyển, xoay camera, chạy, né tránh, nhảy, tấn công, phòng thủ và tương tác được đọc từ bàn phím, chuột hoặc thiết bị điều khiển. Sau khi nhận input, hệ thống sẽ chuyển dữ liệu này đến các thành phần xử lý tương ứng. Cách tổ chức này giúp tách biệt giữa phần tiếp nhận thao tác và phần thực thi hành động, từ đó giúp mã nguồn dễ quản lý và thuận tiện hơn khi cần mở rộng thêm chức năng mới. (Hình 3.1)
+Hình 3.1. Quá trình đăng ký các input action của người chơi trong hệ thống
+Đối với cơ chế di chuyển cơ bản, hướng di chuyển của nhân vật được xác định dựa trên giá trị input kết hợp với hướng của camera. Khi người chơi nhấn phím di chuyển, hệ thống không chỉ cho nhân vật đi theo trục cố định của thế giới, mà sẽ tính toán hướng đi tương đối với góc nhìn hiện tại. Điều này giúp người chơi có cảm giác điều khiển tự nhiên hơn, đặc biệt trong môi trường 3D, nơi camera thường xuyên thay đổi góc nhìn khi khám phá bản đồ hoặc chiến đấu với kẻ địch.
+Quá trình tính toán hướng di chuyển được thực hiện bằng cách lấy hướng trước, sau, trái, phải của camera làm cơ sở, sau đó kết hợp với input theo trục ngang và trục dọc. Vector di chuyển sau khi tính toán sẽ được chuẩn hóa để bảo đảm nhân vật không di chuyển nhanh hơn khi đi chéo. Tùy theo trạng thái hiện tại, hệ thống sẽ lựa chọn tốc độ phù hợp như đi bộ, chạy thường hoặc chạy nước rút. Nhờ đó, nhân vật có thể phản hồi linh hoạt với nhiều tình huống gameplay khác nhau. (Hình 3.2)
+Hình 3.2. Cơ chế di chuyển
+Bên cạnh di chuyển, cơ chế xoay hướng nhân vật cũng được xử lý để bảo đảm nhân vật luôn quay về hướng phù hợp với hành động hiện tại. Khi di chuyển bình thường, nhân vật sẽ xoay theo hướng di chuyển. Khi khóa mục tiêu hoặc tham gia chiến đấu, hướng xoay có thể ưu tiên về phía kẻ địch để hỗ trợ người chơi quan sát và ra đòn chính xác hơn. Việc xoay hướng được thực hiện theo phương pháp nội suy để chuyển từ góc quay hiện tại sang góc quay mong muốn một cách mượt mà, tránh hiện tượng nhân vật đổi hướng quá đột ngột.
+Ngoài các thao tác di chuyển cơ bản, hệ thống còn hỗ trợ những hành động mở rộng như chạy nước rút, né tránh và nhảy. Chạy nước rút giúp người chơi di chuyển nhanh hơn trong bản đồ hoặc giữ khoảng cách với kẻ địch, nhưng sẽ tiêu hao thể lực theo thời gian. Né tránh là cơ chế quan trọng trong chiến đấu, cho phép nhân vật tránh đòn tấn công của quái vật hoặc boss. Nếu người chơi đang nhập hướng di chuyển, nhân vật sẽ né theo hướng tương ứng; nếu không có input di chuyển, nhân vật có thể thực hiện thao tác lùi ngắn. Cơ chế nhảy được dùng để vượt qua một số địa hình hoặc hỗ trợ di chuyển trong môi trường 3D. (Hình 3.3)
+Hình 3.3. Cơ chế xoay hướng nhân vật
+Hình 3.4. Cơ chế chạy nước rút
+Hình 3.5. Cơ chế né tránh
+Hình 3.6. Cơ chế nhảy
+Các hành động như chạy, né tránh và nhảy đều được kiểm tra điều kiện trước khi thực hiện. Hệ thống sẽ xem xét nhân vật có đang bận thực hiện hành động khác hay không, có còn đủ thể lực hay không, có đang đứng trên mặt đất hay không và trạng thái animation hiện tại có cho phép chuyển sang hành động mới hay không. Cách xử lý này giúp tránh xung đột giữa các hành động, ví dụ nhân vật không thể vừa né tránh vừa nhảy, hoặc không thể chạy nước rút khi thể lực đã hết.
+Nhìn chung, cơ chế di chuyển và điều khiển nhân vật trong Eternal Hollow 3D được xây dựng theo hướng kết hợp giữa input, camera, animation và trạng thái gameplay. Hệ thống này giúp nhân vật phản hồi chính xác với thao tác của người chơi, đồng thời tạo cảm giác điều khiển mượt mà và phù hợp với phong cách game hành động nhập vai 3D. Đây cũng là nền tảng quan trọng để triển khai các hệ thống tiếp theo như chiến đấu, tương tác vật phẩm, AI kẻ địch và boss fight.
+Cơ chế tấn công, phòng thủ và gây sát thương
+Cơ chế tấn công, phòng thủ và gây sát thương là thành phần trung tâm của hệ thống chiến đấu trong Eternal Hollow 3D. Đây là nhóm chức năng quyết định cách người chơi giao tranh với quái vật và boss, đồng thời ảnh hưởng trực tiếp đến nhịp độ, độ khó và cảm giác hành động của trò chơi. Trong game hành động nhập vai 3D, hệ thống chiến đấu không chỉ xử lý việc nhân vật gây sát thương, mà còn phải kết hợp nhiều yếu tố như input điều khiển, trạng thái nhân vật, animation, vũ khí, thể lực, va chạm và hiệu ứng sát thương.
+Trong dự án, luồng xử lý chiến đấu bắt đầu từ thao tác của người chơi. Khi người chơi nhấn các nút tấn công như chuột trái hoặc chuột phải, PlayerInputManager sẽ tiếp nhận input và gọi sang PlayerCombatManager. Đồng thời, hệ thống lấy thông tin vũ khí hiện tại từ PlayerInventoryManager để xác định action tương ứng của vũ khí. Nhờ đó, cùng một thao tác điều khiển có thể tạo ra các hành động khác nhau tùy theo loại vũ khí đang được trang bị. (Hình 3.7)
+Hình 3.7. Tiếp nhận input tấn công và gọi action vũ khí
+Sau khi nhận lệnh từ input, PlayerCombatManager không xử lý toàn bộ chi tiết đòn đánh trực tiếp, mà chuyển quyền thực hiện cho WeaponItemAction. Cách tổ chức này giúp hệ thống chiến đấu có tính mô-đun cao hơn. Mỗi loại vũ khí có thể có action riêng, animation riêng và cách xử lý riêng, trong khi PlayerCombatManager đóng vai trò điều phối chung. (Hình 3.8)
+Hình 3.8. Điều phối action chiến đấu trong PlayerCombatManager
+Đối với đòn đánh nhẹ, hệ thống sẽ kiểm tra nhiều điều kiện trước khi thực hiện hành động. Các điều kiện này bao gồm nhân vật có đang dùng vật phẩm hay không, còn đủ thể lực hay không, có đang ở trên không, đang chạy, vừa lăn né hay vừa backstep hay không. Tùy vào trạng thái hiện tại, hệ thống lựa chọn loại đòn đánh phù hợp như đòn đánh khi nhảy, đòn đánh khi chạy, đòn đánh sau né tránh hoặc đòn đánh nhẹ thông thường. Điều này giúp cơ chế chiến đấu linh hoạt hơn và phù hợp với phong cách game Soulslike. (Hình 3.9)
+Hình 3.9. Xử lý đòn đánh nhẹ theo trạng thái nhân vật
+Thể lực là yếu tố quan trọng để cân bằng hệ thống chiến đấu. Mỗi loại đòn đánh sẽ tiêu hao một lượng thể lực khác nhau dựa trên chỉ số cơ bản của vũ khí và hệ số của từng loại hành động. Ví dụ, đòn đánh nhẹ, đòn đánh mạnh hoặc đòn đánh khi chạy có thể sử dụng các hệ số tiêu hao khác nhau. Cách tính này giúp hệ thống dễ cân bằng gameplay, vì khi cần điều chỉnh độ khó hoặc nhịp chiến đấu, chỉ cần thay đổi thông số của vũ khí hoặc hệ số tiêu hao tương ứng. (Hình 3.10)
+Hình 3.10. Tính thể lực tiêu hao theo loại đòn đánh
+Bên cạnh tấn công, cơ chế phòng thủ cũng được xây dựng để người chơi có thêm lựa chọn khi đối mặt với kẻ địch. Khi nhân vật đang ở trạng thái block và đòn đánh đến từ phía trước, hệ thống sẽ không xử lý như một đòn đánh thường mà tạo ra TakeBlockedDamageEffect. Hiệu ứng này dùng để tính lượng sát thương sau khi đã áp dụng chỉ số hấp thụ khi phòng thủ, đồng thời trừ thể lực của nhân vật. Nếu thể lực giảm xuống quá thấp, nhân vật có thể bị phá thế phòng thủ. (Hình 3.11)
+Hình 3.11. Kiểm tra trạng thái phòng thủ khi nhận đòn đánh
+Cơ chế gây sát thương được thực hiện thông qua DamageCollider. Khi vùng va chạm của vũ khí chạm vào một đối tượng có CharacterManager, hệ thống sẽ xác định điểm va chạm, kiểm tra trạng thái phòng thủ và kiểm tra trạng thái bất tử của mục tiêu. Nếu mục tiêu hợp lệ, hệ thống tạo TakeDamageEffect, gán các giá trị sát thương như physical, magic, fire, lightning, holy và poise damage, sau đó chuyển hiệu ứng này cho CharacterEffectsManager xử lý. (Hình 3.12)
+Hình 3.12. Kiểm tra va chạm và tạo hiệu ứng sát thương
+Sau khi hiệu ứng sát thương được tạo, TakeDamageEffect sẽ tính toán lượng sát thương cuối cùng và trừ vào máu hiện tại của nhân vật. Ngoài ra, hệ thống còn xử lý poise damage để xác định mục tiêu có bị phá thế hay không. Việc tách riêng phần va chạm và phần xử lý sát thương giúp hệ thống rõ ràng hơn: DamageCollider chịu trách nhiệm phát hiện mục tiêu, còn TakeDamageEffect chịu trách nhiệm tính toán và áp dụng kết quả sát thương. (Hình 3.13)
+Hình 3.13. Tính toán và áp dụng sát thương lên nhân vật
+Nhìn chung, cơ chế tấn công, phòng thủ và gây sát thương trong Eternal Hollow 3D được xây dựng theo hướng phân tách rõ từng nhiệm vụ. PlayerInputManager tiếp nhận thao tác của người chơi, PlayerCombatManager điều phối hành động chiến đấu, WeaponItemAction xử lý hành động cụ thể của vũ khí, DamageCollider kiểm tra va chạm, còn TakeDamageEffect và TakeBlockedDamageEffect xử lý kết quả sát thương. Cách tổ chức này giúp hệ thống chiến đấu dễ mở rộng, dễ kiểm soát và phù hợp với một game hành động nhập vai 3D có nhiều loại vũ khí, trạng thái nhân vật và tình huống giao tranh khác nhau.
+Kỹ năng, phép thuật và hiệu ứng trạng thái
+Bên cạnh các đòn đánh vật lý bằng vũ khí, Eternal Hollow 3D còn xây dựng thêm hệ thống kỹ năng, phép thuật và hiệu ứng trạng thái nhằm tăng chiều sâu cho gameplay chiến đấu. Các cơ chế này giúp người chơi có nhiều lựa chọn hơn trong quá trình giao tranh, không chỉ phụ thuộc vào tấn công cận chiến mà còn có thể sử dụng phép thuật, vật phẩm hỗ trợ hoặc các hiệu ứng tăng cường tạm thời. Đây là yếu tố quan trọng đối với game hành động nhập vai, vì nó tạo ra sự đa dạng trong cách xây dựng nhân vật và chiến thuật chiến đấu.
+Trong dự án, cơ chế thi triển phép thuật được tổ chức thông qua các WeaponItemAction. Khi người chơi sử dụng vũ khí hoặc vật phẩm có khả năng thi triển phép, hệ thống sẽ kiểm tra các điều kiện cần thiết như nhân vật có đang dùng vật phẩm hay không, còn đủ thể lực hay không, có đang đứng trên mặt đất hay không và đã trang bị đúng loại phép hay chưa. Nếu các điều kiện hợp lệ, hệ thống sẽ gọi đến phép hiện tại trong PlayerInventoryManager để thực hiện hành động thi triển. Đoạn mã xử lý thao tác sử dụng phép thuật được thể hiện như sau. (Hình 3.14)
+Hình 3.14. Cơ chế kiểm tra điều kiện và thi triển phép thuật
+Ngoài phép thuật, game còn hỗ trợ các vật phẩm tăng cường chỉ số tạm thời. Khi người chơi sử dụng vật phẩm dạng buff, hệ thống sẽ kiểm tra trạng thái hiện tại của nhân vật, phát animation sử dụng vật phẩm, sau đó tạo một hiệu ứng tạm thời và đưa hiệu ứng đó vào PlayerEffectsManager. Cách tổ chức này giúp vật phẩm không trực tiếp sửa toàn bộ chỉ số nhân vật trong nhiều nơi khác nhau, mà chỉ tạo ra một hiệu ứng riêng để hệ thống quản lý tập trung. Đoạn mã tạo hiệu ứng tăng cường từ vật phẩm được thể hiện như sau. (Hình 3.15)
+Hình 3.15. Cơ chế tạo hiệu ứng tăng cường khi sử dụng vật phẩm
+Sau khi hiệu ứng tăng cường được tạo, PlayerStatBuffTimedEffect sẽ chịu trách nhiệm áp dụng chỉ số cộng thêm vào nhân vật. Các chỉ số có thể được tăng gồm máu tối đa, thể lực tối đa, năng lượng tối đa, tốc độ hồi thể lực và phần trăm sát thương gây ra. Khi hiệu ứng hết thời gian, hệ thống sẽ tự động gỡ các chỉ số đã cộng thêm và cập nhật lại trạng thái nhân vật. Điều này giúp hiệu ứng buff có vòng đời rõ ràng: bắt đầu, tồn tại trong một khoảng thời gian và kết thúc. Đoạn mã áp dụng và gỡ hiệu ứng tăng chỉ số được thể hiện như sau. (Hình 3.16)
+Hình 3.16. Cơ chế áp dụng và gỡ hiệu ứng tăng chỉ số theo thời gian
+Bên cạnh hiệu ứng có lợi, hệ thống còn có các hiệu ứng bất lợi như độc, cháy, đóng băng hoặc các trạng thái gây sát thương theo thời gian. Các hiệu ứng này không gây tác động một lần duy nhất, mà được xử lý theo từng chu kỳ trong thời gian tồn tại của hiệu ứng. Ví dụ, hiệu ứng độc sẽ giảm thời gian còn lại, kiểm tra nhân vật còn sống hay không, sau đó gây một lượng sát thương nhất định lên nhân vật trong mỗi lần xử lý. Đoạn mã xử lý hiệu ứng độc theo thời gian được thể hiện như sau. (Hình 3.17)
+Hình 3.17. Cơ chế xử lý hiệu ứng độc gây sát thương theo thời gian
+Nhìn chung, hệ thống kỹ năng, phép thuật và hiệu ứng trạng thái trong Eternal Hollow 3D được xây dựng theo hướng tách biệt giữa phần kích hoạt hành động, phần tạo hiệu ứng và phần xử lý hiệu ứng theo thời gian. CastIncantationAction chịu trách nhiệm kiểm tra điều kiện thi triển phép, BuffCharmItem tạo hiệu ứng tăng cường từ vật phẩm, còn các lớp như PlayerStatBuffTimedEffect và PoisonedEffect xử lý tác động của hiệu ứng lên nhân vật. Cách tổ chức này giúp hệ thống dễ mở rộng thêm phép thuật, vật phẩm buff và các trạng thái bất lợi khác trong quá trình phát triển game.
+Xây dựng hệ thống chỉ số và phát triển nhân vật
+Hệ thống máu, thể lực và năng lượng
+Hệ thống máu, thể lực và năng lượng là nhóm chỉ số cơ bản quyết định khả năng tồn tại và hành động của nhân vật trong Eternal Hollow 3D. Máu thể hiện lượng sát thương nhân vật có thể chịu trước khi chết, thể lực được sử dụng cho các hành động như chạy, né tránh, tấn công và phòng thủ, còn năng lượng được dùng cho các hành động đặc biệt như phép thuật hoặc kỹ năng. Ba chỉ số này có quan hệ trực tiếp với trải nghiệm chiến đấu, vì người chơi phải cân bằng giữa tấn công, phòng thủ, di chuyển và sử dụng tài nguyên.
+Trong dự án, các chỉ số cơ bản của nhân vật được tính toán dựa trên thuộc tính của người chơi. Cụ thể, máu tối đa phụ thuộc vào chỉ số vigor, thể lực tối đa phụ thuộc vào endurance, còn năng lượng tối đa phụ thuộc vào mind. Cách tổ chức này giúp hệ thống chỉ số có quy luật rõ ràng và dễ mở rộng khi thêm cơ chế nâng cấp nhân vật. Đoạn mã tính toán máu, thể lực và năng lượng theo thuộc tính được thể hiện như sau. (Hình 3.18)
+Hình 3.18. Công thức tính máu, thể lực và năng lượng theo thuộc tính nhân vật
+Bên cạnh chỉ số gốc, hệ thống còn hỗ trợ các chỉ số cộng thêm từ buff hoặc trang bị. Trong PlayerStatsManager, các hàm tính chỉ số tối đa không chỉ lấy giá trị từ thuộc tính nhân vật mà còn cộng thêm các giá trị như maxHealthBuff, maxStaminaBuff và maxFocusPointsBuff. Điều này giúp các vật phẩm tăng cường hoặc trang bị có thể tác động trực tiếp đến khả năng sinh tồn và chiến đấu của người chơi. Đoạn mã tính chỉ số tối đa sau khi áp dụng buff được thể hiện như sau. (Hình 3.19)
+Hình 3.19. Tính chỉ số tối đa sau khi áp dụng buff
+Khi thuộc tính hoặc buff của nhân vật thay đổi, hệ thống cần cập nhật lại các chỉ số phát sinh để bảo đảm dữ liệu hiện tại không bị sai lệch. Hàm RefreshDerivedStats() có nhiệm vụ tính lại máu tối đa, thể lực tối đa và năng lượng tối đa, sau đó điều chỉnh các giá trị hiện tại tương ứng. Đồng thời, hệ thống cũng cập nhật giao diện HUD để người chơi nhìn thấy sự thay đổi trên thanh trạng thái. Đoạn mã cập nhật lại các chỉ số phát sinh được thể hiện như sau. (Hình 3.20)
+Hình 3.20. Cập nhật lại máu, thể lực và năng lượng khi chỉ số thay đổi
+Trong quá trình chơi, thể lực là chỉ số thay đổi liên tục do người chơi thường xuyên thực hiện các hành động như chạy, né tránh, tấn công hoặc phòng thủ. Vì vậy, hệ thống cần có cơ chế hồi thể lực theo thời gian. Tuy nhiên, thể lực không được hồi trong mọi trạng thái. Nếu nhân vật đang chạy nước rút hoặc đang thực hiện hành động, hệ thống sẽ tạm dừng hồi thể lực. Khi nhân vật đang phòng thủ, tốc độ hồi thể lực cũng bị giảm để tạo sự cân bằng trong chiến đấu. Đoạn mã hồi phục thể lực theo thời gian được thể hiện như sau. (Hình 3.21)
+Hình 3.21. Cơ chế hồi phục thể lực theo thời gian
+Ngoài việc tính toán bên trong hệ thống, các thay đổi về chỉ số cũng cần được đồng bộ với giao diện người chơi. Khi máu, thể lực hoặc năng lượng tối đa thay đổi, PlayerNetworkManager sẽ cập nhật giá trị mới và gọi đến PlayerUIHudManager để thay đổi thanh trạng thái trên HUD. Nhờ đó, người chơi có thể theo dõi trực quan trạng thái hiện tại của nhân vật trong quá trình chiến đấu. Đoạn mã cập nhật chỉ số tối đa và giao diện HUD được thể hiện như sau. (Hình 3.22)
+Hình 3.22. Cập nhật chỉ số tối đa và giao diện HUD
+Nhìn chung, hệ thống máu, thể lực và năng lượng trong Eternal Hollow 3D được xây dựng theo hướng liên kết giữa thuộc tính nhân vật, buff, dữ liệu mạng và giao diện HUD. CharacterStatsManager chịu trách nhiệm tính toán chỉ số cơ bản, PlayerStatsManager xử lý chỉ số phát sinh và buff, còn PlayerNetworkManager cập nhật giá trị lên hệ thống dữ liệu và giao diện. Cách tổ chức này giúp các chỉ số của nhân vật được quản lý rõ ràng, dễ cân bằng và có thể mở rộng cho các cơ chế nâng cấp, trang bị hoặc vật phẩm hỗ trợ trong game.
+Cấp độ, thuộc tính và nâng cấp nhân vật
+Hệ thống level, thuộc tính và nâng cấp nhân vật là cơ chế giúp người chơi phát triển sức mạnh trong quá trình trải nghiệm Eternal Hollow 3D. Thông qua việc tích lũy rune và sử dụng rune để tăng chỉ số, nhân vật có thể trở nên mạnh hơn, chịu đòn tốt hơn, sử dụng kỹ năng hiệu quả hơn hoặc gây sát thương cao hơn. Đây là một phần quan trọng của game hành động nhập vai vì nó tạo cảm giác tiến bộ cho người chơi sau mỗi trận chiến và khuyến khích người chơi tiếp tục khám phá thế giới game.
+Trong dự án, level của nhân vật không được lưu như một giá trị độc lập hoàn toàn, mà được tính dựa trên tổng các thuộc tính chính. Các thuộc tính gồm vigor, mind, endurance, strength, dexterity, intelligence và faith. Khi tổng các thuộc tính tăng lên, level nhân vật cũng tăng theo. Cách tính này giúp level phản ánh trực tiếp quá trình phát triển chỉ số của nhân vật. Đoạn mã tính level nhân vật dựa trên thuộc tính được thể hiện như sau. (Hình 3.23)
+Hình 3.23. Cơ chế tính level nhân vật dựa trên tổng thuộc tính
+Việc nâng cấp nhân vật được thực hiện thông qua giao diện level up. Khi mở giao diện này, hệ thống đọc level hiện tại, số rune đang sở hữu và các thuộc tính hiện tại của người chơi, sau đó hiển thị lên UI. Đồng thời, các slider của từng thuộc tính được thiết lập giá trị tối thiểu bằng chỉ số hiện tại, giúp người chơi chỉ có thể tăng chỉ số lên chứ không thể giảm chỉ số đã có. Đoạn mã khởi tạo thông tin hiện tại của nhân vật trong menu nâng cấp được thể hiện như sau. (Hình 3.24)
+Hình 3.24. Khởi tạo thông tin nhân vật trong giao diện nâng cấp
+Khi người chơi thay đổi slider của một thuộc tính, hệ thống sẽ cập nhật giá trị dự kiến, tính lại level dự kiến và tính tổng số rune cần tiêu hao. Nếu số rune cần dùng lớn hơn số rune người chơi đang có, nút xác nhận nâng cấp sẽ bị vô hiệu hóa. Cơ chế này giúp ngăn người chơi nâng cấp khi chưa đủ tài nguyên, đồng thời cho phép người chơi xem trước kết quả trước khi xác nhận. Đoạn mã cập nhật chỉ số dự kiến khi thay đổi slider được thể hiện như sau. (Hình 3.25)
+Hình 3.25. Cập nhật level dự kiến và kiểm tra rune khi thay đổi thuộc tính
+Chi phí nâng cấp được tính dựa trên level hiện tại và level dự kiến. Hệ thống chỉ tính phí cho các level tăng thêm, không tính lại các level mà người chơi đã đạt được trước đó. Mỗi level có một mức chi phí riêng trong mảng playerLevels, được khởi tạo từ chi phí cơ bản và tăng dần theo cấp. Cách tính này giúp chi phí nâng cấp tăng theo quá trình phát triển nhân vật, từ đó làm cho việc lên cấp ở giai đoạn sau có giá trị hơn. Đoạn mã tính chi phí nâng cấp được thể hiện như sau. (Hình 3.26)
+Hình 3.26. Cơ chế tính chi phí rune khi nâng cấp level
+Sau khi người chơi xác nhận nâng cấp, hệ thống sẽ trừ rune tương ứng và cập nhật lại các thuộc tính mới vào PlayerNetworkManager. Các thuộc tính này sau đó sẽ ảnh hưởng đến những chỉ số phát sinh như máu, thể lực, năng lượng và khả năng chiến đấu của nhân vật. Sau khi cập nhật xong, game sẽ lưu lại dữ liệu để bảo đảm tiến trình nâng cấp không bị mất khi người chơi thoát game hoặc chuyển cảnh. Đoạn mã xác nhận nâng cấp nhân vật được thể hiện như sau. (Hình 3.27)
+Hình 3.27. Xác nhận nâng cấp và lưu lại chỉ số nhân vật
+Nhìn chung, hệ thống level, thuộc tính và nâng cấp nhân vật trong Eternal Hollow 3D được xây dựng theo hướng liên kết giữa dữ liệu nhân vật, giao diện nâng cấp, rune và hệ thống lưu game. CharacterStatsManager chịu trách nhiệm tính toán level dựa trên tổng thuộc tính, PlayerUILevelUpManager xử lý thao tác nâng cấp trên giao diện, còn PlayerNetworkManager lưu các giá trị thuộc tính mới của người chơi. Cách tổ chức này giúp hệ thống nâng cấp rõ ràng, dễ cân bằng và tạo được cảm giác phát triển nhân vật trong quá trình chơi.
+Trang bị, vật phẩm và nâng cấp vũ khí
+Hệ thống trang bị, vật phẩm và nâng cấp vũ khí là phần mở rộng quan trọng của quá trình phát triển nhân vật trong Eternal Hollow 3D. Nếu level và thuộc tính quyết định sức mạnh cơ bản của nhân vật, thì trang bị và vật phẩm lại quyết định cách người chơi tùy biến lối chơi trong từng tình huống cụ thể. Người chơi có thể thay đổi vũ khí, sử dụng vật phẩm hồi phục hoặc tăng cường, trang bị giáp để cải thiện khả năng phòng thủ và nâng cấp vũ khí để tăng hiệu quả chiến đấu.
+Trong dự án, dữ liệu trang bị và vật phẩm của người chơi được quản lý trong PlayerInventoryManager. Lớp này lưu các vũ khí đang được trang bị ở tay phải, tay trái, danh sách quick slot, phép hiện tại, giáp đang mặc và danh sách vật phẩm trong kho đồ. Cách tổ chức này giúp toàn bộ dữ liệu liên quan đến inventory được tập trung tại một nơi, từ đó các hệ thống khác như chiến đấu, giao diện, save/load hoặc nâng cấp vũ khí có thể truy xuất dễ dàng. Cấu trúc quản lý inventory của người chơi được thể hiện như sau. (Hình 3.28)
+Hình 3.28. Cấu trúc quản lý trang bị và vật phẩm của người chơi
+Đối với vật phẩm sử dụng nhanh, hệ thống quick slot cho phép người chơi chuyển qua các vật phẩm đã gán sẵn trong quá trình chơi. Khi người chơi đổi quick slot, PlayerEquipmentManager sẽ tìm vị trí quick slot kế tiếp có vật phẩm hợp lệ, sau đó cập nhật vật phẩm hiện tại để hiển thị và sử dụng. Cơ chế này giúp người chơi có thể luân chuyển giữa các vật phẩm như bình hồi máu, bình hồi năng lượng hoặc vật phẩm tăng cường mà không cần mở menu kho đồ trong lúc chiến đấu. Cơ chế chuyển quick slot được thể hiện như sau. (Hình 3.29)
+Hình 3.29. Cơ chế chuyển vật phẩm quick slot
+Khi người chơi nhấn nút sử dụng vật phẩm, PlayerInputManager sẽ kiểm tra trạng thái menu và vật phẩm hiện tại trong quick slot. Nếu có vật phẩm hợp lệ, hệ thống gọi hàm AttemptToUseItem() của vật phẩm đó để xử lý hành động sử dụng. Đồng thời, đối với chế độ chơi mạng, hệ thống gửi RPC để đồng bộ hành động sử dụng vật phẩm sang các client khác. Cơ chế sử dụng vật phẩm trong quick slot được thể hiện như sau. (Hình 3.30)
+Hình 3.30. Cơ chế sử dụng vật phẩm trong quick slot
+Bên cạnh vật phẩm, hệ thống giáp cũng được quản lý thông qua inventory và equipment. Khi nhân vật trang bị giáp, PlayerEquipmentManager sẽ đọc các trang bị ở từng vị trí như mũ, thân, chân và tay, sau đó tải mô hình tương ứng lên nhân vật. Điều này giúp hình dạng bên ngoài của nhân vật thay đổi theo trang bị đang sử dụng, đồng thời các chỉ số phòng thủ từ giáp có thể được tính trong hệ thống chỉ số. Cơ chế trang bị giáp được thể hiện như sau. (Hình 3.31)
+Hình 3.31. Cơ chế tải trang bị giáp lên nhân vật
+Đối với nâng cấp vũ khí, người chơi cần chọn một vũ khí đang trang bị và có đủ nguyên liệu nâng cấp tương ứng. Trước khi cho phép nâng cấp, hệ thống sẽ kiểm tra vũ khí có phải là vũ khí hợp lệ hay không, người chơi có đủ nguyên liệu không và vũ khí đã đạt cấp tối đa hay chưa. Nếu tất cả điều kiện hợp lệ, giao diện xác nhận nâng cấp sẽ được hiển thị. Cơ chế kiểm tra điều kiện nâng cấp vũ khí được thể hiện như sau. (Hình 3.32)
+Hình 3.32. Kiểm tra điều kiện trước khi nâng cấp vũ khí
+Chi phí nâng cấp vũ khí được xác định dựa trên cấp hiện tại của vũ khí. Ở các cấp đầu, người chơi cần smallUpgradeStone; ở các cấp giữa cần mediumUpgradeStone; còn các cấp cao hơn cần largeUpgradeStone. Hệ thống sẽ tìm trong inventory của người chơi để kiểm tra có đúng loại nguyên liệu và đủ số lượng hay không. Cách tính nguyên liệu nâng cấp được thể hiện như sau. (Hình 3.33)
+Hình 3.33. Xác định nguyên liệu cần thiết để nâng cấp vũ khí
+Sau khi người chơi xác nhận nâng cấp, hệ thống tăng cấp của vũ khí lên một bậc, cập nhật lại sát thương vũ khí, trừ nguyên liệu trong kho đồ và lưu lại dữ liệu game. Nếu đang ở chế độ multiplayer, thông tin cấp vũ khí cũng được đồng bộ thông qua network RPC. Cơ chế này bảo đảm việc nâng cấp có tác động trực tiếp đến chiến đấu, đồng thời tiến trình nâng cấp không bị mất khi người chơi thoát game. Quá trình xác nhận nâng cấp vũ khí được thể hiện như sau. (Hình 3.34)
+Hình 3.34. Xác nhận nâng cấp vũ khí và lưu dữ liệu
+Tóm lại, hệ thống trang bị, vật phẩm và nâng cấp vũ khí trong Eternal Hollow 3D được xây dựng theo hướng liên kết giữa inventory, equipment, UI, combat và save game. PlayerInventoryManager lưu dữ liệu vật phẩm và trang bị, PlayerEquipmentManager xử lý việc hiển thị và chuyển đổi trang bị, PlayerInputManager tiếp nhận thao tác sử dụng vật phẩm, còn PlayerUIWeaponUpgradeManager phụ trách kiểm tra nguyên liệu và nâng cấp vũ khí. Cách tổ chức này giúp người chơi có nhiều lựa chọn phát triển nhân vật, đồng thời giúp hệ thống dễ mở rộng thêm vũ khí, giáp, vật phẩm và nguyên liệu mới.
+Xây dựng hệ thống quái vật và quái lớn
+Quái vật thường
+Quái vật thường là nhóm kẻ địch xuất hiện xuyên suốt trong Eternal Hollow 3D, có nhiệm vụ tạo thử thách cơ bản cho người chơi trong quá trình khám phá bản đồ. Hệ thống quái vật thường không chỉ đơn giản là đứng yên và tấn công khi người chơi đến gần, mà được xây dựng theo mô hình trạng thái gồm chờ, tuần tra, phát hiện mục tiêu, truy đuổi và chiến đấu. Cách tổ chức này giúp hành vi của quái vật linh hoạt hơn và phù hợp với môi trường game hành động nhập vai 3D.
+Trong dự án, quái vật thường được quản lý thông qua AICharacterManager. Lớp này lưu các thành phần quan trọng như combat manager, network manager, locomotion manager, inventory manager, NavMeshAgent và các state của AI. Khi quái vật được spawn, hệ thống khởi tạo các state như idle, pursueTarget, combatStance và attack, sau đó đặt trạng thái ban đầu là idle. Đây là nền tảng để AI chuyển đổi hành vi trong quá trình chơi. Cơ chế khởi tạo state của quái vật được thể hiện như sau. (Hình 3.35)
+Hình 3.35. Khởi tạo các trạng thái chính của quái vật thường
+Ở trạng thái chờ hoặc tuần tra, quái vật sẽ kiểm tra xem có phát hiện mục tiêu hay không. Nếu phát hiện người chơi, AI sẽ chuyển sang trạng thái truy đuổi. Với các quái vật có đường tuần tra, hệ thống sử dụng NavMeshAgent để di chuyển theo các điểm được cấu hình sẵn. Điều này giúp quái vật có thể hoạt động trong bản đồ thay vì chỉ đứng tại một vị trí cố định. Cơ chế tuần tra và chuyển sang truy đuổi được thể hiện như sau. (Hình 3.36)
+Hình 3.36. Trạng thái chờ và phát hiện mục tiêu của quái vật
+Khi đã phát hiện người chơi, quái vật chuyển sang trạng thái truy đuổi. Trong trạng thái này, AI sử dụng NavMeshAgent để tính đường đi đến vị trí mục tiêu, đồng thời xoay hướng theo đường di chuyển. Nếu khoảng cách đến mục tiêu nhỏ hơn hoặc bằng khoảng dừng của NavMeshAgent, quái vật sẽ chuyển sang trạng thái chiến đấu. Cơ chế truy đuổi mục tiêu được thể hiện như sau. (Hình 3.37)
+Hình 3.37. Cơ chế truy đuổi người chơi bằng NavMeshAgent
+Khi vào trạng thái chiến đấu, quái vật sẽ lựa chọn đòn đánh phù hợp dựa trên khoảng cách và góc nhìn so với mục tiêu. Hệ thống duyệt qua danh sách các đòn đánh có thể thực hiện, loại bỏ các đòn không phù hợp, sau đó chọn một đòn dựa trên trọng số. Nhờ vậy, quái vật có thể có nhiều kiểu tấn công khác nhau thay vì luôn lặp lại một hành động duy nhất. Cơ chế lựa chọn đòn đánh được thể hiện như sau. (Hình 3.38)
+Hình 3.38. Cơ chế lựa chọn đòn đánh của quái vật thường
+Nhìn chung, quái vật thường trong Eternal Hollow 3D được xây dựng theo mô hình state machine, trong đó mỗi trạng thái đảm nhiệm một hành vi riêng như chờ, tuần tra, truy đuổi hoặc chiến đấu. AICharacterManager quản lý tổng thể AI, IdleState xử lý trạng thái chờ và phát hiện mục tiêu, PursueTargetState điều khiển truy đuổi bằng NavMeshAgent, còn CombatStanceState lựa chọn đòn đánh phù hợp. Cách tổ chức này giúp hành vi quái vật rõ ràng, dễ mở rộng và tạo được thử thách cơ bản cho người chơi trong quá trình khám phá bản đồ.
+Quái lớn và các giai đoạn chiến đấu
+Quái lớn (Boss) là dạng kẻ địch đặc biệt trong Eternal Hollow 3D, thường xuất hiện ở cuối mỗi khu vực bản đồ và đóng vai trò như thử thách chính trước khi người chơi mở khóa nội dung tiếp theo. So với quái vật thường, boss có lượng máu lớn hơn, khu vực chiến đấu riêng, bộ đòn đánh nguy hiểm hơn và có thể thay đổi hành vi khi máu giảm xuống một ngưỡng nhất định. Vì vậy, hệ thống boss được xây dựng dựa trên nền tảng AI chung nhưng bổ sung thêm các cơ chế riêng như kích hoạt boss fight, khóa khu vực chiến đấu, hiển thị trạng thái trận đấu và chuyển phase.
+Trận đấu boss được kích hoạt khi người chơi đi vào vùng trigger trong bản đồ. Trigger sẽ tìm boss tương ứng thông qua bossID, kiểm tra boss đã bị đánh bại hay chưa, sau đó gọi hàm đánh thức boss nếu trận đấu chưa bắt đầu. Cơ chế này giúp mỗi khu vực boss chủ động quản lý điều kiện bắt đầu trận đấu và tránh việc boss bị kích hoạt lại sau khi đã bị hạ. Quá trình kích hoạt boss fight được thể hiện như sau. (Hình 3.39)
+Hình 3.39. Cơ chế kích hoạt boss fight khi người chơi vào khu vực boss
+Sau khi được kích hoạt, boss sẽ chuyển từ trạng thái ngủ hoặc chờ sang trạng thái chiến đấu. Hệ thống bật cờ bossFightIsActive, đánh dấu boss đã được đánh thức, cho AI bắt đầu hoạt động và kích hoạt các fog wall trong arena. Fog wall có tác dụng giới hạn khu vực chiến đấu, khiến trận boss trở thành một màn giao tranh riêng biệt thay vì bị lẫn với quá trình khám phá bản đồ thông thường. Cơ chế đánh thức boss và kích hoạt khu vực chiến đấu được thể hiện như sau. (Hình 3.40)
+Hình 3.40. Cơ chế đánh thức boss và kích hoạt arena
+Trong quá trình chiến đấu, hệ thống liên tục theo dõi lượng máu của boss. Khi máu giảm xuống dưới ngưỡng được cấu hình bởi minimumHealthPercentageToShift, boss sẽ chuyển sang phase mới. Phase mới có thể thay đổi trạng thái chiến đấu, bộ đòn đánh hoặc mức độ nguy hiểm của boss. Đây là cơ chế giúp trận đấu không bị lặp lại một nhịp từ đầu đến cuối, đồng thời buộc người chơi phải thích nghi khi boss thay đổi hành vi. Cơ chế kiểm tra máu để chuyển phase được thể hiện như sau. (Hình 3.41)
+Hình 3.41. Cơ chế chuyển phase boss theo lượng máu
+Hệ thống boss trong Eternal Hollow 3D được tổ chức theo hướng mở rộng từ AI thông thường nhưng có thêm các thành phần dành riêng cho trận đấu lớn. EventTriggerBossFight phụ trách điều kiện bắt đầu, AIBossCharacterManager quản lý trạng thái boss fight và arena, còn AIBossCharacterNetworkManager theo dõi máu để xử lý chết hoặc chuyển phase. Cấu trúc này giúp boss có hành vi riêng, đồng thời vẫn tận dụng được nền tảng AI, chiến đấu và dữ liệu mạng đã được xây dựng cho toàn bộ hệ thống.
+Điều phối trạng thái AI
+Điều phối trạng thái AI là cơ chế giúp quái vật và boss chuyển đổi hành vi theo tình huống trong game. Thay vì viết toàn bộ hành vi trong một hàm lớn, hệ thống AI của Eternal Hollow 3D được chia thành nhiều state riêng như IdleState, PursueTargetState, CombatStanceState và AttackState. Mỗi state chịu trách nhiệm xử lý một nhóm hành vi cụ thể, còn AICharacterManager giữ vai trò gọi state hiện tại và cập nhật state mới sau mỗi vòng xử lý.
+Trong mỗi frame, AICharacterManager gọi hàm Tick() của state hiện tại. Hàm này trả về state tiếp theo tùy theo điều kiện trong game, ví dụ phát hiện người chơi thì chuyển từ idle sang pursue, đến gần mục tiêu thì chuyển sang combat stance, hoặc chọn được đòn đánh thì chuyển sang attack. Cơ chế xử lý state machine được thể hiện như sau. (Hình 3.42)
+Hình 3.42. Cơ chế xử lý state machine của AI
+Mỗi state đều kế thừa từ lớp cơ sở AIState. Lớp này cung cấp hàm Tick() để xử lý logic của state, hàm SwitchState() để chuyển sang state mới và hàm ResetStateFlags() để đặt lại các cờ trạng thái khi rời khỏi state hiện tại. Việc đặt lại cờ khi chuyển state giúp tránh lỗi hành vi, chẳng hạn AI vẫn giữ trạng thái đã tấn công hoặc đã combo từ lần xử lý trước. Cấu trúc state cơ sở được thể hiện như sau. (Hình 3.43)
+Hình 3.43. Lớp cơ sở dùng để chuyển đổi và đặt lại trạng thái AI
+Trong trạng thái tấn công, AI kiểm tra mục tiêu, xoay về phía mục tiêu, thực hiện đòn đánh và chờ thời gian hồi hành động trước khi quay lại trạng thái chiến đấu. Nếu có combo hợp lệ, AI có thể thực hiện thêm đòn nối tiếp. Đoạn mã này thể hiện rõ cách một state cụ thể hoạt động độc lập nhưng vẫn trả về state tiếp theo cho hệ thống điều phối chung. Cơ chế xử lý trạng thái tấn công được thể hiện như sau. (Hình 3.44)
+Hình 3.44. Cơ chế xử lý trạng thái tấn công của AI
+Cách tổ chức AI theo state machine giúp hành vi của quái vật và boss dễ kiểm soát hơn. Khi cần thêm hành vi mới, chẳng hạn né tránh, điều tra âm thanh, ngủ chờ kích hoạt hoặc kỹ năng đặc biệt, hệ thống có thể bổ sung state mới mà không làm rối toàn bộ logic AI. Nhờ đó, AI trong game có thể mở rộng theo từng loại kẻ địch, đồng thời vẫn giữ được cấu trúc xử lý rõ ràng và thống nhất.
+Xây dựng bản đồ và tiến trình thế giới
+Thiết kế các world scene
+Bản đồ trong Eternal Hollow 3D được tổ chức theo hướng chia thế giới thành nhiều scene và khu vực nhỏ. Cách thiết kế này giúp quá trình xây dựng bản đồ dễ quản lý hơn, đồng thời hỗ trợ việc tải thêm hoặc gỡ bớt các khu vực khi cần thiết. Thay vì đặt toàn bộ môi trường, quái vật, vật phẩm và hiệu ứng vào một scene duy nhất, hệ thống có thể tách thành world scene chính và các additive scene phụ như khu vực chiến đấu, đường đi, phòng boss hoặc các vùng phụ trong bản đồ.
+Mỗi khu vực trong thế giới game có thể khai báo danh sách scene cần thiết thông qua WorldLocationSceneSet. Dữ liệu này cho phép hệ thống biết một khu vực cần load những scene nào, đồng thời có thể kéo theo các khu vực liên quan nếu chúng cần được giữ lại để tránh lỗi hiển thị hoặc mất đối tượng khi người chơi di chuyển. Cách khai báo danh sách scene cho từng khu vực được thể hiện như sau. (Hình 3.45)
+Hình 3.45. Cấu trúc khai báo các scene cần thiết cho một khu vực bản đồ
+Đối với các scene phụ, hệ thống sử dụng cơ chế additive loading để tải thêm scene vào world hiện tại mà không cần thay thế toàn bộ màn chơi. WorldAdditiveSceneBootstrap kiểm tra danh sách scene cần tải, loại bỏ các scene đã được load trước đó và gọi WorldSceneManager để xử lý trong môi trường có multiplayer. Nếu không chạy qua network scene manager, hệ thống có thể dùng trực tiếp SceneManager.LoadScene() với chế độ Additive. Cơ chế bootstrap additive scene được thể hiện như sau. (Hình 3.46)
+Hình 3.46. Cơ chế tải additive scene khi khởi tạo khu vực
+Khi người chơi di chuyển sang một khu vực mới, WorldLocationManager sẽ cập nhật khu vực hiện tại của người chơi, xác định các scene cần load xung quanh khu vực đó và yêu cầu WorldSceneManager kiểm tra các scene không còn cần thiết. Cơ chế này giúp bản đồ có thể mở rộng thành nhiều khu vực mà vẫn kiểm soát được tài nguyên đang được tải trong game. Quá trình tải khu vực dựa trên vị trí người chơi được thể hiện như sau. (Hình 3.47)
+Hình 3.47. Cơ chế tải khu vực bản đồ theo vị trí hiện tại của người chơi
+Cấu trúc world scene theo dạng scene chính kết hợp additive scene giúp bản đồ của Eternal Hollow 3D linh hoạt hơn trong quá trình phát triển. Các khu vực có thể được tách riêng để dễ chỉnh sửa, dễ kiểm thử và thuận tiện khi mở rộng thêm map mới. Đồng thời, việc quản lý scene theo vị trí người chơi giúp game hạn chế tải những khu vực không cần thiết, từ đó hỗ trợ tốt hơn cho hiệu năng và tổ chức tài nguyên trong dự án.
+Chuyển bản đồ và mở khu vực
+Cơ chế chuyển map và mở khóa khu vực giúp Eternal Hollow 3D tổ chức tiến trình chơi theo từng bản đồ. Người chơi không được truy cập toàn bộ thế giới ngay từ đầu, mà sẽ mở khóa các khu vực mới sau khi hoàn thành những mốc quan trọng, đặc biệt là đánh bại boss của map hiện tại. Cách thiết kế này giúp game có nhịp tiến triển rõ ràng, đồng thời tạo mục tiêu cụ thể cho người chơi trong từng giai đoạn.
+Khi boss bị đánh bại, GameProgressionManager sẽ xác định boss đó thuộc map nào, mở khóa map hiện tại và nếu chưa phải map cuối thì mở tiếp map kế tiếp. Hệ thống cũng cập nhật currentMapIndex, xác định scene cần chuyển tới và thiết lập Site of Grace đầu vào của map mới. Cơ chế mở khóa map sau khi hạ boss được thể hiện như sau. (Hình 3.48)
+Hình 3.48. Cơ chế mở khóa map mới sau khi đánh bại boss
+Bên cạnh việc tự chuyển sau khi hoàn thành boss, game còn có các đối tượng tương tác dùng để chuyển sang map khác. Khi người chơi tương tác, WorldMapTransitionInteractable gọi PrepareTransitionToMap() để lấy scene cần tải, lưu lại map hiện tại vào save data, sau đó yêu cầu WorldSceneManager load world scene tương ứng. Nếu đang chơi ở client trong multiplayer, yêu cầu chuyển scene sẽ được gửi lên server thông qua RPC. Cơ chế tương tác chuyển map được thể hiện như sau. (Hình 3.49)
+Hình 3.49. Cơ chế tương tác để chuyển sang map khác
+Cơ chế chuyển map và mở khóa khu vực giúp tiến trình thế giới được kiểm soát theo từng mốc gameplay. GameProgressionManager quản lý trạng thái map đã mở, boss đã bị hạ và scene cần chuyển tới, còn WorldMapTransitionInteractable xử lý tương tác thực tế của người chơi trong bản đồ. Nhờ vậy, quá trình đi từ map này sang map khác vừa gắn với tiến trình đánh boss, vừa có thể được lưu lại để khôi phục khi người chơi tải game.
+Checkpoint, hồi sinh và Site of Grace
+Checkpoint là cơ chế giúp người chơi có điểm hồi phục và quay lại sau khi chết. Trong Eternal Hollow 3D, hệ thống này được xây dựng thông qua SiteOfGraceInteractable. Khi người chơi tương tác với Site of Grace, điểm đó được lưu lại vào dữ liệu game, đồng thời nhân vật có thể nghỉ ngơi để hồi máu, hồi thể lực và mở giao diện chức năng như nâng cấp nhân vật hoặc dịch chuyển. Cơ chế này giúp người chơi có điểm dừng an toàn giữa các khu vực chiến đấu.
+Khi Site of Grace được kích hoạt hoặc nghỉ ngơi, hệ thống lưu siteOfGraceID vào save data, cập nhật điểm nghỉ gần nhất và phục hồi trạng thái cơ bản cho nhân vật. Nếu đây là lần đầu người chơi kích hoạt Site of Grace, game hiển thị thông báo khôi phục; nếu đã kích hoạt trước đó, người chơi có thể nghỉ tại điểm này. Cơ chế tương tác và lưu checkpoint được thể hiện như sau. (Hình 3.50)
+Hình 3.50. Cơ chế nghỉ tại Site of Grace và lưu checkpoint
+Khi nhân vật chết, hệ thống sẽ xử lý sự kiện tử vong, hiển thị thông báo cho người chơi và gọi cơ chế hồi sinh sau một khoảng thời gian. Khi hồi sinh, nhân vật được đưa ra khỏi trạng thái chết, máu và thể lực được phục hồi về giá trị tối đa. Kết hợp với dữ liệu Site of Grace đã lưu, game có thể đưa người chơi trở lại điểm nghỉ gần nhất hoặc điểm vào map hiện tại. Cơ chế tử vong và hồi sinh nhân vật được thể hiện như sau. (Hình 3.51)
+Hình 3.51. Cơ chế xử lý tử vong và hồi sinh nhân vật
+Hệ thống checkpoint giúp tiến trình chơi không bị gián đoạn quá nặng sau khi nhân vật chết. SiteOfGraceInteractable phụ trách lưu điểm nghỉ và phục hồi tài nguyên khi người chơi tương tác, còn PlayerManager xử lý trạng thái chết và hồi sinh của nhân vật. Nhờ vậy, game có thể duy trì vòng lặp gameplay quen thuộc của thể loại hành động nhập vai: khám phá, chiến đấu, thất bại, hồi sinh tại checkpoint và tiếp tục thử lại.
+Xây dựng hệ thống vật phẩm, cửa hàng và giao diện
+Vật phẩm và kho đồ
+Hệ thống vật phẩm và kho đồ giúp người chơi thu thập, lưu trữ và sử dụng các tài nguyên trong quá trình chơi. Trong Eternal Hollow 3D, vật phẩm có thể xuất hiện sẵn trong bản đồ hoặc rơi ra từ kẻ địch sau khi bị đánh bại. Khi người chơi nhặt vật phẩm, hệ thống sẽ thêm vật phẩm đó vào inventory, hiển thị thông báo trên giao diện và lưu lại trạng thái để tránh việc nhặt lại các vật phẩm chỉ được nhận một lần.
+Khi người chơi tương tác với vật phẩm trong thế giới game, PickUpItemInteractable kiểm tra quyền nhặt, xử lý trên server và gửi kết quả về đúng client nhận vật phẩm. Sau đó, client tạo instance vật phẩm, phát âm thanh, chạy animation nhặt đồ, thêm vật phẩm vào kho và hiển thị popup thông báo. Cơ chế nhặt vật phẩm được thể hiện như sau. (Hình 3.52)
+Hình 3.52. Cơ chế thêm vật phẩm vào kho khi người chơi nhặt đồ
+Kho đồ của người chơi được quản lý trong PlayerInventoryManager thông qua danh sách itemsInInventory. Hệ thống hỗ trợ thêm vật phẩm, xóa vật phẩm và đếm số lượng vật phẩm theo itemID. Với các vật phẩm có thể cộng dồn như vật phẩm tiêu hao hoặc đạn, số lượng được tính dựa trên itemAmount hoặc currentAmmoAmount. Cách quản lý này giúp inventory dùng chung cho nhiều loại vật phẩm khác nhau mà không cần tách thành nhiều danh sách riêng. Cơ chế quản lý số lượng vật phẩm trong kho được thể hiện như sau. (Hình 3.53)
+Hình 3.53. Cơ chế thêm và kiểm tra số lượng vật phẩm trong inventory
+Hệ thống vật phẩm và kho đồ tạo nền tảng cho nhiều chức năng khác như sử dụng quick slot, mua bán với merchant, nâng cấp vũ khí và lưu tiến trình. PickUpItemInteractable phụ trách tương tác nhặt vật phẩm trong thế giới, còn PlayerInventoryManager lưu trữ và truy xuất dữ liệu vật phẩm của người chơi. Nhờ cách tổ chức này, game có thể mở rộng thêm nhiều loại vật phẩm mới mà vẫn giữ cấu trúc quản lý tương đối đơn giản.
+Cửa hàng, merchant và tiền tệ
+Shop và merchant là hệ thống cho phép người chơi sử dụng rune để mua vật phẩm hoặc bán lại những vật phẩm không cần thiết. Trong Eternal Hollow 3D, rune đóng vai trò như tiền tệ chính, đồng thời cũng liên quan đến nâng cấp nhân vật và progression. Việc bổ sung shop giúp người chơi có thêm nguồn tiếp cận vật phẩm tiêu hao, nguyên liệu hoặc trang bị, thay vì chỉ phụ thuộc vào vật phẩm nhặt được trong bản đồ.
+Merchant trong game được triển khai dưới dạng một đối tượng có thể tương tác. Khi người chơi tương tác với merchant, ShopInteractable kiểm tra quyền tương tác, kiểm tra dữ liệu shop và mở giao diện mua bán tương ứng. Cách xử lý này giúp mỗi merchant có thể gắn với một ShopInventory riêng, từ đó dễ tạo nhiều cửa hàng với danh sách vật phẩm khác nhau. Cơ chế mở giao diện shop từ merchant được thể hiện như sau. (Hình 3.54)
+Hình 3.54. Cơ chế mở shop khi tương tác với merchant
+Hoạt động mua và bán vật phẩm được xử lý trong PlayerShopManager. Khi mua vật phẩm, hệ thống kiểm tra vật phẩm có được phép mua không, người chơi có đủ rune không và shop còn hàng hay không. Nếu hợp lệ, vật phẩm được thêm vào inventory và rune của người chơi bị trừ. Khi bán vật phẩm, hệ thống kiểm tra vật phẩm có được phép bán không, xóa vật phẩm khỏi kho và cộng rune cho người chơi. Cơ chế xử lý giao dịch mua bán được thể hiện như sau. (Hình 3.55)
+Hình 3.55. Cơ chế mua vật phẩm bằng rune
+Hệ thống shop giúp vòng lặp gameplay có thêm chiều sâu kinh tế. Người chơi có thể dùng rune thu được từ chiến đấu để mua vật phẩm cần thiết, bán vật phẩm dư thừa hoặc chuẩn bị tốt hơn trước khi bước vào khu vực khó. ShopInteractable phụ trách mở cửa hàng trong thế giới game, còn PlayerShopManager xử lý logic giao dịch, cập nhật rune, inventory, giao diện và save data. Nhờ vậy, merchant có thể được mở rộng thành nhiều loại cửa hàng khác nhau trong các map sau.
+Giao diện gameplay và HUD
+Giao diện gameplay và HUD giúp người chơi theo dõi các thông tin quan trọng trong quá trình chơi mà không cần mở menu. Trong Eternal Hollow 3D, HUD hiển thị các thanh chỉ số như máu, thể lực, năng lượng, trạng thái tích tụ hiệu ứng, số rune hiện có, vũ khí đang trang bị và vật phẩm quick slot. Những thông tin này hỗ trợ người chơi đưa ra quyết định nhanh trong chiến đấu, đặc biệt khi phải né tránh, phòng thủ, sử dụng vật phẩm hoặc theo dõi tài nguyên còn lại.
+Các thanh chỉ số chính được cập nhật thông qua PlayerUIHudManager. Khi giá trị máu, thể lực hoặc năng lượng thay đổi, hệ thống gọi các hàm cập nhật tương ứng để thay đổi giá trị hiển thị trên thanh trạng thái. Ngoài giá trị hiện tại, HUD cũng có hàm cập nhật giá trị tối đa, phục vụ cho các trường hợp nhân vật tăng cấp, dùng buff hoặc thay đổi chỉ số. Cơ chế cập nhật thanh máu, thể lực và năng lượng được thể hiện như sau. (Hình 3.56)
+Hình 3.56. Cơ chế cập nhật các thanh chỉ số trên HUD
+Bên cạnh thanh chỉ số, HUD còn hiển thị vật phẩm quick slot để người chơi biết vật phẩm nào đang được chọn và còn bao nhiêu lần sử dụng. Khi quick slot thay đổi, hệ thống kiểm tra vật phẩm hiện tại, kiểm tra icon, kiểm tra số lượng còn lại nếu là vật phẩm tiêu hao, sau đó cập nhật hình ảnh và số lượng trên giao diện. Cơ chế này đặc biệt cần thiết trong chiến đấu vì người chơi thường phải dùng bình hồi máu hoặc vật phẩm hỗ trợ trong thời gian ngắn. Cơ chế cập nhật vật phẩm quick slot được thể hiện như sau. (Hình 3.57)
+Hình 3.57. Cơ chế cập nhật vật phẩm quick slot trên HUD
+HUD là cầu nối trực tiếp giữa dữ liệu gameplay và người chơi. PlayerUIHudManager nhận các thay đổi từ hệ thống nhân vật, inventory và quick slot để hiển thị thành thông tin trực quan trên màn hình. Nhờ đó, người chơi có thể theo dõi trạng thái nhân vật, tài nguyên chiến đấu và vật phẩm đang sử dụng mà không bị gián đoạn trải nghiệm trong quá trình khám phá hoặc giao tranh.
+Xây dựng hệ thống lưu dữ liệu và đa người chơi
+Lưu và tải tiến trình
+Hệ thống lưu và tải tiến trình giúp người chơi tiếp tục trò chơi từ trạng thái đã đạt được trước đó. Trong Eternal Hollow 3D, dữ liệu cần lưu không chỉ gồm vị trí nhân vật, mà còn bao gồm chỉ số, rune, trang bị, vật phẩm, quick slot, map hiện tại, boss đã bị hạ, Site of Grace đã kích hoạt và vật phẩm ngoài thế giới đã được nhặt. Nhờ đó, khi người chơi thoát game rồi quay lại, trạng thái nhân vật và thế giới game có thể được khôi phục gần đúng với thời điểm lưu.
+Khi lưu game, WorldSaveGameManager gọi SaveGameData() từ PlayerManager để ghi dữ liệu hiện tại của người chơi vào CharacterSaveData. Sau đó, progression của thế giới cũng được lưu lại và toàn bộ dữ liệu được ghi xuống file save. Cách xử lý này giúp dữ liệu nhân vật và dữ liệu thế giới được gom vào cùng một cấu trúc trước khi lưu. Cơ chế lưu tiến trình được thể hiện như sau. (Hình 3.58)
+Hình 3.58. Cơ chế lưu dữ liệu nhân vật và tiến trình thế giới
+Dữ liệu cụ thể của nhân vật được ghi trong PlayerManager. Hệ thống lưu scene hiện tại, vị trí nhân vật, máu, thể lực, năng lượng, chỉ số thuộc tính, rune, trang bị, vũ khí, quick slot và các vật phẩm trong inventory. Với vũ khí hoặc vật phẩm đặc biệt, dữ liệu được chuyển sang dạng serializable để có thể ghi vào file save. Một phần quá trình ghi dữ liệu nhân vật được thể hiện như sau. (Hình 3.59)
+Hình 3.59. Cơ chế ghi dữ liệu nhân vật vào CharacterSaveData
+Khi tải game, file save được đọc lại thành CharacterSaveData, sau đó GameProgressionManager khôi phục trạng thái map, map đã mở và Site of Grace gần nhất. Tiếp theo, game load scene đã lưu và đưa dữ liệu trở lại nhân vật. Các giá trị như chỉ số, máu, thể lực, rune và trang bị được gán lại từ dữ liệu save, giúp người chơi tiếp tục từ tiến trình cũ. Hệ thống lưu tải này là nền tảng để duy trì sự liên tục của trải nghiệm, đặc biệt với game có nhiều map, boss, vật phẩm và nâng cấp nhân vật.
+Đa người chơi nền tảng
+Multiplayer nền tảng trong Eternal Hollow 3D được xây dựng để cho phép nhiều người chơi tham gia cùng một phiên chơi. Hệ thống sử dụng Unity Netcode for GameObjects để quản lý host, client, NetworkObject, NetworkVariable và các lời gọi RPC. Ở mức đồ án, multiplayer tập trung vào các chức năng cốt lõi như tạo phiên chơi, tham gia phiên chơi, đồng bộ trạng thái nhân vật và đồng bộ một số hành động gameplay quan trọng.
+Để bắt đầu một phiên chơi mạng, game có thể khởi tạo host trực tiếp hoặc dùng Unity Relay cho chế độ multiplayer online. Khi tạo Relay host, hệ thống đăng nhập Unity Services, tạo allocation, lấy join code, cấu hình UnityTransport bằng dữ liệu Relay và gọi NetworkManager.Singleton.StartHost(). Join code sau đó có thể được dùng để người chơi khác tham gia vào phiên. Cơ chế tạo Relay host được thể hiện như sau. (Hình 3.60)
+Hình 3.60. Cơ chế tạo phiên multiplayer bằng Unity Relay
+Trong quá trình chơi, một số hành động của người chơi cần được đồng bộ sang các client khác. Ví dụ, khi người chơi thực hiện một action bằng vũ khí, client gửi thông tin action lên server thông qua ServerRpc. Server sau đó phát lại action đó đến các client khác bằng ClientRpc. Ở phía client nhận, hệ thống tìm WeaponItemAction và WeaponItem tương ứng rồi thực hiện lại hành động để các người chơi khác nhìn thấy animation hoặc hiệu ứng phù hợp. Cơ chế đồng bộ hành động vũ khí được thể hiện như sau. (Hình 3.61)
+Hình 3.61. Cơ chế đồng bộ hành động vũ khí qua ServerRpc và ClientRpc
+Phần multiplayer trong dự án đóng vai trò nền tảng để nhiều người chơi có thể cùng xuất hiện và thực hiện hành động trong một thế giới chung. WorldGameSessionManager phụ trách thiết lập phiên chơi, host, client và Relay, còn PlayerNetworkManager xử lý đồng bộ trạng thái hoặc hành động quan trọng của nhân vật.
+Tổng kết chương 3
+Chương 3 đã trình bày quá trình xây dựng các hệ thống chính của game Eternal Hollow 3D. Nội dung chương tập trung vào các cơ chế cốt lõi như điều khiển nhân vật, chiến đấu, kỹ năng, hệ thống chỉ số, nâng cấp nhân vật, vật phẩm, AI quái vật, boss, bản đồ, checkpoint, giao diện, lưu dữ liệu và multiplayer nền tảng.
+Các cơ chế điều khiển và chiến đấu được xây dựng dựa trên input, camera, animation, vũ khí, thể lực và va chạm, giúp nhân vật phản hồi phù hợp với thao tác của người chơi. Hệ thống chỉ số, level, trang bị và nâng cấp vũ khí tạo nền tảng cho quá trình phát triển nhân vật trong game.
+Bên cạnh đó, hệ thống quái vật và boss được triển khai theo mô hình trạng thái, cho phép kẻ địch có thể tuần tra, truy đuổi, tấn công và chuyển phase trong các trận boss. Phần bản đồ được tổ chức theo world scene và additive scene, kết hợp với progression, chuyển map và Site of Grace để tạo vòng lặp khám phá, chiến đấu và hồi sinh.
+Ngoài ra, chương cũng trình bày các hệ thống hỗ trợ như vật phẩm, shop, HUD, save/load và multiplayer cơ bản. Những hệ thống này giúp hoàn thiện trải nghiệm gameplay và tạo cơ sở để kiểm thử, đánh giá sản phẩm trong chương tiếp theo.
+THỬ NGHIỆM GAME ETERNAL HOLLOW
+Mục tiêu và môi trường thử nghiệm
+Mục tiêu của phần thực nghiệm là kiểm tra mức độ hoạt động thực tế của các hệ thống đã được xây dựng trong game. Cụ thể, quá trình thử nghiệm tập trung vào việc xác định xem các chức năng chính như tạo nhân vật, di chuyển, chiến đấu, AI quái vật và boss, tương tác với Site of Grace, lưu tiến trình, chuyển map và đồng bộ multiplayer có vận hành đúng theo thiết kế hay không. Bên cạnh đó, phần thực nghiệm cũng nhằm quan sát mức độ liên kết giữa các hệ thống khi chúng cùng tham gia vào một vòng lặp gameplay hoàn chỉnh.
+Khác với việc kiểm tra từng đoạn mã riêng lẻ, thực nghiệm trong chương này được thực hiện theo các kịch bản sử dụng thực tế. Nghĩa là mỗi chức năng không được đánh giá một cách tách biệt hoàn toàn, mà được đặt trong đúng bối cảnh mà người chơi sẽ trải nghiệm trong game. Chẳng hạn, hệ thống chiến đấu sẽ được kiểm tra thông qua quá trình đối đầu với quái vật và boss; hệ thống save-load sẽ được kiểm tra trong mối liên hệ với checkpoint và world progression; còn multiplayer sẽ được đánh giá thông qua việc tạo phiên chơi và đồng bộ trạng thái giữa nhiều người chơi.
+Về môi trường thực nghiệm, dự án được triển khai và chạy thử trên máy tính cá nhân trong môi trường phát triển Unity. Các kịch bản kiểm tra được thực hiện trực tiếp trên phiên bản game hiện tại của đề tài, sử dụng những scene, dữ liệu nhân vật, boss, vật phẩm và hệ thống progression đã được xây dựng trong quá trình phát triển. Hình ảnh giao diện và ảnh chụp trong lúc chạy game được sử dụng như minh chứng trực quan cho kết quả thực nghiệm ở từng mục, giúp quá trình trình bày rõ ràng và có tính thuyết phục hơn.
+Thực nghiệm lối chơi và vòng lặp gameplay
+Để đánh giá khả năng vận hành tổng thể của game, em đã thực nghiệm tiến hành kiểm tra vòng lặp gameplay cốt lõi của hệ thống. Nội dung kiểm tra tập trung vào chuỗi hoạt động chính của người chơi, bao gồm tạo nhân vật, vào màn chơi, khám phá bản đồ, chiến đấu với quái vật, thu thập vật phẩm, tương tác với Site of Grace, nâng cấp và tiếp tục tiến đến khu vực boss. Đây là chuỗi hành vi quan trọng nhất, phản ánh mức độ hoàn chỉnh của sản phẩm khi các hệ thống riêng lẻ được ghép nối thành một tiến trình chơi thống nhất.
+Kịch bản thực nghiệm được bắt đầu từ màn hình khởi động ban đầu của game. Tại đây, hệ thống hiển thị giao diện Press Start, cho phép người chơi bắt đầu phiên chơi và chuyển sang các bước tiếp theo của luồng trải nghiệm. Trong quá trình thử nghiệm, màn hình khởi động được hiển thị ổn định, thao tác bắt đầu trò chơi được tiếp nhận đúng và quá trình chuyển sang giao diện kế tiếp diễn ra bình thường. Điều này cho thấy luồng vào game đã được thiết lập đầy đủ và có thể đóng vai trò điểm bắt đầu cho toàn bộ quá trình trải nghiệm. (Hình 4.1)
+Hình 4.1. Màn hình khởi động Press Start
+Sau khi bắt đầu trò chơi, người chơi được chuyển sang giao diện tạo nhân vật mới. Tại đây, người chơi có thể lựa chọn class khởi đầu và bắt đầu trò chơi với bộ chỉ số, trang bị và vật phẩm tương ứng. Trong quá trình thực nghiệm, chức năng tạo nhân vật hoạt động ổn định, dữ liệu khởi tạo được nạp đúng với lựa chọn ban đầu và người chơi được đưa vào world scene đầu tiên mà không phát sinh lỗi chuyển tiếp. (Hình 4.2)
+Hình 4.2. Giao diện tạo nhân vật và lựa chọn class khởi đầu
+Sau khi vào game, người chơi xuất hiện tại khu vực mở đầu của map hiện tại và bắt đầu thực hiện các thao tác di chuyển, quan sát môi trường và tiếp cận các đối tượng tương tác. Kết quả kiểm tra cho thấy nhân vật phản hồi tốt với input điều khiển, có thể di chuyển ổn định trong không gian 3D và tương tác bình thường với các khu vực chính trong bản đồ. Điều này cho thấy phần khởi tạo màn chơi, vị trí bắt đầu và hệ thống điều hướng nhân vật đã vận hành đúng theo thiết kế. (Hình 4.3)
+Hình 4.3. Nhân vật xuất hiện trong scene và bắt đầu khám phá bản đồ
+Trong quá trình khám phá, người chơi gặp quái vật thường và thực hiện các thao tác chiến đấu cơ bản như tấn công, né tránh, phòng thủ và sử dụng vật phẩm hỗ trợ. Sau khi tiêu diệt quái, hệ thống cập nhật phần thưởng nhận được dưới dạng rune hoặc vật phẩm, đồng thời phản ánh thay đổi trạng thái trên HUD. Kết quả thực nghiệm cho thấy luồng chiến đấu diễn ra liên tục, không bị ngắt quãng giữa các bước điều khiển, gây sát thương và nhận phần thưởng, qua đó chứng minh được sự phối hợp tương đối tốt giữa hệ thống chiến đấu, vật phẩm và chỉ số nhân vật. (Hình 4.4)
+Hình 4.4. Quá trình chiến đấu với quái vật và thu thập vật phẩm trong map
+Khi người chơi tương tác với Site of Grace, hệ thống cho phép phục hồi trạng thái, lưu tiến trình và mở các chức năng hỗ trợ như nâng cấp hoặc dịch chuyển. Trong thực nghiệm, Site of Grace ghi nhận đúng checkpoint hiện tại, phục hồi các chỉ số cần thiết và mở giao diện tương tác theo đúng kịch bản thiết kế. Đây là bước quan trọng trong vòng lặp gameplay vì nó liên kết trực tiếp giữa khám phá, hồi phục, save game và progression. (Hình 4.5)
+Hình 4.5. Tương tác với Site of Grace trong quá trình thực nghiệm
+Sau khi tiếp tục khám phá và đủ điều kiện giao chiến, người chơi tiến vào khu vực boss. Khi boss bị đánh bại, hệ thống cập nhật lại tiến trình, mở khóa map tiếp theo và cho phép tiếp tục hành trình ở khu vực mới. Kết quả này cho thấy vòng lặp gameplay đã hình thành đầy đủ theo hướng: khám phá, chiến đấu, tích lũy tài nguyên, nghỉ tại checkpoint, tăng sức mạnh và chinh phục thử thách lớn hơn ở cuối chặng. (Hình 4.6)
+Hình 4.6. Trận đánh boss và kết quả mở khóa map mới
+Để khái quát quá trình thực nghiệm vòng lặp gameplay, có thể trình bày theo Bảng 4.1 dưới đây.
+Bảng 4.1. Kịch bản và kết quả thực nghiệm vòng lặp gameplay
+Từ kết quả thực nghiệm trên có thể nhận thấy vòng lặp gameplay của game đã được xây dựng tương đối hoàn chỉnh. Các hệ thống khởi động, tạo nhân vật, world scene, chiến đấu, vật phẩm, checkpoint và progression không hoạt động tách rời mà đã liên kết với nhau thành một tiến trình chơi có cấu trúc rõ ràng. Đây là cơ sở quan trọng để tiếp tục đánh giá sâu hơn từng nhóm chức năng ở các mục thực nghiệm tiếp theo.
+Thực nghiệm AI quái vật và quái lớn
+Sau khi kiểm tra vòng lặp gameplay tổng thể, nội dung thực nghiệm tiếp theo tập trung vào hệ thống AI của quái vật và boss. Đây là một thành phần có ảnh hưởng trực tiếp đến độ thử thách của game, đồng thời quyết định liệu trải nghiệm chiến đấu có tạo được cảm giác phản hồi và áp lực đúng như định hướng thiết kế hay không. Mục tiêu của phần thử nghiệm này là đánh giá khả năng phát hiện người chơi, chuyển trạng thái hành vi, thực hiện truy đuổi, tấn công và kích hoạt boss fight trong các tình huống chơi thực tế.
+Trước hết, em tiến hành kiểm tra AI của quái vật thường trong môi trường bản đồ. Khi người chơi tiếp cận đến phạm vi phù hợp, quái vật bắt đầu phát hiện mục tiêu, chuyển từ trạng thái chờ sang truy đuổi và tiến hành tấn công khi ở đủ gần. Trong quá trình kiểm tra, AI phản ứng đúng theo khoảng cách và vị trí của người chơi, không tấn công khi chưa vào vùng phát hiện và có thể chuyển hành vi sang đuổi mục tiêu khi người chơi di chuyển ra khỏi vị trí ban đầu. Kết quả này cho thấy cơ chế phát hiện mục tiêu và điều phối trạng thái cơ bản của quái vật đã hoạt động đúng theo thiết kế. (Hình 4.7)
+Hình 4.7. Quái vật phát hiện người chơi và chuyển sang trạng thái truy đuổi
+Tiếp theo, em quan sát hành vi chiến đấu của quái vật trong cự ly gần. Tại thời điểm người chơi bước vào khoảng cách giao chiến, quái có thể thực hiện đòn đánh, duy trì thế chiến đấu hoặc điều chỉnh vị trí trước khi ra đòn tiếp theo. Điều này cho thấy AI không chỉ di chuyển đơn thuần theo mục tiêu mà đã có bước chuyển sang xử lý chiến đấu tương đối rõ ràng. Trong quá trình kiểm tra, quái vật duy trì được luồng hành vi ổn định, không xuất hiện lỗi dừng trạng thái bất thường hoặc mất mục tiêu ngay trong lúc giao chiến. (Hình 4.8)
+Hình 4.8. Quái vật thực hiện hành vi chiến đấu khi tiếp cận người chơi
+Đối với boss, quá trình thực nghiệm được thực hiện tại khu vực có trigger boss fight. Khi người chơi bước vào vùng kích hoạt, boss được đánh thức, giao diện trận đánh được hiển thị và khu vực chiến đấu được đưa vào trạng thái boss fight. Trong thử nghiệm, boss được kích hoạt đúng thời điểm, chuyển từ trạng thái chờ sang trạng thái chiến đấu và bắt đầu phản ứng với người chơi theo luồng hành vi đã thiết kế. Đây là kết quả quan trọng vì nó cho thấy sự liên kết giữa trigger môi trường, AI boss, HUD và world progression đã hoạt động đồng bộ. (Hình 4.9)
+Hình 4.9. Trước và sau khi boss được kích hoạt khi người chơi đi vào khu vực chiến đấu
+Một nội dung khác được kiểm tra là khả năng thay đổi hành vi của boss theo diễn biến trận đánh. Khi máu của boss giảm đến ngưỡng phù hợp, hệ thống thực hiện chuyển pha và boss bước vào trạng thái chiến đấu mới. Kết quả thử nghiệm cho thấy quá trình chuyển pha diễn ra đúng điều kiện, không làm gián đoạn toàn bộ trận đánh và vẫn giữ được tính liên tục trong luồng chiến đấu. Đây là yếu tố cho thấy AI boss trong dự án đã có mức độ phức tạp cao hơn quái vật thường và đủ để tạo cảm giác giao tranh theo nhiều giai đoạn. (Hình 4.10)
+Hình 4.10. Trước và sau khi boss chuyển sang giai đoạn chiến đấu mới
+Sau khi trận chiến kết thúc, nhóm thực nghiệm tiếp tục kiểm tra phản ứng của hệ thống khi boss bị đánh bại. Kết quả cho thấy trạng thái boss được cập nhật đúng, phần thưởng và tiến trình được ghi nhận, đồng thời hệ thống có thể tiếp tục xử lý bước mở khóa map mới như thiết kế. Điều này chứng minh AI boss không chỉ hoạt động ở giai đoạn giao chiến mà còn liên kết đúng với progression chung của game.
+Để khái quát kết quả thực nghiệm hệ thống AI, có thể trình bày theo Bảng 4.2 dưới đây.
+Bảng 4.2. Kịch bản và kết quả thực nghiệm AI quái vật và boss
+Từ các kết quả trên có thể nhận thấy hệ thống AI của dự án đã vận hành tương đối ổn định trong bối cảnh chơi thực tế. Quái vật thường và boss đều phản ứng đúng với người chơi, có khả năng chuyển trạng thái phù hợp và tạo ra được nhịp giao tranh rõ ràng trong gameplay. Đây là cơ sở để tiếp tục đánh giá sâu hơn hệ thống chiến đấu ở mục tiếp.
+Thực nghiệm hệ thống chiến đấu
+Sau khi đánh giá khả năng vận hành của AI quái vật và boss, nhóm thực nghiệm tiếp tục kiểm tra hệ thống chiến đấu của game. Đây là thành phần trung tâm quyết định trực tiếp đến cảm giác điều khiển và chất lượng gameplay của một game hành động nhập vai. Nội dung kiểm tra tập trung vào các thao tác chiến đấu cơ bản như tấn công, né tránh, phòng thủ, sử dụng kỹ năng hoặc phép thuật, đồng thời quan sát sự thay đổi của máu, thể lực, hiệu ứng trạng thái và phản hồi trên HUD trong suốt quá trình giao tranh.
+Trước hết là thực nghiệm kiểm tra hành vi tấn công cơ bản bằng vũ khí cận chiến. Khi người chơi thực hiện thao tác đánh, nhân vật phát animation tương ứng, vùng va chạm của vũ khí được kích hoạt đúng thời điểm và sát thương được truyền đến mục tiêu nếu có va chạm hợp lệ. Trong quá trình thử nghiệm, đòn đánh được thực hiện liên tục theo đúng nhịp điều khiển, không xuất hiện tình trạng kích hoạt sai thời điểm hoặc gây sát thương ngoài vùng va chạm. Kết quả này cho thấy cơ chế weapon action, animation chiến đấu và damage collider đã được phối hợp tương đối chính xác. (Hình 4.11)
+Hình 4.11. Nhân vật thực hiện đòn tấn công cận chiến
+Tiếp theo, đánh giá cơ chế né tránh và phòng thủ. Khi người chơi sử dụng thao tác né, nhân vật phản ứng đúng theo hướng di chuyển và tiêu hao thể lực tương ứng. Khi sử dụng phòng thủ, nhân vật có thể giảm hoặc chặn một phần tác động của đòn đánh, đồng thời phản ánh thay đổi lên trạng thái chiến đấu. Trong thực nghiệm, hai cơ chế này hoạt động ổn định, giúp người chơi có thể xử lý tình huống chiến đấu linh hoạt hơn thay vì chỉ phụ thuộc vào tấn công liên tục. (Hình 4.12)
+Hình 4.12. Thao tác né tránh và phòng thủ trong tình huống giao chiến
+Một nội dung khác được kiểm tra là việc sử dụng kỹ năng, phép thuật và projectile. Trong các tình huống phù hợp, người chơi có thể kích hoạt phép hoặc vật phẩm chiến đấu để tạo hiệu ứng hỗ trợ hoặc gây sát thương tầm xa. Kết quả thử nghiệm cho thấy sau khi sử dụng, hệ thống trừ đúng lượng thể lực hoặc năng lượng tương ứng, đồng thời hiệu ứng phép được kích hoạt đúng theo loại kỹ năng đã chọn. Điều này cho thấy hệ thống chiến đấu của dự án không chỉ giới hạn trong các thao tác cận chiến mà còn hỗ trợ mở rộng sang nhiều hình thức tấn công khác nhau. (Hình 4.13)
+Hình 4.13. Sử dụng cung tên
+Bên cạnh hành vi tấn công và phòng thủ, nhóm thực nghiệm cũng quan sát cách hệ thống phản hồi các thay đổi trạng thái chiến đấu thông qua HUD. Trong quá trình giao tranh, thanh máu, thể lực, năng lượng và một số hiệu ứng trạng thái được cập nhật liên tục theo tình huống thực tế. Việc hiển thị này có vai trò quan trọng vì nó giúp người chơi theo dõi được diễn biến chiến đấu và đưa ra quyết định phù hợp. Kết quả thực nghiệm cho thấy các thành phần HUD được cập nhật đồng bộ với trạng thái nhân vật, góp phần duy trì sự rõ ràng và trực quan của gameplay.
+Để tổng hợp kết quả kiểm tra hệ thống chiến đấu, có thể trình bày theo Bảng 4.3 dưới đây.
+Bảng 4.3. Kịch bản và kết quả thực nghiệm hệ thống chiến đấu
+Từ kết quả thực nghiệm trên có thể thấy hệ thống chiến đấu của game đã được triển khai tương đối đầy đủ và có thể vận hành ổn định trong bối cảnh chơi thực tế. Các cơ chế tấn công, phòng thủ, né tránh, kỹ năng và HUD không hoạt động độc lập mà đã phối hợp thành một trải nghiệm chiến đấu có tính phản hồi rõ ràng. Đây là cơ sở quan trọng để tiếp tục đánh giá các hệ thống hỗ trợ tiến trình chơi như save-load, chuyển map và multiplayer ở các mục tiếp theo.
+Thử nghiệm kho đồ, cửa hàng và nâng cấp
+Bên cạnh các cơ chế chiến đấu và tiến trình, nhóm chức năng quản lý tài nguyên của người chơi cũng được đưa vào thực nghiệm để kiểm tra mức độ vận hành trong điều kiện chơi thực tế. Nội dung thử nghiệm ở mục này tập trung vào ba thành phần chính: inventory, hệ thống shop gắn với merchant, và cơ chế nâng cấp nhân vật, nâng cấp vũ khí. Đây là những chức năng có vai trò duy trì vòng lặp phát triển của người chơi sau quá trình chiến đấu và thu thập tài nguyên.
+Trước hết, em thực nghiệm tiến hành kiểm tra giao diện inventory và khả năng quản lý trang bị. Người chơi mở kho đồ, quan sát các vật phẩm hiện có, thay đổi vũ khí hoặc giáp đang sử dụng, đồng thời kiểm tra phản ứng của giao diện sau khi thao tác. Kết quả ghi nhận cho thấy hệ thống hiển thị đúng các vật phẩm đang sở hữu, cho phép thay đổi trang bị bình thường và cập nhật lại trạng thái nhân vật sau khi thay đổi. Điều này cho thấy inventory không chỉ lưu trữ dữ liệu mà còn liên kết trực tiếp với hệ thống chỉ số và loadout của nhân vật. (Hình 4.14)
+Hình 4.14. Giao diện kho đồ
+Tiếp theo, nhóm thực nghiệm tiến hành kiểm tra hệ thống shop thông qua tương tác với merchant. Người chơi mở giao diện mua bán, kiểm tra danh sách vật phẩm trong cửa hàng, quan sát số rune hiện có và thực hiện thao tác mua hoặc bán vật phẩm. Trong quá trình thử nghiệm, giao diện shop hiển thị đúng tên cửa hàng, số rune, danh sách vật phẩm và thông tin chi tiết của mục đang chọn. Các thao tác mua bán được thực hiện đúng điều kiện tài nguyên, đồng thời thay đổi được phản ánh lại lên kho đồ và lượng rune của người chơi. (Hình 4.15)
+Hình 4.15. Giao diện shop và quá trình mua bán với merchant
+Một nội dung quan trọng khác là kiểm tra cơ chế nâng cấp nhân vật. Tại giao diện level up, người chơi phân phối điểm thuộc tính và xác nhận tăng cấp bằng rune đã tích lũy được. Kết quả thực nghiệm cho thấy sau khi xác nhận, lượng rune bị trừ đúng theo chi phí nâng cấp, các thuộc tính được cập nhật theo lựa chọn của người chơi và tiến trình được lưu lại. Điều này chứng tỏ cơ chế tăng trưởng nhân vật đã hoạt động đúng về cả mặt dữ liệu lẫn giao diện tương tác. (Hình 4.16)
+Hình 4.16. Giao diện nâng cấp nhân vật
+Cuối cùng, em thực nghiệm kiểm tra cơ chế nâng cấp vũ khí. Người chơi chọn một vũ khí trong danh sách trang bị, kiểm tra điều kiện nguyên liệu và xác nhận nâng cấp. Trong quá trình thử nghiệm, hệ thống xác định đúng loại nguyên liệu cần dùng, trừ vật liệu sau khi nâng cấp thành công và cập nhật lại cấp độ của vũ khí. Đồng thời, trạng thái mới của vũ khí tiếp tục được phản ánh vào hiệu quả chiến đấu của nhân vật. Kết quả này cho thấy cơ chế nâng cấp vũ khí đã được tích hợp đúng với inventory, dữ liệu vật phẩm và hệ thống trang bị. (Hình 4.17)
+Hình 4.17. Giao diện nâng cấp vũ khí
+Để khái quát kết quả thực nghiệm của nhóm chức năng này, có thể trình bày theo Bảng 4.4 dưới đây.
+Bảng 4.4. Kịch bản và kết quả thực nghiệm kho đồ, shop và nâng cấp
+Qua các bước kiểm tra trên, có thể thấy hệ thống kho đồ, shop và nâng cấp của dự án đã vận hành tương đối ổn định trong bối cảnh chơi thực tế. Các chức năng quản lý vật phẩm, mua bán và phát triển nhân vật không tồn tại tách rời mà đã hỗ trợ trực tiếp cho vòng lặp gameplay, góp phần hoàn thiện tiến trình khám phá, chiến đấu và tăng trưởng của người chơi trong game.
+Thực nghiệm lưu, tải, quá trình chuyển map
+Trong một game có nhiều khu vực, nhiều checkpoint và tiến trình mở khóa theo từng chặng, nhóm chức năng save-load, progression và chuyển map giữ vai trò duy trì tính liên tục của trải nghiệm chơi. Nếu phần này xảy ra sai lệch, người chơi rất dễ bị mất tiến trình, xuất hiện sai vị trí hoặc không thể tiếp tục hành trình sau các mốc quan trọng như nghỉ tại Site of Grace hay đánh bại boss. Vì vậy, phần thực nghiệm này được thực hiện nhằm kiểm tra khả năng ghi nhận, khôi phục và cập nhật đúng trạng thái của game trong các tình huống chơi thực tế.
+Kịch bản đầu tiên được tiến hành tại Site of Grace. Người chơi di chuyển đến checkpoint, thực hiện thao tác nghỉ và lưu tiến trình, sau đó tiếp tục một số hoạt động trong map trước khi thoát khỏi phiên chơi. Kết quả cho thấy hệ thống ghi nhận đúng vị trí checkpoint gần nhất, đồng thời lưu lại các dữ liệu cần thiết liên quan đến nhân vật và trạng thái màn chơi hiện tại. Quá trình lưu diễn ra bình thường, không làm gián đoạn luồng tương tác của người chơi. (Hình 4.18)
+Hình 4.18. Thao tác lưu tiến trình tại Site Of Grace
+Sau bước lưu, em thực nghiệm tiến hành mở lại game để kiểm tra khả năng phục hồi dữ liệu. Khi tải save, nhân vật xuất hiện lại trong đúng scene tương ứng với tiến trình trước đó, đồng thời giữ được các thông tin cơ bản như checkpoint gần nhất và trạng thái phát triển hiện tại. Điều này cho thấy cơ chế load không chỉ đọc được dữ liệu đã lưu mà còn tái lập lại được ngữ cảnh chơi ở mức cần thiết để người chơi có thể tiếp tục hành trình mà không bị lệch tiến trình. (Hình 4.19)
+Hình 4.19. Trạng thái game sau khi tải lại dữ liệu đã lưu
+Tiếp theo, phần thực nghiệm chuyển sang kiểm tra world progression. Sau khi người chơi hoàn thành trận đánh boss của map hiện tại, hệ thống được quan sát ở thời điểm cập nhật tiến trình. Kết quả ghi nhận cho thấy trạng thái hoàn thành của khu vực được ghi nhận đúng, map tiếp theo được mở khóa và dữ liệu progression thay đổi phù hợp với thiết kế ban đầu. Nhờ vậy, việc vượt qua boss không chỉ mang ý nghĩa chiến đấu mà còn thực sự trở thành điều kiện mở ra giai đoạn tiếp theo của trò chơi.
+Trên cơ sở map mới đã được mở, nhóm thực nghiệm tiếp tục kiểm tra thao tác chuyển scene. Người chơi được đưa sang khu vực kế tiếp và xuất hiện tại entry Site of Grace tương ứng. Trong quá trình theo dõi, scene mới được tải đúng, vị trí khởi tạo phù hợp với cấu hình của map đích và không phát sinh hiện tượng mất dữ liệu sau khi chuyển cảnh. Điều này cho thấy hệ thống chuyển map đã phối hợp tốt với dữ liệu progression và checkpoint.
+Có thể tóm tắt quá trình thử nghiệm bằng Bảng 4.5 sau đây.
+Bảng 4.5. Kịch bản và kết quả thực nghiệm save-load, progression và chuyển map
+Từ kết quả thực nghiệm có thể nhận thấy nhóm chức năng này đã vận hành ổn định trong luồng chơi thực tế. Việc lưu tiến trình, khôi phục dữ liệu, mở khóa map và chuyển scene đều bám đúng với cấu trúc đã thiết kế, qua đó bảo đảm người chơi có thể tiếp tục trải nghiệm một cách liền mạch giữa các giai đoạn của game.
+Thực nghiệm đa người chơi
+Nội dung thực nghiệm cuối cùng của chương này tập trung vào chức năng multiplayer, nhằm kiểm tra khả năng tạo phiên chơi, tham gia vào phiên đã tồn tại và đồng bộ trạng thái cơ bản giữa nhiều người chơi. Đây là một phần có ý nghĩa quan trọng đối với dự án, bởi multiplayer không chỉ liên quan đến kết nối mạng mà còn ảnh hưởng trực tiếp đến cách các hệ thống khác như nhân vật, scene, boss fight và progression vận hành trong môi trường có nhiều client cùng tham gia.
+Kịch bản đầu tiên được thực hiện với thao tác tạo phiên chơi từ phía host. Người chơi khởi tạo phòng, hệ thống thiết lập phiên mạng và cung cấp mã tham gia để client khác có thể kết nối. Trong quá trình kiểm tra, phiên chơi được tạo thành công, luồng khởi tạo diễn ra ổn định và không phát sinh lỗi ngay tại bước bắt đầu. Điều này cho thấy phần cấu hình mạng nền tảng của game đã hoạt động đúng với mục tiêu thiết kế. (Hình 4.20)
+Hình 4.20. Người chơi tạo phiên multiplayer ở vai trò host
+Sau đó, một client khác sử dụng mã tham gia để vào cùng phiên chơi. Khi kết nối thành công, cả hai người chơi cùng xuất hiện trong môi trường game và có thể quan sát được sự hiện diện của nhau trong cùng một scene. Kết quả này cho thấy quá trình join session được thực hiện đúng, đồng thời hệ thống đã thiết lập được môi trường chơi chung giữa nhiều người dùng. (Hình 4.21)
+Hình 4.21. Người chơi thứ hai tham gia thành công vào phiên multiplayer
+Bước tiếp theo của thực nghiệm là quan sát khả năng đồng bộ vị trí và trạng thái di chuyển. Khi một người chơi di chuyển, thay đổi hướng hoặc thực hiện hành động cơ bản, người chơi còn lại có thể nhìn thấy những thay đổi đó trong thời gian thực. Trong quá trình theo dõi, vị trí và hướng quay của nhân vật được cập nhật tương đối ổn định, không xuất hiện sai lệch lớn về trạng thái hiển thị giữa các client. Điều này cho thấy hệ thống đồng bộ đối tượng mạng đã đáp ứng được yêu cầu cơ bản của gameplay nhiều người chơi.
+Ngoài đồng bộ nhân vật, em cũng kiểm tra khả năng đồng bộ scene và một số trạng thái tiến trình cơ bản. Khi host tải world scene hoặc chuyển sang một khu vực mới, client còn lại cũng được đưa vào đúng môi trường tương ứng. Kết quả ghi nhận cho thấy quá trình tải scene mạng được thực hiện đúng, người chơi không bị tách khỏi phiên hiện tại và vẫn tiếp tục được đặt trong cùng bối cảnh chơi với host. Đây là yếu tố cần thiết để multiplayer có thể hoạt động ổn định trong một game có nhiều map như dự án này.
+Trong phạm vi thực nghiệm của đề tài, multiplayer đã đạt được mục tiêu nền tảng là tạo phòng, tham gia phiên chơi, đồng bộ nhân vật và duy trì trạng thái chung của scene. Mặc dù chưa đi sâu vào toàn bộ các tình huống phức tạp có thể phát sinh trong môi trường mạng, kết quả thử nghiệm hiện tại cho thấy hệ thống đã hình thành được khung vận hành cơ bản cho chế độ nhiều người chơi.
+Có thể tóm tắt quá trình thử nghiệm bằng Bảng 4.6 sau đây.
+Bảng 4.6. Kịch bản và kết quả thực nghiệm multiplayer
+Tổng kết chương 4
+Chương 4 đã trình bày quá trình thực nghiệm các nhóm chức năng chính của hệ thống, từ vòng lặp gameplay, AI, chiến đấu, quản lý vật phẩm và nâng cấp cho đến save-load, chuyển map và multiplayer. Thông qua các kịch bản kiểm tra cụ thể, có thể thấy phần lớn cơ chế quan trọng của game đã hoạt động đúng theo định hướng thiết kế và có khả năng phối hợp với nhau trong quá trình vận hành thực tế.
+Các kết quả thực nghiệm cho thấy dự án đã hình thành được một nguyên mẫu game hành động nhập vai 3D có cấu trúc tương đối hoàn chỉnh, trong đó các hệ thống không tồn tại rời rạc mà đã được liên kết thành một trải nghiệm chơi có tiến trình rõ ràng. Đây là cơ sở để đi đến phần kết luận, nơi tổng hợp lại những gì đề tài đã đạt được, những hạn chế còn tồn tại và hướng phát triển trong giai đoạn tiếp theo.
+KẾT LUẬN
+Kết quả đạt được
+Sau quá trình nghiên cứu, thiết kế, xây dựng và thực nghiệm, đề tài đã hoàn thành mục tiêu chính là xây dựng một nguyên mẫu game 3D hành động nhập vai trên máy tính cá nhân theo định hướng Soulslike. Sản phẩm không dừng ở mức mô phỏng một vài chức năng đơn lẻ, mà đã hình thành được một vòng lặp gameplay tương đối hoàn chỉnh, bao gồm tạo nhân vật, khám phá bản đồ, chiến đấu, thu thập vật phẩm, nghỉ tại Site of Grace, nâng cấp, lưu tiến trình, chuyển map và hỗ trợ multiplayer ở mức nền tảng.
+Về mặt lý thuyết, đề tài đã đạt được các kết quả chính sau:
+Hệ thống hóa được cơ sở lý thuyết liên quan đến game 3D hành động nhập vai, đặc biệt là đặc trưng gameplay theo phong cách Soulslike.
+Làm rõ được các thành phần kỹ thuật quan trọng như AI quái vật và boss, hệ thống chỉ số nhân vật, cấu trúc bản đồ nhiều scene, progression qua nhiều map và cơ chế lưu tiến trình.
+Xây dựng được phần phân tích và thiết kế hệ thống tương đối đầy đủ, bao gồm yêu cầu chức năng, yêu cầu phi chức năng, use case, biểu đồ hoạt động, biểu đồ tuần tự, kiến trúc tổng thể, thiết kế dữ liệu và tài nguyên game.
+Làm rõ được vai trò của các công nghệ sử dụng trong dự án như Unity, C#, Input System và Netcode for GameObjects.
+Về mặt ứng dụng, đề tài đã triển khai được các hệ thống chính của game, gồm:
+Hệ thống nhân vật với khả năng tạo nhân vật, lựa chọn class khởi đầu, quản lý chỉ số và trang bị.
+Hệ thống điều khiển và di chuyển nhân vật trong môi trường 3D.
+Hệ thống chiến đấu gồm tấn công, né tránh, phòng thủ, sử dụng phép thuật, vật phẩm hỗ trợ và xử lý va chạm gây sát thương.
+Hệ thống AI quái vật và boss theo mô hình trạng thái, có khả năng phát hiện mục tiêu, truy đuổi, chiến đấu và kích hoạt boss fight.
+Hệ thống Site of Grace, checkpoint, hồi sinh, lưu và tải tiến trình.
+Hệ thống bản đồ nhiều world scene, mở khóa map sau khi hạ boss và chuyển scene theo progression.
+Hệ thống vật phẩm, inventory, shop, merchant, nâng cấp nhân vật và nâng cấp vũ khí.
+Hệ thống HUD gameplay và multiplayer nền tảng.
+Các kết quả thực nghiệm ở Chương 4 cho thấy phần lớn các hệ thống trên đã hoạt động đúng theo thiết kế và có thể phối hợp với nhau trong quá trình chơi thực tế.
+Hạn chế
+Bên cạnh các kết quả đạt được, đề tài vẫn còn một số hạn chế:
+Sản phẩm hiện mới ở mức nguyên mẫu, nên nội dung game chưa thật sự phong phú về số lượng bản đồ, quái vật, boss, vật phẩm và biến thể chiến đấu.
+Hệ thống AI đã vận hành được nhưng mức độ đa dạng trong hành vi của quái vật và boss vẫn còn hạn chế.
+Cân bằng chiến đấu, nhịp độ tăng tiến sức mạnh và độ phong phú của animation vẫn có thể tiếp tục hoàn thiện thêm.
+Multiplayer mới dừng ở mức nền tảng, chưa mở rộng sâu cho nhiều tình huống phức tạp hoặc số lượng người chơi lớn.
+Quá trình kiểm thử chủ yếu tập trung vào thực nghiệm chức năng và kịch bản gameplay, chưa đi sâu vào tối ưu hiệu năng hoặc kiểm thử tải trên nhiều điều kiện khác nhau.
+Hướng phát triển
+Từ những kết quả hiện có, đề tài có thể tiếp tục phát triển theo các hướng sau:
+Mở rộng thêm số lượng world scene, quái vật, boss, vật phẩm và nhiệm vụ để tăng chiều sâu nội dung.
+Hoàn thiện hơn hệ thống AI theo hướng đa pha, có nhiều hành vi chiến thuật và phản ứng linh hoạt hơn với người chơi.
+Bổ sung thêm các loại vũ khí, phép thuật, hiệu ứng trạng thái và nhánh phát triển nhân vật để đa dạng hóa lối chơi.
+Mở rộng và hoàn thiện hệ thống multiplayer để hỗ trợ tốt hơn cho trải nghiệm co-op.
+Tối ưu hiệu năng, cải thiện giao diện, animation, âm thanh và hiệu ứng hình ảnh để nâng cao chất lượng tổng thể của sản phẩm.
+Tiếp tục kiểm thử trên nhiều kịch bản và nhiều cấu hình máy khác nhau để nâng cao độ ổn định của game.
+Nhìn chung, đề tài đã đạt được mục tiêu xây dựng một game 3D hành động nhập vai ở mức nguyên mẫu có tính hệ thống, có khả năng vận hành thực tế và có giá trị cả về học thuật lẫn ứng dụng. Đây là nền tảng quan trọng để tiếp tục mở rộng sản phẩm trong tương lai, đồng thời cũng là kết quả thể hiện quá trình vận dụng kiến thức chuyên ngành vào một bài toán phát triển game tương đối toàn diện.
+TÀI LIỆU THAM KHẢO
+[1]. Alaric, T. (2026). Unity 6 Step-by-Step. Independently published.
+[2]. Berinstein, P. (2014). Game Development Tool Essentials. Apress.
+[3]. Borromeo, N. A. (2024). Hands-On Unity Game Development. Packt Publishing.
+[4]. Buttfield, P. (2019). Unity Game Development Cookbook. O'Reilly Media.
+[5]. Doran, J. P. (2025). Unity 6 Shaders and Effects Cookbook. Packt Publishing.
+[6]. Felicia, P. (2015). Unity From Zero to Proficiency. LPF Publishing.
+[7]. Gregory, J. (2018). Game Engine Architecture. A K Peters/CRC Press.
+[8]. Okita, A. (2014). Learning C# Programming with Unity 3D. Routledge.
+[9]. Silva, V. (2011). Advanced Android 4 Games. Apress.
+[10]. Trafford, G. (2026). Advanced Unity 6. Independently published.
+Từ viết tắt || Ý nghĩa
+3D || Three-Dimensional
+AI || Artificial Intelligence
+C# || C Sharp
+HUD || Heads-Up Display
+UI || User Interface
+NPC || Non-Player Character
+HP || Health Point
+FOV || Field of View
+ID || Identifier
+JSON || JavaScript Object Notation
+Lớp chức năng || Thành phần chính || Vai trò
+Lớp giao diện và nhập liệu || UI / HUD / Menu, Input System || Tiếp nhận thao tác người chơi và hiển thị thông tin
+Lớp gameplay || Player System, Combat & Interaction System, AI System || Xử lý các cơ chế chơi cốt lõi của game
+Lớp quản lý thế giới || World Management System, Scene / Map Progression || Quản lý scene, bản đồ, checkpoint, boss và tiến trình
+Lớp dữ liệu và mạng || Data & Save System, Multiplayer System || Lưu trữ dữ liệu, save-load và đồng bộ multiplayer
+Thành phần || Vai trò
+Bộ quản lý nhân vật || Điều phối toàn bộ trạng thái và hành vi của nhân vật
+Hệ thống di chuyển || Xử lý đi bộ, chạy, né tránh, nhảy và xoay hướng
+Hệ thống chiến đấu || Xử lý tấn công, phòng thủ, dùng kỹ năng và va chạm
+Hệ thống chỉ số || Quản lý máu, thể lực, năng lượng, thuộc tính nhân vật
+Hệ thống trang bị, kho đồ || Quản lý vũ khí, giáp, vật phẩm và trạng thái trang bị
+Hệ thống class khởi đầu || Khởi tạo chỉ số, trang bị và phong cách chơi ban đầu
+Thành phần || Vai trò
+Hệ thống tấn công || Xử lý đòn đánh, animation, collider và gây sát thương
+Hệ thống phòng thủ và né tránh || Xử lý block, giảm sát thương, tiêu hao thể lực và tránh đòn
+Hệ thống sử dụng vật phẩm || Cho phép dùng vật phẩm hồi phục hoặc vật phẩm hỗ trợ
+Hệ thống hiệu ứng trạng thái || Áp dụng các trạng thái như cháy, độc, chảy máu hoặc hiệu ứng tăng cường
+Hệ thống tương tác môi trường || Xử lý nhặt vật phẩm, checkpoint, merchant và các đối tượng tương tác khác
+Thành phần || Vai trò
+AI State Machine || Quản lý trạng thái hành vi của quái và boss
+Detection / Targeting || Phát hiện người chơi và xác định mục tiêu
+Navigation / Movement || Điều hướng và di chuyển tới mục tiêu
+Combat AI || Lựa chọn hành động tấn công hoặc truy đuổi
+Boss Fight Control || Kích hoạt và điều phối trận đấu với boss
+Progression Integration || Cập nhật trạng thái boss và tiến trình map
+Thành phần || Vai trò
+Session Manager || Quản lý phiên chơi, host và client
+Network Connection || Thiết lập và duy trì kết nối mạng
+Network Object Sync || Đồng bộ trạng thái đối tượng mạng
+Scene Sync || Đồng bộ scene và trạng thái world
+Gameplay Sync || Đồng bộ các sự kiện gameplay như chiến đấu, boss fight, hồi sinh
+Player Data Sync || Đồng bộ dữ liệu liên quan đến nhân vật người chơi
+Thành phần || Vai trò
+Character Data || Lưu thông tin chỉ số, trang bị, inventory và trạng thái nhân vật
+Item / Weapon Data || Lưu dữ liệu tĩnh của vật phẩm, vũ khí, giáp và hiệu ứng
+Save Game Manager || Ghi và đọc dữ liệu lưu
+Progression Manager || Theo dõi map hiện tại, map mở khóa, boss đã tiêu diệt và class khởi đầu
+World Data || Lưu trạng thái Site of Grace, world item, boss, checkpoint và scene
+Multiplayer Related Data || Hỗ trợ đồng bộ các dữ liệu cần thiết trong phiên chơi mạng
+Nhóm dữ liệu || Nội dung chính
+Dữ liệu nhận dạng nhân vật || Tên nhân vật, class khởi đầu, giới tính, vị trí hiện tại
+Dữ liệu tài nguyên || Máu, thể lực, năng lượng, rune
+Dữ liệu thuộc tính || Vitality, Endurance, Mind, Strength, Dexterity, Intelligence, Faith
+Dữ liệu trang bị || Vũ khí, giáp, vật phẩm nhanh, projectile
+Dữ liệu trạng thái || Trạng thái đầu độc, cháy, chảy máu, đóng băng, hiệu ứng tăng cường
+Chỉ số || Ý nghĩa
+Vitality || Ảnh hưởng đến lượng máu và khả năng chịu đòn
+Endurance || Ảnh hưởng đến thể lực và khả năng duy trì hành động
+Mind || Ảnh hưởng đến năng lượng dùng cho kỹ năng hoặc phép
+Strength || Ảnh hưởng đến khả năng sử dụng và sức mạnh của vũ khí cận chiến nặng
+Dexterity || Ảnh hưởng đến vũ khí nhanh, độ linh hoạt và một số hành động đặc biệt
+Intelligence || Ảnh hưởng đến năng lực sử dụng phép thuật
+Faith || Ảnh hưởng đến kỹ năng hỗ trợ, phép hệ tín ngưỡng và hiệu ứng đặc biệt
+Nhóm dữ liệu || Nội dung chính
+Dữ liệu vật phẩm || Tên vật phẩm, mô tả, loại vật phẩm, giá trị sử dụng
+Dữ liệu vũ khí || Loại vũ khí, sát thương, yêu cầu chỉ số, cấp nâng cấp, animation
+Dữ liệu giáp || Loại giáp, vị trí trang bị, chỉ số phòng thủ, hiệu ứng bổ trợ
+Dữ liệu vật phẩm nhanh || Số lượng dùng, tác dụng hồi phục hoặc hỗ trợ
+Dữ liệu projectile || Loại đạn, số lượng, sát thương, phạm vi ảnh hưởng
+Dữ liệu hiệu ứng || Hiệu ứng tăng cường, hiệu ứng trạng thái, thời gian tác dụng
+Trường dữ liệu || Ý nghĩa
+itemID || Mã định danh của vũ khí trong hệ thống
+weaponClass || Phân loại vũ khí
+upgradeLevel || Cấp độ nâng cấp hiện tại
+physicalDamage || Sát thương vật lý cơ bản
+magicDamage / fireDamage / holyDamage / lightningDamage || Các loại sát thương nguyên tố
+strengthREQ / dexREQ / intREQ / faithREQ || Điều kiện thuộc tính để sử dụng vũ khí
+baseStaminaCost || Lượng thể lực tiêu hao cơ bản
+weaponModel || Mô hình hiển thị của vũ khí
+weaponAnimator || Animation hoặc animator liên quan đến vũ khí
+Nhóm dữ liệu || Nội dung chính
+Dữ liệu boss || Mã boss, tên boss, trạng thái kích hoạt, trạng thái bị tiêu diệt
+Dữ liệu map || Tên map, scene, điểm vào, checkpoint, cấu hình độ khó
+Dữ liệu progression || Map hiện tại, map đã mở khóa, boss đã tiêu diệt, trạng thái chiến thắng
+Dữ liệu world state || Site of Grace, world item, đối tượng đặc biệt trong map
+Trường dữ liệu || Ý nghĩa
+currentMapIndex || Xác định map hiện tại của người chơi
+mapsUnlocked || Danh sách hoặc trạng thái các map đã được mở khóa
+bossID || Mã định danh của boss tương ứng với từng map
+entrySiteOfGraceID || Điểm vào mặc định của map
+bossesDefeated || Trạng thái các boss đã bị tiêu diệt
+bossesAwakened || Trạng thái boss đã được kích hoạt
+gameWon || Trạng thái hoàn thành toàn bộ game
+Nhóm dữ liệu || Nội dung chính
+Dữ liệu nhận dạng và vị trí || Tên nhân vật, class khởi đầu, vị trí hiện tại, scene hiện tại
+Dữ liệu chỉ số và tài nguyên || Máu, thể lực, năng lượng, rune, thuộc tính
+Dữ liệu trang bị và inventory || Vũ khí, giáp, vật phẩm nhanh, projectile, danh sách vật phẩm sở hữu
+Dữ liệu world state || Site of Grace, world item, boss, checkpoint, dead spot
+Dữ liệu progression || Map hiện tại, map mở khóa, boss đã tiêu diệt, trạng thái game
+Dữ liệu khác || Merchant stock, active buffs, dialogue stage
+Trường dữ liệu || Ý nghĩa
+sceneIndex || Scene hiện tại khi lưu game
+xPosition, yPosition, zPosition || Vị trí hiện tại của nhân vật
+currentHealth || Lượng máu hiện tại
+runes || Số rune đang sở hữu
+lastSiteOfGraceRestedAt || Checkpoint gần nhất
+bossesDefeated || Trạng thái boss đã bị tiêu diệt
+mapsUnlocked || Trạng thái map đã mở khóa
+weaponsInInventory || Danh sách vũ khí trong kho đồ
+quickSlotItemsInInventory || Danh sách vật phẩm nhanh đang sở hữu
+activeBuffs || Danh sách hiệu ứng đang hoạt động
+Các bước || Nội dung kiểm tra || Kết quả mong đợi || Kết quả ghi nhận
+1 || Khởi động game và vào màn hình Press Start || Game khởi động ổn định, cho phép bắt đầu phiên chơi || Hoạt động đúng, thời gian phản hồi <1ms
+2 || Tạo nhân vật mới || Nhân vật được khởi tạo đúng class và dữ liệu ban đầu || Hoạt động đúng, thời gian phản hồi <1ms
+3 || Vào world scene đầu tiên || Người chơi xuất hiện đúng vị trí khởi đầu || Hoạt động đúng, thời gian phản hồi <1s
+4 || Di chuyển và khám phá || Nhân vật phản hồi đúng input, di chuyển ổn định || Hoạt động đúng, thời gian phản hồi <1ms
+5 || Chiến đấu với quái thường || Có thể tấn công, né, nhận sát thương và tiêu diệt địch || Hoạt động đúng, thời gian phản hồi <1ms
+6 || Thu thập vật phẩm và rune || Vật phẩm và rune được cộng vào hệ thống hiện tại || Hoạt động đúng, thời gian phản hồi <1ms
+7 || Tương tác Site of Grace || Phục hồi, lưu tiến trình và mở menu tương tác || Hoạt động đúng, thời gian phản hồi <1ms
+8 || Đánh bại boss || Boss bị tiêu diệt và trạng thái trận đánh được cập nhật || Hoạt động đúng, thời gian phản hồi <1ms
+9 || Mở khóa map tiếp theo || Progression được cập nhật và cho phép chuyển map || Hoạt động đúng, thời gian phản hồi <1s
+Các bước || Nội dung kiểm tra || Kết quả mong đợi || Kết quả ghi nhận
+1 || Quái vật phát hiện người chơi || Quái chuyển từ trạng thái chờ sang truy đuổi || Hoạt động đúng, thời gian phản hồi <1ms
+2 || Quái vật tiếp cận và tấn công || Quái thực hiện hành vi chiến đấu ở cự ly gần || Hoạt động đúng, thời gian phản hồi <1ms
+3 || Boss fight được kích hoạt || Boss thức tỉnh, HUD boss hiển thị đúng || Hoạt động đúng, thời gian phản hồi <1ms
+4 || Boss chuyển pha || Boss đổi trạng thái khi máu giảm đến ngưỡng phù hợp || Hoạt động đúng, thời gian phản hồi <1ms
+5 || Boss bị đánh bại || Trạng thái trận đánh được cập nhật, progression tiếp tục || Hoạt động đúng, thời gian phản hồi <1ms
+Các bước || Nội dung kiểm tra || Kết quả mong đợi || Kết quả ghi nhận
+1 || Tấn công bằng vũ khí cận chiến || Animation, va chạm và sát thương hoạt động đúng || Hoạt động đúng, thời gian phản hồi <1ms
+2 || Né tránh || Nhân vật di chuyển né đúng hướng và tiêu hao thể lực || Hoạt động đúng, thời gian phản hồi <1ms
+3 || Phòng thủ || Nhân vật có thể giảm hoặc chặn tác động của đòn đánh || Hoạt động đúng, thời gian phản hồi <1ms
+4 || Sử dụng phép thuật hoặc projectile || Kích hoạt đúng hiệu ứng và trừ tài nguyên tương ứng || Hoạt động đúng, thời gian phản hồi <1ms
+5 || Cập nhật HUD chiến đấu || Máu, thể lực, năng lượng và trạng thái được hiển thị chính xác || Hoạt động đúng, thời gian phản hồi <1ms
+Các bước || Nội dung kiểm tra || Kết quả mong đợi || Kết quả ghi nhận
+1 || Mở inventory và thay đổi trang bị || Hiển thị đúng vật phẩm, đổi trang bị thành công || Hoạt động đúng, thời gian phản hồi <1ms
+2 || Sử dụng quick slot item || Vật phẩm được chọn và kích hoạt đúng || Hoạt động đúng, thời gian phản hồi <1ms
+3 || Mở shop và mua bán với merchant || Hiển thị đúng dữ liệu shop, cập nhật rune và vật phẩm || Hoạt động đúng, thời gian phản hồi <1ms
+4 || Nâng cấp nhân vật || Trừ rune, cập nhật thuộc tính và lưu tiến trình || Hoạt động đúng, thời gian phản hồi <1ms
+5 || Nâng cấp vũ khí || Trừ nguyên liệu, tăng cấp vũ khí và cập nhật dữ liệu || Hoạt động đúng, thời gian phản hồi <1ms
+Các bước || Nội dung kiểm tra || Kết quả mong đợi || Kết quả ghi nhận
+1 || Lưu tại Site of Grace || Checkpoint và dữ liệu hiện tại được ghi nhận đầy đủ || Hoạt động đúng, thời gian phản hồi <1ms
+2 || Tải lại save game || Khôi phục đúng scene và trạng thái đã lưu || Hoạt động đúng, thời gian phản hồi <1ms
+3 || Hoàn thành boss và cập nhật progression || Mở khóa đúng map kế tiếp || Hoạt động đúng, thời gian phản hồi <1ms
+4 || Chuyển sang scene mới || Tải đúng map và đặt người chơi tại điểm vào phù hợp || Hoạt động đúng, thời gian phản hồi <1ms
+Các bước || Nội dung kiểm tra || Kết quả mong đợi || Kết quả ghi nhận
+1 || Tạo phiên chơi ở vai trò host || Phiên multiplayer được khởi tạo thành công || Hoạt động đúng, thời gian phản hồi <1ms
+2 || Client tham gia bằng mã kết nối || Người chơi thứ hai vào đúng phiên hiện tại || Hoạt động đúng, thời gian phản hồi <1ms
+3 || Đồng bộ vị trí và di chuyển || Các client nhìn thấy đúng trạng thái nhân vật của nhau || Hoạt động đúng, thời gian phản hồi <1ms
+4 || Đồng bộ scene || Các người chơi cùng tồn tại trong đúng world scene || Hoạt động đúng, thời gian phản hồi <1ms
