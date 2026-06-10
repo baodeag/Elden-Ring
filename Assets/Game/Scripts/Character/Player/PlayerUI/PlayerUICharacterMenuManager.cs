@@ -1,6 +1,7 @@
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Threading.Tasks;
 
@@ -14,6 +15,8 @@ namespace baodeag
 
         private bool joinWorldUIInitialized;
         private bool menuButtonsInitialized;
+        private const string BackToMainMenuButtonName = "Back To Main Menu";
+        private const string BackToMainMenuButtonLabel = "BACK TO MAIN MENU";
 
         [Header("Relay Join UI")]
         [SerializeField] private RectTransform serializedJoinWorldControlsRoot;
@@ -31,6 +34,7 @@ namespace baodeag
         private Button checkCodeButton;
         private Button shopButton;
         private Button settingsButton;
+        private Button backToMainMenuButton;
         private Color worldAddressLabelDefaultColor = Color.white;
         private Color joinStatusLabelDefaultColor = Color.white;
         private bool isJoiningWorld;
@@ -70,6 +74,7 @@ namespace baodeag
                 return;
 
             Button[] buttons = GetComponentsInChildren<Button>(true);
+            Button buttonTemplate = null;
 
             for (int i = 0; i < buttons.Length; i++)
             {
@@ -83,7 +88,15 @@ namespace baodeag
                 {
                     settingsButton = buttons[i];
                 }
+
+                if (buttons[i].name == BackToMainMenuButtonName)
+                    backToMainMenuButton = buttons[i];
             }
+
+            buttonTemplate = settingsButton != null ? settingsButton : shopButton;
+
+            if (backToMainMenuButton == null && buttonTemplate != null)
+                backToMainMenuButton = CreateBackToMainMenuButton(buttonTemplate);
 
             if (shopButton != null)
             {
@@ -97,7 +110,28 @@ namespace baodeag
                 settingsButton.onClick.AddListener(OpenSettingsMenu);
             }
 
-            menuButtonsInitialized = shopButton != null || settingsButton != null;
+            if (backToMainMenuButton != null)
+            {
+                backToMainMenuButton.onClick.RemoveAllListeners();
+                backToMainMenuButton.onClick.AddListener(ReturnToPressStartScreen);
+                ForceButtonUsable(backToMainMenuButton);
+            }
+
+            menuButtonsInitialized = shopButton != null || settingsButton != null || backToMainMenuButton != null;
+        }
+
+        private Button CreateBackToMainMenuButton(Button buttonTemplate)
+        {
+            GameObject buttonObject = Instantiate(buttonTemplate.gameObject, buttonTemplate.transform.parent);
+            buttonObject.name = BackToMainMenuButtonName;
+            buttonObject.transform.SetAsLastSibling();
+
+            TextMeshProUGUI buttonLabel = buttonObject.GetComponentInChildren<TextMeshProUGUI>(true);
+
+            if (buttonLabel != null)
+                buttonLabel.text = BackToMainMenuButtonLabel;
+
+            return buttonObject.GetComponent<Button>();
         }
 
         private void OpenShopMenu()
@@ -115,6 +149,26 @@ namespace baodeag
                 return;
 
             PlayerUIManager.instance.playerUISettingsManager.OpenFromCharacterMenu();
+        }
+
+        private void ReturnToPressStartScreen()
+        {
+            if (PlayerUIManager.instance != null)
+                PlayerUIManager.instance.CloseAllMenuWindows();
+
+            if (WorldGameSessionManager.instance != null)
+            {
+                WorldGameSessionManager.instance.ReturnToTitleFromEndGame();
+                return;
+            }
+
+            if (NetworkManager.Singleton != null &&
+                (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsClient))
+            {
+                NetworkManager.Singleton.Shutdown();
+            }
+
+            SceneManager.LoadScene(0);
         }
 
         private void EnsureJoinWorldUI()
