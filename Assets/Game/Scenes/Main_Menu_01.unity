@@ -23250,11 +23250,7 @@ PrefabInstance:
     - target: {fileID: 968115240157817716, guid: 74ed47cd96dcc0d429366ca71548588d, type: 3}
       propertyPath: 'NetworkConfig.Prefabs.NetworkPrefabsLists.Array.data[0]'
       value: 
-      objectReference: {fileID: 11400000, guid: 7812df3bb3948fe469669bca6373d231, type: 2}
-    - target: {fileID: 968115240157817716, guid: 74ed47cd96dcc0d429366ca71548588d, type: 3}
-      propertyPath: 'NetworkConfig.Prefabs.NetworkPrefabsLists.Array.data[1]'
-      value: 
-      objectReference: {fileID: 11400000, guid: 7812df3bb3948fe469669bca6373d231, type: 2}
+      objectReference: {fileID: 11400000, guid: 0e598bd7efd49f749a6a45cadd6eebbb, type: 2}
     - target: {fileID: 2352044073367267216, guid: 74ed47cd96dcc0d429366ca71548588d, type: 3}
       propertyPath: m_Name
       value: World Network Manager

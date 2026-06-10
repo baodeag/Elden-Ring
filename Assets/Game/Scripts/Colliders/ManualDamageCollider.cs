@@ -41,10 +41,9 @@ namespace baodeag
             damageEffect.contactPoint = contactPoint;
             damageEffect.angleHitFrom = Vector3.SignedAngle(characterCausingDamage.transform.forward, damageTarget.transform.forward, Vector3.up);
 
-            if (damageTarget.IsOwner)
+            if (characterCausingDamage.IsServer)
             {
-                //send a damage request to the server
-                damageTarget.characterNetworkManager.NotifyTheServerOfCharacterDamageServerRpc(
+                damageTarget.characterNetworkManager.NotifyClientsOfCharacterDamage(
                     damageTarget.NetworkObjectId,
                     characterCausingDamage.NetworkObjectId,
                     damageEffect.physicalDamage,

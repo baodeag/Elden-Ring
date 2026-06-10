@@ -568,9 +568,28 @@ namespace baodeag
         {
             if (IsServer)
             {
-                NotifyTheServerOfCharacterDamageClientRpc(damagedCharacterID, characterCausingDamageID, physicalDamage, magicDamage, fireDamage, lightningDamage, holyDamage, poiseDamage, angleHitFrom, contactPointX, contactPointY, contactPointZ);
-
+                NotifyClientsOfCharacterDamage(damagedCharacterID, characterCausingDamageID, physicalDamage, magicDamage, fireDamage, lightningDamage, holyDamage, poiseDamage, angleHitFrom, contactPointX, contactPointY, contactPointZ);
             }
+        }
+
+        public void NotifyClientsOfCharacterDamage(
+            ulong damagedCharacterID,
+            ulong characterCausingDamageID,
+            float physicalDamage,
+            float magicDamage,
+            float fireDamage,
+            float lightningDamage,
+            float holyDamage,
+            float poiseDamage,
+            float angleHitFrom,
+            float contactPointX,
+            float contactPointY,
+            float contactPointZ)
+        {
+            if (!IsServer)
+                return;
+
+            NotifyTheServerOfCharacterDamageClientRpc(damagedCharacterID, characterCausingDamageID, physicalDamage, magicDamage, fireDamage, lightningDamage, holyDamage, poiseDamage, angleHitFrom, contactPointX, contactPointY, contactPointZ);
         }
 
         [ClientRpc]
