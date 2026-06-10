@@ -45,6 +45,30 @@ namespace baodeag
             character = GetComponent<CharacterManager>();
         }
 
+        public virtual void ResetForWorldEntry()
+        {
+            yVelocity = Vector3.zero;
+            slopeSlideVelocity = Vector3.zero;
+            fallingVelocityHasBeenSet = false;
+            inAirTimer = 0f;
+            isSliding = false;
+            isSlidingOffCharacter = false;
+            slideUntilGrounded = false;
+            isRolling = false;
+            canRotate = true;
+            canMove = true;
+            canRun = true;
+            canRoll = true;
+            isGrounded = true;
+            isRidingLift = false;
+
+            if (slideOffCharacterCoroutine != null)
+            {
+                StopCoroutine(slideOffCharacterCoroutine);
+                slideOffCharacterCoroutine = null;
+            }
+        }
+
         protected virtual void Update()
         {
             if (character.characterController == null)

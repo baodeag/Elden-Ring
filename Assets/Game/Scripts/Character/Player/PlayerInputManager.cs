@@ -101,8 +101,8 @@ namespace baodeag
 
         private void OnSceneChange(Scene oldScene, Scene newScene)
         {
-            //if we are loading into our world scene, enable our player controls
-            if (newScene.buildIndex == WorldSaveGameManager.instance.GetWorldSceneIndex())
+            //if we are loading into a world scene, enable our player controls
+            if (newScene.buildIndex > 0)
             {
                 instance.enabled = true;
 

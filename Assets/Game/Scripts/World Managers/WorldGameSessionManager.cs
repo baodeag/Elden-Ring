@@ -101,6 +101,7 @@ namespace baodeag
             if (newScene.buildIndex <= 0)
                 return;
 
+            EnsureClientMapEntryForNetworkSceneLoad(newScene.buildIndex);
             ResetTransientSessionStateForCurrentMap();
 
             if (!GameProgressionManager.Instance.HasPendingTransitionSiteOfGrace())
@@ -406,8 +407,10 @@ namespace baodeag
                 BuildRuntimeLogger.Log($"WorldGameSessionManager.HandlePendingMapEntryCoroutine teleporting to siteOfGraceID={targetSiteOfGrace.siteOfGraceID}");
                 PlayerManager localPlayer = PlayerUIManager.instance.localPlayer;
                 targetSiteOfGrace.TeleportPlayerToSiteOfGrace(localPlayer, false);
+                RestoreLocalPlayerForMapEntry(localPlayer);
                 localPlayer.playerNetworkManager.lastSiteOfGraceUsed.Value = targetSiteOfGrace.siteOfGraceID;
                 WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = targetSiteOfGrace.siteOfGraceID;
+                WorldSaveGameManager.instance.currentCharacterData.sceneIndex = SceneManager.GetActiveScene().buildIndex;
                 WorldSaveGameManager.instance.SaveGame();
 
                 // Wait one frame for the teleport position to take effect, then
@@ -449,6 +452,72 @@ namespace baodeag
 
             BuildRuntimeLogger.Log("WorldGameSessionManager.HandlePendingMapEntryCoroutine end");
             pendingMapEntryCoroutine = null;
+        }
+
+        private void EnsureClientMapEntryForNetworkSceneLoad(int sceneBuildIndex)
+        {
+            if (NetworkManager.Singleton == null ||
+                !NetworkManager.Singleton.IsClient ||
+                NetworkManager.Singleton.IsServer)
+            {
+                return;
+            }
+
+            if (GameProgressionManager.Instance.HasPendingTransitionSiteOfGrace())
+                return;
+
+            int mapIndex = GameProgressionManager.Instance.GetMapIndexForSceneBuildIndex(sceneBuildIndex);
+
+            if (mapIndex < 0)
+                return;
+
+            GameProgressionManager.Instance.SetCurrentMapIndex(mapIndex);
+            int entrySiteOfGraceID = GameProgressionManager.Instance.GetEntrySiteOfGraceIDForCurrentMap();
+
+            if (entrySiteOfGraceID < 0)
+                return;
+
+            GameProgressionManager.Instance.SetPendingTransitionSiteOfGraceID(entrySiteOfGraceID);
+
+            if (WorldSaveGameManager.instance != null &&
+                WorldSaveGameManager.instance.currentCharacterData != null)
+            {
+                WorldSaveGameManager.instance.currentCharacterData.sceneIndex = sceneBuildIndex;
+                WorldSaveGameManager.instance.currentCharacterData.lastSiteOfGraceRestedAt = entrySiteOfGraceID;
+            }
+        }
+
+        private void RestoreLocalPlayerForMapEntry(PlayerManager localPlayer)
+        {
+            if (localPlayer == null || !localPlayer.IsOwner)
+                return;
+
+            localPlayer.isPerformingAction = false;
+            localPlayer.characterLocomotionManager.ResetForWorldEntry();
+            localPlayer.characterCombatManager.SetTarget(null);
+
+            localPlayer.isDead.Value = false;
+            localPlayer.playerNetworkManager.currentHealth.Value = localPlayer.playerNetworkManager.maxHealth.Value;
+            localPlayer.playerNetworkManager.currentStamina.Value = localPlayer.playerNetworkManager.maxStamina.Value;
+            localPlayer.playerNetworkManager.isMoving.Value = false;
+            localPlayer.playerNetworkManager.isSprinting.Value = false;
+            localPlayer.playerNetworkManager.isJumping.Value = false;
+            localPlayer.playerNetworkManager.isRolling.Value = false;
+            localPlayer.playerNetworkManager.isBlocking.Value = false;
+            localPlayer.playerNetworkManager.isParrying.Value = false;
+            localPlayer.playerNetworkManager.isParryable.Value = false;
+            localPlayer.playerNetworkManager.isAttacking.Value = false;
+            localPlayer.playerNetworkManager.isInvulnerable.Value = false;
+            localPlayer.playerNetworkManager.isLockedOn.Value = false;
+            localPlayer.playerNetworkManager.currentTargetNetworkObjectID.Value = 0;
+            localPlayer.playerNetworkManager.isChargingAttack.Value = false;
+            localPlayer.playerNetworkManager.isChargingLeftSpell.Value = false;
+            localPlayer.playerNetworkManager.isChargingRightSpell.Value = false;
+            localPlayer.playerNetworkManager.isHoldingArrow.Value = false;
+            localPlayer.playerNetworkManager.isAiming.Value = false;
+
+            if (localPlayer.playerAnimatorManager != null)
+                localPlayer.playerAnimatorManager.PlayTargetActionAnimation("Empty", false, true, true, true, true, true);
         }
 
         private IEnumerator AutoContinuePendingVictoryFlowCoroutine(float delay)
