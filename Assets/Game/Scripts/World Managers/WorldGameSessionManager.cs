@@ -73,9 +73,7 @@ namespace baodeag
                 Destroy(gameObject);
             }
 
-            unityTransport = NetworkManager.Singleton != null
-                ? NetworkManager.Singleton.NetworkConfig.NetworkTransport as UnityTransport
-                : null;
+            ResolveUnityTransport();
 
             ConfigureUnityTransportPortForCurrentProject();
         }
@@ -684,12 +682,24 @@ namespace baodeag
 
         public bool StartGameAsHost()
         {
+            if (NetworkManager.Singleton == null)
+            {
+                Debug.LogError("NetworkManager is missing. Cannot start host session.");
+                return false;
+            }
+
             if (NetworkManager.Singleton.IsHost)
                 return true;
 
             if (NetworkManager.Singleton.IsClient)
             {
                 Debug.LogWarning("Client session is active. Shut it down before starting a host.");
+                return false;
+            }
+
+            if (ResolveUnityTransport() == null)
+            {
+                Debug.LogError("UnityTransport is missing from NetworkManager. Cannot start host session.");
                 return false;
             }
 
@@ -730,6 +740,12 @@ namespace baodeag
 
         public async Task<bool> StartGameAsRelayHostAsync(int maxConnections = DefaultRelayMaxConnections)
         {
+            if (NetworkManager.Singleton == null)
+            {
+                Debug.LogError("NetworkManager is missing. Cannot start Relay host.");
+                return false;
+            }
+
             if (NetworkManager.Singleton.IsHost)
             {
                 if (!string.IsNullOrWhiteSpace(currentRelayJoinCode))
@@ -745,7 +761,7 @@ namespace baodeag
                 return false;
             }
 
-            if (unityTransport == null)
+            if (ResolveUnityTransport() == null)
             {
                 Debug.LogError("UnityTransport is missing from NetworkManager. Cannot start Relay host.");
                 return false;
@@ -793,11 +809,41 @@ namespace baodeag
 
         private void ConfigureUnityTransportPortForCurrentProject()
         {
-            if (unityTransport == null)
+            if (ResolveUnityTransport() == null)
                 return;
 
             ushort port = GetUnityTransportPortForCurrentProject();
             unityTransport.SetConnectionData("127.0.0.1", port, "0.0.0.0");
+        }
+
+        private UnityTransport ResolveUnityTransport()
+        {
+            NetworkManager networkManager = NetworkManager.Singleton;
+
+            if (networkManager != null && networkManager.NetworkConfig != null)
+            {
+                if (unityTransport == null)
+                    unityTransport = networkManager.NetworkConfig.NetworkTransport as UnityTransport;
+
+                if (unityTransport == null)
+                    unityTransport = networkManager.GetComponent<UnityTransport>();
+
+                if (unityTransport != null && networkManager.NetworkConfig.NetworkTransport != unityTransport)
+                    networkManager.NetworkConfig.NetworkTransport = unityTransport;
+            }
+
+            if (unityTransport == null)
+                unityTransport = GetComponent<UnityTransport>();
+
+            if (unityTransport != null &&
+                networkManager != null &&
+                networkManager.NetworkConfig != null &&
+                networkManager.NetworkConfig.NetworkTransport != unityTransport)
+            {
+                networkManager.NetworkConfig.NetworkTransport = unityTransport;
+            }
+
+            return unityTransport;
         }
 
         private ushort GetUnityTransportPortForCurrentProject()
@@ -833,6 +879,12 @@ namespace baodeag
 
         public async Task<bool> StartGameAsClientAsync(string addressInput)
         {
+            if (NetworkManager.Singleton == null)
+            {
+                Debug.LogError("NetworkManager is missing. Cannot start client session.");
+                return false;
+            }
+
             if (joinAsClientCoroutine != null)
                 StopCoroutine(joinAsClientCoroutine);
 
@@ -871,7 +923,7 @@ namespace baodeag
 
             yield return null;
 
-            if (unityTransport == null)
+            if (ResolveUnityTransport() == null)
             {
                 Debug.LogError("UnityTransport is missing from NetworkManager. Cannot join by address.");
                 yield break;
@@ -890,13 +942,19 @@ namespace baodeag
 
         public async Task<bool> StartGameAsRelayClientAsync(string relayJoinCode)
         {
+            if (NetworkManager.Singleton == null)
+            {
+                Debug.LogError("NetworkManager is missing. Cannot join Relay session.");
+                return false;
+            }
+
             if (!TryNormalizeRelayJoinCode(relayJoinCode, out relayJoinCode))
             {
                 Debug.LogError($"Invalid Relay join code '{relayJoinCode}'.");
                 return false;
             }
 
-            if (unityTransport == null)
+            if (ResolveUnityTransport() == null)
             {
                 Debug.LogError("UnityTransport is missing from NetworkManager. Cannot join Relay session.");
                 return false;
