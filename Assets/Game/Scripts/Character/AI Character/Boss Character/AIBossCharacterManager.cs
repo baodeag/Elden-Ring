@@ -177,20 +177,19 @@ namespace baodeag
         {
             if (bossDefeatFlowStarted)
             {
-                Debug.Log($"[BossFlow] Ignored duplicate death flow for '{name}'.");
+                
                 yield break;
             }
 
             if (!IsServer)
             {
-                Debug.Log($"[BossFlow] Forwarding death flow for '{name}' to server. isOwner={IsOwner}");
+                
                 RequestProcessBossDeathServerRpc(manuallySelectDeathAnimation);
                 yield break;
             }
 
             bossDefeatFlowStarted = true;
-            string deathStage = "start";
-            Debug.Log($"[BossFlow] Starting server death flow for '{name}' bossID={bossID} currentMap={GameProgressionManager.Instance.CurrentMapIndex}");
+            
 
             if (PlayerUIManager.instance != null && PlayerUIManager.instance.playerUIPopUpManager != null)
                 PlayerUIManager.instance.playerUIPopUpManager.SendBossDefeatedPopUp("Great Foe Felled");
@@ -205,17 +204,11 @@ namespace baodeag
             {
                 try
                 {
-                    deathStage = "apply-dead-flags";
                     characterNetworkManager.currentHealth.Value = 0;
                     isDead.Value = true;
                     bossFightIsActive.Value = false;
-                    Debug.Log($"[BossFlow] '{name}' marked dead. isServer={IsServer} isOwner={IsOwner}");
-
-                    deathStage = "refresh-fogwalls";
                     if (fogWalls == null || fogWalls.Count == 0)
                         RefreshFogWallsFromWorldObjectManager();
-
-                    deathStage = "disable-fogwalls";
                     if (fogWalls != null)
                     {
                         foreach (var fogWall in fogWalls)
@@ -226,18 +219,11 @@ namespace baodeag
                     }
 
                     //reset any flags here that need to be reset on death
-
-                    deathStage = "play-death-animation";
                     if (!manuallySelectDeathAnimation)
                     {
                         characterAnimatorManager.PlayTargetActionAnimation("Dead_01", true);
                     }
-
-                    deathStage = "mark-defeated";
                     hasBeenDefeated.Value = true;
-                    Debug.Log($"[BossFlow] '{name}' hasBeenDefeated set true.");
-
-                    deathStage = "resolve-reward-player";
                     PlayerManager rewardPlayer = null;
 
                     if (WorldGameSessionManager.instance != null)
@@ -250,19 +236,15 @@ namespace baodeag
 
                     if (rewardPlayer == null && PlayerUIManager.instance != null)
                         rewardPlayer = PlayerUIManager.instance.localPlayer;
-
-                    deathStage = "award-runes";
                     if (rewardPlayer != null)
                     {
                         aiCharacterCombatManager.AwardRunesOnDeath(rewardPlayer);
-                        Debug.Log($"[BossFlow] Awarded runes for '{name}' to player '{rewardPlayer.name}'.");
+                        
                     }
                     else
                     {
-                        Debug.LogWarning($"[BossFlow] No reward player resolved for '{name}'.");
+                        
                     }
-
-                    deathStage = "save-boss-state";
                     if (WorldSaveGameManager.instance != null && WorldSaveGameManager.instance.currentCharacterData != null)
                     {
                         if (!WorldSaveGameManager.instance.currentCharacterData.bossesAwakened.ContainsKey(bossID))
@@ -278,16 +260,12 @@ namespace baodeag
                             WorldSaveGameManager.instance.currentCharacterData.bossesDefeated.Add(bossID, true);
                         }
                     }
-
-                    deathStage = "register-boss-defeat";
                     if (GameProgressionManager.instance != null)
                     {
                         shouldLoadNextScene = GameProgressionManager.Instance.RegisterBossDefeat(bossID, out nextSceneBuildIndex, out unlockedMapIndex, out gameWon);
                         canContinueProgression = shouldLoadNextScene || unlockedMapIndex >= 0;
-                        Debug.Log($"[BossFlow] RegisterBossDefeat for '{name}' => shouldLoadNextScene={shouldLoadNextScene}, nextSceneBuildIndex={nextSceneBuildIndex}, unlockedMapIndex={unlockedMapIndex}, gameWon={gameWon}");
+                        
                     }
-
-                    deathStage = "resolve-entry-grace";
                     int entrySiteOfGraceID = GameProgressionManager.instance != null
                         ? GameProgressionManager.Instance.GetEntrySiteOfGraceIDForCurrentMap()
                         : -1;
@@ -300,8 +278,6 @@ namespace baodeag
                         if (PlayerUIManager.instance != null && PlayerUIManager.instance.localPlayer != null)
                             PlayerUIManager.instance.localPlayer.playerNetworkManager.lastSiteOfGraceUsed.Value = entrySiteOfGraceID;
                     }
-
-                    deathStage = "schedule-transition";
                     if (WorldGameSessionManager.instance != null)
                     {
                         WorldGameSessionManager.instance.ScheduleMapTransition(
@@ -313,22 +289,19 @@ namespace baodeag
 
                     if (gameWon)
                     {
-                        deathStage = "broadcast-final-victory";
                         BroadcastVictoryAchievedClientRpc(canContinueProgression, 0f);
                     }
-
-                    deathStage = "save-game";
                     if (WorldSaveGameManager.instance != null &&
                         WorldSaveGameManager.instance.currentCharacterData != null)
                     {
                         WorldSaveGameManager.instance.SaveGame();
                     }
 
-                    Debug.Log($"[BossFlow] Server death flow completed for '{name}'. canContinueProgression={canContinueProgression}");
+                    
                 }
-                catch (System.Exception exception)
+                catch (System.Exception)
                 {
-                    Debug.LogError($"[BossFlow] Death flow failed for '{name}' at stage '{deathStage}': {exception}");
+                    
                     throw;
                 }
             }
@@ -359,7 +332,7 @@ namespace baodeag
             if (!IsServer || bossDefeatFlowStarted)
                 return;
 
-            Debug.Log($"[BossFlow] Server RPC received for '{name}', starting death flow.");
+            
             StartCoroutine(ProcessDeathEvent(manuallySelectDeathAnimation));
         }
 
@@ -387,7 +360,7 @@ namespace baodeag
                 beacon.gameObject.SetActive(false);
 
             WorldAIManager.instance?.RemoveCharacterFromSpawnedCharacterList(this);
-            Debug.Log($"[BossFlow] Cleaning up '{name}'. networkSpawned={NetworkObject != null && NetworkObject.IsSpawned}");
+            
 
             if (NetworkObject != null && NetworkObject.IsSpawned)
             {

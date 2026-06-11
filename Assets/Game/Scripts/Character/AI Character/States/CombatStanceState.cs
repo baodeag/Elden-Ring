@@ -192,13 +192,13 @@ namespace baodeag
             if (Physics.CheckSphere(aiCharacter.aiCharacterCombatManager.lockOnTransform.position, aiCharacter.characterController.radius + 0.25f, WorldUtilityManager.Instance.GetEnviroLayers()))
             {
                 //stop strafing/circling because we've hit something, instead path towards enemy
-                Debug.Log("We are collidong with something, ending strafe");
+                
                 aiCharacter.characterAnimatorManager.SetAnimatorMovementParameters(0, Mathf.Abs(strafeMoveAmount));
                 return;
             }
 
             //strafe
-            Debug.Log("Strafing");
+            
             aiCharacter.characterAnimatorManager.SetAnimatorMovementParameters(strafeMoveAmount, 0);
 
             if (hasChoosenCirclePath)

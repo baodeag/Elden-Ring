@@ -305,7 +305,7 @@ namespace baodeag
                 BakeGeneratedNavMesh();
 #endif
 
-            Debug.Log($"[RandomMapGenerator] Map '{areaName}' generated. Seed={usedSeed}, Rooms={rooms.Count}, Zones={generatedZones.Count}");
+            
         }
 
         /// <summary>Xoá toàn bộ map đã tạo.</summary>
@@ -450,7 +450,7 @@ namespace baodeag
             Destroy(temp);
 #endif
 
-            Debug.Log($"[RandomMapGenerator] Floor: stepX={detectedStepX:F3}, stepZ={detectedStepZ:F3}, surface Y={detectedFloorTopY:F3}");
+            
         }
 
         /// <summary>
@@ -495,7 +495,7 @@ namespace baodeag
             Destroy(temp);
 #endif
 
-            Debug.Log($"[RandomMapGenerator] Wall detected: Y base={detectedWallYBase:F3} | top={detectedWallTopY:F3} | widthOffset={detectedWallWidthOfs:F3}");
+            
         }
 
         private void DetectWallArchOffset()
@@ -520,7 +520,7 @@ namespace baodeag
             Destroy(temp);
 #endif
 
-            Debug.Log($"[RandomMapGenerator] Wall arch detected: widthOffset={detectedWallArchWidthOfs:F3}");
+            
         }
 
         // ── Coordinate helpers ────────────────────────────────────────────
@@ -1524,7 +1524,7 @@ namespace baodeag
                     zone.objects.Add(t.gameObject);
             }
 
-            Debug.Log($"[RandomMapGenerator] Split into {generatedZones.Count} room zones.");
+            
         }
 
         private Bounds ExpandRoomBoundsForStructure(Bounds roomFloorBounds)
@@ -1800,7 +1800,7 @@ namespace baodeag
                 }
             }
 
-            Debug.Log($"[RandomMapGenerator] Split into {generatedZones.Count} zones.");
+            
         }
 
         private void CollectAllChildren(Transform root, List<Transform> result)
@@ -1949,7 +1949,7 @@ namespace baodeag
             Transform floors = root != null ? root.Find("Structure/Floors") : null;
             if (floors == null)
             {
-                Debug.LogWarning("[RandomMapGenerator] Cannot bake NavMesh: generated Structure/Floors not found.");
+                
                 return;
             }
 

@@ -50,7 +50,7 @@ namespace baodeag
 
             if (boss == null)
             {
-                Debug.LogWarning($"Boss trigger on '{gameObject.name}' could not find a spawned boss with bossID {bossID}. Make sure the boss is spawned and registered in WorldAIManager.");
+                
                 StartCoroutine(TryWakeBossWhenAvailable());
                 return;
             }

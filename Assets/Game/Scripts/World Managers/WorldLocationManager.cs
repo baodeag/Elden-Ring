@@ -131,36 +131,36 @@ namespace baodeag
         //this is called whenever a player enters a new additive scene
         public void LoadAreasBasedOnAreaCurrentIn(WorldLocationSceneSet areaCurrentlyIn, PlayerManager player)
         {
-            BuildRuntimeLogger.Log($"WorldLocationManager.LoadAreasBasedOnAreaCurrentIn begin area={(areaCurrentlyIn != null ? areaCurrentlyIn.name : "null")} player={(player != null ? player.name : "null")}");
+            
 
             if (IsPlayerAlreadyInArea(areaCurrentlyIn, player))
             {
-                BuildRuntimeLogger.Log($"WorldLocationManager.LoadAreasBasedOnAreaCurrentIn skip already in area={(areaCurrentlyIn != null ? areaCurrentlyIn.name : "null")}");
+                
                 return;
             }
 
-            BuildRuntimeLogger.Log("WorldLocationManager.LoadAreasBasedOnAreaCurrentIn removing previous location");
+            
             RemovePlayerFromPreviousLocation(player);
 
-            BuildRuntimeLogger.Log("WorldLocationManager.LoadAreasBasedOnAreaCurrentIn adding player to new location");
+            
             AddPlayerToNewLocation(areaCurrentlyIn, player);
 
             if (WorldSceneManager.instance.ShouldLoadGeneratedWorldAllAtOnce())
             {
-                BuildRuntimeLogger.Log("WorldLocationManager.LoadAreasBasedOnAreaCurrentIn loading generated world all at once");
+                
                 WorldSceneManager.instance.LoadAllGeneratedWorldAreaScenes();
             }
             else
             {
-                BuildRuntimeLogger.Log("WorldLocationManager.LoadAreasBasedOnAreaCurrentIn loading additive scenes around area");
+                
                 LoadAdditiveScenesAroundCurrentArea(areaCurrentlyIn);
             }
 
-            BuildRuntimeLogger.Log("WorldLocationManager.LoadAreasBasedOnAreaCurrentIn checking unrequired scenes");
+            
             WorldSceneManager.instance.CheckForUnrequiredScenes();
-            BuildRuntimeLogger.Log("WorldLocationManager.LoadAreasBasedOnAreaCurrentIn checking required renderers");
+            
             WorldSceneManager.instance.CheckForRequiredRenderers();
-            BuildRuntimeLogger.Log("WorldLocationManager.LoadAreasBasedOnAreaCurrentIn end");
+            
         }
 
         private bool IsPlayerAlreadyInArea(WorldLocationSceneSet area, PlayerManager player)
@@ -283,11 +283,11 @@ namespace baodeag
 
         private void LoadAdditiveScenesAroundCurrentArea(WorldLocationSceneSet area)
         {
-            BuildRuntimeLogger.Log($"WorldLocationManager.LoadAdditiveScenesAroundCurrentArea begin area={(area != null ? area.name : "null")}");
+            
 
             if (area == null)
             {
-                BuildRuntimeLogger.Warning("WorldLocationManager.LoadAdditiveScenesAroundCurrentArea skipped null area");
+                
                 return;
             }
 
@@ -296,13 +296,13 @@ namespace baodeag
             List<WorldLocationSceneSet> worldLocations = new List<WorldLocationSceneSet>();
 
             scenesToLoad = area.GetRequiredSceneIDsForWorldLocation();
-            BuildRuntimeLogger.Log($"WorldLocationManager.LoadAdditiveScenesAroundCurrentArea scenesToLoad={scenesToLoad.Count}");
+            
 
             if (scenesToLoad.Count <= 0)
                 return;
 
             WorldSceneManager.instance.LoadAdditiveScenes(scenesToLoad);
-            BuildRuntimeLogger.Log("WorldLocationManager.LoadAdditiveScenesAroundCurrentArea end");
+            
         }
 
         private IEnumerator WaitThenSetActiveScene()

@@ -61,7 +61,7 @@ namespace baodeag.Editor
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log($"Aligned weapon damage colliders to Weapon Pivot. Changed prefabs: {changedCount}");
+            
         }
 
         private static bool ShouldSkip(string prefabPath)

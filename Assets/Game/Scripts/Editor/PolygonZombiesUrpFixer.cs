@@ -18,7 +18,7 @@ public static class PolygonZombiesUrpFixer
         var shader = Shader.Find(UrpLitShaderName);
         if (shader == null)
         {
-            Debug.LogError($"Could not find shader '{UrpLitShaderName}'. Make sure URP is installed.");
+            
             return;
         }
 
@@ -69,7 +69,7 @@ public static class PolygonZombiesUrpFixer
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log($"Converted {updatedCount} Polygon Zombies materials to URP/Lit.");
+        
     }
 
     private static void TryAutoFixOnce()

@@ -47,7 +47,7 @@ namespace baodeag
 
             base.ProcessEffect(character);
 
-            Debug.Log("Hit was blocked!");
+            
 
             //if the character is dead, no additional damage effect should be processed
             if (character.isDead.Value)
@@ -73,7 +73,7 @@ namespace baodeag
 
             }
 
-            Debug.Log("Original Physical Damage: " + physicalDamage);
+            
 
             physicalDamage -= (physicalDamage * (character.characterStatsManager.blockingPhysicalAbsorption / 100));
             magicDamage -= (magicDamage * (character.characterStatsManager.blockingMagicAbsorption / 100));
@@ -88,7 +88,7 @@ namespace baodeag
                 finalDamageDealt = 1;
             }
 
-            Debug.Log("Final Physical Damage: " + physicalDamage);
+            
 
             character.characterNetworkManager.currentHealth.Value -= finalDamageDealt;
         }

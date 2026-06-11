@@ -13,7 +13,7 @@ namespace baodeag
 
         public virtual void AttemptToPerformAction(PlayerManager playerPerformingAction)
         {
-            Debug.Log("Performed");
+            
         }
 
         public virtual bool CanIUseThisAbility(PlayerManager playerPerformingAbility)

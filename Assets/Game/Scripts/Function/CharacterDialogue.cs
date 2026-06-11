@@ -35,7 +35,7 @@ namespace baodeag
         {
             if (dialogueString.Count != dialogueAudio.Count)
             {
-                Debug.LogError("Audio Clip Count Does Not Match Subtitle Count, Missing Files");
+                
                 return;
             }
 

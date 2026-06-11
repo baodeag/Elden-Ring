@@ -50,7 +50,7 @@ namespace baodeag {
 
         private void Awake()
         {
-            BuildRuntimeLogger.Log("WorldSaveGameManager.Awake");
+            
             GameProgressionManager.EnsureInstance();
 
             // There can only be one instance of this object
@@ -66,11 +66,11 @@ namespace baodeag {
 
         private void Start()
         {
-            BuildRuntimeLogger.Log("WorldSaveGameManager.Start begin");
+            
             // Ensure this object persists across scene loads
             DontDestroyOnLoad(gameObject);
             LoadAllCharacterProfiles();
-            BuildRuntimeLogger.Log("WorldSaveGameManager.Start end");
+            
         }
 
         private void Update()
@@ -229,7 +229,7 @@ namespace baodeag {
 
         public void AttemptToCreateNewGame()
         {
-            BuildRuntimeLogger.Log("WorldSaveGameManager.AttemptToCreateNewGame begin");
+            
             saveFileDataWriter = new SaveFileDataWriter();
             saveFileDataWriter.saveDataDirectoryPath = Application.persistentDataPath;
 
@@ -241,7 +241,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_01;
                 currentCharacterData = new CharacterSaveData();
-                BuildRuntimeLogger.Log("WorldSaveGameManager.AttemptToCreateNewGame selected CharacterSlot_01");
+                
                 NewGame();
                 return;
             }
@@ -253,7 +253,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_02;
                 currentCharacterData = new CharacterSaveData();
-                BuildRuntimeLogger.Log("WorldSaveGameManager.AttemptToCreateNewGame selected CharacterSlot_02");
+                
                 NewGame();
                 return;
             }
@@ -265,7 +265,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_03;
                 currentCharacterData = new CharacterSaveData();
-                BuildRuntimeLogger.Log("WorldSaveGameManager.AttemptToCreateNewGame selected CharacterSlot_03");
+                
                 NewGame();
                 return;
             }
@@ -277,7 +277,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_04;
                 currentCharacterData = new CharacterSaveData();
-                BuildRuntimeLogger.Log("WorldSaveGameManager.AttemptToCreateNewGame selected CharacterSlot_04");
+                
                 NewGame();
                 return;
             }
@@ -289,7 +289,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_05;
                 currentCharacterData = new CharacterSaveData();
-                BuildRuntimeLogger.Log("WorldSaveGameManager.AttemptToCreateNewGame selected CharacterSlot_05");
+                
                 NewGame();
                 return;
             }
@@ -301,7 +301,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_06;
                 currentCharacterData = new CharacterSaveData();
-                BuildRuntimeLogger.Log("WorldSaveGameManager.AttemptToCreateNewGame selected CharacterSlot_06");
+                
                 NewGame();
                 return;
             }
@@ -313,7 +313,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_07;
                 currentCharacterData = new CharacterSaveData();
-                BuildRuntimeLogger.Log("WorldSaveGameManager.AttemptToCreateNewGame selected CharacterSlot_07");
+                
                 NewGame();
                 return;
             }
@@ -325,7 +325,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_08;
                 currentCharacterData = new CharacterSaveData();
-                BuildRuntimeLogger.Log("WorldSaveGameManager.AttemptToCreateNewGame selected CharacterSlot_08");
+                
                 NewGame();
                 return;
             }
@@ -337,7 +337,7 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_09;
                 currentCharacterData = new CharacterSaveData();
-                BuildRuntimeLogger.Log("WorldSaveGameManager.AttemptToCreateNewGame selected CharacterSlot_09");
+                
                 NewGame();
                 return;
             }
@@ -349,19 +349,19 @@ namespace baodeag {
                 //if this profile slot is not taken, make a new one using this slot
                 currentCharacterSlotBeingUsed = CharacterSlot.CharacterSlot_10;
                 currentCharacterData = new CharacterSaveData();
-                BuildRuntimeLogger.Log("WorldSaveGameManager.AttemptToCreateNewGame selected CharacterSlot_10");
+                
                 NewGame();
                 return;
             }
 
             //if there are no available slots, notify the player
-            BuildRuntimeLogger.Warning("WorldSaveGameManager.AttemptToCreateNewGame no available slots");
+            
             TitleScreenManager.Instance.DisplayNoFreeCharacterSlotPopUp();
         }
 
         private void NewGame()
         {
-            BuildRuntimeLogger.Log("WorldSaveGameManager.NewGame begin");
+            
             int selectedStartingClassID = -1;
 
             if (TitleScreenManager.Instance != null)
@@ -369,21 +369,21 @@ namespace baodeag {
 
             GameProgressionManager.Instance.ResetForNewGame(selectedStartingClassID);
             GameProgressionManager.Instance.SaveToCharacterData(currentCharacterData);
-            BuildRuntimeLogger.Log($"WorldSaveGameManager.NewGame progression reset selectedClass={selectedStartingClassID} currentMap={GameProgressionManager.Instance.CurrentMapIndex}");
+            
 
-            BuildRuntimeLogger.Log("WorldSaveGameManager.NewGame calling SaveGame");
+            
             SaveGame();
-            BuildRuntimeLogger.Log("WorldSaveGameManager.NewGame SaveGame returned");
+            
 
             int sceneBuildIndex = GameProgressionManager.Instance.GetSceneBuildIndexForCurrentMap(worldSceneIndex);
-            BuildRuntimeLogger.Log($"WorldSaveGameManager.NewGame calling LoadWorldScene buildIndex={sceneBuildIndex}");
+            
             WorldSceneManager.instance.LoadWorldScene(sceneBuildIndex);
-            BuildRuntimeLogger.Log("WorldSaveGameManager.NewGame LoadWorldScene returned");
+            
         }
 
         public void LoadGame()
         {
-            BuildRuntimeLogger.Log($"WorldSaveGameManager.LoadGame begin slot={currentCharacterSlotBeingUsed}");
+            
             //load the file, with a file name depending on which slot we are using
             saveFileName = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(currentCharacterSlotBeingUsed);
             
@@ -395,7 +395,7 @@ namespace baodeag {
 
             if (currentCharacterData == null)
             {
-                BuildRuntimeLogger.Warning($"WorldSaveGameManager: Could not load save data for slot '{currentCharacterSlotBeingUsed}'.");
+                
                 return;
             }
 
@@ -422,9 +422,9 @@ namespace baodeag {
 
             GetStageIDsOnLoad();
 
-            BuildRuntimeLogger.Log($"WorldSaveGameManager.LoadGame calling LoadWorldScene savedSceneBuildIndex={savedSceneBuildIndex}");
+            
             WorldSceneManager.instance.LoadWorldScene(savedSceneBuildIndex);
-            BuildRuntimeLogger.Log("WorldSaveGameManager.LoadGame LoadWorldScene returned");
+            
         }
 
         public void SaveGame(PlayerManager playerToSave = null, int sceneIndexOverride = -1, int mapIndexOverride = -1)
@@ -434,7 +434,7 @@ namespace baodeag {
 
             if (resolvedPlayer == null)
             {
-                BuildRuntimeLogger.Warning("WorldSaveGameManager.SaveGame skipped because no player was available to save.");
+                
                 return;
             }
 
@@ -481,7 +481,7 @@ namespace baodeag {
             if (mapIndexOverride >= 0)
                 currentCharacterData.currentMapIndex = mapIndexOverride;
 
-            BuildRuntimeLogger.Log($"[InventoryTrace] SaveGame writing slot={currentCharacterSlotBeingUsed} file={saveFileName} player={resolvedPlayer.name} scene={currentCharacterData.sceneIndex} map={currentCharacterData.currentMapIndex} runtimeInventory={resolvedPlayer.playerInventoryManager.itemsInInventory?.Count ?? -1} saveWeapons={currentCharacterData.weaponsInInventory?.Count ?? -1} saveGeneric={currentCharacterData.itemsInInventory?.Count ?? -1}");
+            
 
             //write that info onto a json file, saved to this machine
             saveFileDataWriter.CreateNewCharacterSaveFile(currentCharacterData);
@@ -507,7 +507,7 @@ namespace baodeag {
             int mergedLegs = MergeEquipmentIDsForTransition(previouslySavedLegEquipment, currentCharacterData.legEquipmentInInventory);
             int mergedHands = MergeEquipmentIDsForTransition(previouslySavedHandEquipment, currentCharacterData.handEquipmentInInventory);
 
-            BuildRuntimeLogger.Log($"[InventoryTrace] TransitionInventoryMerge weapons={mergedWeapons} projectiles={mergedProjectiles} quickSlots={mergedQuickSlots} generic={mergedItems} head={mergedHead} body={mergedBody} legs={mergedLegs} hands={mergedHands}");
+            
         }
 
         private int MergeWeaponsForTransition(List<SerializableWeapon> previouslySavedWeapons)
@@ -529,7 +529,7 @@ namespace baodeag {
 
                 currentCharacterData.weaponsInInventory.Add(weapon);
                 merged++;
-                BuildRuntimeLogger.Log($"[InventoryTrace] TransitionInventoryMerge weapon add id={weapon.itemID} name={weapon.itemName} upgrade={weapon.upgradeLevel} ash={weapon.ashOfWarID}");
+                
             }
 
             return merged;
@@ -617,7 +617,7 @@ namespace baodeag {
 
                 currentCharacterData.itemsInInventory.Add(item);
                 merged++;
-                BuildRuntimeLogger.Log($"[InventoryTrace] TransitionInventoryMerge generic add id={item.itemID} name={item.itemName} amount={item.itemAmount}");
+                
             }
 
             return merged;

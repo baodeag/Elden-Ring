@@ -26,7 +26,7 @@ namespace baodeag.EditorTools
             var templatePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TemplatePrefabPath);
             if (templatePrefab == null)
             {
-                Debug.LogError("Could not find Undead_Dummy_01 template prefab.");
+                
                 return;
             }
 
@@ -38,7 +38,7 @@ namespace baodeag.EditorTools
 
             if (sourcePrefabPaths.Count == 0)
             {
-                Debug.LogWarning("No Polygon Zombie character prefabs were found to convert.");
+                
                 return;
             }
 
@@ -59,7 +59,7 @@ namespace baodeag.EditorTools
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log($"Generated or updated {generatedCount} undead dummy prefabs from Polygon Zombies.");
+            
         }
 
         private static void TryAutoCreateOnce()
@@ -84,7 +84,7 @@ namespace baodeag.EditorTools
 
             if (!AssetDatabase.CopyAsset(TemplatePrefabPath, targetPrefabPath))
             {
-                Debug.LogError($"Failed to create prefab '{targetPrefabPath}' from template.");
+                
             }
         }
 
@@ -93,7 +93,7 @@ namespace baodeag.EditorTools
             var sourcePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(sourcePrefabPath);
             if (sourcePrefab == null)
             {
-                Debug.LogWarning($"Skipped missing source prefab '{sourcePrefabPath}'.");
+                
                 return;
             }
 
@@ -108,7 +108,7 @@ namespace baodeag.EditorTools
                 var sourceInstance = PrefabUtility.InstantiatePrefab(sourcePrefab, prefabRoot.scene) as GameObject;
                 if (sourceInstance == null)
                 {
-                    Debug.LogError($"Failed to instantiate '{sourcePrefabPath}' into '{targetPrefabPath}'.");
+                    
                     return;
                 }
 
@@ -193,7 +193,7 @@ namespace baodeag.EditorTools
             var hpBar = prefabRoot.GetComponentInChildren<baodeag.UI_Character_HP_Bar>(true);
             if (hpBar == null)
             {
-                Debug.LogWarning($"Could not find a floating HP bar under '{prefabRoot.name}'.");
+                
                 return;
             }
 
@@ -314,7 +314,7 @@ namespace baodeag.EditorTools
 
             if (rightBone == null || leftBone == null)
             {
-                Debug.LogWarning($"Could not find Hand_L/Hand_R on '{visualRoot.name}', skipped hand hitbox setup.");
+                
                 return;
             }
 

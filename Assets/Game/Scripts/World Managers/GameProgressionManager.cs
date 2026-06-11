@@ -511,18 +511,18 @@ namespace baodeag
 
                 if (definition == null)
                 {
-                    Debug.LogWarning($"GameProgressionManager: Map definition at index {i} is null.");
+                    
                     continue;
                 }
 
                 if (definition.sceneBuildIndex <= 0)
                 {
-                    Debug.LogWarning($"GameProgressionManager: '{definition.mapName}' has invalid sceneBuildIndex. It will fall back to build index {DefaultWorldSceneBuildIndex}.");
+                    
                 }
 
                 if (definition.entrySiteOfGraceID < 0)
                 {
-                    Debug.LogWarning($"GameProgressionManager: '{definition.mapName}' has no entrySiteOfGraceID configured. Same-scene progression and spawn handoff may fall back poorly.");
+                    
                 }
             }
         }

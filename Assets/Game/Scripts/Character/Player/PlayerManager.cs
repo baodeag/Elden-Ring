@@ -84,14 +84,14 @@ namespace baodeag
 
         public override void OnNetworkSpawn()
         {
-            BuildRuntimeLogger.Log($"PlayerManager.OnNetworkSpawn begin owner={IsOwner} server={IsServer} host={IsHost} clientId={OwnerClientId}");
+            
             base.OnNetworkSpawn();
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
 
             //if we own this player, set the camera's player to this
             if (IsOwner)
             {
-                BuildRuntimeLogger.Log("PlayerManager.OnNetworkSpawn configuring local owner references");
+                
                 PlayerCamera.instance.player = this;
                 PlayerInputManager.instance.player = this;
                 PlayerUIManager.instance.localPlayer = this;
@@ -123,7 +123,7 @@ namespace baodeag
 
                 //reset camera rotation to standard when aiming is disabled
                 playerNetworkManager.isAiming.OnValueChanged += playerNetworkManager.OnIsAimingChanged;
-                BuildRuntimeLogger.Log("PlayerManager.OnNetworkSpawn local owner references configured");
+                
             }
 
             //only update the floating hp bar if this character is not the local players character
@@ -192,12 +192,12 @@ namespace baodeag
             //upon connecting, if we are the owner of this player, but not the server, reload our character data to this newly instantiated character
             if (IsOwner && !IsServer)
             {
-                BuildRuntimeLogger.Log("PlayerManager.OnNetworkSpawn loading client character data");
+                
                 LoadGameDataFromCurrentCharacterData(ref WorldSaveGameManager.instance.currentCharacterData);
-                BuildRuntimeLogger.Log("PlayerManager.OnNetworkSpawn client character data loaded");
+                
             }
 
-            BuildRuntimeLogger.Log("PlayerManager.OnNetworkSpawn end");
+            
         }
 
         public override void OnNetworkDespawn()
@@ -294,7 +294,7 @@ namespace baodeag
 
         private void OnClientConnectedCallback(ulong clientID)
         {
-            BuildRuntimeLogger.Log($"PlayerManager.OnClientConnectedCallback clientID={clientID} owner={IsOwner} server={IsServer} localClientId={NetworkManager.Singleton.LocalClientId}");
+            
             WorldGameSessionManager.instance.AddPlayerToActivePlayersList(this);
 
             if (IsServer && clientID != NetworkManager.Singleton.LocalClientId)
@@ -477,13 +477,13 @@ namespace baodeag
             currentCharacterData.handEquipmentInInventory = new List<int>();
 
             playerEffectsManager.SaveActiveBuffs(currentCharacterData.activeBuffs);
-            BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory begin player={name} owner={IsOwner} server={IsServer} runtimeInventoryCount={playerInventoryManager.itemsInInventory?.Count ?? -1}");
+            
 
             for (int i = 0; i < playerInventoryManager.itemsInInventory.Count; i++)
             {
                 if (playerInventoryManager.itemsInInventory[i] == null)
                 {
-                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory skip null index={i}");
+                    
                     continue;
                 }
 
@@ -498,42 +498,42 @@ namespace baodeag
                 if (weaponInInventory != null)
                 {
                     currentCharacterData.weaponsInInventory.Add(WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(weaponInInventory));
-                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory weapon index={i} name={weaponInInventory.itemName} id={weaponInInventory.itemID} upgrade={(int)weaponInInventory.upgradeLevel}");
+                    
                 }
                 else if (headEquipmentInInventory != null)
                 {
                     currentCharacterData.headEquipmentInInventory.Add(headEquipmentInInventory.itemID);
-                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory head index={i} name={headEquipmentInInventory.itemName} id={headEquipmentInInventory.itemID}");
+                    
                 }
                 else if (bodyEquipmentInInventory != null)
                 {
                     currentCharacterData.bodyEquipmentInInventory.Add(bodyEquipmentInInventory.itemID);
-                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory body index={i} name={bodyEquipmentInInventory.itemName} id={bodyEquipmentInInventory.itemID}");
+                    
                 }
                 else if (legEquipmentInInventory != null)
                 {
                     currentCharacterData.legEquipmentInInventory.Add(legEquipmentInInventory.itemID);
-                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory legs index={i} name={legEquipmentInInventory.itemName} id={legEquipmentInInventory.itemID}");
+                    
                 }
                 else if (handEquipmentInInventory != null)
                 {
                     currentCharacterData.handEquipmentInInventory.Add(handEquipmentInInventory.itemID);
-                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory hands index={i} name={handEquipmentInInventory.itemName} id={handEquipmentInInventory.itemID}");
+                    
                 }
                 else if (projectileItemInInventory != null)
                 {
                     currentCharacterData.projectilesInInventory.Add(WorldSaveGameManager.instance.GetSerializableRangedProjectileFromRangedProjectileItem(projectileItemInInventory));
-                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory projectile index={i} name={projectileItemInInventory.itemName} id={projectileItemInInventory.itemID} amount={projectileItemInInventory.currentAmmoAmount}");
+                    
                 }
                 else if (quickSlotItemInInventory != null)
                 {
                     currentCharacterData.quickSlotItemsInInventory.Add(WorldSaveGameManager.instance.GetSerializableQuickSlotItemFromQuickSlotItem(quickSlotItemInInventory));
-                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory quickSlot index={i} name={quickSlotItemInInventory.itemName} id={quickSlotItemInInventory.itemID} amount={quickSlotItemInInventory.itemAmount}");
+                    
                 }
                 else
                 {
                     currentCharacterData.itemsInInventory.Add(WorldSaveGameManager.instance.GetSerializableItemFromItem(playerInventoryManager.itemsInInventory[i]));
-                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory generic index={i} name={playerInventoryManager.itemsInInventory[i].itemName} id={playerInventoryManager.itemsInInventory[i].itemID} type={playerInventoryManager.itemsInInventory[i].GetType().Name} amount={playerInventoryManager.itemsInInventory[i].currentItemAmount}");
+                    
                 }
             }
 
@@ -544,7 +544,7 @@ namespace baodeag
             SaveEquippedWeaponInventoryBackup(currentCharacterData.weaponsInInventory, playerInventoryManager.weaponsInLeftHandSlots[1], "left02");
             SaveEquippedWeaponInventoryBackup(currentCharacterData.weaponsInInventory, playerInventoryManager.weaponsInLeftHandSlots[2], "left03");
 
-            BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory end saveWeapons={currentCharacterData.weaponsInInventory.Count} saveProjectiles={currentCharacterData.projectilesInInventory.Count} saveQuickSlots={currentCharacterData.quickSlotItemsInInventory.Count} saveGeneric={currentCharacterData.itemsInInventory.Count} saveHead={currentCharacterData.headEquipmentInInventory.Count} saveBody={currentCharacterData.bodyEquipmentInInventory.Count} saveLegs={currentCharacterData.legEquipmentInInventory.Count} saveHands={currentCharacterData.handEquipmentInInventory.Count}");
+            
         }
 
         private void SaveEquippedWeaponInventoryBackup(List<SerializableWeapon> savedWeapons, WeaponItem weapon, string slotName)
@@ -554,12 +554,12 @@ namespace baodeag
 
             if (SavedWeaponsContainWeapon(savedWeapons, weapon))
             {
-                BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory equippedBackup skip duplicate slot={slotName} name={weapon.itemName} id={weapon.itemID} upgrade={(int)weapon.upgradeLevel}");
+                
                 return;
             }
 
             savedWeapons.Add(WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(weapon));
-            BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory equippedBackup add slot={slotName} name={weapon.itemName} id={weapon.itemID} upgrade={(int)weapon.upgradeLevel}");
+            
         }
 
         private bool SavedWeaponsContainWeapon(List<SerializableWeapon> savedWeapons, WeaponItem weapon)
@@ -607,7 +607,7 @@ namespace baodeag
 
         public void LoadGameDataFromCurrentCharacterData(ref CharacterSaveData currentCharacterData)
         {
-            BuildRuntimeLogger.Log("PlayerManager.LoadGameDataFromCurrentCharacterData begin");
+            
             playerNetworkManager.characterName.Value = currentCharacterData.characterName;
             playerNetworkManager.isMale.Value = currentCharacterData.isMale;
 
@@ -648,7 +648,7 @@ namespace baodeag
             playerNetworkManager.buildUpCapacity.Value = playerStatsManager.CalculateBuildUpCapacityBasedOnVitalityLevel(playerNetworkManager.vigor.Value);
             playerNetworkManager.lastSiteOfGraceUsed.Value = currentCharacterData.lastSiteOfGraceRestedAt;
             isDead.Value = false;
-            BuildRuntimeLogger.Log("PlayerManager.LoadGameDataFromCurrentCharacterData stats/body loaded");
+            
 
             playerStatsManager.runes = currentCharacterData.runes;
 
@@ -723,7 +723,7 @@ namespace baodeag
             playerInventoryManager.quickSlotItemsInQuickSlots[1] = currentCharacterData.quickSlotItem02.GetQuickSlotItem();
             playerInventoryManager.quickSlotItemsInQuickSlots[2] = currentCharacterData.quickSlotItem03.GetQuickSlotItem();
             playerEquipmentManager.LoadQuickSlotEquipment(playerInventoryManager.quickSlotItemsInQuickSlots[playerInventoryManager.quickSlotItemIndex]); //this refreshes the hud
-            BuildRuntimeLogger.Log("PlayerManager.LoadGameDataFromCurrentCharacterData quick slots loaded");
+            
 
             if (currentCharacterData.rightWeaponIndex >= 0)
             {
@@ -762,7 +762,7 @@ namespace baodeag
             else
                 playerInventoryManager.itemsInInventory.Clear();
 
-            BuildRuntimeLogger.Log($"[InventoryTrace] LoadInventory begin player={name} owner={IsOwner} server={IsServer} saveWeapons={currentCharacterData.weaponsInInventory?.Count ?? -1} saveProjectiles={currentCharacterData.projectilesInInventory?.Count ?? -1} saveQuickSlots={currentCharacterData.quickSlotItemsInInventory?.Count ?? -1} saveGeneric={currentCharacterData.itemsInInventory?.Count ?? -1}");
+            
 
             for (int i = 0; i < currentCharacterData.weaponsInInventory.Count; i++)
             {
@@ -770,12 +770,12 @@ namespace baodeag
 
                 if (IsEquippedWeapon(weapon))
                 {
-                    BuildRuntimeLogger.Log($"[InventoryTrace] LoadInventory weapon skip equipped duplicate index={i} name={(weapon != null ? weapon.itemName : "null")} id={(weapon != null ? weapon.itemID : -1)}");
+                    
                     continue;
                 }
 
                 playerInventoryManager.AddItemToInventory(weapon);
-                BuildRuntimeLogger.Log($"[InventoryTrace] LoadInventory weapon index={i} name={(weapon != null ? weapon.itemName : "null")} id={(weapon != null ? weapon.itemID : -1)}");
+                
             }
 
             for (int i = 0; i < currentCharacterData.headEquipmentInInventory.Count; i++)
@@ -820,10 +820,10 @@ namespace baodeag
             {
                 Item item = currentCharacterData.itemsInInventory[i].GetItem();
                 playerInventoryManager.AddItemToInventory(item);
-                BuildRuntimeLogger.Log($"[InventoryTrace] LoadInventory generic index={i} name={(item != null ? item.itemName : "null")} id={(item != null ? item.itemID : -1)} type={(item != null ? item.GetType().Name : "null")}");
+                
             }
 
-            BuildRuntimeLogger.Log($"[InventoryTrace] LoadInventory end runtimeInventoryCount={playerInventoryManager.itemsInInventory.Count}");
+            
 
             EnsureDefaultBuffCharmsAvailable(true);
 
@@ -831,7 +831,7 @@ namespace baodeag
             playerEquipmentManager.LoadMainProjectileEquipment(currentCharacterData.mainProjectile.GetProjectile());
             playerEquipmentManager.LoadSecondaryProjectileEquipment(currentCharacterData.secondaryProjectile.GetProjectile());
             playerEffectsManager.LoadActiveBuffs(currentCharacterData.activeBuffs);
-            BuildRuntimeLogger.Log("PlayerManager.LoadGameDataFromCurrentCharacterData end");
+            
         }
 
         private bool IsEquippedWeapon(WeaponItem weapon)

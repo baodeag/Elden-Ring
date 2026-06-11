@@ -29,7 +29,7 @@ namespace baodeag.Editor
             if (existing != null)
             {
                 Selection.activeGameObject = existing;
-                Debug.Log("[WorldMapTransitionSetup] Connector already exists: Travel To World_02");
+                
                 return;
             }
 
@@ -47,7 +47,7 @@ namespace baodeag.Editor
 
             EditorSceneManager.MarkSceneDirty(scene);
             Selection.activeGameObject = connector;
-            Debug.Log("[WorldMapTransitionSetup] Created Travel To World_02 connector at (0, 1, 35). Move it to the desired door/exit if needed.");
+            
         }
     }
 }

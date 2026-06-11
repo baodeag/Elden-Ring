@@ -440,7 +440,7 @@ namespace baodeag
 
                 if (exportedRootCount < 10)
                 {
-                    Debug.LogError($"[RandomMapGeneratorEditor] Export stopped before cleanup because only {exportedRootCount} root object(s) were exported. Generate the map again and export after fixing the hierarchy grouping.");
+                    
                     EditorUtility.DisplayDialog(
                         "Export chua du map",
                         $"Chi xuat duoc {exportedRootCount} root object. Tool se khong xoa map trong scene chinh de tranh mat map. Hay Generate Map lai roi Export lai.",
@@ -462,7 +462,7 @@ namespace baodeag
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"[RandomMapGeneratorEditor] Export lỗi: {ex}");
+                
                 EditorUtility.DisplayDialog("Lỗi xuất scene", ex.Message, "OK");
             }
             finally
@@ -826,7 +826,7 @@ namespace baodeag
 
             if (bootstrapType == null)
             {
-                Debug.LogWarning("[RandomMapGeneratorEditor] WorldAdditiveSceneBootstrap is not compiled yet. Let Unity refresh scripts, then export again to write the additive scene list.");
+                
                 return;
             }
 
@@ -1111,10 +1111,10 @@ namespace baodeag
                 newScene.name = sceneName;
                 return true;
             }
-            catch (System.InvalidOperationException ex)
+            catch (System.InvalidOperationException)
             {
                 newScene = default;
-                Debug.LogError($"[RandomMapGeneratorEditor] Cannot create additive export scene '{sceneName}': {ex}");
+                
                 EditorUtility.DisplayDialog(
                     "Khong the tao sub-scene",
                     "Unity dang o Prefab Mode/Preview Stage hoac mot editor mode khong cho tao additive scene. Hay thoat Prefab Mode, chon object Random Map Generator trong scene World_02, roi export lai.",
@@ -1134,7 +1134,7 @@ namespace baodeag
         {
             if (!AssetDatabase.IsValidFolder(folderPath))
             {
-                Debug.LogWarning($"[RandomMapGeneratorEditor] Folder not found: {folderPath}");
+                
                 return;
             }
 
@@ -1161,7 +1161,7 @@ namespace baodeag
             }
 
             AssetDatabase.Refresh();
-            Debug.Log($"[RandomMapGeneratorEditor] Normalized {normalizedCount} Area_02 sub-scene(s) with World Location Renderer.");
+            
         }
 
         private static string GetSceneCategorySuffix(string scenePath)

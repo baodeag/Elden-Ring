@@ -22,7 +22,7 @@ public static class UndeadDummyModelReplacer
 
         if (targetPrefab == null || replacementPrefab == null)
         {
-            Debug.LogError("Undead dummy or Wretch prefab could not be found.");
+            
             return;
         }
 
@@ -41,7 +41,7 @@ public static class UndeadDummyModelReplacer
             var replacementInstance = PrefabUtility.InstantiatePrefab(replacementPrefab, prefabRoot.scene) as GameObject;
             if (replacementInstance == null)
             {
-                Debug.LogError("Failed to instantiate Wretch prefab into Undead Dummy.");
+                
                 return;
             }
 
@@ -67,7 +67,7 @@ public static class UndeadDummyModelReplacer
             SetLayerRecursively(replacementInstance.transform, prefabRoot.layer);
 
             PrefabUtility.SaveAsPrefabAsset(prefabRoot, TargetPrefabPath);
-            Debug.Log("Undead Dummy model was replaced with SM_Chr_ZombieBoss_Wretch_01.");
+            
         }
         finally
         {

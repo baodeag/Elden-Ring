@@ -12,7 +12,7 @@ public static class PolygonBossZombiesUrpFixer
         var shader = Shader.Find(UrpLitShaderName);
         if (shader == null)
         {
-            Debug.LogError($"Could not find shader '{UrpLitShaderName}'. Make sure URP is installed.");
+            
             return;
         }
 
@@ -63,7 +63,7 @@ public static class PolygonBossZombiesUrpFixer
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log($"Converted {updatedCount} Polygon Boss Zombies materials to URP/Lit.");
+        
     }
 
     private static Texture GetFirstTexture(Material material, params string[] propertyNames)

@@ -21,7 +21,7 @@ namespace baodeag
                 currentHealth.Value <= 0 &&
                 !aiBossCharacter.isDead.Value)
             {
-                Debug.Log($"[BossFlow] HP reached zero for '{aiBossCharacter.name}' old={oldValue} new={newValue} isServer={IsServer} isOwner={aiBossCharacter.IsOwner}");
+                
 
                 if (IsServer)
                     aiBossCharacter.StartCoroutine(aiBossCharacter.ProcessDeathEvent());

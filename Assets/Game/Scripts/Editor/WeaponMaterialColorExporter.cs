@@ -69,7 +69,7 @@ namespace baodeag.Editor
             WritePromptJson(promptRecords, Path.Combine(exportRoot, PromptJsonFileName));
 
             AssetDatabase.Refresh();
-            Debug.Log($"Exported {materialRecords.Count} material color rows and {promptRecords.Count} prompt rows to {ExportRelativeRoot}");
+            
         }
 
         private static List<WeaponItem> LoadAllWeaponItems()

@@ -476,7 +476,7 @@ namespace baodeag
 
             if (weaponTemplate == null)
             {
-                Debug.LogWarning($"Weapon being used with ID {newID} was not found in the World Item Database or equipped weapon slots.");
+                
                 return;
             }
 
@@ -831,7 +831,7 @@ namespace baodeag
             }
             else
             {
-                Debug.LogWarning($"Weapon action {actionID} could not be performed because action or weapon ID {weaponID} was not found.");
+                
             }
         }
 

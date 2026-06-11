@@ -51,7 +51,7 @@ namespace baodeag
 
         private void Awake()
         {
-            BuildRuntimeLogger.Log("WorldSceneManager.Awake");
+            
 
             if (instance == null)
             {
@@ -68,13 +68,13 @@ namespace baodeag
 
         private void OnEnable()
         {
-            BuildRuntimeLogger.Log("WorldSceneManager.OnEnable subscribe sceneLoaded");
+            
             SceneManager.sceneLoaded += OnUnitySceneLoaded;
         }
 
         private void OnDisable()
         {
-            BuildRuntimeLogger.Log("WorldSceneManager.OnDisable unsubscribe sceneLoaded");
+            
             SceneManager.sceneLoaded -= OnUnitySceneLoaded;
         }
 
@@ -97,7 +97,7 @@ namespace baodeag
 
         private void OnSceneEvent(SceneEvent sceneEvent)
         {
-            BuildRuntimeLogger.Log($"WorldSceneManager.OnSceneEvent type={sceneEvent.SceneEventType} scene={sceneEvent.SceneName} clients={sceneEvent.ClientsThatCompleted?.Count ?? 0}");
+            
 
             if (!NetworkManager.IsServer)
                 return;
@@ -169,21 +169,21 @@ namespace baodeag
         //used to load our main world scene
         public void LoadWorldScene(int buildIndex)
         {
-            BuildRuntimeLogger.Log($"WorldSceneManager.LoadWorldScene requested buildIndex={buildIndex}");
+            
             PrepareForSingleWorldSceneLoad();
 
             //activate loading screen
-            BuildRuntimeLogger.Log("WorldSceneManager.LoadWorldScene activating loading screen");
-            BuildRuntimeLogger.BeginLoadingWatch("WorldSceneManager.LoadWorldScene");
+            
+            
             PlayerUIManager.instance.playerUILoadingScreenManager.ActivateLoadingScreen();
             PlayerUIManager.instance.playerUILoadingScreenManager.SetProgress(0.02f, "Loading World");
 
             string worldScenePath = SceneUtility.GetScenePathByBuildIndex(buildIndex);
-            BuildRuntimeLogger.Log($"WorldSceneManager.LoadWorldScene resolved path='{worldScenePath}'");
+            
 
             if (string.IsNullOrEmpty(worldScenePath))
             {
-                BuildRuntimeLogger.Warning($"WorldSceneManager: Could not resolve scene path for build index {buildIndex}.");
+                
                 return;
             }
 
@@ -194,37 +194,37 @@ namespace baodeag
                 (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer))
             {
                 string worldSceneName = Path.GetFileNameWithoutExtension(worldScenePath);
-                BuildRuntimeLogger.Log($"WorldSceneManager.LoadWorldScene starting Netcode load scene='{worldSceneName}'");
-                BuildRuntimeLogger.MainThreadHeartbeat($"Before Netcode LoadScene {worldSceneName}");
+                
+                
                 var loadSceneStatus = NetworkManager.Singleton.SceneManager.LoadScene(worldSceneName, LoadSceneMode.Single);
-                BuildRuntimeLogger.MainThreadHeartbeat($"After Netcode LoadScene {worldSceneName}");
+                
                 startedNetworkSceneLoad = loadSceneStatus == SceneEventProgressStatus.Started;
-                BuildRuntimeLogger.Log($"WorldSceneManager.LoadWorldScene Netcode status scene='{worldSceneName}' status={loadSceneStatus}");
+                
 
                 if (!startedNetworkSceneLoad)
                 {
-                    BuildRuntimeLogger.Warning($"WorldSceneManager: Netcode scene load did not start for '{worldSceneName}' (build index {buildIndex}). Falling back to SceneManager.LoadScene.");
+                    
                 }
             }
 
             if (!startedNetworkSceneLoad)
             {
-                BuildRuntimeLogger.Warning($"WorldSceneManager.LoadWorldScene starting synchronous Unity SceneManager.LoadScene buildIndex={buildIndex}. This can block the UI thread until the scene finishes loading.");
-                BuildRuntimeLogger.MainThreadHeartbeat($"Before synchronous SceneManager.LoadScene {buildIndex}");
+                
+                
                 SceneManager.LoadScene(buildIndex, LoadSceneMode.Single);
-                BuildRuntimeLogger.MainThreadHeartbeat($"After synchronous SceneManager.LoadScene {buildIndex}");
-                BuildRuntimeLogger.Log($"WorldSceneManager.LoadWorldScene Unity SceneManager.LoadScene returned buildIndex={buildIndex}");
+                
+                
             }
 
             //load player save data
-            BuildRuntimeLogger.Log("WorldSceneManager.LoadWorldScene loading local player data after scene load request");
+            
             PlayerUIManager.instance.localPlayer.LoadGameDataFromCurrentCharacterData(ref WorldSaveGameManager.instance.currentCharacterData);
-            BuildRuntimeLogger.Log("WorldSceneManager.LoadWorldScene local player data load completed");
+            
         }
 
         private void PrepareForSingleWorldSceneLoad()
         {
-            BuildRuntimeLogger.Log("WorldSceneManager.PrepareForSingleWorldSceneLoad begin");
+            
 
             if (loadingAdditiveScenesCoroutine != null)
             {
@@ -258,12 +258,12 @@ namespace baodeag
             if (WorldLocationManager.instance != null)
                 WorldLocationManager.instance.ResetForWorldSceneTransition();
 
-            BuildRuntimeLogger.Log("WorldSceneManager.PrepareForSingleWorldSceneLoad end");
+            
         }
 
         private void OnUnitySceneLoaded(Scene scene, LoadSceneMode loadMode)
         {
-            BuildRuntimeLogger.Log($"WorldSceneManager.OnUnitySceneLoaded scene={scene.name} buildIndex={scene.buildIndex} mode={loadMode}");
+            
 
             if (loadMode != LoadSceneMode.Single)
                 return;
@@ -291,10 +291,7 @@ namespace baodeag
             bool networkServer = NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer;
             bool networkClient = NetworkManager.Singleton != null && NetworkManager.Singleton.IsClient;
 
-            BuildRuntimeLogger.Log(
-                $"LOADING-SNAPSHOT source={source} activeScene={activeSceneName} world={world} loadingScreen={loadingScreenActive} " +
-                $"sceneIsLoading={sceneIsLoading} sceneIsUnloading={sceneIsUnloading} queuedLoad={quedScenesToLoad} queuedUnload={quedScenesToUnload} " +
-                $"loadedScenes={loadedScenes.Count} aiLoading={aiLoading} netListening={networkListening} host={networkHost} server={networkServer} client={networkClient}");
+            
         }
 
         private void RefreshCurrentWorldSceneID(Scene scene)
@@ -389,7 +386,7 @@ namespace baodeag
         //used to load additive scenes in main world scene
         private void LoadAdditiveScene(string sceneName)
         {
-            BuildRuntimeLogger.Log($"WorldSceneManager.LoadAdditiveScene requested scene={sceneName}");
+            
 
             for (int i = 0; i < loadedScenes.Count; i++)
             {
@@ -410,36 +407,36 @@ namespace baodeag
                 NetworkManager.Singleton.SceneManager != null &&
                 (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer))
             {
-                BuildRuntimeLogger.Log($"WorldSceneManager.LoadAdditiveScene starting Netcode additive scene={sceneName}");
+                
                 loadSceneStatus = NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
-                BuildRuntimeLogger.Log($"WorldSceneManager.LoadAdditiveScene Netcode status scene={sceneName} status={loadSceneStatus}");
+                
             }
             else
             {
-                BuildRuntimeLogger.Log($"WorldSceneManager.LoadAdditiveScene starting local coroutine scene={sceneName}");
+                
                 StartCoroutine(LoadAdditiveSceneNonNetworkCoroutine(sceneName));
                 return;
             }
 
             if (loadSceneStatus != SceneEventProgressStatus.Started)
             {
-                Debug.LogWarning($"WorldSceneManager: Netcode additive scene load did not start for '{sceneName}' ({loadSceneStatus}). Falling back to local additive load.");
+                
                 StartCoroutine(LoadAdditiveSceneNonNetworkCoroutine(sceneName));
             }
         }
 
         private IEnumerator LoadAdditiveSceneNonNetworkCoroutine(string sceneName)
         {
-            BuildRuntimeLogger.Log($"WorldSceneManager.LoadAdditiveSceneNonNetworkCoroutine begin scene={sceneName}");
+            
             AsyncOperation loadingOperation = null;
 
             try
             {
                 loadingOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
             }
-            catch (System.Exception exception)
+            catch (System.Exception)
             {
-                Debug.LogWarning($"WorldSceneManager: Local additive scene load failed for '{sceneName}': {exception.Message}");
+                
                 sceneIsLoading = false;
                 yield break;
             }
@@ -452,7 +449,7 @@ namespace baodeag
 
             while (!loadingOperation.isDone)
             {
-                BuildRuntimeLogger.MainThreadHeartbeat($"Additive LoadSceneAsync scene={sceneName} progress={loadingOperation.progress:0.00}");
+                
                 yield return null;
             }
 
@@ -476,26 +473,26 @@ namespace baodeag
             }
 
             sceneIsLoading = false;
-            BuildRuntimeLogger.Log($"WorldSceneManager.LoadAdditiveSceneNonNetworkCoroutine end scene={sceneName}");
+            
             CheckForRequiredRenderers();
         }
 
         //used to load multiple additive scenes at once when entering new area
         public void LoadAdditiveScenes(List<string> scenesToLoad)
         {
-            BuildRuntimeLogger.Log($"WorldSceneManager.LoadAdditiveScenes begin requestedCount={(scenesToLoad != null ? scenesToLoad.Count : 0)}");
+            
 
             if (NetworkManager.Singleton != null &&
                 NetworkManager.Singleton.IsClient &&
                 !NetworkManager.Singleton.IsServer)
             {
-                BuildRuntimeLogger.Log("WorldSceneManager.LoadAdditiveScenes skipped client-only instance");
+                
                 return;
             }
 
             if (scenesToLoad == null)
             {
-                BuildRuntimeLogger.Warning("WorldSceneManager.LoadAdditiveScenes skipped null scene list");
+                
                 return;
             }
 
@@ -512,7 +509,7 @@ namespace baodeag
             }
 
             quedScenesToLoad = quedSceneIDs.Count;
-            BuildRuntimeLogger.Log($"WorldSceneManager.LoadAdditiveScenes queuedCount={quedScenesToLoad}");
+            
 
             if (quedScenesToLoad <= 0)
                 return;
@@ -521,7 +518,7 @@ namespace baodeag
                 StopCoroutine(loadingAdditiveScenesCoroutine);
 
             loadingAdditiveScenesCoroutine = StartCoroutine(LoadAdditiveScenesCoroutine());
-            BuildRuntimeLogger.Log("WorldSceneManager.LoadAdditiveScenes coroutine started");
+            
         }
 
         private bool IsSceneLoadedOrQueued(string sceneName)
@@ -545,7 +542,7 @@ namespace baodeag
 
         private IEnumerator LoadAdditiveScenesCoroutine()
         {
-            BuildRuntimeLogger.Log("WorldSceneManager.LoadAdditiveScenesCoroutine begin");
+            
             yield return null;
 
             float waitTime = 0.1f;
@@ -553,14 +550,14 @@ namespace baodeag
             //check to see if a scene is currently being loaded/unloaded and if it is, wait
             for (int i = 0; i < quedSceneIDs.Count; i++)
             {
-                BuildRuntimeLogger.MainThreadHeartbeat($"LoadAdditiveScenesCoroutine index={i}/{quedSceneIDs.Count} scene={quedSceneIDs[i]}");
+                
 
                 if (PlayerUIManager.instance.playerUILoadingScreenManager.LoadingScreenIsActive())
                     waitTime = 0;
 
                 while (sceneIsLoading || sceneIsUnloading)
                 {
-                    BuildRuntimeLogger.MainThreadHeartbeat($"LoadAdditiveScenesCoroutine waiting busy scene={quedSceneIDs[i]} loading={sceneIsLoading} unloading={sceneIsUnloading}");
+                    
                     yield return new WaitForSeconds(waitTime);
                 }
 
@@ -575,7 +572,7 @@ namespace baodeag
 
                 while (sceneIsLoading || sceneIsUnloading)
                 {
-                    BuildRuntimeLogger.MainThreadHeartbeat($"LoadAdditiveScenesCoroutine waiting scene complete scene={quedSceneIDs[i]} loading={sceneIsLoading} unloading={sceneIsUnloading}");
+                    
                     yield return new WaitForSeconds(waitTime);
                 }
 
@@ -588,7 +585,7 @@ namespace baodeag
             }
 
             loadingAdditiveScenesCoroutine = null;
-            BuildRuntimeLogger.Log("WorldSceneManager.LoadAdditiveScenesCoroutine end");
+            
 
             yield return null;
         }
@@ -823,11 +820,11 @@ namespace baodeag
 
         public void CheckForRequiredRenderers()
         {
-            BuildRuntimeLogger.Log("WorldSceneManager.CheckForRequiredRenderers begin");
+            
 
             if (WorldLocationManager.instance == null)
             {
-                BuildRuntimeLogger.Warning("WorldSceneManager.CheckForRequiredRenderers skipped WorldLocationManager null");
+                
                 return;
             }
 
@@ -838,23 +835,23 @@ namespace baodeag
 
             if (location != null)
             {
-                BuildRuntimeLogger.Log($"WorldSceneManager.CheckForRequiredRenderers starting coroutine location={location.name}");
+                
                 requiredRenderersCoroutine = StartCoroutine(CheckForRequiredSceneRenderersCoroutine(location));
             }
             else
             {
-                BuildRuntimeLogger.Warning("WorldSceneManager.CheckForRequiredRenderers skipped null player area");
+                
             }
         }
 
         private IEnumerator CheckForRequiredSceneRenderersCoroutine(WorldLocationSceneSet location)
         {
-            BuildRuntimeLogger.Log($"WorldSceneManager.CheckForRequiredSceneRenderersCoroutine begin location={(location != null ? location.name : "null")}");
+            
 
             //wait until scenes have finished loading to search for renderers/root objects
             while (sceneIsLoading)
             {
-                BuildRuntimeLogger.MainThreadHeartbeat("CheckForRequiredSceneRenderersCoroutine waiting sceneIsLoading");
+                
                 yield return new WaitForEndOfFrame();
             }
 
@@ -869,7 +866,7 @@ namespace baodeag
                     WorldLocationManager.instance.worldLocationRenderers[i].ToggleRootObjects(true);
                 }
 
-                BuildRuntimeLogger.Log("WorldSceneManager.CheckForRequiredSceneRenderersCoroutine end generated-world-all-at-once");
+                
                 yield break;
             }
 
@@ -923,7 +920,7 @@ namespace baodeag
                 }
             }
 
-            BuildRuntimeLogger.Log("WorldSceneManager.CheckForRequiredSceneRenderersCoroutine end");
+            
             yield return null;
         }
 
@@ -960,19 +957,19 @@ namespace baodeag
         public static void Log(string message)
         {
             Write("INFO", message);
-            Debug.Log(message);
+            
         }
 
         public static void Warning(string message)
         {
             Write("WARN", message);
-            Debug.LogWarning(message);
+            
         }
 
         public static void Error(string message)
         {
             Write("ERROR", message);
-            Debug.LogError(message);
+            
         }
 
         private static void Initialize()
@@ -1009,9 +1006,9 @@ namespace baodeag
                     unityLogHooked = true;
                 }
             }
-            catch (System.Exception exception)
+            catch (System.Exception)
             {
-                Debug.LogWarning("BuildRuntimeLogger failed to initialize: " + exception.Message);
+                
             }
         }
 

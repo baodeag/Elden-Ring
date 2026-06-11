@@ -22,20 +22,20 @@ namespace baodeag
 
         private void Awake()
         {
-            BuildRuntimeLogger.Log("PlayerUILoadingScreenManager.Awake");
+            
             HideLoadingProgressUIIfNeeded();
         }
 
         private void Start()
         {
-            BuildRuntimeLogger.Log("PlayerUILoadingScreenManager.Start");
+            
             SceneManager.activeSceneChanged += OnSceneChanged;
             HideLoadingProgressUIIfNeeded();
         }
 
         private void OnSceneChanged(Scene arg0, Scene arg1)
         {
-            BuildRuntimeLogger.Log($"PlayerUILoadingScreenManager.OnSceneChanged from={arg0.name} to={arg1.name}");
+            
             // Scene transitions can require extra time for world scenes, additive areas,
             // and teleport targets to become ready. The loading screen is now closed
             // explicitly by the systems that know when the world is actually ready.
@@ -45,7 +45,7 @@ namespace baodeag
         {
             if (loadingScreen != null && loadingScreen.activeSelf)
             {
-                BuildRuntimeLogger.MainThreadHeartbeat("PlayerUILoadingScreenManager.Update loading screen active");
+                
 
                 if (Time.unscaledTime >= nextLoadingSnapshotTime)
                 {
@@ -53,16 +53,14 @@ namespace baodeag
 
                     if (WorldSceneManager.instance != null)
                         WorldSceneManager.instance.LogLoadingStateSnapshot("PlayerUILoadingScreenManager.Update");
-                    else
-                        BuildRuntimeLogger.Log("LOADING-SNAPSHOT source=PlayerUILoadingScreenManager.Update WorldSceneManager.instance=null");
                 }
             }
         }
 
         public void ActivateLoadingScreen()
         {
-            BuildRuntimeLogger.Log("PlayerUILoadingScreenManager.ActivateLoadingScreen begin");
-            BuildRuntimeLogger.BeginLoadingWatch("PlayerUILoadingScreenManager.ActivateLoadingScreen");
+            
+            
             if (fadeLoadingScreenCoroutine != null)
             {
                 StopCoroutine(fadeLoadingScreenCoroutine);
@@ -74,13 +72,13 @@ namespace baodeag
             ToggleGameplayHUDForLoading(false);
             SetProgress(0, DefaultProgressLabel);
             HideLoadingProgressUIIfNeeded();
-            BuildRuntimeLogger.Log("PlayerUILoadingScreenManager.ActivateLoadingScreen end");
+            
         }
 
         public void SetProgress(float progress, string label = DefaultProgressLabel)
         {
             progress = Mathf.Clamp01(progress);
-            BuildRuntimeLogger.Log($"PlayerUILoadingScreenManager.SetProgress progress={progress:0.00} label={label}");
+            
 
             if (progressBar != null)
                 progressBar.value = progress;
@@ -95,11 +93,11 @@ namespace baodeag
 
         public void DeactivateLoadingScreen(float delay = 1)
         {
-            BuildRuntimeLogger.Log($"PlayerUILoadingScreenManager.DeactivateLoadingScreen requested delay={delay}");
+            
             //if the loading screen is not active, return
             if (!loadingScreen.activeSelf)
             {
-                BuildRuntimeLogger.Log("PlayerUILoadingScreenManager.DeactivateLoadingScreen ignored because loading screen is inactive");
+                
                 return;
             }
 
@@ -113,7 +111,7 @@ namespace baodeag
 
             //the duration is how long the fade will take, the delay is how long to wait before starting the fade
             fadeLoadingScreenCoroutine = StartCoroutine(FadeLoadingScreen(1, delay));
-            BuildRuntimeLogger.Log("PlayerUILoadingScreenManager.DeactivateLoadingScreen fade coroutine started");
+            
         }
 
         //private IEnumerator FadeLoadingScreen(float duration, float delay)
@@ -152,7 +150,7 @@ namespace baodeag
 
         private IEnumerator FadeLoadingScreen(float duration, float delay)
         {
-            BuildRuntimeLogger.Log($"PlayerUILoadingScreenManager.FadeLoadingScreen begin duration={duration} delay={delay}");
+            
             // Wait for AI loading operations to complete (with safety check)
             float waitTimeout = 10f; // Maximum wait time
             float waitTimer = 0f;
@@ -166,7 +164,7 @@ namespace baodeag
             }
 
             bool aiStillLoading = WorldAIManager.instance != null && WorldAIManager.instance.isPerformingLoadingOperation;
-            BuildRuntimeLogger.Log($"PlayerUILoadingScreenManager.FadeLoadingScreen AI wait finished waitTimer={waitTimer:0.00} aiStillLoading={aiStillLoading}");
+            
 
             loadingScreen.SetActive(true);
 
@@ -193,8 +191,8 @@ namespace baodeag
             loadingScreen.SetActive(false);
             ToggleGameplayHUDForLoading(true);
             fadeLoadingScreenCoroutine = null;
-            BuildRuntimeLogger.EndLoadingWatch("PlayerUILoadingScreenManager.FadeLoadingScreen");
-            BuildRuntimeLogger.Log("PlayerUILoadingScreenManager.FadeLoadingScreen end hidden");
+            
+            
             yield return null;
         }
 
@@ -237,7 +235,7 @@ namespace baodeag
 
         public void ForceHideLoadingScreen()
         {
-            BuildRuntimeLogger.Log("PlayerUILoadingScreenManager.ForceHideLoadingScreen begin");
+            
             if (fadeLoadingScreenCoroutine != null)
             {
                 StopCoroutine(fadeLoadingScreenCoroutine);
@@ -248,8 +246,8 @@ namespace baodeag
             canvasGroup.alpha = 0;
             loadingScreen.SetActive(false);
             ToggleGameplayHUDForLoading(true);
-            BuildRuntimeLogger.EndLoadingWatch("PlayerUILoadingScreenManager.ForceHideLoadingScreen");
-            BuildRuntimeLogger.Log("PlayerUILoadingScreenManager.ForceHideLoadingScreen end");
+            
+            
         }
     }
 }

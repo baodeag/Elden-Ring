@@ -308,7 +308,7 @@ namespace baodeag
                     break;
             }
 
-            Debug.Log("Stamina Deducted: " + staminaDeducted);
+            
             player.playerNetworkManager.currentStamina.Value -= Mathf.RoundToInt(staminaDeducted);
         }
 

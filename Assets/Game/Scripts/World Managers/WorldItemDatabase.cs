@@ -88,34 +88,34 @@ namespace baodeag
             items.Clear();
 
             foreach (var weapon in weapons)
-                AddUniqueItemToDatabase(weapon, false);
+                AddUniqueItemToDatabase(weapon);
 
             foreach (var item in headEquipment)
-                AddUniqueItemToDatabase(item, false);
+                AddUniqueItemToDatabase(item);
 
             foreach (var item in bodyEquipment)
-                AddUniqueItemToDatabase(item, false);
+                AddUniqueItemToDatabase(item);
 
             foreach (var item in legEquipment)
-                AddUniqueItemToDatabase(item, false);
+                AddUniqueItemToDatabase(item);
 
             foreach (var item in handEquipment)
-                AddUniqueItemToDatabase(item, false);
+                AddUniqueItemToDatabase(item);
 
             foreach(var item in ashesOfWar)
-                AddUniqueItemToDatabase(item, false);
+                AddUniqueItemToDatabase(item);
 
             foreach (var item in spells)
-                AddUniqueItemToDatabase(item, false);
+                AddUniqueItemToDatabase(item);
 
             foreach (var item in projectiles)
-                AddUniqueItemToDatabase(item, false);
+                AddUniqueItemToDatabase(item);
 
             foreach (var item in quickSlotItems)
-                AddUniqueItemToDatabase(item, false);
+                AddUniqueItemToDatabase(item);
 
             foreach (var item in upgradeMaterials)
-                AddUniqueItemToDatabase(item, false);
+                AddUniqueItemToDatabase(item);
 
             if (!assignSequentialIDs)
                 return;
@@ -190,7 +190,7 @@ namespace baodeag
             else if (item is UpgradeMaterial upgradeMaterial)
                 AddUniqueTypedItem(upgradeMaterials, upgradeMaterial);
 
-            AddUniqueItemToDatabase(item, true);
+            AddUniqueItemToDatabase(item);
         }
 
         private void AddUniqueTypedItem<T>(List<T> list, T item) where T : Item
@@ -204,7 +204,7 @@ namespace baodeag
             list.Add(item);
         }
 
-        private void AddUniqueItemToDatabase(Item item, bool logRegistration)
+        private void AddUniqueItemToDatabase(Item item)
         {
             if (item == null)
                 return;
@@ -213,9 +213,6 @@ namespace baodeag
                 return;
 
             items.Add(item);
-
-            if (logRegistration)
-                BuildRuntimeLogger.Log($"[InventoryTrace] WorldItemDatabase registered item name={item.itemName} id={item.itemID} type={item.GetType().Name}");
         }
 
         private bool ItemsMatch(Item a, Item b)
@@ -403,12 +400,9 @@ namespace baodeag
 
             if (item == null)
             {
-                BuildRuntimeLogger.Warning($"[InventoryTrace] CreateItemInstance failed id={serializableItem.itemID} name={serializableItem.itemName}");
+                
                 return null;
             }
-
-            if (item.itemID != serializableItem.itemID)
-                BuildRuntimeLogger.Log($"[InventoryTrace] CreateItemInstance resolved by name savedID={serializableItem.itemID} runtimeID={item.itemID} name={serializableItem.itemName}");
 
             return Instantiate(item);
         }
@@ -484,13 +478,13 @@ namespace baodeag
                 if (weaponByName != null)
                 {
                     weapon = Instantiate(weaponByName);
-                    BuildRuntimeLogger.Log($"[InventoryTrace] GetWeaponFromSerializedData resolved by name savedID={serializableWeapon.itemID} runtimeID={weaponByName.itemID} name={serializableWeapon.itemName}");
+                    
                 }
             }
 
             if (weapon == null)
             {
-                BuildRuntimeLogger.Warning($"[InventoryTrace] GetWeaponFromSerializedData failed id={serializableWeapon.itemID} name={serializableWeapon.itemName}, falling back to unarmed");
+                
                 return Instantiate(unarmedWeapon);
             }
 

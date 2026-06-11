@@ -21,25 +21,25 @@ namespace baodeag
         {
             if (playerPerformingAction.isPerformingAction)
             {
-                Debug.Log("Cannot Perform Ash Of War: You Are Already Performing An Action");
+                
                 return false;
             }
 
             if (playerPerformingAction.playerNetworkManager.isJumping.Value)
             {
-                Debug.Log("Cannot Perform Ash Of War: You Are Jumping");
+                
                 return false;
             }
 
             if (!playerPerformingAction.playerLocomotionManager.isGrounded)
             {
-                Debug.Log("Cannot Perform Ash Of War: You Are Not Grounded");
+                
                 return false;
             }
 
             if (playerPerformingAction.playerNetworkManager.currentStamina.Value <= 0)
             {
-                Debug.Log("Cannot Perform Ash Of War: Out Of Stamina");
+                
                 return false;
             }
 

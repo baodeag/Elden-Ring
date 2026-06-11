@@ -16,7 +16,7 @@ namespace baodeag
         {
             if (character.IsOwner)
             {
-                Debug.Log("Character is taking: " + staminaDamage + " stamina damage");
+                
                 character.characterNetworkManager.currentStamina.Value -= staminaDamage;
             }
         }

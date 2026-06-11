@@ -276,7 +276,7 @@ namespace baodeag
 
             if (weapon == null)
             {
-                Debug.Log("Item is null");
+                
                 rightWeaponQuickSlotIcon.enabled = false;
                 rightWeaponQuickSlotIcon.sprite = null;
                 return;
@@ -284,7 +284,7 @@ namespace baodeag
 
             if (weapon.itemIcon == null)
             {
-                Debug.Log("Item has no icon");
+                
                 rightWeaponQuickSlotIcon.enabled = false;
                 rightWeaponQuickSlotIcon.sprite = null;
                 return;
@@ -300,14 +300,14 @@ namespace baodeag
 
             if (weapon == null)
             {
-                Debug.Log("Item is null");
+                
                 leftWeaponQuickSlotIcon.enabled = false;
                 leftWeaponQuickSlotIcon.sprite = null;
                 return;
             }
             if (weapon.itemIcon == null)
             {
-                Debug.Log("Item has no icon");
+                
                 leftWeaponQuickSlotIcon.enabled = false;
                 leftWeaponQuickSlotIcon.sprite = null;
                 return;
@@ -358,7 +358,7 @@ namespace baodeag
 
             if (spell == null)
             {
-                Debug.Log("Item is null");
+                
                 spellItemQuickSlotIcon.enabled = false;
                 spellItemQuickSlotIcon.sprite = null;
                 return;
@@ -366,7 +366,7 @@ namespace baodeag
 
             if (spell.itemIcon == null)
             {
-                Debug.Log("Item has no icon");
+                
                 spellItemQuickSlotIcon.enabled = false;
                 spellItemQuickSlotIcon.sprite = null;
                 return;
@@ -380,7 +380,7 @@ namespace baodeag
         {
             if (quickSlotItem == null)
             {
-                Debug.Log("Item is null");
+                
                 quickSlotItemQuickSlotIcon.enabled = false;
                 quickSlotItemQuickSlotIcon.sprite = null;
                 quickSlotItemCount.enabled = false;
@@ -397,7 +397,7 @@ namespace baodeag
 
             if (quickSlotItem.itemIcon == null)
             {
-                Debug.Log("Item has no icon");
+                
                 quickSlotItemQuickSlotIcon.enabled = false;
                 quickSlotItemQuickSlotIcon.sprite = null;
                 quickSlotItemCount.enabled = false;
@@ -427,7 +427,7 @@ namespace baodeag
         {
             if (projectileItem == null)
             {
-                Debug.Log("Item is null");
+                
                 mainProjectileQuickSlotIcon.enabled = false;
                 mainProjectileQuickSlotIcon.sprite = null;
                 mainProjectileCount.enabled = false;
@@ -436,7 +436,7 @@ namespace baodeag
 
             if (projectileItem.itemIcon == null)
             {
-                Debug.Log("Item has no icon");
+                
                 mainProjectileQuickSlotIcon.enabled = false;
                 mainProjectileQuickSlotIcon.sprite = null;
                 mainProjectileCount.enabled = false;
@@ -453,7 +453,7 @@ namespace baodeag
         {
             if (projectileItem == null)
             {
-                Debug.Log("Item is null");
+                
                 secondaryProjectileQuickSlotIcon.enabled = false;
                 secondaryProjectileQuickSlotIcon.sprite = null;
                 secondaryProjectileCount.enabled = false;
@@ -462,7 +462,7 @@ namespace baodeag
 
             if (projectileItem.itemIcon == null)
             {
-                Debug.Log("Item has no icon");
+                
                 secondaryProjectileQuickSlotIcon.enabled = false;
                 secondaryProjectileQuickSlotIcon.sprite = null;
                 secondaryProjectileCount.enabled = false;

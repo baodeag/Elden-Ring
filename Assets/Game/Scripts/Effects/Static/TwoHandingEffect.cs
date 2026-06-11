@@ -15,7 +15,7 @@ namespace baodeag
             if (character.IsOwner)
             {
                 strengthGainedFromTwoHandingWeapon = Mathf.RoundToInt(character.characterNetworkManager.strength.Value / 2);
-                Debug.Log("Strength gained: " + strengthGainedFromTwoHandingWeapon);
+                
                 character.characterNetworkManager.strengthModifier.Value += strengthGainedFromTwoHandingWeapon;
             }
         }

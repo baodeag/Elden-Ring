@@ -26,7 +26,7 @@ namespace baodeag.EditorTools
 
             if (spawnerPrefab == null || triggerPrefab == null || fogWallPrefab == null)
             {
-                Debug.LogError("Knight boss arena setup failed because one or more required prefabs could not be found.");
+                
                 return;
             }
 
@@ -41,7 +41,7 @@ namespace baodeag.EditorTools
 
             if (spawnerInstance == null || triggerInstance == null || fogWallInstance == null)
             {
-                Debug.LogError("Knight boss arena setup failed while instantiating prefabs.");
+                
                 Object.DestroyImmediate(arenaRoot);
                 return;
             }
@@ -80,7 +80,7 @@ namespace baodeag.EditorTools
             Selection.activeGameObject = arenaRoot;
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
 
-            Debug.Log("Knight boss arena setup created. Review trigger/fog wall positions in scene, then save the scene.");
+            
         }
     }
 }

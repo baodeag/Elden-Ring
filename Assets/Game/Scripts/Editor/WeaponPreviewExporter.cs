@@ -54,7 +54,7 @@ namespace baodeag.Editor
             EnsureOverrideCsv(records, Path.Combine(exportRoot, OverrideCsvFileName));
 
             AssetDatabase.Refresh();
-            Debug.Log($"Exported {records.Count} weapon previews and manifests to {ExportRelativeRoot}");
+            
         }
 
         [MenuItem("Tools/Weapons/Apply Weapon Names From Override CSV")]
@@ -64,7 +64,7 @@ namespace baodeag.Editor
 
             if (!File.Exists(overrideCsvPath))
             {
-                Debug.LogWarning($"Override CSV not found: {overrideCsvPath}. Run 'Export Weapon Previews + Manifest' first.");
+                
                 return;
             }
 
@@ -88,7 +88,7 @@ namespace baodeag.Editor
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log($"Applied {renameCount} weapon name overrides from {OverrideCsvFileName}");
+            
         }
 
         [MenuItem("Tools/Weapons/Apply Auto Suggested Weapon Names")]
@@ -111,7 +111,7 @@ namespace baodeag.Editor
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log($"Applied {renameCount} auto-suggested weapon names.");
+            
         }
 
         [MenuItem("Tools/Weapons/Sync Weapon Asset File Names")]
@@ -129,7 +129,7 @@ namespace baodeag.Editor
             }
 
             AssetDatabase.Refresh();
-            Debug.Log($"Renamed {renameCount} weapon asset files to match their main object names.");
+            
         }
 
         private static List<WeaponItem> LoadAllWeaponItems()
@@ -210,7 +210,7 @@ namespace baodeag.Editor
             string renameError = AssetDatabase.RenameAsset(assetPath, desiredFileName);
             if (!string.IsNullOrWhiteSpace(renameError))
             {
-                Debug.LogWarning($"Failed to rename '{assetPath}' to '{desiredFileName}': {renameError}");
+                
                 return false;
             }
 
@@ -290,9 +290,9 @@ namespace baodeag.Editor
                 byte[] pngBytes = texture.EncodeToPNG();
                 File.WriteAllBytes(absoluteOutputPath, pngBytes);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                Debug.LogWarning($"Failed to export preview for '{prefab.name}': {exception.Message}");
+                
             }
             finally
             {

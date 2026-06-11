@@ -317,13 +317,13 @@ namespace baodeag
 
         private IEnumerator HandlePendingMapEntryCoroutine()
         {
-            BuildRuntimeLogger.Log("WorldGameSessionManager.HandlePendingMapEntryCoroutine begin");
+            
             int targetSiteOfGraceID = GameProgressionManager.Instance.ConsumePendingTransitionSiteOfGraceID();
-            BuildRuntimeLogger.Log($"WorldGameSessionManager.HandlePendingMapEntryCoroutine targetSiteOfGraceID={targetSiteOfGraceID}");
+            
 
             if (targetSiteOfGraceID < 0)
             {
-                BuildRuntimeLogger.Warning("WorldGameSessionManager.HandlePendingMapEntryCoroutine no target site of grace; deactivating loading screen");
+                
                 if (PlayerUIManager.instance != null)
                     PlayerUIManager.instance.playerUILoadingScreenManager.DeactivateLoadingScreen(1.5f);
 
@@ -339,14 +339,14 @@ namespace baodeag
                     WorldObjectManager.instance == null) &&
                    elapsedTime < timeout)
             {
-                BuildRuntimeLogger.MainThreadHeartbeat($"HandlePendingMapEntry waiting managers elapsed={elapsedTime:0.00}");
+                
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
 
             if (PlayerUIManager.instance == null || PlayerUIManager.instance.localPlayer == null)
             {
-                BuildRuntimeLogger.Warning("WorldGameSessionManager.HandlePendingMapEntryCoroutine abort: PlayerUIManager/localPlayer missing after timeout");
+                
                 pendingMapEntryCoroutine = null;
                 yield break;
             }
@@ -355,7 +355,7 @@ namespace baodeag
 
             bool loadGeneratedWorldAllAtOnce = WorldSceneManager.instance != null &&
                                                WorldSceneManager.instance.ShouldLoadGeneratedWorldAllAtOnce();
-            BuildRuntimeLogger.Log($"WorldGameSessionManager.HandlePendingMapEntryCoroutine loadGeneratedWorldAllAtOnce={loadGeneratedWorldAllAtOnce}");
+            
 
             if (loadGeneratedWorldAllAtOnce)
             {
@@ -363,11 +363,11 @@ namespace baodeag
             }
             else
             {
-                BuildRuntimeLogger.Log("WorldGameSessionManager.HandlePendingMapEntryCoroutine yielding before initial area trigger");
+                
                 yield return null;
 
                 WorldLocationSceneSet initialArea = TriggerInitialAreaLoadForPlayer(PlayerUIManager.instance.localPlayer);
-                BuildRuntimeLogger.Log($"WorldGameSessionManager.HandlePendingMapEntryCoroutine initialArea={(initialArea != null ? initialArea.name : "null")}");
+                
                 yield return WaitForRequiredAreaScenes(initialArea, 30f, 0.05f, 0.55f);
             }
 
@@ -378,7 +378,7 @@ namespace baodeag
                     WorldObjectManager.instance.sitesOfGrace.Count == 0) &&
                    elapsedTime < timeout)
             {
-                BuildRuntimeLogger.MainThreadHeartbeat($"HandlePendingMapEntry waiting sitesOfGrace elapsed={elapsedTime:0.00}");
+                
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
@@ -404,7 +404,7 @@ namespace baodeag
 
             if (targetSiteOfGrace != null)
             {
-                BuildRuntimeLogger.Log($"WorldGameSessionManager.HandlePendingMapEntryCoroutine teleporting to siteOfGraceID={targetSiteOfGrace.siteOfGraceID}");
+                
                 PlayerManager localPlayer = PlayerUIManager.instance.localPlayer;
                 targetSiteOfGrace.TeleportPlayerToSiteOfGrace(localPlayer, false);
                 RestoreLocalPlayerForMapEntry(localPlayer);
@@ -429,17 +429,17 @@ namespace baodeag
                 }
                 else
                 {
-                    BuildRuntimeLogger.Log("WorldGameSessionManager.HandlePendingMapEntryCoroutine yielding before nearest area trigger");
+                    
                     yield return null;
 
                     WorldLocationSceneSet entryArea = TriggerNearestAreaLoadForPlayer(localPlayer, targetSiteOfGrace.transform.position);
-                    BuildRuntimeLogger.Log($"WorldGameSessionManager.HandlePendingMapEntryCoroutine entryArea={(entryArea != null ? entryArea.name : "null")}");
+                    
                     yield return WaitForRequiredAreaScenes(entryArea, 30f, 0.55f, 0.95f);
                 }
             }
             else
             {
-                BuildRuntimeLogger.Warning("WorldGameSessionManager.HandlePendingMapEntryCoroutine target site of grace not found; waiting fallback");
+                
                 SetLoadingProgress(0.95f, "Loading Map");
                 yield return new WaitForSeconds(4f);
             }
@@ -450,7 +450,7 @@ namespace baodeag
                 PlayerUIManager.instance.playerUILoadingScreenManager.DeactivateLoadingScreen(2.5f);
             }
 
-            BuildRuntimeLogger.Log("WorldGameSessionManager.HandlePendingMapEntryCoroutine end");
+            
             pendingMapEntryCoroutine = null;
         }
 
@@ -547,9 +547,9 @@ namespace baodeag
         /// </summary>
         private WorldLocationSceneSet TriggerNearestAreaLoadForPlayer(PlayerManager player, Vector3 origin, float searchRadius = 120f)
         {
-            BuildRuntimeLogger.Log($"WorldGameSessionManager.TriggerNearestAreaLoadForPlayer begin player={(player != null ? player.name : "null")} origin={origin} radius={searchRadius}");
+            
             List<EventTriggerLoadScene> allTriggers = EventTriggerLoadScene.GetRegisteredTriggersSnapshot();
-            BuildRuntimeLogger.Log($"WorldGameSessionManager.TriggerNearestAreaLoadForPlayer registeredTriggers={allTriggers.Count}");
+            
 
             EventTriggerLoadScene nearest = null;
             float nearestDistSq = searchRadius * searchRadius;
@@ -583,21 +583,21 @@ namespace baodeag
 
             if (nearest != null)
             {
-                BuildRuntimeLogger.Log($"WorldGameSessionManager.TriggerNearestAreaLoadForPlayer firing trigger={nearest.name} area={(nearest.GetArea() != null ? nearest.GetArea().name : "null")}");
+                
                 nearest.ManualTriggerForPlayer(player);
-                BuildRuntimeLogger.Log($"WorldGameSessionManager.TriggerNearestAreaLoadForPlayer end trigger={nearest.name}");
+                
                 return nearest.GetArea();
             }
 
-            BuildRuntimeLogger.Warning("WorldGameSessionManager.TriggerNearestAreaLoadForPlayer no registered trigger found");
+            
             return null;
         }
 
         private WorldLocationSceneSet TriggerInitialAreaLoadForPlayer(PlayerManager player)
         {
-            BuildRuntimeLogger.Log($"WorldGameSessionManager.TriggerInitialAreaLoadForPlayer begin player={(player != null ? player.name : "null")}");
+            
             List<EventTriggerLoadScene> allTriggers = EventTriggerLoadScene.GetRegisteredTriggersSnapshot();
-            BuildRuntimeLogger.Log($"WorldGameSessionManager.TriggerInitialAreaLoadForPlayer registeredTriggers={allTriggers.Count}");
+            
             EventTriggerLoadScene firstTrigger = null;
 
             for (int i = 0; i < allTriggers.Count; i++)
@@ -616,13 +616,13 @@ namespace baodeag
 
             if (firstTrigger == null)
             {
-                BuildRuntimeLogger.Warning("WorldGameSessionManager.TriggerInitialAreaLoadForPlayer no registered trigger found");
+                
                 return null;
             }
 
-            BuildRuntimeLogger.Log($"WorldGameSessionManager.TriggerInitialAreaLoadForPlayer firing trigger={firstTrigger.name} area={(firstTrigger.GetArea() != null ? firstTrigger.GetArea().name : "null")}");
+            
             firstTrigger.ManualTriggerForPlayer(player);
-            BuildRuntimeLogger.Log($"WorldGameSessionManager.TriggerInitialAreaLoadForPlayer end trigger={firstTrigger.name}");
+            
             return firstTrigger.GetArea();
         }
 
@@ -632,7 +632,7 @@ namespace baodeag
                 ? area.GetRequiredSceneIDsForWorldLocation()
                 : new List<string>();
 
-            BuildRuntimeLogger.Log($"WorldGameSessionManager.WaitForRequiredAreaScenes begin area={(area != null ? area.name : "null")} requiredScenes={requiredScenes.Count} timeout={timeout}");
+            
 
             if (WorldSceneManager.instance != null && WorldSceneManager.instance.ShouldLoadGeneratedWorldAllAtOnce())
             {
@@ -641,7 +641,7 @@ namespace baodeag
             }
             else if (area == null)
             {
-                BuildRuntimeLogger.Warning("WorldGameSessionManager.WaitForRequiredAreaScenes area null; fallback wait");
+                
                 SetLoadingProgress(endProgress, "Loading Map");
                 yield return new WaitForSeconds(4f);
                 yield break;
@@ -676,11 +676,11 @@ namespace baodeag
 
                 float sceneProgress = requiredSceneCount <= 0 ? 1f : (float)loadedSceneCount / requiredSceneCount;
                 SetLoadingProgress(Mathf.Lerp(startProgress, endProgress, sceneProgress), "Loading Map");
-                BuildRuntimeLogger.MainThreadHeartbeat($"WaitForRequiredAreaScenes loaded={loadedSceneCount}/{requiredSceneCount} elapsed={elapsedTime:0.00}");
+                
 
                 if (allScenesLoaded)
                 {
-                    BuildRuntimeLogger.Log($"WorldGameSessionManager.WaitForRequiredAreaScenes all scenes loaded loaded={loadedSceneCount}/{requiredSceneCount} elapsed={elapsedTime:0.00}");
+                    
                     if (WorldSceneManager.instance != null)
                         WorldSceneManager.instance.CheckForRequiredRenderers();
 
@@ -694,7 +694,7 @@ namespace baodeag
             }
 
             string areaName = area != null ? area.name : "null";
-            BuildRuntimeLogger.Warning($"WorldGameSessionManager: Timed out while waiting for required area scenes for '{areaName}'. Continuing so the player is not stuck on the loading screen.");
+            
 
             if (WorldSceneManager.instance != null)
                 WorldSceneManager.instance.CheckForRequiredRenderers();
@@ -753,7 +753,7 @@ namespace baodeag
         {
             if (NetworkManager.Singleton == null)
             {
-                Debug.LogError("NetworkManager is missing. Cannot start host session.");
+                
                 return false;
             }
 
@@ -762,13 +762,13 @@ namespace baodeag
 
             if (NetworkManager.Singleton.IsClient)
             {
-                Debug.LogWarning("Client session is active. Shut it down before starting a host.");
+                
                 return false;
             }
 
             if (ResolveUnityTransport() == null)
             {
-                Debug.LogError("UnityTransport is missing from NetworkManager. Cannot start host session.");
+                
                 return false;
             }
 
@@ -776,11 +776,11 @@ namespace baodeag
 
             if (!NetworkManager.Singleton.StartHost())
             {
-                Debug.LogError("Failed to start host session.");
+                
                 return false;
             }
 
-            Debug.Log($"Host started with UnityTransport on {GetCurrentConnectionAddress()}.");
+            
             CurrentConnectionAddressChanged?.Invoke();
             return true;
         }
@@ -811,7 +811,7 @@ namespace baodeag
         {
             if (NetworkManager.Singleton == null)
             {
-                Debug.LogError("NetworkManager is missing. Cannot start Relay host.");
+                
                 return false;
             }
 
@@ -820,19 +820,19 @@ namespace baodeag
                 if (!string.IsNullOrWhiteSpace(currentRelayJoinCode))
                     return true;
 
-                Debug.LogWarning("A local host session is already active. Shut it down before starting a Relay host.");
+                
                 return false;
             }
 
             if (NetworkManager.Singleton.IsClient)
             {
-                Debug.LogWarning("Client session is active. Shut it down before starting a Relay host.");
+                
                 return false;
             }
 
             if (ResolveUnityTransport() == null)
             {
-                Debug.LogError("UnityTransport is missing from NetworkManager. Cannot start Relay host.");
+                
                 return false;
             }
 
@@ -853,19 +853,19 @@ namespace baodeag
 
                 if (!NetworkManager.Singleton.StartHost())
                 {
-                    Debug.LogError("Failed to start Relay host session.");
+                    
                     currentRelayJoinCode = string.Empty;
                     CurrentConnectionAddressChanged?.Invoke();
                     return false;
                 }
 
-                Debug.Log($"Relay host started. Join code: {currentRelayJoinCode}");
+                
                 CurrentConnectionAddressChanged?.Invoke();
                 return true;
             }
-            catch (System.Exception exception)
+            catch (System.Exception)
             {
-                Debug.LogError($"Failed to start Relay host: {exception.Message}");
+                
                 currentRelayJoinCode = string.Empty;
                 CurrentConnectionAddressChanged?.Invoke();
                 return false;
@@ -936,7 +936,7 @@ namespace baodeag
             if (candidatePort > ushort.MaxValue)
                 return DefaultUnityTransportPort;
 
-            Debug.Log($"ParrelSync clone detected. Using UnityTransport port {candidatePort} for project '{projectFolderName}'.");
+            
             return (ushort)candidatePort;
         }
 
@@ -950,7 +950,7 @@ namespace baodeag
         {
             if (NetworkManager.Singleton == null)
             {
-                Debug.LogError("NetworkManager is missing. Cannot start client session.");
+                
                 return false;
             }
 
@@ -964,13 +964,13 @@ namespace baodeag
 
             if (RequiresRelayForCurrentMode())
             {
-                Debug.LogError("Multiplayer mode requires a valid Relay join code.");
+                
                 return false;
             }
 
             if (!TryParseAddressInput(addressInput, out string hostAddress, out ushort port))
             {
-                Debug.LogError($"Invalid address '{addressInput}'. Use a Relay join code or an IP/host name, optionally with ':port', for example '127.0.0.1:7777'.");
+                
                 return false;
             }
 
@@ -994,7 +994,7 @@ namespace baodeag
 
             if (ResolveUnityTransport() == null)
             {
-                Debug.LogError("UnityTransport is missing from NetworkManager. Cannot join by address.");
+                
                 yield break;
             }
 
@@ -1002,30 +1002,30 @@ namespace baodeag
 
             if (!NetworkManager.Singleton.StartClient())
             {
-                Debug.LogError($"Failed to start client for {hostAddress}:{port}.");
+                
                 yield break;
             }
 
-            Debug.Log($"Client connecting to {hostAddress}:{port}.");
+            
         }
 
         public async Task<bool> StartGameAsRelayClientAsync(string relayJoinCode)
         {
             if (NetworkManager.Singleton == null)
             {
-                Debug.LogError("NetworkManager is missing. Cannot join Relay session.");
+                
                 return false;
             }
 
             if (!TryNormalizeRelayJoinCode(relayJoinCode, out relayJoinCode))
             {
-                Debug.LogError($"Invalid Relay join code '{relayJoinCode}'.");
+                
                 return false;
             }
 
             if (ResolveUnityTransport() == null)
             {
-                Debug.LogError("UnityTransport is missing from NetworkManager. Cannot join Relay session.");
+                
                 return false;
             }
 
@@ -1053,17 +1053,17 @@ namespace baodeag
 
                 if (!NetworkManager.Singleton.StartClient())
                 {
-                    Debug.LogError($"Failed to start Relay client for join code {relayJoinCode}.");
+                    
                     return false;
                 }
 
-                Debug.Log($"Relay client connecting with join code {relayJoinCode}.");
+                
                 ClearCheckedRelayJoinCode();
                 return true;
             }
-            catch (System.Exception exception)
+            catch (System.Exception)
             {
-                Debug.LogError($"Failed to join Relay session '{relayJoinCode}': {exception.Message}");
+                
                 return false;
             }
         }
@@ -1072,7 +1072,7 @@ namespace baodeag
         {
             if (!TryNormalizeRelayJoinCode(relayJoinCode, out relayJoinCode))
             {
-                Debug.LogError($"Invalid Relay join code '{relayJoinCode}'.");
+                
                 ClearCheckedRelayJoinCode();
                 return false;
             }
@@ -1084,12 +1084,12 @@ namespace baodeag
                 checkedRelayJoinAllocation = await RelayService.Instance.JoinAllocationAsync(relayJoinCode);
                 checkedRelayJoinCode = relayJoinCode;
 
-                Debug.Log($"Relay join code {relayJoinCode} is valid.");
+                
                 return true;
             }
-            catch (System.Exception exception)
+            catch (System.Exception)
             {
-                Debug.LogError($"Relay join code check failed for '{relayJoinCode}': {exception.Message}");
+                
                 ClearCheckedRelayJoinCode();
                 return false;
             }
@@ -1118,7 +1118,7 @@ namespace baodeag
 
             if (networkManager != null && (networkManager.ShutdownInProgress || networkManager.IsListening))
             {
-                Debug.LogError("Timed out while shutting down the current network session before joining Relay.");
+                
                 return false;
             }
 

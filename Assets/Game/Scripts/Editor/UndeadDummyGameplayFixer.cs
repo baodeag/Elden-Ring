@@ -27,7 +27,7 @@ namespace baodeag.EditorTools
                 var visualRoot = FindDeepChild(prefabRoot.transform, VisualRootName);
                 if (visualRoot == null)
                 {
-                    Debug.LogError("Could not find the Wretch visual root inside Undead_Dummy_01.");
+                    
                     return;
                 }
 
@@ -37,7 +37,7 @@ namespace baodeag.EditorTools
                 EnsureHandDamageColliders(prefabRoot, visualRoot);
 
                 PrefabUtility.SaveAsPrefabAsset(prefabRoot, TargetPrefabPath);
-                Debug.Log("Repaired Undead_Dummy_01 lock-on, body colliders, and hand damage colliders.");
+                
             }
             finally
             {
@@ -88,7 +88,7 @@ namespace baodeag.EditorTools
 
             if (rightBone == null || leftBone == null)
             {
-                Debug.LogWarning("Could not find Hand_L/Hand_R on Wretch rig, skipped damage collider repair.");
+                
                 return;
             }
 

@@ -16,8 +16,7 @@ namespace baodeag.Editor
         public static void ListWorld02Roots()
         {
             Scene scene = EditorSceneManager.OpenScene(TargetScenePath, OpenSceneMode.Single);
-            Debug.Log("[GeneratedWorldCleanup] World_02 roots:\n" +
-                      string.Join("\n", scene.GetRootGameObjects().Select(go => "- " + go.name)));
+            
         }
 
         [MenuItem("Tools/Random Map/Cleanup World_02 Clone Roots")]
@@ -43,7 +42,7 @@ namespace baodeag.Editor
                 if (root == null || ShouldKeepRoot(root))
                     continue;
 
-                Debug.Log("[GeneratedWorldCleanup] Delete old clone root: " + root.name);
+                
                 UnityEngine.Object.DestroyImmediate(root);
                 deleted++;
             }
@@ -53,7 +52,7 @@ namespace baodeag.Editor
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();
-            Debug.Log($"[GeneratedWorldCleanup] Cleanup done. Deleted {deleted} old clone root(s), cleaned {cleanedNavMeshes} old NavMeshSurface(s).");
+            
         }
 
         private static int RemoveOldNavMeshSurfaces(Scene scene)

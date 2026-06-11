@@ -112,7 +112,7 @@ namespace baodeag {
 
         private void Awake()
         {
-            BuildRuntimeLogger.Log("TitleScreenManager.Awake");
+            
 
             if(Instance == null)
             {
@@ -136,7 +136,7 @@ namespace baodeag {
 
         private void Start()
         {
-            BuildRuntimeLogger.Log("TitleScreenManager.Start begin");
+            
             EnsureEnterGameMusicPlayer();
             EnsureButtonClickSFXPlayer();
             HideGameplayHUDOnTitleScreen();
@@ -146,7 +146,7 @@ namespace baodeag {
             EnsureLaunchModeMenu();
             RefreshSaveMenuButtons();
             InstallTitleButtonClickSFX();
-            BuildRuntimeLogger.Log("TitleScreenManager.Start end");
+            
         }
 
         private void Update()
@@ -212,7 +212,7 @@ namespace baodeag {
 
         public void JoinOnlineGame()
         {
-            Debug.Log("Join World has moved to the in-game character menu.");
+            
         }
 
         public async void HostWorld()
@@ -318,35 +318,35 @@ namespace baodeag {
 
         public async void AttemptToCreateNewCharacter()
         {
-            BuildRuntimeLogger.Log("TitleScreenManager.AttemptToCreateNewCharacter begin");
+            
 
             if (!await EnsureHostSessionForSaveMenus())
             {
-                BuildRuntimeLogger.Warning("TitleScreenManager.AttemptToCreateNewCharacter aborted: EnsureHostSessionForSaveMenus failed");
+                
                 return;
             }
 
             if (WorldSaveGameManager.instance.HasFreeCharacterSlot())
             {
-                BuildRuntimeLogger.Log("TitleScreenManager.AttemptToCreateNewCharacter opening character creation menu");
+                
                 OpenCharacterCreationMenu();
             }
             else
             {
                 //if there are no available slots, notify the player
-                BuildRuntimeLogger.Warning("TitleScreenManager.AttemptToCreateNewCharacter no free character slots");
+                
                 DisplayNoFreeCharacterSlotPopUp();
             }
         }
 
         public void StartNewGame()
         {
-            BuildRuntimeLogger.Log("TitleScreenManager.StartNewGame begin");
+            
             StopEnterGameMusic();
             selectedStartingClassID = GetSelectedStartingClassID();
-            BuildRuntimeLogger.Log($"TitleScreenManager.StartNewGame selectedStartingClassID={selectedStartingClassID}");
+            
             WorldSaveGameManager.instance.AttemptToCreateNewGame();
-            BuildRuntimeLogger.Log("TitleScreenManager.StartNewGame returned from AttemptToCreateNewGame");
+            
         }
 
         private void EnsureEnterGameMusicPlayer()
@@ -577,17 +577,17 @@ namespace baodeag {
 
         private async Task<bool> EnsureHostSessionForSaveMenus()
         {
-            BuildRuntimeLogger.Log("TitleScreenManager.EnsureHostSessionForSaveMenus begin");
+            
 
             if (NetworkManager.Singleton.IsHost)
             {
-                BuildRuntimeLogger.Log("TitleScreenManager.EnsureHostSessionForSaveMenus already host");
+                
                 return true;
             }
 
             if (NetworkManager.Singleton.IsClient)
             {
-                BuildRuntimeLogger.Warning("New Game and Load Game are only available for the host session.");
+                
                 return false;
             }
 
@@ -595,7 +595,7 @@ namespace baodeag {
                 ? await WorldGameSessionManager.instance.StartGameAsRelayHostAsync()
                 : WorldGameSessionManager.instance.StartGameAsHost();
 
-            BuildRuntimeLogger.Log($"TitleScreenManager.EnsureHostSessionForSaveMenus result={result}");
+            
             return result;
         }
 

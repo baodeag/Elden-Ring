@@ -604,7 +604,7 @@ namespace baodeag
                 endGamePrimaryButtonText == null ||
                 endGameSecondaryButtonText == null)
             {
-                Debug.LogWarning("PlayerUIPopUpManager: End game overlay references are missing.");
+                
                 return;
             }
 
@@ -845,7 +845,7 @@ namespace baodeag
                 leaderboardRankText == null ||
                 leaderboardSummaryText == null)
             {
-                Debug.LogWarning("PlayerUIPopUpManager: Leaderboard overlay references are missing.");
+                
                 return;
             }
 

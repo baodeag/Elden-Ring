@@ -26,14 +26,14 @@ namespace baodeag
         {
             base.SuccessfullyCastSpell(player);
 
-            Debug.Log("Casted Spell");
+            
         }
 
         public override void InstantiateWarmUpSpellFX(PlayerManager player)
         {
             base.InstantiateWarmUpSpellFX(player);
 
-            Debug.Log("Instantiated FX");
+            
         }
 
         public override bool CanICastThisSpell(PlayerManager player)

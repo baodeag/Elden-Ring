@@ -39,7 +39,7 @@ namespace baodeag
             {
                 //create the directory the file will be written to if it doesn't already exist
                 Directory.CreateDirectory(Path.GetDirectoryName(savePath));
-                Debug.Log("Creating Save File, At Save Path: " + savePath);
+                
 
                 //serialize the c# game data object into json format
                 string dataStore = JsonUtility.ToJson(characterData, true);
@@ -53,9 +53,9 @@ namespace baodeag
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Debug.LogError("Error while trying to save character data, game not saved: " + savePath + "\n" + ex);
+                
             }
         }
 
@@ -84,9 +84,9 @@ namespace baodeag
                     characterData = JsonUtility.FromJson<CharacterSaveData>(dataToLoad);
                 }
 
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Debug.LogError("File is blank" + loadPath + "\n" + ex);
+                    
                 }
             }
             return characterData;

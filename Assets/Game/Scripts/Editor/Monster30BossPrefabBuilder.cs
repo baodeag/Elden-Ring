@@ -57,14 +57,14 @@ namespace baodeag.EditorTools
 
             if (sourceTemplate == null || bossReference == null)
             {
-                Debug.LogError("Monster30 boss builder is missing one of the required prefab assets.");
+                
                 return;
             }
 
             var bossReferenceManager = bossReference.GetComponent<AIBossCharacterManager>();
             if (bossReferenceManager == null)
             {
-                Debug.LogError("Durk_Dummy_01 is missing AIBossCharacterManager, cannot copy boss settings.");
+                
                 return;
             }
 
@@ -94,7 +94,7 @@ namespace baodeag.EditorTools
                     visualInstance = CreateEmbeddedMonster30Visual(prefabRoot.scene);
                     if (visualInstance == null)
                     {
-                        Debug.LogError("Failed to instantiate Monster30 visual prefab.");
+                        
                         return;
                     }
 
@@ -120,7 +120,7 @@ namespace baodeag.EditorTools
 
                 if (rootAnimator == null)
                 {
-                    Debug.LogError($"Monster30 boss builder could not find required animator components. rootAnimatorNull={rootAnimator == null}, monsterAvatarNull={monsterAvatar == null}");
+                    
                     return;
                 }
 
@@ -137,7 +137,7 @@ namespace baodeag.EditorTools
 
                 if (rootAnimator.avatar == null)
                 {
-                    Debug.LogError("Monster30 boss builder could not resolve a humanoid avatar for the boss.");
+                    
                     return;
                 }
 
@@ -157,9 +157,7 @@ namespace baodeag.EditorTools
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
 
-                Debug.Log(targetPrefabExists
-                    ? "Updated Monster30_Boss_01 root logic/components only. Existing visual hierarchy/model edits were left untouched."
-                    : "Created Monster30_Boss_01 prefab with boss gameplay hooks.");
+                
             }
             finally
             {
@@ -176,7 +174,7 @@ namespace baodeag.EditorTools
                 var visualRoot = prefabRoot.transform.Find("Monster30_VisualRoot");
                 if (visualRoot == null)
                 {
-                    Debug.LogWarning("Monster30_Boss_01 does not contain Monster30_VisualRoot.");
+                    
                     return;
                 }
 
@@ -184,7 +182,7 @@ namespace baodeag.EditorTools
                 PrefabUtility.SaveAsPrefabAsset(prefabRoot, TargetPrefabPath);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
-                Debug.Log("Monster30_Boss_01 visual hierarchy was unpacked for editing.");
+                
             }
             finally
             {
@@ -472,7 +470,7 @@ namespace baodeag.EditorTools
                 || attack02Clip == null
                 || attack03Clip == null)
             {
-                Debug.LogError("Monster30 boss builder could not create the Monster30 boss animation clips.");
+                
                 return null;
             }
 
@@ -488,7 +486,7 @@ namespace baodeag.EditorTools
             {
                 if (!AssetDatabase.CopyAsset(DurkAnimatorControllerPath, TargetAnimatorControllerPath))
                 {
-                    Debug.LogError("Monster30 boss builder could not duplicate Durk.controller.");
+                    
                     return null;
                 }
             }
@@ -496,7 +494,7 @@ namespace baodeag.EditorTools
             var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(TargetAnimatorControllerPath);
             if (controller == null)
             {
-                Debug.LogError("Monster30 boss builder could not load Monster30_Boss.controller after duplication.");
+                
                 return null;
             }
 
@@ -521,7 +519,7 @@ namespace baodeag.EditorTools
             var sourceClip = AssetDatabase.LoadAssetAtPath<AnimationClip>(sourceClipPath);
             if (sourceClip == null)
             {
-                Debug.LogError($"Monster30 boss builder could not load source clip at {sourceClipPath}.");
+                
                 return null;
             }
 
@@ -564,7 +562,7 @@ namespace baodeag.EditorTools
             var sourceClip = LoadPrimaryAnimationClip(sourceAssetPath);
             if (sourceClip == null)
             {
-                Debug.LogError($"Monster30 boss builder could not load source clip at {sourceAssetPath}.");
+                
                 return null;
             }
 
@@ -582,10 +580,7 @@ namespace baodeag.EditorTools
 
             if (sourceBonePaths.Count == 0 || targetBonePaths.Count == 0)
             {
-                Debug.LogWarning(
-                    $"Monster30 boss builder could not build humanoid bone path maps for attack retargeting. " +
-                    $"source='{sourceAssetPath}' ({sourceBonePaths.Count} bones), target='{MonsterVisualPath}'/'{MonsterModelPath}' ({targetBonePaths.Count} bones). " +
-                    "Falling back to direct skeleton path remapping.");
+                
             }
 
             var targetClip = AssetDatabase.LoadAssetAtPath<AnimationClip>(targetClipPath);
@@ -632,9 +627,7 @@ namespace baodeag.EditorTools
 
             if (mappedFloatCurveCount == 0 && mappedObjectCurveCount == 0)
             {
-                Debug.LogError(
-                    $"Monster30 boss builder mapped 0 curves for '{sourceClip.name}' into '{targetClipPath}'. " +
-                    "This usually means the source skeleton paths do not match the humanoid bone map.");
+                
                 return null;
             }
 
@@ -677,7 +670,7 @@ namespace baodeag.EditorTools
             var instance = InstantiateHumanoidAsset(asset);
             if (instance == null)
             {
-                Debug.LogWarning($"Monster30 boss builder could not instantiate humanoid asset at {assetPath}.");
+                
                 return result;
             }
 
@@ -686,7 +679,7 @@ namespace baodeag.EditorTools
                 var animator = instance.GetComponent<Animator>() ?? instance.GetComponentInChildren<Animator>();
                 if (animator == null || animator.avatar == null || !animator.avatar.isHuman)
                 {
-                    Debug.LogWarning($"Monster30 boss builder found no humanoid animator/avatar at {assetPath}.");
+                    
                     return result;
                 }
 
@@ -985,7 +978,7 @@ namespace baodeag.EditorTools
             var clipSettings = serializedClip.FindProperty("m_AnimationClipSettings");
             if (clipSettings == null)
             {
-                Debug.LogWarning($"Monster30 boss builder could not locate animation clip settings for {clip.name}.");
+                
                 return;
             }
 
@@ -1097,7 +1090,7 @@ namespace baodeag.EditorTools
 
             if (!AssetDatabase.CopyAsset(templatePath, targetPath))
             {
-                Debug.LogError($"Monster30 boss builder could not copy asset from {templatePath} to {targetPath}.");
+                
                 return null;
             }
 
@@ -1174,7 +1167,7 @@ namespace baodeag.EditorTools
             var state = FindState(controller, stateName);
             if (state == null)
             {
-                Debug.LogWarning($"Monster30 boss builder could not find animator state '{stateName}' inside {controller.name}.");
+                
                 return;
             }
 
@@ -1209,7 +1202,7 @@ namespace baodeag.EditorTools
 
             if (destinationState == null)
             {
-                Debug.LogWarning("Monster30 boss builder could not find a destination state for Attack_01_Combo.");
+                
                 return;
             }
 
@@ -1408,7 +1401,7 @@ namespace baodeag.EditorTools
 
             if (rightWeapon == null || leftWeapon == null)
             {
-                Debug.LogWarning("Monster30 rig does not expose root_dupli_001.x/root_dupli_002.x weapon bones, damage colliders were skipped.");
+                
                 return;
             }
 
@@ -1431,7 +1424,7 @@ namespace baodeag.EditorTools
 
             if (rightHand == null || leftHand == null || rightWeapon == null || leftWeapon == null)
             {
-                Debug.LogWarning("Monster30 builder could not constrain weapon roots to hands because one or more transforms are missing.");
+                
                 return;
             }
 
@@ -1487,7 +1480,7 @@ namespace baodeag.EditorTools
 
             if (bootstrapType == null)
             {
-                Debug.LogWarning("Monster30 builder could not find Monster30WeaponConstraintBootstrap type.");
+                
                 return;
             }
 

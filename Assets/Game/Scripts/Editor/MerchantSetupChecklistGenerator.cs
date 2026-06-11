@@ -45,7 +45,7 @@ namespace baodeag
             if (checklistAsset != null)
                 Selection.activeObject = checklistAsset;
 
-            Debug.Log($"Generated merchant setup checklist with {merchantRecords.Count} merchant entries at '{ChecklistPath}'.");
+            
         }
 
         private static void GatherPrefabMerchants(List<MerchantRecord> merchantRecords)

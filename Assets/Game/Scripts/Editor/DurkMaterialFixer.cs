@@ -23,7 +23,7 @@ namespace baodeag.EditorTools
 
             if (bodyMaterial == null || clubMaterial == null)
             {
-                Debug.LogError("Durk materials are missing.");
+                
                 return;
             }
 
@@ -76,7 +76,7 @@ namespace baodeag.EditorTools
                     AssetDatabase.ImportAsset(TargetPrefabPath, ImportAssetOptions.ForceUpdate);
                 }
 
-                Debug.Log($"Applied Durk boss materials to {changes} renderer(s).");
+                
             }
             finally
             {

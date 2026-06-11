@@ -768,7 +768,7 @@ namespace baodeag
 
                 if (!HasVisibleLegEquipment(player.playerNetworkManager.isMale.Value))
                 {
-                    Debug.LogWarning($"Fallback leg equipment also failed on {player.name}. Re-enabling default lower body.");
+                    
                     player.playerBodyManager.EnableLowerBody();
                 }
             }
@@ -1205,13 +1205,13 @@ namespace baodeag
 
                 if (weaponModelPrefab == null && WorldItemDatabase.Instance != null && WorldItemDatabase.Instance.unarmedWeapon != null)
                 {
-                    Debug.LogWarning($"Weapon '{player.playerInventoryManager.currentRightHandWeapon.itemName}' is missing a weaponModel. Falling back to Unarmed model.");
+                    
                     weaponModelPrefab = WorldItemDatabase.Instance.unarmedWeapon.weaponModel;
                 }
 
                 if (weaponModelPrefab == null)
                 {
-                    Debug.LogWarning($"Weapon '{player.playerInventoryManager.currentRightHandWeapon.itemName}' could not be loaded because no fallback weaponModel was found.");
+                    
                     return;
                 }
 
@@ -1320,13 +1320,13 @@ namespace baodeag
 
                 if (weaponModelPrefab == null && WorldItemDatabase.Instance != null && WorldItemDatabase.Instance.unarmedWeapon != null)
                 {
-                    Debug.LogWarning($"Weapon '{player.playerInventoryManager.currentLeftHandWeapon.itemName}' is missing a weaponModel. Falling back to Unarmed model.");
+                    
                     weaponModelPrefab = WorldItemDatabase.Instance.unarmedWeapon.weaponModel;
                 }
 
                 if (weaponModelPrefab == null)
                 {
-                    Debug.LogWarning($"Weapon '{player.playerInventoryManager.currentLeftHandWeapon.itemName}' could not be loaded because no fallback weaponModel was found.");
+                    
                     return;
                 }
 
