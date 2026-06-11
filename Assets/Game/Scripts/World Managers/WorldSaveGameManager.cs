@@ -427,8 +427,17 @@ namespace baodeag {
             BuildRuntimeLogger.Log("WorldSaveGameManager.LoadGame LoadWorldScene returned");
         }
 
-        public void SaveGame()
+        public void SaveGame(PlayerManager playerToSave = null, int sceneIndexOverride = -1, int mapIndexOverride = -1)
         {
+            PlayerManager resolvedPlayer = playerToSave != null ? playerToSave : player;
+            bool isTransitionSave = sceneIndexOverride >= 0 || mapIndexOverride >= 0;
+
+            if (resolvedPlayer == null)
+            {
+                BuildRuntimeLogger.Warning("WorldSaveGameManager.SaveGame skipped because no player was available to save.");
+                return;
+            }
+
             //save the current file under a file name depending on which slot we are using
             saveFileName = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(currentCharacterSlotBeingUsed);
 
@@ -440,13 +449,292 @@ namespace baodeag {
             if (currentCharacterData != null)
                 currentCharacterData.EnsureCollectionsInitialized();
 
+            List<SerializableWeapon> previouslySavedWeapons = isTransitionSave ? new List<SerializableWeapon>(currentCharacterData.weaponsInInventory) : null;
+            List<SerializableRangedProjectile> previouslySavedProjectiles = isTransitionSave ? new List<SerializableRangedProjectile>(currentCharacterData.projectilesInInventory) : null;
+            List<SerializableQuickSlotItem> previouslySavedQuickSlots = isTransitionSave ? new List<SerializableQuickSlotItem>(currentCharacterData.quickSlotItemsInInventory) : null;
+            List<SerializableItem> previouslySavedItems = isTransitionSave ? new List<SerializableItem>(currentCharacterData.itemsInInventory) : null;
+            List<int> previouslySavedHeadEquipment = isTransitionSave ? new List<int>(currentCharacterData.headEquipmentInInventory) : null;
+            List<int> previouslySavedBodyEquipment = isTransitionSave ? new List<int>(currentCharacterData.bodyEquipmentInInventory) : null;
+            List<int> previouslySavedLegEquipment = isTransitionSave ? new List<int>(currentCharacterData.legEquipmentInInventory) : null;
+            List<int> previouslySavedHandEquipment = isTransitionSave ? new List<int>(currentCharacterData.handEquipmentInInventory) : null;
+
             //pass the player info, from game, to their save file
-            player.SaveGameDataToCurrentCharacterData(ref currentCharacterData);
+            resolvedPlayer.SaveGameDataToCurrentCharacterData(ref currentCharacterData);
             GameProgressionManager.Instance.SaveToCharacterData(currentCharacterData);
+
+            if (isTransitionSave)
+            {
+                MergePreviouslySavedInventoryForTransition(
+                    previouslySavedWeapons,
+                    previouslySavedProjectiles,
+                    previouslySavedQuickSlots,
+                    previouslySavedItems,
+                    previouslySavedHeadEquipment,
+                    previouslySavedBodyEquipment,
+                    previouslySavedLegEquipment,
+                    previouslySavedHandEquipment);
+            }
+
+            if (sceneIndexOverride >= 0)
+                currentCharacterData.sceneIndex = sceneIndexOverride;
+
+            if (mapIndexOverride >= 0)
+                currentCharacterData.currentMapIndex = mapIndexOverride;
+
+            BuildRuntimeLogger.Log($"[InventoryTrace] SaveGame writing slot={currentCharacterSlotBeingUsed} file={saveFileName} player={resolvedPlayer.name} scene={currentCharacterData.sceneIndex} map={currentCharacterData.currentMapIndex} runtimeInventory={resolvedPlayer.playerInventoryManager.itemsInInventory?.Count ?? -1} saveWeapons={currentCharacterData.weaponsInInventory?.Count ?? -1} saveGeneric={currentCharacterData.itemsInInventory?.Count ?? -1}");
 
             //write that info onto a json file, saved to this machine
             saveFileDataWriter.CreateNewCharacterSaveFile(currentCharacterData);
             SetCharacterDataForSlot(currentCharacterSlotBeingUsed, currentCharacterData);
+        }
+
+        private void MergePreviouslySavedInventoryForTransition(
+            List<SerializableWeapon> previouslySavedWeapons,
+            List<SerializableRangedProjectile> previouslySavedProjectiles,
+            List<SerializableQuickSlotItem> previouslySavedQuickSlots,
+            List<SerializableItem> previouslySavedItems,
+            List<int> previouslySavedHeadEquipment,
+            List<int> previouslySavedBodyEquipment,
+            List<int> previouslySavedLegEquipment,
+            List<int> previouslySavedHandEquipment)
+        {
+            int mergedWeapons = MergeWeaponsForTransition(previouslySavedWeapons);
+            int mergedProjectiles = MergeProjectilesForTransition(previouslySavedProjectiles);
+            int mergedQuickSlots = MergeQuickSlotsForTransition(previouslySavedQuickSlots);
+            int mergedItems = MergeItemsForTransition(previouslySavedItems);
+            int mergedHead = MergeEquipmentIDsForTransition(previouslySavedHeadEquipment, currentCharacterData.headEquipmentInInventory);
+            int mergedBody = MergeEquipmentIDsForTransition(previouslySavedBodyEquipment, currentCharacterData.bodyEquipmentInInventory);
+            int mergedLegs = MergeEquipmentIDsForTransition(previouslySavedLegEquipment, currentCharacterData.legEquipmentInInventory);
+            int mergedHands = MergeEquipmentIDsForTransition(previouslySavedHandEquipment, currentCharacterData.handEquipmentInInventory);
+
+            BuildRuntimeLogger.Log($"[InventoryTrace] TransitionInventoryMerge weapons={mergedWeapons} projectiles={mergedProjectiles} quickSlots={mergedQuickSlots} generic={mergedItems} head={mergedHead} body={mergedBody} legs={mergedLegs} hands={mergedHands}");
+        }
+
+        private int MergeWeaponsForTransition(List<SerializableWeapon> previouslySavedWeapons)
+        {
+            if (previouslySavedWeapons == null)
+                return 0;
+
+            int merged = 0;
+
+            for (int i = 0; i < previouslySavedWeapons.Count; i++)
+            {
+                SerializableWeapon weapon = previouslySavedWeapons[i];
+
+                if (weapon == null || weapon.itemID < 0 || IsUnarmedWeapon(weapon))
+                    continue;
+
+                if (ContainsWeapon(currentCharacterData.weaponsInInventory, weapon))
+                    continue;
+
+                currentCharacterData.weaponsInInventory.Add(weapon);
+                merged++;
+                BuildRuntimeLogger.Log($"[InventoryTrace] TransitionInventoryMerge weapon add id={weapon.itemID} name={weapon.itemName} upgrade={weapon.upgradeLevel} ash={weapon.ashOfWarID}");
+            }
+
+            return merged;
+        }
+
+        private int MergeProjectilesForTransition(List<SerializableRangedProjectile> previouslySavedProjectiles)
+        {
+            if (previouslySavedProjectiles == null)
+                return 0;
+
+            int merged = 0;
+
+            for (int i = 0; i < previouslySavedProjectiles.Count; i++)
+            {
+                SerializableRangedProjectile projectile = previouslySavedProjectiles[i];
+
+                if (projectile == null || projectile.itemID < 0)
+                    continue;
+
+                SerializableRangedProjectile savedProjectile = FindProjectile(currentCharacterData.projectilesInInventory, projectile.itemID);
+
+                if (savedProjectile != null)
+                {
+                    savedProjectile.itemAmount = Mathf.Max(savedProjectile.itemAmount, projectile.itemAmount);
+                    continue;
+                }
+
+                currentCharacterData.projectilesInInventory.Add(projectile);
+                merged++;
+            }
+
+            return merged;
+        }
+
+        private int MergeQuickSlotsForTransition(List<SerializableQuickSlotItem> previouslySavedQuickSlots)
+        {
+            if (previouslySavedQuickSlots == null)
+                return 0;
+
+            int merged = 0;
+
+            for (int i = 0; i < previouslySavedQuickSlots.Count; i++)
+            {
+                SerializableQuickSlotItem quickSlotItem = previouslySavedQuickSlots[i];
+
+                if (quickSlotItem == null || quickSlotItem.itemID < 0)
+                    continue;
+
+                SerializableQuickSlotItem savedQuickSlot = FindQuickSlot(currentCharacterData.quickSlotItemsInInventory, quickSlotItem.itemID);
+
+                if (savedQuickSlot != null)
+                {
+                    savedQuickSlot.itemAmount = Mathf.Max(savedQuickSlot.itemAmount, quickSlotItem.itemAmount);
+                    continue;
+                }
+
+                currentCharacterData.quickSlotItemsInInventory.Add(quickSlotItem);
+                merged++;
+            }
+
+            return merged;
+        }
+
+        private int MergeItemsForTransition(List<SerializableItem> previouslySavedItems)
+        {
+            if (previouslySavedItems == null)
+                return 0;
+
+            int merged = 0;
+
+            for (int i = 0; i < previouslySavedItems.Count; i++)
+            {
+                SerializableItem item = previouslySavedItems[i];
+
+                if (item == null || item.itemID < 0)
+                    continue;
+
+                SerializableItem savedItem = FindItem(currentCharacterData.itemsInInventory, item.itemID, item.itemName);
+
+                if (savedItem != null)
+                {
+                    savedItem.itemAmount = Mathf.Max(savedItem.itemAmount, item.itemAmount);
+                    continue;
+                }
+
+                currentCharacterData.itemsInInventory.Add(item);
+                merged++;
+                BuildRuntimeLogger.Log($"[InventoryTrace] TransitionInventoryMerge generic add id={item.itemID} name={item.itemName} amount={item.itemAmount}");
+            }
+
+            return merged;
+        }
+
+        private int MergeEquipmentIDsForTransition(List<int> previouslySavedEquipment, List<int> currentEquipment)
+        {
+            if (previouslySavedEquipment == null || currentEquipment == null)
+                return 0;
+
+            int merged = 0;
+
+            for (int i = 0; i < previouslySavedEquipment.Count; i++)
+            {
+                int itemID = previouslySavedEquipment[i];
+
+                if (itemID < 0 || currentEquipment.Contains(itemID))
+                    continue;
+
+                currentEquipment.Add(itemID);
+                merged++;
+            }
+
+            return merged;
+        }
+
+        private bool ContainsWeapon(List<SerializableWeapon> weapons, SerializableWeapon weapon)
+        {
+            if (weapons == null || weapon == null)
+                return false;
+
+            for (int i = 0; i < weapons.Count; i++)
+            {
+                SerializableWeapon savedWeapon = weapons[i];
+
+                if (savedWeapon == null)
+                    continue;
+
+                if (savedWeapon.itemID == weapon.itemID &&
+                    savedWeapon.upgradeLevel == weapon.upgradeLevel &&
+                    savedWeapon.ashOfWarID == weapon.ashOfWarID)
+                    return true;
+
+                if (!string.IsNullOrWhiteSpace(savedWeapon.itemName) &&
+                    savedWeapon.itemName == weapon.itemName &&
+                    savedWeapon.upgradeLevel == weapon.upgradeLevel &&
+                    savedWeapon.ashOfWarID == weapon.ashOfWarID)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private SerializableRangedProjectile FindProjectile(List<SerializableRangedProjectile> projectiles, int itemID)
+        {
+            if (projectiles == null)
+                return null;
+
+            for (int i = 0; i < projectiles.Count; i++)
+            {
+                if (projectiles[i] != null && projectiles[i].itemID == itemID)
+                    return projectiles[i];
+            }
+
+            return null;
+        }
+
+        private SerializableQuickSlotItem FindQuickSlot(List<SerializableQuickSlotItem> quickSlotItems, int itemID)
+        {
+            if (quickSlotItems == null)
+                return null;
+
+            for (int i = 0; i < quickSlotItems.Count; i++)
+            {
+                if (quickSlotItems[i] != null && quickSlotItems[i].itemID == itemID)
+                    return quickSlotItems[i];
+            }
+
+            return null;
+        }
+
+        private SerializableItem FindItem(List<SerializableItem> items, int itemID, string itemName)
+        {
+            if (items == null)
+                return null;
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                if (items[i] != null && items[i].itemID == itemID)
+                    return items[i];
+
+                if (items[i] != null &&
+                    !string.IsNullOrWhiteSpace(items[i].itemName) &&
+                    items[i].itemName == itemName)
+                    return items[i];
+            }
+
+            return null;
+        }
+
+        private bool IsUnarmedWeapon(SerializableWeapon weapon)
+        {
+            if (weapon == null)
+                return true;
+
+            if (weapon.itemName == "Unarmed")
+                return true;
+
+            return IsUnarmedWeaponID(weapon.itemID);
+        }
+
+        private bool IsUnarmedWeaponID(int itemID)
+        {
+            if (WorldItemDatabase.Instance == null || WorldItemDatabase.Instance.unarmedWeapon == null)
+                return false;
+
+            return itemID == WorldItemDatabase.Instance.unarmedWeapon.itemID;
         }
 
         public void DeleteGame(CharacterSlot characterSlot)
@@ -507,6 +795,7 @@ namespace baodeag {
 
             //get weapon id
             serializableWeapon.itemID = weapon.itemID;
+            serializableWeapon.itemName = weapon.itemName;
             serializableWeapon.upgradeLevel = (int)weapon.upgradeLevel;
 
             //get ash of war id if one is present
@@ -583,6 +872,7 @@ namespace baodeag {
             if (item != null)
             {
                 serializableItem.itemID = item.itemID;
+                serializableItem.itemName = item.itemName;
                 serializableItem.itemAmount = Mathf.Max(1, item.currentItemAmount);
             }
 

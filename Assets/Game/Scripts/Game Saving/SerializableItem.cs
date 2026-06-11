@@ -6,6 +6,7 @@ namespace baodeag
     public class SerializableItem : ISerializationCallbackReceiver
     {
         [SerializeField] public int itemID = -1;
+        [SerializeField] public string itemName;
         [SerializeField] public int itemAmount = 1;
 
         public Item GetItem()

@@ -31,6 +31,8 @@ namespace baodeag
                 if (entry == null || entry.item == null)
                     continue;
 
+                RegisterShopItem(entry.item);
+
                 if (entry.requiredProgressionTier > playerProgressionTier)
                     continue;
 
@@ -109,6 +111,8 @@ namespace baodeag
                 if (stockEntries[i] == null || stockEntries[i].item == null)
                     continue;
 
+                RegisterShopItem(stockEntries[i].item);
+
                 if (stockEntries[i].item == item)
                     return stockEntries[i];
 
@@ -132,6 +136,14 @@ namespace baodeag
             }
 
             return globalStock;
+        }
+
+        private void RegisterShopItem(Item item)
+        {
+            if (item == null || WorldItemDatabase.Instance == null)
+                return;
+
+            WorldItemDatabase.Instance.RegisterItemTemplate(item);
         }
 
         private int GetRemainingQuantity(ShopStockEntry entry)

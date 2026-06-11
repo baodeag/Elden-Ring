@@ -15,11 +15,16 @@ namespace baodeag
 
         public bool TryBuyItem(ShopStockEntry entry, ShopInventory shopInventory = null)
         {
+            BuildRuntimeLogger.Log($"[InventoryTrace] TryBuyItem begin owner={player != null && player.IsOwner} server={player != null && player.IsServer} item={(entry != null && entry.item != null ? entry.item.itemName : "null")} id={(entry != null && entry.item != null ? entry.item.itemID : -1)} type={(entry != null && entry.item != null ? entry.item.GetType().Name : "null")}");
+
             if (player == null || entry == null || entry.item == null)
                 return false;
 
             if (!entry.item.canBePurchased)
                 return false;
+
+            if (WorldItemDatabase.Instance != null)
+                WorldItemDatabase.Instance.RegisterItemTemplate(entry.item);
 
             int price = shopInventory != null ? shopInventory.GetBuyPrice(entry.item) : entry.GetBuyPrice();
 
@@ -35,6 +40,7 @@ namespace baodeag
                 return false;
 
             player.playerInventoryManager.AddItemToInventory(purchasedItem);
+            BuildRuntimeLogger.Log($"[InventoryTrace] TryBuyItem added item={purchasedItem.itemName} id={purchasedItem.itemID} type={purchasedItem.GetType().Name} inventoryCount={player.playerInventoryManager.itemsInInventory?.Count ?? -1} ownedAmount={player.playerInventoryManager.GetInventoryCountByItemID(purchasedItem.itemID)}");
             player.playerStatsManager.AddRunes(-price);
 
             if (!player.IsServer)
@@ -134,6 +140,7 @@ namespace baodeag
 
             if (WorldItemDatabase.Instance != null)
             {
+                WorldItemDatabase.Instance.RegisterItemTemplate(shopItem);
                 Item purchasedItem = WorldItemDatabase.Instance.CreateItemInstance(shopItem.itemID);
 
                 if (purchasedItem != null)
@@ -158,16 +165,32 @@ namespace baodeag
 
         private void TryAutoSave()
         {
-            if (WorldSaveGameManager.instance == null)
+            if (player == null || !player.IsOwner)
+            {
+                BuildRuntimeLogger.Log($"[InventoryTrace] Shop TryAutoSave skipped owner={player != null && player.IsOwner} playerNull={player == null}");
                 return;
+            }
+
+            if (WorldSaveGameManager.instance == null)
+            {
+                BuildRuntimeLogger.Log("[InventoryTrace] Shop TryAutoSave skipped WorldSaveGameManager null");
+                return;
+            }
 
             if (WorldSaveGameManager.instance.currentCharacterData == null)
+            {
+                BuildRuntimeLogger.Log("[InventoryTrace] Shop TryAutoSave skipped currentCharacterData null");
                 return;
+            }
 
             if (WorldSaveGameManager.instance.currentCharacterSlotBeingUsed == CharacterSlot.NO_SLOT)
+            {
+                BuildRuntimeLogger.Log("[InventoryTrace] Shop TryAutoSave skipped NO_SLOT");
                 return;
+            }
 
-            WorldSaveGameManager.instance.SaveGame();
+            BuildRuntimeLogger.Log($"[InventoryTrace] Shop TryAutoSave saving player={player.name} inventoryCount={player.playerInventoryManager.itemsInInventory?.Count ?? -1}");
+            WorldSaveGameManager.instance.SaveGame(player);
         }
     }
 }

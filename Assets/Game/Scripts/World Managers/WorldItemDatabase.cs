@@ -70,71 +70,168 @@ namespace baodeag
             if(Instance == null)
             {
                 Instance = this;
+                DontDestroyOnLoad(gameObject);
             }
             else
             {
+                Instance.MergeDatabase(this);
                 Destroy(gameObject);
+                return;
             }
 
             RegisterDefaultBuffCharms();
+            RebuildItemList(true);
+        }
 
-            //add all of our weapons to the item list
+        private void RebuildItemList(bool assignSequentialIDs)
+        {
+            items.Clear();
+
             foreach (var weapon in weapons)
-            {
-                items.Add(weapon);
-            }
+                AddUniqueItemToDatabase(weapon, false);
 
             foreach (var item in headEquipment)
-            {
-                items.Add(item);
-            }
+                AddUniqueItemToDatabase(item, false);
 
             foreach (var item in bodyEquipment)
-            {
-                items.Add(item);
-            }
+                AddUniqueItemToDatabase(item, false);
 
             foreach (var item in legEquipment)
-            {
-                items.Add(item);
-            }
+                AddUniqueItemToDatabase(item, false);
 
             foreach (var item in handEquipment)
-            {
-                items.Add(item);
-            }
+                AddUniqueItemToDatabase(item, false);
 
             foreach(var item in ashesOfWar)
-            {
-                items.Add(item);
-            }
+                AddUniqueItemToDatabase(item, false);
 
             foreach (var item in spells)
-            {
-                items.Add(item); 
-            }
+                AddUniqueItemToDatabase(item, false);
 
             foreach (var item in projectiles)
-            {
-                items.Add(item);
-            }
+                AddUniqueItemToDatabase(item, false);
 
             foreach (var item in quickSlotItems)
-            {
-                items.Add(item);
-            }
+                AddUniqueItemToDatabase(item, false);
 
             foreach (var item in upgradeMaterials)
-            {
-                items.Add(item);
-            }
+                AddUniqueItemToDatabase(item, false);
 
+            if (!assignSequentialIDs)
+                return;
 
-            //assign all of our items a unique item id
             for (int i = 0; i < items.Count; i++)
             {
                 items[i].itemID = i;
             }
+        }
+
+        private void MergeDatabase(WorldItemDatabase database)
+        {
+            if (database == null)
+                return;
+
+            RegisterDefaultBuffCharms();
+
+            foreach (var weapon in database.weapons)
+                RegisterItemTemplate(weapon);
+
+            foreach (var item in database.headEquipment)
+                RegisterItemTemplate(item);
+
+            foreach (var item in database.bodyEquipment)
+                RegisterItemTemplate(item);
+
+            foreach (var item in database.legEquipment)
+                RegisterItemTemplate(item);
+
+            foreach (var item in database.handEquipment)
+                RegisterItemTemplate(item);
+
+            foreach (var item in database.ashesOfWar)
+                RegisterItemTemplate(item);
+
+            foreach (var item in database.spells)
+                RegisterItemTemplate(item);
+
+            foreach (var item in database.projectiles)
+                RegisterItemTemplate(item);
+
+            foreach (var item in database.quickSlotItems)
+                RegisterItemTemplate(item);
+
+            foreach (var item in database.upgradeMaterials)
+                RegisterItemTemplate(item);
+        }
+
+        public void RegisterItemTemplate(Item item)
+        {
+            if (item == null)
+                return;
+
+            if (item is WeaponItem weapon)
+                AddUniqueTypedItem(weapons, weapon);
+            else if (item is HeadEquipmentItem head)
+                AddUniqueTypedItem(headEquipment, head);
+            else if (item is BodyEquipmentItem body)
+                AddUniqueTypedItem(bodyEquipment, body);
+            else if (item is LegEquipmentItem legs)
+                AddUniqueTypedItem(legEquipment, legs);
+            else if (item is HandEquipmentItem hands)
+                AddUniqueTypedItem(handEquipment, hands);
+            else if (item is AshOfWar ashOfWar)
+                AddUniqueTypedItem(ashesOfWar, ashOfWar);
+            else if (item is SpellItem spell)
+                AddUniqueTypedItem(spells, spell);
+            else if (item is RangedProjectileItem projectile)
+                AddUniqueTypedItem(projectiles, projectile);
+            else if (item is QuickSlotItem quickSlotItem)
+                AddUniqueTypedItem(quickSlotItems, quickSlotItem);
+            else if (item is UpgradeMaterial upgradeMaterial)
+                AddUniqueTypedItem(upgradeMaterials, upgradeMaterial);
+
+            AddUniqueItemToDatabase(item, true);
+        }
+
+        private void AddUniqueTypedItem<T>(List<T> list, T item) where T : Item
+        {
+            if (list == null || item == null)
+                return;
+
+            if (list.Any(existingItem => ItemsMatch(existingItem, item)))
+                return;
+
+            list.Add(item);
+        }
+
+        private void AddUniqueItemToDatabase(Item item, bool logRegistration)
+        {
+            if (item == null)
+                return;
+
+            if (items.Any(existingItem => ItemsMatch(existingItem, item)))
+                return;
+
+            items.Add(item);
+
+            if (logRegistration)
+                BuildRuntimeLogger.Log($"[InventoryTrace] WorldItemDatabase registered item name={item.itemName} id={item.itemID} type={item.GetType().Name}");
+        }
+
+        private bool ItemsMatch(Item a, Item b)
+        {
+            if (a == null || b == null)
+                return false;
+
+            if (a == b)
+                return true;
+
+            if (a.itemID == b.itemID && a.GetType() == b.GetType())
+                return true;
+
+            return !string.IsNullOrWhiteSpace(a.itemName) &&
+                   a.itemName == b.itemName &&
+                   a.GetType() == b.GetType();
         }
 
         private void RegisterDefaultBuffCharms()
@@ -294,6 +391,28 @@ namespace baodeag
             return Instantiate(item);
         }
 
+        public Item CreateItemInstance(SerializableItem serializableItem)
+        {
+            if (serializableItem == null)
+                return null;
+
+            Item item = GetItemByID(serializableItem.itemID);
+
+            if (item == null && !string.IsNullOrWhiteSpace(serializableItem.itemName))
+                item = items.FirstOrDefault(databaseItem => databaseItem != null && databaseItem.itemName == serializableItem.itemName);
+
+            if (item == null)
+            {
+                BuildRuntimeLogger.Warning($"[InventoryTrace] CreateItemInstance failed id={serializableItem.itemID} name={serializableItem.itemName}");
+                return null;
+            }
+
+            if (item.itemID != serializableItem.itemID)
+                BuildRuntimeLogger.Log($"[InventoryTrace] CreateItemInstance resolved by name savedID={serializableItem.itemID} runtimeID={item.itemID} name={serializableItem.itemName}");
+
+            return Instantiate(item);
+        }
+
         public List<Item> GetPurchasableItems()
         {
             return items.Where(item => item != null && item.canBePurchased).ToList();
@@ -358,8 +477,22 @@ namespace baodeag
             if (GetWeaponByID(serializableWeapon.itemID))
                 weapon = Instantiate(GetWeaponByID(serializableWeapon.itemID));
 
+            if (weapon == null && !string.IsNullOrWhiteSpace(serializableWeapon.itemName))
+            {
+                WeaponItem weaponByName = weapons.FirstOrDefault(databaseWeapon => databaseWeapon != null && databaseWeapon.itemName == serializableWeapon.itemName);
+
+                if (weaponByName != null)
+                {
+                    weapon = Instantiate(weaponByName);
+                    BuildRuntimeLogger.Log($"[InventoryTrace] GetWeaponFromSerializedData resolved by name savedID={serializableWeapon.itemID} runtimeID={weaponByName.itemID} name={serializableWeapon.itemName}");
+                }
+            }
+
             if (weapon == null)
+            {
+                BuildRuntimeLogger.Warning($"[InventoryTrace] GetWeaponFromSerializedData failed id={serializableWeapon.itemID} name={serializableWeapon.itemName}, falling back to unarmed");
                 return Instantiate(unarmedWeapon);
+            }
 
             if (GetAshOfWarByID(serializableWeapon.ashOfWarID))
             {
@@ -410,7 +543,7 @@ namespace baodeag
 
         public Item GetItemFromSerializedData(SerializableItem serializableItem)
         {
-            Item item = CreateItemInstance(serializableItem.itemID);
+            Item item = CreateItemInstance(serializableItem);
 
             if (item == null)
                 return null;

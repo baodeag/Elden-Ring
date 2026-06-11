@@ -477,11 +477,15 @@ namespace baodeag
             currentCharacterData.handEquipmentInInventory = new List<int>();
 
             playerEffectsManager.SaveActiveBuffs(currentCharacterData.activeBuffs);
+            BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory begin player={name} owner={IsOwner} server={IsServer} runtimeInventoryCount={playerInventoryManager.itemsInInventory?.Count ?? -1}");
 
             for (int i = 0; i < playerInventoryManager.itemsInInventory.Count; i++)
             {
                 if (playerInventoryManager.itemsInInventory[i] == null)
+                {
+                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory skip null index={i}");
                     continue;
+                }
 
                 WeaponItem weaponInInventory = playerInventoryManager.itemsInInventory[i] as WeaponItem;
                 HeadEquipmentItem headEquipmentInInventory = playerInventoryManager.itemsInInventory[i] as HeadEquipmentItem;
@@ -492,22 +496,113 @@ namespace baodeag
                 RangedProjectileItem projectileItemInInventory = playerInventoryManager.itemsInInventory[i] as RangedProjectileItem;
 
                 if (weaponInInventory != null)
+                {
                     currentCharacterData.weaponsInInventory.Add(WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(weaponInInventory));
+                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory weapon index={i} name={weaponInInventory.itemName} id={weaponInInventory.itemID} upgrade={(int)weaponInInventory.upgradeLevel}");
+                }
                 else if (headEquipmentInInventory != null)
+                {
                     currentCharacterData.headEquipmentInInventory.Add(headEquipmentInInventory.itemID);
+                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory head index={i} name={headEquipmentInInventory.itemName} id={headEquipmentInInventory.itemID}");
+                }
                 else if (bodyEquipmentInInventory != null)
+                {
                     currentCharacterData.bodyEquipmentInInventory.Add(bodyEquipmentInInventory.itemID);
+                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory body index={i} name={bodyEquipmentInInventory.itemName} id={bodyEquipmentInInventory.itemID}");
+                }
                 else if (legEquipmentInInventory != null)
+                {
                     currentCharacterData.legEquipmentInInventory.Add(legEquipmentInInventory.itemID);
+                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory legs index={i} name={legEquipmentInInventory.itemName} id={legEquipmentInInventory.itemID}");
+                }
                 else if (handEquipmentInInventory != null)
+                {
                     currentCharacterData.handEquipmentInInventory.Add(handEquipmentInInventory.itemID);
+                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory hands index={i} name={handEquipmentInInventory.itemName} id={handEquipmentInInventory.itemID}");
+                }
                 else if (projectileItemInInventory != null)
+                {
                     currentCharacterData.projectilesInInventory.Add(WorldSaveGameManager.instance.GetSerializableRangedProjectileFromRangedProjectileItem(projectileItemInInventory));
+                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory projectile index={i} name={projectileItemInInventory.itemName} id={projectileItemInInventory.itemID} amount={projectileItemInInventory.currentAmmoAmount}");
+                }
                 else if (quickSlotItemInInventory != null)
+                {
                     currentCharacterData.quickSlotItemsInInventory.Add(WorldSaveGameManager.instance.GetSerializableQuickSlotItemFromQuickSlotItem(quickSlotItemInInventory));
+                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory quickSlot index={i} name={quickSlotItemInInventory.itemName} id={quickSlotItemInInventory.itemID} amount={quickSlotItemInInventory.itemAmount}");
+                }
                 else
+                {
                     currentCharacterData.itemsInInventory.Add(WorldSaveGameManager.instance.GetSerializableItemFromItem(playerInventoryManager.itemsInInventory[i]));
+                    BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory generic index={i} name={playerInventoryManager.itemsInInventory[i].itemName} id={playerInventoryManager.itemsInInventory[i].itemID} type={playerInventoryManager.itemsInInventory[i].GetType().Name} amount={playerInventoryManager.itemsInInventory[i].currentItemAmount}");
+                }
             }
+
+            SaveEquippedWeaponInventoryBackup(currentCharacterData.weaponsInInventory, playerInventoryManager.weaponsInRightHandSlots[0], "right01");
+            SaveEquippedWeaponInventoryBackup(currentCharacterData.weaponsInInventory, playerInventoryManager.weaponsInRightHandSlots[1], "right02");
+            SaveEquippedWeaponInventoryBackup(currentCharacterData.weaponsInInventory, playerInventoryManager.weaponsInRightHandSlots[2], "right03");
+            SaveEquippedWeaponInventoryBackup(currentCharacterData.weaponsInInventory, playerInventoryManager.weaponsInLeftHandSlots[0], "left01");
+            SaveEquippedWeaponInventoryBackup(currentCharacterData.weaponsInInventory, playerInventoryManager.weaponsInLeftHandSlots[1], "left02");
+            SaveEquippedWeaponInventoryBackup(currentCharacterData.weaponsInInventory, playerInventoryManager.weaponsInLeftHandSlots[2], "left03");
+
+            BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory end saveWeapons={currentCharacterData.weaponsInInventory.Count} saveProjectiles={currentCharacterData.projectilesInInventory.Count} saveQuickSlots={currentCharacterData.quickSlotItemsInInventory.Count} saveGeneric={currentCharacterData.itemsInInventory.Count} saveHead={currentCharacterData.headEquipmentInInventory.Count} saveBody={currentCharacterData.bodyEquipmentInInventory.Count} saveLegs={currentCharacterData.legEquipmentInInventory.Count} saveHands={currentCharacterData.handEquipmentInInventory.Count}");
+        }
+
+        private void SaveEquippedWeaponInventoryBackup(List<SerializableWeapon> savedWeapons, WeaponItem weapon, string slotName)
+        {
+            if (savedWeapons == null || IsUnarmedWeapon(weapon))
+                return;
+
+            if (SavedWeaponsContainWeapon(savedWeapons, weapon))
+            {
+                BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory equippedBackup skip duplicate slot={slotName} name={weapon.itemName} id={weapon.itemID} upgrade={(int)weapon.upgradeLevel}");
+                return;
+            }
+
+            savedWeapons.Add(WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(weapon));
+            BuildRuntimeLogger.Log($"[InventoryTrace] SaveInventory equippedBackup add slot={slotName} name={weapon.itemName} id={weapon.itemID} upgrade={(int)weapon.upgradeLevel}");
+        }
+
+        private bool SavedWeaponsContainWeapon(List<SerializableWeapon> savedWeapons, WeaponItem weapon)
+        {
+            if (savedWeapons == null || weapon == null)
+                return false;
+
+            int ashOfWarID = weapon.ashOfWarAction != null ? weapon.ashOfWarAction.itemID : -1;
+
+            for (int i = 0; i < savedWeapons.Count; i++)
+            {
+                SerializableWeapon savedWeapon = savedWeapons[i];
+
+                if (savedWeapon == null)
+                    continue;
+
+                if (savedWeapon.itemID == weapon.itemID &&
+                    savedWeapon.upgradeLevel == (int)weapon.upgradeLevel &&
+                    savedWeapon.ashOfWarID == ashOfWarID)
+                    return true;
+
+                if (!string.IsNullOrWhiteSpace(savedWeapon.itemName) &&
+                    savedWeapon.itemName == weapon.itemName &&
+                    savedWeapon.upgradeLevel == (int)weapon.upgradeLevel &&
+                    savedWeapon.ashOfWarID == ashOfWarID)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private bool IsUnarmedWeapon(WeaponItem weapon)
+        {
+            if (weapon == null)
+                return true;
+
+            if (weapon.itemName == "Unarmed")
+                return true;
+
+            if (WorldItemDatabase.Instance == null || WorldItemDatabase.Instance.unarmedWeapon == null)
+                return false;
+
+            return weapon.itemID == WorldItemDatabase.Instance.unarmedWeapon.itemID;
         }
 
         public void LoadGameDataFromCurrentCharacterData(ref CharacterSaveData currentCharacterData)
@@ -667,10 +762,20 @@ namespace baodeag
             else
                 playerInventoryManager.itemsInInventory.Clear();
 
+            BuildRuntimeLogger.Log($"[InventoryTrace] LoadInventory begin player={name} owner={IsOwner} server={IsServer} saveWeapons={currentCharacterData.weaponsInInventory?.Count ?? -1} saveProjectiles={currentCharacterData.projectilesInInventory?.Count ?? -1} saveQuickSlots={currentCharacterData.quickSlotItemsInInventory?.Count ?? -1} saveGeneric={currentCharacterData.itemsInInventory?.Count ?? -1}");
+
             for (int i = 0; i < currentCharacterData.weaponsInInventory.Count; i++)
             {
                 WeaponItem weapon = currentCharacterData.weaponsInInventory[i].GetWeapon();
+
+                if (IsEquippedWeapon(weapon))
+                {
+                    BuildRuntimeLogger.Log($"[InventoryTrace] LoadInventory weapon skip equipped duplicate index={i} name={(weapon != null ? weapon.itemName : "null")} id={(weapon != null ? weapon.itemID : -1)}");
+                    continue;
+                }
+
                 playerInventoryManager.AddItemToInventory(weapon);
+                BuildRuntimeLogger.Log($"[InventoryTrace] LoadInventory weapon index={i} name={(weapon != null ? weapon.itemName : "null")} id={(weapon != null ? weapon.itemID : -1)}");
             }
 
             for (int i = 0; i < currentCharacterData.headEquipmentInInventory.Count; i++)
@@ -715,7 +820,10 @@ namespace baodeag
             {
                 Item item = currentCharacterData.itemsInInventory[i].GetItem();
                 playerInventoryManager.AddItemToInventory(item);
+                BuildRuntimeLogger.Log($"[InventoryTrace] LoadInventory generic index={i} name={(item != null ? item.itemName : "null")} id={(item != null ? item.itemID : -1)} type={(item != null ? item.GetType().Name : "null")}");
             }
+
+            BuildRuntimeLogger.Log($"[InventoryTrace] LoadInventory end runtimeInventoryCount={playerInventoryManager.itemsInInventory.Count}");
 
             EnsureDefaultBuffCharmsAvailable(true);
 
@@ -724,6 +832,32 @@ namespace baodeag
             playerEquipmentManager.LoadSecondaryProjectileEquipment(currentCharacterData.secondaryProjectile.GetProjectile());
             playerEffectsManager.LoadActiveBuffs(currentCharacterData.activeBuffs);
             BuildRuntimeLogger.Log("PlayerManager.LoadGameDataFromCurrentCharacterData end");
+        }
+
+        private bool IsEquippedWeapon(WeaponItem weapon)
+        {
+            if (IsUnarmedWeapon(weapon))
+                return false;
+
+            return WeaponSlotMatches(playerInventoryManager.weaponsInRightHandSlots[0], weapon) ||
+                   WeaponSlotMatches(playerInventoryManager.weaponsInRightHandSlots[1], weapon) ||
+                   WeaponSlotMatches(playerInventoryManager.weaponsInRightHandSlots[2], weapon) ||
+                   WeaponSlotMatches(playerInventoryManager.weaponsInLeftHandSlots[0], weapon) ||
+                   WeaponSlotMatches(playerInventoryManager.weaponsInLeftHandSlots[1], weapon) ||
+                   WeaponSlotMatches(playerInventoryManager.weaponsInLeftHandSlots[2], weapon);
+        }
+
+        private bool WeaponSlotMatches(WeaponItem equippedWeapon, WeaponItem weapon)
+        {
+            if (IsUnarmedWeapon(equippedWeapon) || weapon == null)
+                return false;
+
+            int equippedAshOfWarID = equippedWeapon.ashOfWarAction != null ? equippedWeapon.ashOfWarAction.itemID : -1;
+            int weaponAshOfWarID = weapon.ashOfWarAction != null ? weapon.ashOfWarAction.itemID : -1;
+
+            return equippedWeapon.itemID == weapon.itemID &&
+                   equippedWeapon.upgradeLevel == weapon.upgradeLevel &&
+                   equippedAshOfWarID == weaponAshOfWarID;
         }
 
         public void LoadOtherPlayerCharacterWhenJoiningServer()

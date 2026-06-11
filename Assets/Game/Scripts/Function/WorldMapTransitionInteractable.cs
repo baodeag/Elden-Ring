@@ -38,9 +38,10 @@ namespace baodeag
 
             if (WorldSaveGameManager.instance != null && WorldSaveGameManager.instance.currentCharacterData != null)
             {
+                BuildRuntimeLogger.Log($"[InventoryTrace] WorldTransition saving before load player={player.name} targetMap={targetMapIndex} sceneBuildIndex={sceneBuildIndex} inventoryCount={player.playerInventoryManager.itemsInInventory?.Count ?? -1}");
                 WorldSaveGameManager.instance.currentCharacterData.currentMapIndex = targetMapIndex;
                 WorldSaveGameManager.instance.currentCharacterData.sceneIndex = sceneBuildIndex;
-                WorldSaveGameManager.instance.SaveGame();
+                WorldSaveGameManager.instance.SaveGame(player, sceneBuildIndex, targetMapIndex);
             }
 
             if (NetworkManager.Singleton != null &&
