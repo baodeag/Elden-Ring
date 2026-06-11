@@ -469,6 +469,7 @@ namespace baodeag
             currentCharacterData.weaponsInInventory = new List<SerializableWeapon>();
             currentCharacterData.projectilesInInventory = new List<SerializableRangedProjectile>();
             currentCharacterData.quickSlotItemsInInventory = new List<SerializableQuickSlotItem>();
+            currentCharacterData.itemsInInventory = new List<SerializableItem>();
             currentCharacterData.activeBuffs = new List<SerializableActiveBuff>();
             currentCharacterData.headEquipmentInInventory = new List<int>();
             currentCharacterData.bodyEquipmentInInventory = new List<int>();
@@ -492,24 +493,20 @@ namespace baodeag
 
                 if (weaponInInventory != null)
                     currentCharacterData.weaponsInInventory.Add(WorldSaveGameManager.instance.GetSerializableWeaponFromWeaponItem(weaponInInventory));
-
-                if (headEquipmentInInventory != null)
+                else if (headEquipmentInInventory != null)
                     currentCharacterData.headEquipmentInInventory.Add(headEquipmentInInventory.itemID);
-
-                if (bodyEquipmentInInventory != null)
+                else if (bodyEquipmentInInventory != null)
                     currentCharacterData.bodyEquipmentInInventory.Add(bodyEquipmentInInventory.itemID);
-
-                if (legEquipmentInInventory != null)
+                else if (legEquipmentInInventory != null)
                     currentCharacterData.legEquipmentInInventory.Add(legEquipmentInInventory.itemID);
-
-                if (handEquipmentInInventory != null)
+                else if (handEquipmentInInventory != null)
                     currentCharacterData.handEquipmentInInventory.Add(handEquipmentInInventory.itemID);
-
-                if (projectileItemInInventory != null)
+                else if (projectileItemInInventory != null)
                     currentCharacterData.projectilesInInventory.Add(WorldSaveGameManager.instance.GetSerializableRangedProjectileFromRangedProjectileItem(projectileItemInInventory));
-
-                if (quickSlotItemInInventory != null)
+                else if (quickSlotItemInInventory != null)
                     currentCharacterData.quickSlotItemsInInventory.Add(WorldSaveGameManager.instance.GetSerializableQuickSlotItemFromQuickSlotItem(quickSlotItemInInventory));
+                else
+                    currentCharacterData.itemsInInventory.Add(WorldSaveGameManager.instance.GetSerializableItemFromItem(playerInventoryManager.itemsInInventory[i]));
             }
         }
 
@@ -665,6 +662,11 @@ namespace baodeag
                 playerNetworkManager.currentSpellID.Value = -1;
             }
 
+            if (playerInventoryManager.itemsInInventory == null)
+                playerInventoryManager.itemsInInventory = new List<Item>();
+            else
+                playerInventoryManager.itemsInInventory.Clear();
+
             for (int i = 0; i < currentCharacterData.weaponsInInventory.Count; i++)
             {
                 WeaponItem weapon = currentCharacterData.weaponsInInventory[i].GetWeapon();
@@ -705,6 +707,14 @@ namespace baodeag
             {
                 RangedProjectileItem projectile = currentCharacterData.projectilesInInventory[i].GetProjectile();
                 playerInventoryManager.AddItemToInventory(projectile);
+            }
+
+            currentCharacterData.itemsInInventory ??= new List<SerializableItem>();
+
+            for (int i = 0; i < currentCharacterData.itemsInInventory.Count; i++)
+            {
+                Item item = currentCharacterData.itemsInInventory[i].GetItem();
+                playerInventoryManager.AddItemToInventory(item);
             }
 
             EnsureDefaultBuffCharmsAvailable(true);

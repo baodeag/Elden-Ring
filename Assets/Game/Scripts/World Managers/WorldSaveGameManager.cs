@@ -576,6 +576,19 @@ namespace baodeag {
             return serializableQuickSlotItem;
         }
 
+        public SerializableItem GetSerializableItemFromItem(Item item)
+        {
+            SerializableItem serializableItem = new SerializableItem();
+
+            if (item != null)
+            {
+                serializableItem.itemID = item.itemID;
+                serializableItem.itemAmount = Mathf.Max(1, item.currentItemAmount);
+            }
+
+            return serializableItem;
+        }
+
         //load dialogue
         public CharacterDialogue GetCharacterDialogueByEnum(CharacterDialogueID characterDialogueID)
         {

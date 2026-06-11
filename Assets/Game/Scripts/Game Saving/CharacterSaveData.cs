@@ -104,6 +104,7 @@ namespace baodeag
         public List<SerializableWeapon> weaponsInInventory;
         public List<SerializableRangedProjectile> projectilesInInventory;
         public List<SerializableQuickSlotItem> quickSlotItemsInInventory;
+        public List<SerializableItem> itemsInInventory;
         public List<SerializableActiveBuff> activeBuffs;
         public List<int> headEquipmentInInventory;
         public List<int> bodyEquipmentInInventory;
@@ -133,6 +134,7 @@ namespace baodeag
             weaponsInInventory ??= new List<SerializableWeapon>();
             projectilesInInventory ??= new List<SerializableRangedProjectile>();
             quickSlotItemsInInventory ??= new List<SerializableQuickSlotItem>();
+            itemsInInventory ??= new List<SerializableItem>();
             activeBuffs ??= new List<SerializableActiveBuff>();
             headEquipmentInInventory ??= new List<int>();
             bodyEquipmentInInventory ??= new List<int>();

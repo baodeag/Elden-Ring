@@ -14,11 +14,12 @@ namespace baodeag
         private Vector3 baseScale;
         private bool isPointerInside;
         private bool isPressed;
+        private bool hasBaseScale;
 
         private void Awake()
         {
             rectTransform = GetComponent<RectTransform>();
-            baseScale = rectTransform != null ? rectTransform.localScale : Vector3.one;
+            CaptureBaseScale();
         }
 
         private void OnEnable()
@@ -83,9 +84,20 @@ namespace baodeag
 
             if (rectTransform != null)
             {
-                baseScale = rectTransform.localScale;
                 rectTransform.localScale = baseScale;
             }
+        }
+
+        private void CaptureBaseScale()
+        {
+            if (rectTransform == null)
+                rectTransform = GetComponent<RectTransform>();
+
+            if (hasBaseScale)
+                return;
+
+            baseScale = rectTransform != null ? rectTransform.localScale : Vector3.one;
+            hasBaseScale = true;
         }
     }
 }

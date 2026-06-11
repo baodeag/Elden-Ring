@@ -407,5 +407,16 @@ namespace baodeag
 
             return quickSlotItem;
         }
+
+        public Item GetItemFromSerializedData(SerializableItem serializableItem)
+        {
+            Item item = CreateItemInstance(serializableItem.itemID);
+
+            if (item == null)
+                return null;
+
+            item.currentItemAmount = Mathf.Max(1, serializableItem.itemAmount);
+            return item;
+        }
     }
 }
