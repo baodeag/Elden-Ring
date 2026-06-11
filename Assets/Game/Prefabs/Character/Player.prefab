@@ -5614,7 +5614,7 @@ MonoBehaviour:
   basePoiseDefense: 0
   defaultPoiseResetTime: 8
   poiseResetTimer: 0
-  runes: 0
+  runes: 10000
 --- !u!114 &-5518382285501829735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5705,7 +5705,10 @@ MonoBehaviour:
   handEquipment: {fileID: 0}
   mainProjectile: {fileID: 0}
   secondaryProjectile: {fileID: 0}
-  itemsInInventory: []
+  itemsInInventory:
+  - {fileID: 11400000, guid: dd0921e3223132746b9bacdb3acca269, type: 2}
+  - {fileID: 11400000, guid: 6b6b98df85f408e4ea7f35142718f50c, type: 2}
+  - {fileID: 11400000, guid: 0c567da9272c187489ed8342dc53c2e4, type: 2}
 --- !u!114 &8536375284825481294
 MonoBehaviour:
   m_ObjectHideFlags: 0
