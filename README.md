@@ -1,3 +1,5 @@
+Gameplay Demo: https://www.youtube.com/watch?v=wNkZXQfIaDc&t=9s
+
 # ⚔️ Eternal Hollow
 
 **Eternal Hollow** is a 3D dark fantasy action RPG built in Unity, inspired by soulslike combat loops: explore dangerous worlds, defeat enemies, collect runes, upgrade your character, and conquer bosses to unlock the next map.
